@@ -1,0 +1,17 @@
+id: compute.blockchain_rpc
+label: Call blockchain JSON-RPC
+description: Execute JSON-RPC calls against blockchain networks via pay-per-request RPC.
+aliases:
+  - json-rpc
+  - node rpc
+  - blockchain node
+  - solana rpc
+  - ethereum rpc
+related:
+  - finance.crypto_spot_price
+satisfies:
+  - origin: https://x402.quicknode.com
+    method: POST
+    path: /solana-mainnet/
+    confidence: primary
+    notes: QuickNode x402 JSON-RPC proxy (140+ network paths available)

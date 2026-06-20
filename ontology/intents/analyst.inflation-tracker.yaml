@@ -1,0 +1,15 @@
+id: analyst.inflation_tracker
+label: Track category price inflation trends
+description: Analyze price inflation and trend direction within a retail category.
+aliases:
+  - inflation
+  - price inflation
+  - category trends
+related:
+  - analyst.price_dispersion
+  - shop.track_price_history
+satisfies:
+  - origin: https://api.crushrewards.dev
+    method: GET
+    path: /v1/analyst/inflation
+    confidence: primary

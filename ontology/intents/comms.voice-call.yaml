@@ -1,0 +1,15 @@
+id: comms.voice_call
+label: Place an AI-powered phone call
+description: Initiate an outbound AI phone call with natural-language task instructions.
+aliases:
+  - phone call
+  - voice call
+  - outbound call
+  - ai call
+related:
+  - comms.send_email
+satisfies:
+  - origin: https://stablephone.dev
+    method: POST
+    path: /api/call
+    confidence: primary

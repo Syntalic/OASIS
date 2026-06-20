@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://paid-api-graph.dev/spec/endpoint-record.schema.json",
+  "title": "EndpointRecord",
+  "type": "object",
+  "required": [
+    "id",
+    "origin",
+    "method",
+    "path",
+    "summary",
+    "payment",
+    "search_text",
+    "built_at"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "origin": { "type": "string", "format": "uri" },
+    "method": {
+      "type": "string",
+      "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
+    },
+    "path": { "type": "string", "minLength": 1 },
+    "operation_id": { "type": "string" },
+    "summary": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "provider_fqn": { "type": "string" },
+    "provider_title": { "type": "string" },
+    "category": { "type": "string" },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9._-]*$" }
+    },
+    "inputs": { "type": "array", "items": { "type": "string" } },
+    "payment": { "$ref": "#/$defs/Payment" },
+    "guidance_available": { "type": "boolean" },
+    "openapi_url": { "type": "string", "format": "uri" },
+    "search_text": { "type": "string" },
+    "built_at": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "PaymentRail": {
+      "type": "object",
+      "required": ["protocol"],
+      "properties": {
+        "protocol": { "type": "string", "enum": ["x402", "mpp"] },
+        "version": { "type": "string" },
+        "networks": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "Payment": {
+      "type": "object",
+      "required": ["rails"],
+      "properties": {
+        "price_usd": { "type": "number", "minimum": 0 },
+        "paid": { "type": "boolean" },
+        "rails": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PaymentRail" }
+        }
+      }
+    }
+  }
+}

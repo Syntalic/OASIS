@@ -1,0 +1,15 @@
+id: shop.price_drop_alert
+label: Detect recent price drops on a product
+description: Check whether a product's price has dropped recently across tracked retailers.
+aliases:
+  - price drop
+  - price alert
+  - price decrease
+related:
+  - shop.compare_price
+  - shop.track_price_history
+satisfies:
+  - origin: https://api.crushrewards.dev
+    method: GET
+    path: /v1/shopper/price-drop-alert
+    confidence: primary

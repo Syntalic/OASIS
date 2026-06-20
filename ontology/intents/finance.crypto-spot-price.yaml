@@ -1,0 +1,15 @@
+id: finance.crypto_spot_price
+label: Get cryptocurrency spot price
+description: Fetch current spot price for one or more crypto assets.
+aliases:
+  - crypto price
+  - token price
+  - coin price
+  - bitcoin price
+related:
+  - finance.crypto_market_data
+satisfies:
+  - origin: https://stablecrypto.dev
+    method: POST
+    path: /api/coingecko/price
+    confidence: primary

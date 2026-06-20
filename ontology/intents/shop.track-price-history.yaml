@@ -1,0 +1,15 @@
+id: shop.track_price_history
+label: Get historical price trends for a product
+description: Retrieve price history over time for a specific product query.
+aliases:
+  - price history
+  - price trend
+  - historical pricing
+related:
+  - shop.compare_price
+  - analyst.inflation_tracker
+satisfies:
+  - origin: https://api.crushrewards.dev
+    method: GET
+    path: /v1/shopper/price-history
+    confidence: primary

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://paid-api-graph.dev/spec/ontology.schema.json",
+  "title": "PaidApiGraphIndex",
+  "type": "object",
+  "required": ["index_version", "spec_version", "built_at", "endpoints", "capabilities"],
+  "additionalProperties": false,
+  "properties": {
+    "index_version": { "type": "string" },
+    "spec_version": { "type": "string" },
+    "built_at": { "type": "string", "format": "date-time" },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "path"],
+        "properties": {
+          "name": { "type": "string" },
+          "path": { "type": "string" },
+          "providers": { "type": "integer", "minimum": 0 },
+          "endpoints": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "stats": {
+      "type": "object",
+      "properties": {
+        "providers": { "type": "integer" },
+        "endpoints": { "type": "integer" },
+        "capabilities": { "type": "integer" },
+        "origins": { "type": "integer" }
+      }
+    },
+    "endpoints": {
+      "type": "array",
+      "items": {
+        "$ref": "https://paid-api-graph.dev/spec/endpoint-record.schema.json"
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "$ref": "https://paid-api-graph.dev/spec/capability.schema.json"
+      }
+    }
+  }
+}

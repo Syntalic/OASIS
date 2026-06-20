@@ -1,0 +1,15 @@
+id: shop.find_deals
+label: Find discounted products in a category
+description: Discover current deals and discounts within a product category.
+aliases:
+  - deal finder
+  - discounts
+  - on sale
+related:
+  - shop.compare_price
+  - shop.price_drop_alert
+satisfies:
+  - origin: https://api.crushrewards.dev
+    method: GET
+    path: /v1/shopper/deal-finder
+    confidence: primary

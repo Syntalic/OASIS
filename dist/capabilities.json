@@ -1,0 +1,235 @@
+{
+  "index_version": "0.1.0",
+  "spec_version": "0.1.0",
+  "built_at": "2026-06-20T18:40:43.261Z",
+  "capabilities": [
+    {
+      "id": "analyst.inflation_tracker",
+      "label": "Track category price inflation trends",
+      "description": "Analyze price inflation and trend direction within a retail category.",
+      "aliases": [
+        "inflation",
+        "price inflation",
+        "category trends"
+      ],
+      "related": [
+        "analyst.price_dispersion",
+        "shop.track_price_history"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.crushrewards.dev",
+          "method": "GET",
+          "path": "/v1/analyst/inflation",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
+      "id": "comms.send_email",
+      "label": "Send an outbound email",
+      "description": "Send a single email message via micropayment without API keys.",
+      "aliases": [
+        "send email",
+        "email delivery",
+        "outbound email"
+      ],
+      "related": [
+        "comms.buy_inbox"
+      ],
+      "schema_org": [
+        "schema:EmailMessage"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://stableemail.dev",
+          "method": "POST",
+          "path": "/api/send",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
+      "id": "comms.voice_call",
+      "label": "Place an AI-powered phone call",
+      "description": "Initiate an outbound AI phone call with natural-language task instructions.",
+      "aliases": [
+        "phone call",
+        "voice call",
+        "outbound call",
+        "ai call"
+      ],
+      "related": [
+        "comms.send_email"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://stablephone.dev",
+          "method": "POST",
+          "path": "/api/call",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
+      "id": "compute.blockchain_rpc",
+      "label": "Call blockchain JSON-RPC",
+      "description": "Execute JSON-RPC calls against blockchain networks via pay-per-request RPC.",
+      "aliases": [
+        "json-rpc",
+        "node rpc",
+        "blockchain node",
+        "solana rpc",
+        "ethereum rpc"
+      ],
+      "related": [
+        "finance.crypto_spot_price"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://x402.quicknode.com",
+          "method": "POST",
+          "path": "/solana-mainnet/",
+          "confidence": "primary",
+          "notes": "QuickNode x402 JSON-RPC proxy (140+ network paths available)"
+        }
+      ]
+    },
+    {
+      "id": "finance.crypto_spot_price",
+      "label": "Get cryptocurrency spot price",
+      "description": "Fetch current spot price for one or more crypto assets.",
+      "aliases": [
+        "crypto price",
+        "token price",
+        "coin price",
+        "bitcoin price"
+      ],
+      "related": [
+        "finance.crypto_market_data"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://stablecrypto.dev",
+          "method": "POST",
+          "path": "/api/coingecko/price",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
+      "id": "marketing.competitive_landscape",
+      "label": "Competitive pricing landscape for a category",
+      "description": "View all products in a category with competitive pricing across retailers.",
+      "aliases": [
+        "competitive analysis",
+        "category landscape",
+        "market landscape"
+      ],
+      "related": [
+        "marketing.brand_tracker",
+        "shop.compare_price"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.crushrewards.dev",
+          "method": "GET",
+          "path": "/v1/marketing/competitive-landscape",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
+      "id": "shop.compare_price",
+      "label": "Compare retail price across stores",
+      "description": "Find the lowest current price for a product across multiple retailers.",
+      "aliases": [
+        "cheapest price",
+        "best price",
+        "price comparison",
+        "compare prices"
+      ],
+      "schema_org": [
+        "schema:SearchAction"
+      ],
+      "related": [
+        "shop.find_deals",
+        "shop.track_price_history"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.crushrewards.dev",
+          "method": "GET",
+          "path": "/v1/shopper/best-price",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
+      "id": "shop.find_deals",
+      "label": "Find discounted products in a category",
+      "description": "Discover current deals and discounts within a product category.",
+      "aliases": [
+        "deal finder",
+        "discounts",
+        "on sale"
+      ],
+      "related": [
+        "shop.compare_price",
+        "shop.price_drop_alert"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.crushrewards.dev",
+          "method": "GET",
+          "path": "/v1/shopper/deal-finder",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
+      "id": "shop.price_drop_alert",
+      "label": "Detect recent price drops on a product",
+      "description": "Check whether a product's price has dropped recently across tracked retailers.",
+      "aliases": [
+        "price drop",
+        "price alert",
+        "price decrease"
+      ],
+      "related": [
+        "shop.compare_price",
+        "shop.track_price_history"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.crushrewards.dev",
+          "method": "GET",
+          "path": "/v1/shopper/price-drop-alert",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
+      "id": "shop.track_price_history",
+      "label": "Get historical price trends for a product",
+      "description": "Retrieve price history over time for a specific product query.",
+      "aliases": [
+        "price history",
+        "price trend",
+        "historical pricing"
+      ],
+      "related": [
+        "shop.compare_price",
+        "analyst.inflation_tracker"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.crushrewards.dev",
+          "method": "GET",
+          "path": "/v1/shopper/price-history",
+          "confidence": "primary"
+        }
+      ]
+    }
+  ]
+}
