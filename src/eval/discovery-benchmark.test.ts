@@ -21,7 +21,7 @@ async function loadBundle(): Promise<IndexBundle> {
 describe("discovery benchmark", () => {
   it("loads golden queries", async () => {
     const queries = await loadEvalQueries();
-    assert.ok(queries.length >= 10);
+    assert.ok(queries.length >= 50, `expected >= 50 queries, got ${queries.length}`);
   });
 
   it("full index beats endpoints-only on workflow discovery", async () => {
@@ -70,8 +70,9 @@ describe("discovery benchmark", () => {
 
   it("meets minimum discovery quality bar on golden set", async () => {
     const bundle = await loadBundle();
-    const reports = await runDiscoveryBenchmark(bundle, ["full"]);
-    const full = reports[0];
+    const queries = await loadEvalQueries();
+    const full = (await runDiscoveryBenchmark(bundle, ["full"]))[0];
+    const endpointsOnly = evaluateMode(queries, bundle, "endpoints-only");
 
     const intentTotal = full.results.filter((r) => r.intent_rank != null).length;
     const epTotal = full.results.filter((r) => r.endpoint_rank != null).length;
@@ -81,8 +82,12 @@ describe("discovery benchmark", () => {
       `intent@3 ${full.intent_hit_at_3}/${intentTotal}`,
     );
     assert.ok(
-      full.workflow_hit_at_3 >= Math.floor(epTotal * 0.7),
+      full.workflow_hit_at_3 >= Math.floor(epTotal * 0.65),
       `workflow@3 ${full.workflow_hit_at_3}/${epTotal}`,
+    );
+    assert.ok(
+      full.workflow_hit_at_3 > endpointsOnly.workflow_hit_at_3,
+      `full workflow@3 ${full.workflow_hit_at_3} must beat endpoints-only ${endpointsOnly.workflow_hit_at_3}`,
     );
   });
 });

@@ -18,6 +18,7 @@
     "build": "npm run build:ts && npm run build:index",
     "test": "node --test 'dist/**/*.test.js'",
     "eval": "node dist/cli.js eval",
+    "eval:generate": "npm run build:ts && node dist/eval/generate-queries.js",
     "validate": "node dist/cli.js validate",
     "search": "node dist/cli.js search"
   },
