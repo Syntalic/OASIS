@@ -1,12 +1,20 @@
 id: comms.agent_inbox
 label: Create an AI agent email inbox
-description: Provision a dedicated inbox for an AI agent to send and receive email via micropayment.
+description: Provision a dedicated inbox for an AI agent to send and receive email via micropayment. Use when setting up a mailbox an autonomous agent can poll or webhook for inbound messages before sending replies.
 aliases:
   - ai agent email inbox
   - agent inbox
   - create agent inbox
   - agentmail inbox
   - programmatic inbox
+  - mailbox my bot can poll
+  - dedicated inbox for autonomous agent
+  - provision agent email
+  - set up email for my AI agent
+  - bot email address to receive mail
+  - create mailbox for autonomous bot
+  - agent email account setup
+  - polling inbox for AI workflows
 related:
   - comms.send_email
 schema_org:

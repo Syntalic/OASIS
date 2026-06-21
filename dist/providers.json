@@ -1,7 +1,7 @@
 {
   "index_version": "0.1.0",
   "spec_version": "0.1.0",
-  "built_at": "2026-06-21T14:33:09.945Z",
+  "built_at": "2026-06-21T16:28:37.145Z",
   "stats": {
     "providers": 1104
   },
@@ -8161,11 +8161,11 @@
       "origins": [
         "https://api.babyblueviper.com"
       ],
-      "endpoint_count": 163,
+      "endpoint_count": 165,
       "payment_rails": [
         "x402"
       ],
-      "min_price_usd": 0.019202,
+      "min_price_usd": 0.019254,
       "guidance_available": true,
       "sources": [
         "x402scan"
@@ -8722,7 +8722,7 @@
       "origins": [
         "https://api.gocreativeai.com"
       ],
-      "endpoint_count": 685,
+      "endpoint_count": 688,
       "payment_rails": [
         "x402"
       ],
@@ -9478,13 +9478,13 @@
       "fqn": "x402scan/api.moltalyzer.xyz",
       "title": "x402scan/api.moltalyzer.xyz",
       "description": "Returns complete API documentation as markdown, including x402 payment setup instructions with working code examples in TypeScript and Python. This is the best starting point for integration. Free — no payment required.",
-      "use_case": "Paid API for documentation, master intelligence, github digests, advisor, digests, polymarket intelligence, polymarket, token intelligence via https://api.moltalyzer.xyz",
+      "use_case": "Paid API for documentation, master intelligence, github digests, advisor, digests, polymarket intelligence, polymarket, pulse via https://api.moltalyzer.xyz",
       "categories": [],
       "service_url": "https://api.moltalyzer.xyz",
       "origins": [
         "https://api.moltalyzer.xyz"
       ],
-      "endpoint_count": 39,
+      "endpoint_count": 44,
       "payment_rails": [
         "x402"
       ],
@@ -9492,7 +9492,7 @@
       "sources": [
         "x402scan"
       ],
-      "search_text": "x402scan/api.moltalyzer.xyz returns complete api documentation as markdown, including x402 payment setup instructions with working code examples in typescript and python. this is the best starting point for integration. free — no payment required. paid api for documentation, master intelligence, github digests, advisor, digests, polymarket intelligence, polymarket, token intelligence via https://api.moltalyzer.xyz documentation master intelligence github digests advisor digests polymarket intelligence polymarket token intelligence https://api.moltalyzer.xyz",
+      "search_text": "x402scan/api.moltalyzer.xyz returns complete api documentation as markdown, including x402 payment setup instructions with working code examples in typescript and python. this is the best starting point for integration. free — no payment required. paid api for documentation, master intelligence, github digests, advisor, digests, polymarket intelligence, polymarket, pulse via https://api.moltalyzer.xyz documentation master intelligence github digests advisor digests polymarket intelligence polymarket pulse https://api.moltalyzer.xyz",
       "alternatives": [
         "x402scan/agentforge-taupe.vercel.app",
         "x402scan/api.regressionincoming.fyi",
@@ -10231,11 +10231,11 @@
       ],
       "search_text": "x402scan/api.scrvo.com crawl a url using headless browser rendering and return llm-ready content (markdown, html, and/or structured json). supports multi-page crawls with configurable depth, link discovery, and js rendering. use for crawl a url using headless browser rendering and return llm-ready content (markdown, html, and/or structured json). supports multi-page crawls with configurable https://api.scrvo.com",
       "alternatives": [
-        "x402scan/entropy.rip",
         "x402scan/docparse.x402tools.xyz",
         "x402scan/text-to-json.x4api.com",
         "x402scan/api.callbsman.com",
-        "x402scan/bsman-ai.onrender.com"
+        "x402scan/bsman-ai.onrender.com",
+        "x402scan/md.wdh.sh"
       ]
     },
     {
@@ -12308,10 +12308,10 @@
       "search_text": "x402scan/cheap-search--gw.swerver.net scrapes up to 20 urls concurrently. each url is fetched independently; individual failures don't affect other results. use for scrapes up to 20 urls concurrently. each url is fetched independently; individual failures don't affect other results. https://cheap-search--gw.swerver.net",
       "alternatives": [
         "x402scan/websearch--gw.swerver.net",
-        "x402scan/entropy.rip",
         "x402scan/qr.x402tools.xyz",
         "x402scan/rendex.x402tools.xyz",
-        "x402scan/visionex.x402tools.xyz"
+        "x402scan/visionex.x402tools.xyz",
+        "x402scan/geo.x4api.com"
       ]
     },
     {
@@ -14019,11 +14019,11 @@
       ],
       "search_text": "x402scan/drmadmeow.up.railway.app render animated code as mp4/gif. pay-per-use via x402. use for render animated code as mp4/gif. pay-per-use via x402. https://drmadmeow.up.railway.app",
       "alternatives": [
-        "x402scan/entropy.rip",
         "x402scan/api.vectorway.io",
         "x402scan/qr.x402tools.xyz",
         "x402scan/rendex.x402tools.xyz",
-        "x402scan/convert.boring-api.com"
+        "x402scan/convert.boring-api.com",
+        "x402scan/geo.x4api.com"
       ]
     },
     {
@@ -14477,30 +14477,20 @@
     {
       "fqn": "x402scan/entropy.rip",
       "title": "https://entropy.rip",
-      "description": "Render URL in headless browser",
-      "use_case": "Use for render url in headless browser",
       "categories": [],
       "service_url": "https://entropy.rip",
       "origins": [
         "https://entropy.rip"
       ],
-      "endpoint_count": 32,
+      "endpoint_count": 19,
       "payment_rails": [
         "x402"
       ],
-      "min_price_usd": 0.01,
-      "guidance_available": true,
+      "guidance_available": false,
       "sources": [
         "x402scan"
       ],
-      "search_text": "x402scan/entropy.rip render url in headless browser use for render url in headless browser https://entropy.rip",
-      "alternatives": [
-        "x402scan/rendex.x402tools.xyz",
-        "x402scan/qr.x402tools.xyz",
-        "x402scan/geo.x4api.com",
-        "x402scan/drmadmeow.up.railway.app",
-        "x402scan/api.hyperextend.xyz"
-      ]
+      "search_text": "x402scan/entropy.rip https://entropy.rip"
     },
     {
       "fqn": "x402scan/eonet.gsfc.nasa.gov",
@@ -17162,7 +17152,7 @@
         "x402scan/cheaptokens.ai",
         "x402scan/v.botpay.network",
         "x402scan/api.myceliasignal.com",
-        "x402scan/api.moltalyzer.xyz"
+        "x402scan/api.aitrailblazer.net"
       ]
     },
     {
@@ -18850,7 +18840,7 @@
       "origins": [
         "https://orbisapi.com"
       ],
-      "endpoint_count": 2041,
+      "endpoint_count": 2042,
       "payment_rails": [
         "x402"
       ],
@@ -20199,7 +20189,7 @@
         "x402scan/pdf.x4api.com",
         "x402scan/api.jarvisclaw.ai",
         "x402scan/visionex.x402tools.xyz",
-        "x402scan/entropy.rip"
+        "x402scan/fake.x4api.com"
       ]
     },
     {
@@ -20555,11 +20545,11 @@
       ],
       "search_text": "x402scan/rendex.x402tools.xyz render html or a public url into a pdf use for render html or a public url into a pdf https://rendex.x402tools.xyz",
       "alternatives": [
-        "x402scan/entropy.rip",
         "x402scan/docparse.x402tools.xyz",
         "x402scan/md.wdh.sh",
         "x402scan/qr.x402tools.xyz",
-        "x402scan/drmadmeow.up.railway.app"
+        "x402scan/drmadmeow.up.railway.app",
+        "x402scan/geo.x4api.com"
       ]
     },
     {
@@ -23748,7 +23738,7 @@
       "origins": [
         "https://three.ws"
       ],
-      "endpoint_count": 28,
+      "endpoint_count": 36,
       "payment_rails": [
         "x402"
       ],
@@ -25448,10 +25438,10 @@
       "search_text": "x402scan/websearch--gw.swerver.net scrapes up to 20 urls concurrently. each url is fetched independently; individual failures don't affect other results. use for scrapes up to 20 urls concurrently. each url is fetched independently; individual failures don't affect other results. https://websearch--gw.swerver.net",
       "alternatives": [
         "x402scan/cheap-search--gw.swerver.net",
-        "x402scan/entropy.rip",
         "x402scan/qr.x402tools.xyz",
         "x402scan/rendex.x402tools.xyz",
-        "x402scan/visionex.x402tools.xyz"
+        "x402scan/visionex.x402tools.xyz",
+        "x402scan/geo.x4api.com"
       ]
     },
     {
@@ -26588,11 +26578,11 @@
       ],
       "search_text": "x402scan/x402-market-intel-mcp.mtree.workers.dev high-frequency x402-compatible token risk scan clone: one evm token/contract address in, live bytecode/erc-20 metadata/proxy/admin/selector evidence out, with risk score, verdict, and approval/trade policy. mirrors the active /tools/token_risk_scan buyer route shape. paid api for x402 market intelligence via https://x402-market-intel-mcp.mtree.workers.dev x402 market intelligence https://x402-market-intel-mcp.mtree.workers.dev",
       "alternatives": [
-        "x402scan/api.moltalyzer.xyz",
         "x402scan/x402.ottoai.services",
         "x402scan/x402.asterpay.io",
         "x402scan/store.agentexchange.work",
-        "x402scan/gpt55.558686.xyz"
+        "x402scan/gpt55.558686.xyz",
+        "x402scan/cheaptokens.ai"
       ]
     },
     {

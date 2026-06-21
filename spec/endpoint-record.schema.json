@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://paid-api-graph.dev/spec/endpoint-record.schema.json",
+  "$id": "https://syntalic.com/oasis/spec/endpoint-record.schema.json",
   "title": "EndpointRecord",
   "type": "object",
   "required": [

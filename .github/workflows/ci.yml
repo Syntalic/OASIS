@@ -10,12 +10,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - run: npm ci
-      - run: npm run build:ts
-      - run: npm test
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build:ts
+      - run: pnpm test
       - run: node dist/cli.js build --openapi fixtures/minimal.openapi.json --origin https://api.example.com -o /tmp/capindex-dist
       - run: node dist/cli.js validate -d /tmp/capindex-dist
       - run: node dist/cli.js search "demo" -d /tmp/capindex-dist

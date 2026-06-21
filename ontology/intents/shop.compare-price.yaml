@@ -1,6 +1,6 @@
 id: shop.compare_price
 label: Compare retail price across stores
-description: Find the lowest current price for a product across multiple retailers.
+description: Find the lowest current price for a product across multiple retailers. Use when an agent must compare the same SKU across stores before recommending where a user should buy.
 aliases:
   - cheapest price
   - best price
@@ -14,6 +14,14 @@ aliases:
   - cross retailer price
   - where can I buy
   - buy cheaper
+  - cheaper at Amazon or Walmart
+  - cross-store price comparison
+  - which store has lower price
+  - best deal across retailers
+  - price check multiple stores
+  - compare same product different shops
+  - who sells it cheapest today
+  - multi-retailer price lookup
 schema_org:
   - schema:SearchAction
 related:

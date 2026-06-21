@@ -1,12 +1,20 @@
 id: web.screenshot
 label: Capture a website screenshot
-description: Take a full-page or viewport screenshot of any public URL via micropayment.
+description: Take a full-page or viewport screenshot of any public URL via micropayment. Use when an agent needs a pixel-accurate visual capture of a public webpage for QA, archiving, or showing users what a site looks like.
 aliases:
   - screenshot
   - website screenshot
   - page capture
   - take a screenshot
   - capture website
+  - PNG of homepage
+  - visual snapshot of webpage
+  - grab screenshot of URL
+  - capture page as image
+  - screenshot a live URL
+  - full page PNG capture
+  - webpage image preview
+  - render site as screenshot
 satisfies:
   - origin: https://screenshotone.x402.paysponge.com
     method: GET

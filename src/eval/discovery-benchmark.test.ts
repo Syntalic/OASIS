@@ -24,35 +24,35 @@ describe("discovery benchmark", () => {
     assert.ok(queries.length >= 50, `expected >= 50 queries, got ${queries.length}`);
   });
 
-  it("full index beats endpoints-only on workflow discovery", async () => {
+  it("full index beats endpoints-only on discover@3", async () => {
     const bundle = await loadBundle();
     const queries = await loadEvalQueries();
     const full = evaluateMode(queries, bundle, "full");
     const endpointsOnly = evaluateMode(queries, bundle, "endpoints-only");
 
     assert.ok(
-      full.intent_hit_at_1 > endpointsOnly.intent_hit_at_1,
-      `intent@1: full=${full.intent_hit_at_1} endpoints-only=${endpointsOnly.intent_hit_at_1}`,
+      full.task_hit_at_1 > endpointsOnly.task_hit_at_1,
+      `task@1: full=${full.task_hit_at_1} endpoints-only=${endpointsOnly.task_hit_at_1}`,
     );
     assert.ok(
-      full.workflow_hit_at_3 >= endpointsOnly.workflow_hit_at_3,
-      `workflow@3: full=${full.workflow_hit_at_3} endpoints-only=${endpointsOnly.workflow_hit_at_3}`,
+      full.discover_hit_at_3 >= endpointsOnly.discover_hit_at_3,
+      `discover@3: full=${full.discover_hit_at_3} endpoints-only=${endpointsOnly.discover_hit_at_3}`,
     );
     assert.ok(
-      full.workflow_mrr >= endpointsOnly.workflow_mrr,
-      `workflow MRR: full=${full.workflow_mrr} endpoints-only=${endpointsOnly.workflow_mrr}`,
+      full.discover_mrr >= endpointsOnly.discover_mrr,
+      `discover MRR: full=${full.discover_mrr} endpoints-only=${endpointsOnly.discover_mrr}`,
     );
   });
 
-  it("full index beats provider-only catalog search on endpoint@3", async () => {
+  it("full index beats provider-only catalog search on literal@3", async () => {
     const bundle = await loadBundle();
     const queries = await loadEvalQueries();
     const full = evaluateMode(queries, bundle, "full");
     const providersOnly = evaluateMode(queries, bundle, "providers-only");
 
     assert.ok(
-      full.endpoint_hit_at_3 > providersOnly.endpoint_hit_at_3,
-      `endpoint@3: full=${full.endpoint_hit_at_3} providers-only=${providersOnly.endpoint_hit_at_3}`,
+      full.literal_hit_at_3 > providersOnly.literal_hit_at_3,
+      `literal@3: full=${full.literal_hit_at_3} providers-only=${providersOnly.literal_hit_at_3}`,
     );
   });
 
@@ -74,20 +74,20 @@ describe("discovery benchmark", () => {
     const full = (await runDiscoveryBenchmark(bundle, ["full"]))[0];
     const endpointsOnly = evaluateMode(queries, bundle, "endpoints-only");
 
-    const intentTotal = full.results.filter((r) => r.intent_rank != null).length;
-    const epTotal = full.results.filter((r) => r.endpoint_rank != null).length;
+    const taskTotal = full.results.filter((r) => r.task_rank != null).length;
+    const apiTotal = full.results.filter((r) => r.literal_rank != null).length;
 
     assert.ok(
-      full.intent_hit_at_3 >= Math.floor(intentTotal * 0.7),
-      `intent@3 ${full.intent_hit_at_3}/${intentTotal}`,
+      full.task_hit_at_3 >= Math.floor(taskTotal * 0.7),
+      `task@3 ${full.task_hit_at_3}/${taskTotal}`,
     );
     assert.ok(
-      full.workflow_hit_at_3 >= Math.floor(epTotal * 0.9),
-      `workflow@3 ${full.workflow_hit_at_3}/${epTotal}`,
+      full.discover_hit_at_3 >= Math.floor(apiTotal * 0.9),
+      `discover@3 ${full.discover_hit_at_3}/${apiTotal}`,
     );
     assert.ok(
-      full.workflow_hit_at_3 > endpointsOnly.workflow_hit_at_3,
-      `full workflow@3 ${full.workflow_hit_at_3} must beat endpoints-only ${endpointsOnly.workflow_hit_at_3}`,
+      full.discover_hit_at_3 > endpointsOnly.discover_hit_at_3,
+      `full discover@3 ${full.discover_hit_at_3} must beat endpoints-only ${endpointsOnly.discover_hit_at_3}`,
     );
   });
 });

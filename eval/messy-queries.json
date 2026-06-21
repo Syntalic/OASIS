@@ -1,0 +1,432 @@
+[
+  {
+    "id": "messy-screenshot-1",
+    "query": "grab a PNG of the nike.com homepage for my report",
+    "expect_intent": "web.screenshot",
+    "expect_endpoint": {
+      "origin": "https://screenshotone.x402.paysponge.com",
+      "method": "GET",
+      "path": "/take"
+    }
+  },
+  {
+    "id": "messy-screenshot-2",
+    "query": "I need a visual snapshot of a live webpage URL",
+    "expect_intent": "web.screenshot",
+    "expect_endpoint": {
+      "origin": "https://screenshotone.x402.paysponge.com",
+      "method": "GET",
+      "path": "/take"
+    }
+  },
+  {
+    "id": "messy-company-1",
+    "query": "who runs stripe.com — industry, size, firmographics",
+    "expect_intent": "data.company_enrich",
+    "expect_endpoint": {
+      "origin": "https://abstract-company-enrichment.mpp.paywithlocus.com",
+      "method": "POST",
+      "path": "/abstract-company-enrichment/lookup"
+    }
+  },
+  {
+    "id": "messy-company-2",
+    "query": "turn a corporate domain into structured company metadata",
+    "expect_intent": "data.company_enrich",
+    "expect_endpoint": {
+      "origin": "https://abstract-company-enrichment.mpp.paywithlocus.com",
+      "method": "POST",
+      "path": "/abstract-company-enrichment/lookup"
+    }
+  },
+  {
+    "id": "messy-crypto-price-1",
+    "query": "what is ETH trading at right now in USD",
+    "expect_intent": "finance.crypto_spot_price",
+    "expect_endpoint": {
+      "origin": "https://stablecrypto.dev",
+      "method": "POST",
+      "path": "/api/coingecko/price"
+    }
+  },
+  {
+    "id": "messy-crypto-price-2",
+    "query": "spot quote for bitcoin without an exchange API key",
+    "expect_intent": "finance.crypto_spot_price",
+    "expect_endpoint": {
+      "origin": "https://stablecrypto.dev",
+      "method": "POST",
+      "path": "/api/coingecko/price"
+    }
+  },
+  {
+    "id": "messy-influencer-1",
+    "query": "find fitness creators on instagram with around 50k followers",
+    "expect_intent": "social.influencer_search",
+    "expect_endpoint": {
+      "origin": "https://api.socialintel.dev",
+      "method": "GET",
+      "path": "/v1/search"
+    }
+  },
+  {
+    "id": "messy-influencer-2",
+    "query": "discover micro-influencers in the skincare niche",
+    "expect_intent": "social.influencer_search",
+    "expect_endpoint": {
+      "origin": "https://api.socialintel.dev",
+      "method": "GET",
+      "path": "/v1/search"
+    }
+  },
+  {
+    "id": "messy-realestate-1",
+    "query": "show me houses currently listed for sale in Austin TX",
+    "expect_intent": "realestate.property_lookup",
+    "expect_endpoint": {
+      "origin": "https://rentcast.x402.paysponge.com",
+      "method": "GET",
+      "path": "/listings/sale"
+    }
+  },
+  {
+    "id": "messy-realestate-2",
+    "query": "MLS-style residential listings near a zip code",
+    "expect_intent": "realestate.property_lookup",
+    "expect_endpoint": {
+      "origin": "https://rentcast.x402.paysponge.com",
+      "method": "GET",
+      "path": "/listings/sale"
+    }
+  },
+  {
+    "id": "messy-image-1",
+    "query": "render a quick SDXL picture of a mountain sunset",
+    "expect_intent": "ai.image_generate",
+    "expect_endpoint": {
+      "origin": "https://fal.x402.paysponge.com",
+      "method": "POST",
+      "path": "/fal-ai/fast-sdxl"
+    }
+  },
+  {
+    "id": "messy-image-2",
+    "query": "text-to-image generation paid per request",
+    "expect_intent": "ai.image_generate",
+    "expect_endpoint": {
+      "origin": "https://fal.x402.paysponge.com",
+      "method": "POST",
+      "path": "/fal-ai/fast-sdxl"
+    }
+  },
+  {
+    "id": "messy-email-1",
+    "query": "fire off a transactional email without wiring up SendGrid",
+    "expect_intent": "comms.send_email",
+    "expect_endpoint": {
+      "origin": "https://stableemail.dev",
+      "method": "POST",
+      "path": "/api/send"
+    }
+  },
+  {
+    "id": "messy-email-2",
+    "query": "send a one-off outbound message to a user inbox",
+    "expect_intent": "comms.send_email",
+    "expect_endpoint": {
+      "origin": "https://stableemail.dev",
+      "method": "POST",
+      "path": "/api/send"
+    }
+  },
+  {
+    "id": "messy-voice-1",
+    "query": "have an AI dial my customer and confirm their appointment",
+    "expect_intent": "comms.voice_call",
+    "expect_endpoint": {
+      "origin": "https://stablephone.dev",
+      "method": "POST",
+      "path": "/api/call"
+    }
+  },
+  {
+    "id": "messy-voice-2",
+    "query": "outbound robocall style conversation via API",
+    "expect_intent": "comms.voice_call",
+    "expect_endpoint": {
+      "origin": "https://stablephone.dev",
+      "method": "POST",
+      "path": "/api/call"
+    }
+  },
+  {
+    "id": "messy-inbox-1",
+    "query": "provision a dedicated email inbox for my autonomous agent",
+    "expect_intent": "comms.agent_inbox",
+    "expect_endpoint": {
+      "origin": "https://mpp.api.agentmail.to",
+      "method": "POST",
+      "path": "/v0/inboxes"
+    }
+  },
+  {
+    "id": "messy-inbox-2",
+    "query": "create a mailbox my bot can poll for inbound mail",
+    "expect_intent": "comms.agent_inbox",
+    "expect_endpoint": {
+      "origin": "https://mpp.api.agentmail.to",
+      "method": "POST",
+      "path": "/v0/inboxes"
+    }
+  },
+  {
+    "id": "messy-compare-price-1",
+    "query": "is this SKU cheaper at Amazon or Walmart right now",
+    "expect_intent": "shop.compare_price",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/shopper/best-price"
+    }
+  },
+  {
+    "id": "messy-compare-price-2",
+    "query": "cross-store retail price comparison for a product link",
+    "expect_intent": "shop.compare_price",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/shopper/best-price"
+    }
+  },
+  {
+    "id": "messy-inflation-1",
+    "query": "did grocery prices inflate this year versus last",
+    "expect_intent": "analyst.inflation_tracker",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/analyst/inflation"
+    }
+  },
+  {
+    "id": "messy-inflation-2",
+    "query": "category-level CPI style trend for consumer goods",
+    "expect_intent": "analyst.inflation_tracker",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/analyst/inflation"
+    }
+  },
+  {
+    "id": "messy-hosting-1",
+    "query": "upload static assets and host a tiny landing page",
+    "expect_intent": "storage.hosting",
+    "expect_endpoint": {
+      "origin": "https://stableupload.dev",
+      "method": "POST",
+      "path": "/api/upload"
+    }
+  },
+  {
+    "id": "messy-hosting-2",
+    "query": "cheap file hosting for a side-project README site",
+    "expect_intent": "storage.hosting",
+    "expect_endpoint": {
+      "origin": "https://stableupload.dev",
+      "method": "POST",
+      "path": "/api/upload"
+    }
+  },
+  {
+    "id": "messy-reducto-1",
+    "query": "pull structured fields out of a scanned PDF invoice",
+    "expect_intent": "ai_ml.reducto",
+    "expect_endpoint": {
+      "origin": "https://api.paysponge.com/x402/purchase/svc_d672d90ggvqqygj60",
+      "method": "POST",
+      "path": "/extract"
+    }
+  },
+  {
+    "id": "messy-reducto-2",
+    "query": "document OCR and table extraction from uploaded files",
+    "expect_intent": "ai_ml.reducto",
+    "expect_endpoint": {
+      "origin": "https://api.paysponge.com/x402/purchase/svc_d672d90ggvqqygj60",
+      "method": "POST",
+      "path": "/extract"
+    }
+  },
+  {
+    "id": "messy-captcha-1",
+    "query": "solve this captcha so my scraper can continue",
+    "expect_intent": "devtools.2captcha",
+    "expect_endpoint": {
+      "origin": "https://2captcha.x402.paysponge.com",
+      "method": "POST",
+      "path": "/createTask"
+    }
+  },
+  {
+    "id": "messy-captcha-2",
+    "query": "human verification bypass for automated form posting",
+    "expect_intent": "devtools.2captcha",
+    "expect_endpoint": {
+      "origin": "https://2captcha.x402.paysponge.com",
+      "method": "POST",
+      "path": "/createTask"
+    }
+  },
+  {
+    "id": "messy-nansen-1",
+    "query": "track what smart-money wallets are accumulating on chain",
+    "expect_intent": "finance.nansen_api",
+    "expect_endpoint": {
+      "origin": "https://api.nansen.ai",
+      "method": "POST",
+      "path": "/api/v1/smart-money/historical-holdings"
+    }
+  },
+  {
+    "id": "messy-nansen-2",
+    "query": "on-chain fund flow analytics for labeled wallets",
+    "expect_intent": "finance.nansen_api",
+    "expect_endpoint": {
+      "origin": "https://api.nansen.ai",
+      "method": "POST",
+      "path": "/api/v1/smart-money/historical-holdings"
+    }
+  },
+  {
+    "id": "messy-rpc-1",
+    "query": "JSON-RPC call into Solana mainnet without running a node",
+    "expect_intent": "compute.blockchain_rpc",
+    "expect_endpoint": {
+      "origin": "https://x402.quicknode.com",
+      "method": "POST",
+      "path": "/solana-mainnet/"
+    }
+  },
+  {
+    "id": "messy-rpc-2",
+    "query": "submit a solana getBalance style RPC request",
+    "expect_intent": "compute.blockchain_rpc",
+    "expect_endpoint": {
+      "origin": "https://x402.quicknode.com",
+      "method": "POST",
+      "path": "/solana-mainnet/"
+    }
+  },
+  {
+    "id": "messy-competitive-1",
+    "query": "map competitor pricing across brands in running shoes",
+    "expect_intent": "marketing.competitive_landscape",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/marketing/competitive-landscape"
+    }
+  },
+  {
+    "id": "messy-deals-1",
+    "query": "surface discounted electronics under a budget cap",
+    "expect_intent": "shop.find_deals",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/shopper/deal-finder"
+    }
+  },
+  {
+    "id": "messy-price-drop-1",
+    "query": "alert me if this product had a recent markdown",
+    "expect_intent": "shop.price_drop_alert",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/shopper/price-drop-alert"
+    }
+  },
+  {
+    "id": "messy-price-history-1",
+    "query": "chart how this item's price moved over the last 90 days",
+    "expect_intent": "shop.track_price_history",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/shopper/price-history"
+    }
+  },
+  {
+    "id": "messy-perplexity-1",
+    "query": "web-grounded research answer with citations",
+    "expect_intent": "ai_ml.perplexity",
+    "expect_endpoint": {
+      "origin": "https://pplx.x402.paysponge.com",
+      "method": "POST",
+      "path": "/search"
+    }
+  },
+  {
+    "id": "messy-embeddings-1",
+    "query": "turn a batch of sentences into dense vectors for retrieval",
+    "expect_intent": "ai_ml.embeddings",
+    "expect_endpoint": {
+      "origin": "https://embeddings.alibaba.gateway-402.com",
+      "method": "POST",
+      "path": "/compatible-mode/v1/embeddings"
+    }
+  },
+  {
+    "id": "messy-sms-1",
+    "query": "send a one-time SMS verification code to a phone number",
+    "expect_intent": "messaging.textbelt",
+    "expect_endpoint": {
+      "origin": "https://api.paysponge.com/x402/purchase/svc_d6kszbre4qwg5n4n4",
+      "method": "POST",
+      "path": "/text"
+    }
+  },
+  {
+    "id": "messy-person-search-1",
+    "query": "lookup public profiles for a person by name and city",
+    "expect_intent": "data.nyne",
+    "expect_endpoint": {
+      "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
+      "method": "POST",
+      "path": "/person/search"
+    }
+  },
+  {
+    "id": "messy-domains-1",
+    "query": "renew my project's domain name programmatically",
+    "expect_intent": "cloud.domains",
+    "expect_endpoint": {
+      "origin": "https://stabledomains.dev",
+      "method": "POST",
+      "path": "/api/domain/renew"
+    }
+  },
+  {
+    "id": "messy-social-comments-1",
+    "query": "fetch comments on a Facebook post for sentiment review",
+    "expect_intent": "media.social_data",
+    "expect_endpoint": {
+      "origin": "https://stablesocial.dev",
+      "method": "POST",
+      "path": "/api/facebook/post-comments"
+    }
+  },
+  {
+    "id": "messy-token-balance-1",
+    "query": "how many ERC-1155 tokens does this wallet hold",
+    "expect_intent": "finance.token_balance",
+    "expect_endpoint": {
+      "origin": "https://api.onesource.io",
+      "method": "GET",
+      "path": "/api/chain/erc1155-balance"
+    }
+  }
+]

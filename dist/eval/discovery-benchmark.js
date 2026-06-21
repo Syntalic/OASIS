@@ -5,14 +5,21 @@ import { endpointId } from "../id.js";
 import { searchIndex } from "../search.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");
-function expectedEndpointId(expect) {
+export function expectedEndpointId(expect) {
     if (!expect)
         return null;
     return endpointId(expect.origin, expect.method, expect.path);
 }
-function searchProvidersOnly(query, bundle, limit) {
+// The provider "corpus" depends only on the bundle, so build it once per bundle
+// instead of rebuilding it for every query in the providers-only sweep.
+const providerCorpusCache = new WeakMap();
+function providerCorpus(bundle) {
+    const cached = providerCorpusCache.get(bundle);
+    if (cached)
+        return cached;
+    let corpus;
     if (bundle.providers?.length) {
-        const proxyEndpoints = bundle.providers.map((p) => ({
+        corpus = bundle.providers.map((p) => ({
             id: p.fqn,
             origin: p.service_url,
             method: "GET",
@@ -26,29 +33,26 @@ function searchProvidersOnly(query, bundle, limit) {
             search_text: p.search_text,
             built_at: bundle.built_at,
         }));
-        return searchIndex(query, proxyEndpoints, [], limit).map((h) => ({
-            ...h,
-            kind: "endpoint",
+    }
+    else {
+        const byProvider = new Map();
+        for (const ep of bundle.endpoints) {
+            const key = ep.provider_fqn ?? ep.origin;
+            if (!byProvider.has(key))
+                byProvider.set(key, ep);
+        }
+        corpus = [...byProvider.values()].map((ep) => ({
+            ...ep,
+            search_text: [ep.provider_fqn, ep.provider_title, ep.category, ep.origin]
+                .filter(Boolean)
+                .join(" "),
         }));
     }
-    const byProvider = new Map();
-    for (const ep of bundle.endpoints) {
-        const key = ep.provider_fqn ?? ep.origin;
-        if (!byProvider.has(key))
-            byProvider.set(key, ep);
-    }
-    const providers = [...byProvider.values()].map((ep) => ({
-        ...ep,
-        search_text: [
-            ep.provider_fqn,
-            ep.provider_title,
-            ep.category,
-            ep.origin,
-        ]
-            .filter(Boolean)
-            .join(" "),
-    }));
-    return searchIndex(query, providers, [], limit).map((h) => ({
+    providerCorpusCache.set(bundle, corpus);
+    return corpus;
+}
+function searchProvidersOnly(query, bundle, limit) {
+    return searchIndex(query, providerCorpus(bundle), [], limit).map((h) => ({
         ...h,
         kind: "endpoint",
     }));
@@ -62,31 +66,39 @@ function runSearch(query, bundle, mode, limit = 10) {
             !e.provider_fqn.startsWith("mppscan/") &&
             !e.provider_fqn.startsWith("mpp-catalog/"));
     }
+    else if (mode === "x402scan-only") {
+        endpoints = endpoints.filter((e) => e.provider_fqn?.startsWith("x402scan/"));
+    }
+    else if (mode === "mpp-only") {
+        endpoints = endpoints.filter((e) => e.provider_fqn?.startsWith("mppscan/") ||
+            e.provider_fqn?.startsWith("mpp-catalog/"));
+    }
     switch (mode) {
         case "endpoints-only":
+        case "pay-skills-only":
+        case "x402scan-only":
+        case "mpp-only":
             return searchIndex(query, endpoints, [], limit);
         case "providers-only":
             return searchProvidersOnly(query, bundle, limit);
-        case "pay-skills-only":
-            return searchIndex(query, endpoints, [], limit);
         default:
             return searchIndex(query, endpoints, capabilities, limit);
     }
 }
-function rankIntent(hits, intentId) {
+export function rankIntent(hits, intentId) {
     const idx = hits.findIndex((h) => h.capability_id === intentId);
     return idx >= 0 ? idx + 1 : null;
 }
-function rankEndpoint(hits, endpointIdExpected) {
+export function rankEndpoint(hits, endpointIdExpected) {
     const idx = hits.findIndex((h) => h.endpoint_id === endpointIdExpected);
     return idx >= 0 ? idx + 1 : null;
 }
-function resolveIntentToEndpointIds(intent, endpoints) {
+export function resolveIntentToEndpointIds(intent, endpoints) {
     return intent.satisfies
         .map((ref) => endpointId(ref.origin, ref.method, ref.path))
         .filter((id) => endpoints.some((e) => e.id === id));
 }
-function workflowRank(hits, expectedIntent, expectedEndpointId, capabilities, endpoints) {
+export function discoverRank(hits, expectedIntent, expectedEndpointId, capabilities, endpoints) {
     if (!expectedEndpointId)
         return null;
     for (let i = 0; i < hits.length; i++) {
@@ -104,17 +116,43 @@ function workflowRank(hits, expectedIntent, expectedEndpointId, capabilities, en
     }
     return null;
 }
-function mrr(ranks) {
+export function mrr(ranks) {
     const scored = ranks.filter((r) => r != null);
     if (!scored.length)
         return 0;
     return scored.reduce((sum, r) => sum + 1 / r, 0) / ranks.length;
 }
+export function hitAt(ranks, k) {
+    return ranks.filter((r) => r != null && r <= k).length;
+}
+/** Single source of truth for the BenchmarkReport metric block. */
+export function buildReport(mode, queries, results, ranks) {
+    const withIntent = queries.filter((q) => q.expect_intent).length;
+    const withEndpoint = queries.filter((q) => q.expect_endpoint).length;
+    return {
+        mode,
+        queries: queries.length,
+        task_queries: withIntent,
+        api_queries: withEndpoint,
+        task_hit_at_1: withIntent ? hitAt(ranks.task, 1) : 0,
+        task_hit_at_3: withIntent ? hitAt(ranks.task, 3) : 0,
+        task_hit_at_5: withIntent ? hitAt(ranks.task, 5) : 0,
+        literal_hit_at_1: withEndpoint ? hitAt(ranks.literal, 1) : 0,
+        literal_hit_at_3: withEndpoint ? hitAt(ranks.literal, 3) : 0,
+        literal_hit_at_5: withEndpoint ? hitAt(ranks.literal, 5) : 0,
+        discover_hit_at_1: withEndpoint ? hitAt(ranks.discover, 1) : 0,
+        discover_hit_at_3: withEndpoint ? hitAt(ranks.discover, 3) : 0,
+        task_mrr: mrr(ranks.task),
+        literal_mrr: mrr(ranks.literal),
+        discover_mrr: mrr(ranks.discover),
+        results,
+    };
+}
 export function evaluateMode(queries, bundle, mode) {
     const results = [];
-    const intentRanks = [];
-    const endpointRanks = [];
-    const workflowRanks = [];
+    const taskRanks = [];
+    const literalRanks = [];
+    const discoverRanks = [];
     for (const q of queries) {
         const hits = runSearch(q.query, bundle, mode, 10);
         const expectedId = expectedEndpointId(q.expect_endpoint);
@@ -122,49 +160,31 @@ export function evaluateMode(queries, bundle, mode) {
             ? rankIntent(hits, q.expect_intent)
             : null;
         const endpointRank = expectedId ? rankEndpoint(hits, expectedId) : null;
-        const wfRank = workflowRank(hits, q.expect_intent, expectedId, bundle.capabilities, bundle.endpoints);
+        const discover = discoverRank(hits, q.expect_intent, expectedId, bundle.capabilities, bundle.endpoints);
         if (q.expect_intent)
-            intentRanks.push(intentRank);
+            taskRanks.push(intentRank);
         if (expectedId) {
-            endpointRanks.push(endpointRank);
-            workflowRanks.push(wfRank);
+            literalRanks.push(endpointRank);
+            discoverRanks.push(discover);
         }
         results.push({
             id: q.id,
             query: q.query,
             mode,
-            intent_hit: intentRank === 1,
-            intent_rank: intentRank,
-            endpoint_hit: endpointRank === 1,
-            endpoint_rank: endpointRank,
-            workflow_hit: wfRank === 1,
-            workflow_rank: wfRank,
+            task_hit: intentRank === 1,
+            task_rank: intentRank,
+            literal_hit: endpointRank === 1,
+            literal_rank: endpointRank,
+            discover_hit: discover === 1,
+            discover_rank: discover,
             top_label: hits[0]?.label ?? null,
         });
     }
-    const withIntent = queries.filter((q) => q.expect_intent).length;
-    const withEndpoint = queries.filter((q) => q.expect_endpoint).length;
-    const intentHitAt = (k) => intentRanks.filter((r) => r != null && r <= k).length;
-    const endpointHitAt = (k) => endpointRanks.filter((r) => r != null && r <= k).length;
-    const workflowHitAt = (k) => workflowRanks.filter((r) => r != null && r <= k).length;
-    return {
-        mode,
-        queries: queries.length,
-        intent_queries: withIntent,
-        endpoint_queries: withEndpoint,
-        intent_hit_at_1: withIntent ? intentHitAt(1) : 0,
-        intent_hit_at_3: withIntent ? intentHitAt(3) : 0,
-        intent_hit_at_5: withIntent ? intentHitAt(5) : 0,
-        endpoint_hit_at_1: withEndpoint ? endpointHitAt(1) : 0,
-        endpoint_hit_at_3: withEndpoint ? endpointHitAt(3) : 0,
-        endpoint_hit_at_5: withEndpoint ? endpointHitAt(5) : 0,
-        workflow_hit_at_1: withEndpoint ? workflowHitAt(1) : 0,
-        workflow_hit_at_3: withEndpoint ? workflowHitAt(3) : 0,
-        intent_mrr: mrr(intentRanks),
-        endpoint_mrr: mrr(endpointRanks),
-        workflow_mrr: mrr(workflowRanks),
-        results,
-    };
+    return buildReport(mode, queries, results, {
+        task: taskRanks,
+        literal: literalRanks,
+        discover: discoverRanks,
+    });
 }
 export async function loadEvalQueries() {
     const raw = await readFile(path.join(PACKAGE_ROOT, "eval", "queries.json"), "utf8");
@@ -182,21 +202,21 @@ export async function runDiscoveryBenchmark(bundle, modes = [
 export function formatReportTable(reports) {
     const header = [
         "mode".padEnd(18),
-        "intent@1".padEnd(10),
-        "flow@1".padEnd(8),
-        "flow@3".padEnd(8),
-        "ep@3".padEnd(8),
-        "flow MRR".padEnd(9),
+        "task@1".padEnd(10),
+        "disc@1".padEnd(8),
+        "disc@3".padEnd(8),
+        "lit@3".padEnd(8),
+        "disc MRR".padEnd(9),
     ].join(" ");
     const lines = [header, "-".repeat(header.length)];
     for (const r of reports) {
         lines.push([
             r.mode.padEnd(18),
-            `${r.intent_hit_at_1}/${r.intent_queries}`.padEnd(10),
-            `${r.workflow_hit_at_1}/${r.endpoint_queries}`.padEnd(8),
-            `${r.workflow_hit_at_3}/${r.endpoint_queries}`.padEnd(8),
-            `${r.endpoint_hit_at_3}/${r.endpoint_queries}`.padEnd(8),
-            r.workflow_mrr.toFixed(3).padEnd(9),
+            `${r.task_hit_at_1}/${r.task_queries}`.padEnd(10),
+            `${r.discover_hit_at_1}/${r.api_queries}`.padEnd(8),
+            `${r.discover_hit_at_3}/${r.api_queries}`.padEnd(8),
+            `${r.literal_hit_at_3}/${r.api_queries}`.padEnd(8),
+            r.discover_mrr.toFixed(3).padEnd(9),
         ].join(" "));
     }
     return lines.join("\n");

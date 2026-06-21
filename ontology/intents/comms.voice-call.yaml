@@ -1,6 +1,6 @@
 id: comms.voice_call
 label: Place an AI-powered phone call
-description: Initiate an outbound AI phone call with natural-language task instructions.
+description: Initiate an outbound AI phone call with natural-language task instructions. Use when an agent must place a real phone call to confirm appointments, follow up with customers, or complete spoken tasks autonomously.
 aliases:
   - phone call
   - voice call
@@ -8,6 +8,14 @@ aliases:
   - ai call
   - confirm appointment
   - call a customer
+  - call someone on the phone
+  - automated outbound phone call
+  - phone follow up for customer
+  - voice agent makes a call
+  - dial number and speak task
+  - AI phone outreach
+  - place call with instructions
+  - telephony task via AI
 related:
   - comms.send_email
 satisfies:

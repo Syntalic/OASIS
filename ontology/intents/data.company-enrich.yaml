@@ -1,12 +1,20 @@
 id: data.company_enrich
 label: Enrich company data from a domain
-description: Look up company firmographics, industry, and metadata from a domain name.
+description: Look up company firmographics, industry, and metadata from a domain name. Use when an agent needs business context from a website domain for prospecting, due diligence, or CRM enrichment.
 aliases:
   - company enrichment
   - enrich company
   - company from domain
   - enrich a company
   - domain lookup company
+  - who runs stripe.com
+  - firmographics from domain
+  - company metadata from domain
+  - lookup company by website
+  - enrich lead from domain name
+  - business info from URL
+  - company profile from domain
+  - what company owns this domain
 satisfies:
   - origin: https://abstract-company-enrichment.mpp.paywithlocus.com
     method: POST

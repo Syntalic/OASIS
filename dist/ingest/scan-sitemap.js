@@ -46,7 +46,7 @@ function parseResourceUrl(resourceUrl, builtAt, sourceName) {
 }
 async function fetchText(url) {
     const res = await fetch(url, {
-        headers: { "User-Agent": "paid-api-graph/0.1 (+https://github.com/paid-api-graph)" },
+        headers: { "User-Agent": "oasis/0.1 (+https://github.com/Syntalic/OASIS)" },
     });
     if (!res.ok)
         throw new Error(`${url} → ${res.status}`);

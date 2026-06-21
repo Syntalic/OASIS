@@ -1,10 +1,18 @@
 id: shop.track_price_history
 label: Get historical price trends for a product
-description: Retrieve price history over time for a specific product query.
+description: Retrieve price history over time for a specific product query. Use when an agent needs historical pricing trends to judge buy timing, volatility, or whether an item was cheaper before.
 aliases:
   - price history
   - price trend
   - historical pricing
+  - how has price changed over time
+  - price chart for product
+  - historical cost trend SKU
+  - past pricing for item
+  - price over last months
+  - track product price timeline
+  - was it cheaper before
+  - pricing history lookup
 related:
   - shop.compare_price
   - analyst.inflation_tracker

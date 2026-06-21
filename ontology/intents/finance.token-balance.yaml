@@ -1,0 +1,18 @@
+id: finance.token_balance
+label: Look up wallet token balances
+description: On-chain token and wallet balance lookups for EVM wallets. Use when an agent needs holdings, ERC-1155 balances, or wallet inventory before transfers, portfolio checks, or treasury reporting.
+aliases:
+  - ERC-1155 balance
+  - wallet holdings
+  - token balance lookup
+  - how many tokens wallet holds
+  - wallet token balance
+  - check wallet holdings on chain
+  - ERC1155 token count
+  - what tokens does this wallet hold
+  - on-chain balance lookup
+satisfies:
+  - origin: https://api.onesource.io
+    method: GET
+    path: /api/chain/erc1155-balance
+    confidence: primary

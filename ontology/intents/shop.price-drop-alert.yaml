@@ -1,10 +1,18 @@
 id: shop.price_drop_alert
 label: Detect recent price drops on a product
-description: Check whether a product's price has dropped recently across tracked retailers.
+description: Check whether a product's price has dropped recently across tracked retailers. Use when an agent needs to detect recent markdowns on a tracked SKU before alerting a user to buy.
 aliases:
   - price drop
   - price alert
   - price decrease
+  - did price go down recently
+  - recent markdown on product
+  - price decrease alert
+  - has this item gotten cheaper
+  - detect sale on tracked SKU
+  - product price fell lately
+  - notify if price dropped
+  - check for recent price cuts
 related:
   - shop.compare_price
   - shop.track_price_history

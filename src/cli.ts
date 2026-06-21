@@ -5,6 +5,12 @@ import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { buildIndex, defaultPaySkillsPath } from "./build.js";
 import { endpointId } from "./id.js";
+import { defaultLanceDir, buildLanceIndex } from "./embed/lance-index.js";
+import {
+  DEFAULT_KEYWORD_WEIGHT,
+  DEFAULT_VECTOR_WEIGHT,
+  searchHybridWithFallback,
+} from "./search-hybrid.js";
 import { searchIndex } from "./search.js";
 import type { CapabilityIntent, EndpointRecord, IndexBundle } from "./types.js";
 
@@ -14,6 +20,24 @@ const PACKAGE_ROOT = path.join(__dirname, "..");
 async function loadBundle(distDir: string): Promise<IndexBundle> {
   const raw = await readFile(path.join(distDir, "index.json"), "utf8");
   return JSON.parse(raw) as IndexBundle;
+}
+
+function parsePositiveInt(value: string, flag: string): number {
+  const n = Number(value);
+  if (!Number.isInteger(n) || n <= 0) {
+    console.error(`Invalid ${flag}: "${value}" (expected a positive integer)`);
+    process.exit(1);
+  }
+  return n;
+}
+
+function parseWeight(value: string, flag: string): number {
+  const n = Number(value);
+  if (!Number.isFinite(n) || n < 0) {
+    console.error(`Invalid ${flag}: "${value}" (expected a non-negative number)`);
+    process.exit(1);
+  }
+  return n;
 }
 
 function resolveIntent(
@@ -100,15 +124,19 @@ program
   .description("Search capabilities and endpoints")
   .option("-l, --limit <n>", "Max results", "10")
   .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--hybrid", "Keyword + vector RRF fusion (requires embed)")
   .option("--json", "Output JSON")
   .action(async (query, opts) => {
     const bundle = await loadBundle(opts.dist);
-    const hits = searchIndex(
-      query,
-      bundle.endpoints,
-      bundle.capabilities,
-      Number(opts.limit),
-    );
+    const limit = parsePositiveInt(opts.limit, "--limit");
+    const hits = opts.hybrid
+      ? await searchHybridWithFallback(
+          query,
+          bundle,
+          defaultLanceDir(opts.dist),
+          limit,
+        )
+      : searchIndex(query, bundle.endpoints, bundle.capabilities, limit);
 
     if (opts.json) {
       console.log(JSON.stringify(hits, null, 2));
@@ -191,11 +219,31 @@ program
   });
 
 program
+  .command("embed")
+  .description("Build LanceDB vector index from capabilities and providers")
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("-o, --output <dir>", "Lance output directory")
+  .option(
+    "--scope <scope>",
+    "Embed scope: all, capabilities, or curated (ontology YAML subset)",
+    "curated",
+  )
+  .action(async (opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const outDir = opts.output ?? defaultLanceDir(opts.dist);
+    const scope = opts.scope as "all" | "capabilities" | "curated";
+    const result = await buildLanceIndex(bundle, outDir, scope);
+    console.log(`Lance index built: ${result.records} vectors (scope=${result.scope})`);
+    console.log(`  table: ${result.table}`);
+    console.log(`  path:  ${result.path}`);
+  });
+
+program
   .command("eval")
   .description("Run discovery benchmark against golden queries")
   .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
   .option("--json", "Output JSON report")
-  .option("--misses", "Show queries that missed workflow@3")
+  .option("--misses", "Show queries that missed discover@3")
   .action(async (opts) => {
     const bundle = await loadBundle(opts.dist);
     const { runDiscoveryBenchmark, formatReportTable } = await import(
@@ -212,21 +260,20 @@ program
       const full = reports.find((r) => r.mode === "full");
       if (full) {
         const misses = full.results.filter(
-          (r) => r.workflow_rank == null || r.workflow_rank > 3,
+          (r) => r.discover_rank == null || r.discover_rank > 3,
         );
         if (misses.length) {
-          console.log("\nMisses (full index, workflow@3):");
+          console.log("\nMisses (full index, discover@3):");
           for (const m of misses) {
             console.log(`  - ${m.id}: "${m.query}" → top: ${m.top_label}`);
           }
         } else {
-          console.log("\nNo misses — all queries hit workflow@3.");
+          console.log("\nNo misses — all queries hit discover@3.");
         }
       }
     }
-    console.log("\nLegend: intent@k = correct capability in top-k");
-    console.log("        flow@k = correct endpoint via search+resolve in top-k");
-    console.log("        ep@k = correct endpoint row directly in top-k\n");
+    const { METRICS_LEGEND } = await import("./eval/metrics.js");
+    console.log(`\nLegend:\n${METRICS_LEGEND}\n`);
     const full = reports.find((r) => r.mode === "full");
     const paySkills = reports.find((r) => r.mode === "pay-skills-only");
     if (full && paySkills) {
@@ -240,12 +287,163 @@ program
       ).length;
       console.log(`Coverage: ${cov} unified endpoints vs ${ps} pay-skills-only`);
       console.log(
-        `Full index workflow@3: ${full.workflow_hit_at_3}/${full.endpoint_queries}`,
+        `Full index discover@3: ${full.discover_hit_at_3}/${full.api_queries}`,
       );
       console.log(
-        `pay-skills-only workflow@3: ${paySkills.workflow_hit_at_3}/${paySkills.endpoint_queries}`,
+        `pay-skills-only discover@3: ${paySkills.discover_hit_at_3}/${paySkills.api_queries}`,
       );
     }
+  });
+
+program
+  .command("eval:resolve")
+  .description("Check curated ontology satisfies refs resolve to indexed endpoints")
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--json", "Output JSON report")
+  .option("--misses", "Show unresolved intents only")
+  .action(async (opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const { runResolveBenchmark, formatResolveReport } = await import(
+      "./eval/resolve-benchmark.js"
+    );
+    const report = await runResolveBenchmark(bundle);
+
+    if (opts.json) {
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      console.log(formatResolveReport(report));
+    }
+
+    if (opts.misses) {
+      const misses = report.results.filter((r) => !r.resolved);
+      if (misses.length) {
+        console.log("\nUnresolved (primary satisfies ref):");
+        for (const m of misses) {
+          const ref = m.primary_ref;
+          console.log(
+            `  - ${m.intent_id}: ${ref.method} ${ref.origin}${ref.path}`,
+          );
+        }
+      } else {
+        console.log("\nNo misses — all curated intents resolve.");
+      }
+    }
+
+    if (report.missing > 0) {
+      process.exitCode = 1;
+    }
+  });
+
+program
+  .command("eval:compare")
+  .description(
+    "Compare discovery methods on messy NL queries (internal slices + external APIs)",
+  )
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--json", "Output JSON report")
+  .option("--offline", "Skip live external APIs (cdp-bazaar, mpp-catalog-live)")
+  .option(
+    "--methods <list>",
+    "Comma-separated methods (default: all)",
+  )
+  .option("--misses", "Show queries that missed discover@3 per method")
+  .action(async (opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const { runCompareBenchmark, formatCompareTable, VALID_METHODS } =
+      await import("./eval/compare-benchmark.js");
+    type BenchmarkMode = import("./eval/discovery-benchmark.js").BenchmarkMode;
+    const methods: BenchmarkMode[] | undefined = opts.methods
+      ? (opts.methods as string)
+          .split(",")
+          .map((m: string) => m.trim() as BenchmarkMode)
+      : undefined;
+    if (methods) {
+      const unknown = methods.filter((m) => !VALID_METHODS.has(m));
+      if (unknown.length) {
+        console.error(
+          `Unknown --methods: ${unknown.join(", ")}. Valid: ${[
+            ...VALID_METHODS,
+          ].join(", ")}`,
+        );
+        process.exit(1);
+      }
+    }
+    const reports = await runCompareBenchmark(bundle, {
+      distDir: opts.dist,
+      offline: Boolean(opts.offline),
+      methods,
+    });
+
+    if (opts.json) {
+      console.log(JSON.stringify(reports, null, 2));
+      return;
+    }
+
+    console.log(formatCompareTable(reports));
+
+    if (opts.misses) {
+      for (const r of reports) {
+        const misses = r.results.filter(
+          (q) => q.discover_rank == null || q.discover_rank > 3,
+        );
+        if (misses.length) {
+          console.log(`\nMisses — ${r.mode} (${misses.length}):`);
+          for (const m of misses) {
+            console.log(`  • ${m.id}: "${m.query}" → top: ${m.top_label}`);
+          }
+        }
+      }
+    }
+
+    const { METRICS_LEGEND } = await import("./eval/metrics.js");
+    console.log(`\nLegend:\n${METRICS_LEGEND}\n`);
+  });
+
+program
+  .command("eval:hybrid")
+  .description("Compare keyword vs hybrid search on messy natural-language queries")
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--json", "Output JSON report")
+  .option("--verify", "Only verify messy-queries.json refs against index")
+  .option(
+    "--keyword-weight <n>",
+    "RRF weight for keyword ranks",
+    String(DEFAULT_KEYWORD_WEIGHT),
+  )
+  .option(
+    "--vector-weight <n>",
+    "RRF weight for vector ranks",
+    String(DEFAULT_VECTOR_WEIGHT),
+  )
+  .action(async (opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const {
+      runHybridMvp,
+      formatHybridComparison,
+      verifyMessyQueries,
+    } = await import("./eval/hybrid-mvp.js");
+
+    if (opts.verify) {
+      const issues = await verifyMessyQueries(bundle);
+      if (issues.length) {
+        for (const issue of issues) console.error(issue);
+        process.exitCode = 1;
+        return;
+      }
+      console.log("messy-queries.json: all refs valid");
+      return;
+    }
+
+    const fusion = {
+      keywordWeight: parseWeight(opts.keywordWeight, "--keyword-weight"),
+      vectorWeight: parseWeight(opts.vectorWeight, "--vector-weight"),
+    };
+    const comparison = await runHybridMvp(bundle, opts.dist, fusion);
+    if (opts.json) {
+      console.log(JSON.stringify({ fusion, ...comparison }, null, 2));
+      return;
+    }
+    console.log(formatHybridComparison(comparison, fusion));
   });
 
 program

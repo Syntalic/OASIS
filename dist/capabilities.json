@@ -1,18 +1,74 @@
 {
   "index_version": "0.1.0",
   "spec_version": "0.1.0",
-  "built_at": "2026-06-21T14:33:09.945Z",
+  "built_at": "2026-06-21T16:28:37.145Z",
   "capabilities": [
+    {
+      "id": "ai_ml.reducto",
+      "label": "Extract structured data from documents",
+      "description": "OCR, PDF parsing, table extraction, and schema-based field extraction from uploaded files. Use when an agent needs to turn invoices, scans, or spreadsheets into structured JSON without running a local OCR pipeline.",
+      "aliases": [
+        "document OCR",
+        "PDF invoice extraction",
+        "scanned PDF fields",
+        "table extraction from files",
+        "structured document parsing",
+        "pull fields from PDF invoice",
+        "document OCR and table extraction",
+        "parse uploaded PDF",
+        "extract data from scanned document"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.paysponge.com/x402/purchase/svc_d672d90ggvqqygj60",
+          "method": "POST",
+          "path": "/extract",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
+      "id": "ai_ml.embeddings",
+      "label": "Generate text embeddings for retrieval",
+      "description": "Dense vector embeddings for semantic search, clustering, and RAG pipelines. Use when an agent needs to embed sentences or documents for retrieval, ranking, or vector indexing without hosting an embedding model.",
+      "aliases": [
+        "dense vectors",
+        "sentence embeddings",
+        "vector indexing",
+        "semantic embedding API",
+        "batch embeddings",
+        "turn sentences into vectors",
+        "text embeddings for retrieval",
+        "embedding API for semantic search",
+        "vectorize text batch"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://embeddings.alibaba.gateway-402.com",
+          "method": "POST",
+          "path": "/compatible-mode/v1/embeddings",
+          "confidence": "primary"
+        }
+      ]
+    },
     {
       "id": "ai.image_generate",
       "label": "Generate an image from a text prompt",
-      "description": "Text-to-image generation via AI models with per-image micropayment.",
+      "description": "Text-to-image generation via AI models with per-image micropayment. Use when an agent must render a visual asset from a natural-language prompt for mockups, illustrations, or user-facing content.",
       "aliases": [
         "generate image",
         "text to image",
         "image from prompt",
         "ai image generation",
-        "fast sdxl"
+        "fast sdxl",
+        "SDXL image",
+        "render a picture from prompt",
+        "mountain sunset image",
+        "create image from description",
+        "generate picture from text",
+        "make an illustration from prompt",
+        "draw an image from words",
+        "AI render from text prompt"
       ],
       "satisfies": [
         {
@@ -24,15 +80,47 @@
       ]
     },
     {
+      "id": "ai_ml.perplexity",
+      "label": "Web-grounded research with citations",
+      "description": "Live web search answers with citations and grounded sources. Use when an agent needs current facts, research summaries, or cited responses instead of static model knowledge.",
+      "aliases": [
+        "cited web answers",
+        "live research",
+        "perplexity search",
+        "grounded research",
+        "web search with sources",
+        "web-grounded research answer",
+        "research with citations",
+        "current events lookup with sources",
+        "cited web research API"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://pplx.x402.paysponge.com",
+          "method": "POST",
+          "path": "/search",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
       "id": "analyst.inflation_tracker",
       "label": "Track category price inflation trends",
-      "description": "Analyze price inflation and trend direction within a retail category.",
+      "description": "Analyze price inflation and trend direction within a retail category. Use when an agent needs category-level inflation trends to explain rising costs, budget impacts, or year-over-year price changes.",
       "aliases": [
         "inflation",
         "price inflation",
         "category trends",
         "grocery prices increased",
-        "how much have prices increased"
+        "how much have prices increased",
+        "grocery prices inflate",
+        "CPI category trend",
+        "price inflation year over year",
+        "how fast are prices rising",
+        "category price change over time",
+        "inflation trend in groceries",
+        "yoy price increase by category",
+        "are household goods getting more expensive"
       ],
       "related": [
         "analyst.price_dispersion",
@@ -48,15 +136,47 @@
       ]
     },
     {
+      "id": "cloud.domains",
+      "label": "Register or renew domain names",
+      "description": "Domain registration, renewal, and DNS management via micropayment. Use when an agent provisions or renews project domains and DNS without traditional registrar billing flows.",
+      "aliases": [
+        "renew domain programmatically",
+        "domain registration API",
+        "DNS management",
+        "buy domain",
+        "renew my domain name",
+        "register domain for project",
+        "manage DNS records API",
+        "domain renew without registrar UI",
+        "programmatic domain renewal"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://stabledomains.dev",
+          "method": "POST",
+          "path": "/api/domain/renew",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
       "id": "comms.agent_inbox",
       "label": "Create an AI agent email inbox",
-      "description": "Provision a dedicated inbox for an AI agent to send and receive email via micropayment.",
+      "description": "Provision a dedicated inbox for an AI agent to send and receive email via micropayment. Use when setting up a mailbox an autonomous agent can poll or webhook for inbound messages before sending replies.",
       "aliases": [
         "ai agent email inbox",
         "agent inbox",
         "create agent inbox",
         "agentmail inbox",
-        "programmatic inbox"
+        "programmatic inbox",
+        "mailbox my bot can poll",
+        "dedicated inbox for autonomous agent",
+        "provision agent email",
+        "set up email for my AI agent",
+        "bot email address to receive mail",
+        "create mailbox for autonomous bot",
+        "agent email account setup",
+        "polling inbox for AI workflows"
       ],
       "related": [
         "comms.send_email"
@@ -82,11 +202,19 @@
     {
       "id": "comms.send_email",
       "label": "Send an outbound email",
-      "description": "Send a single email message via micropayment without API keys.",
+      "description": "Send a single email message via micropayment without API keys. Use when an agent must deliver one outbound email for notifications, confirmations, or replies without configuring SMTP or mail APIs.",
       "aliases": [
         "send email",
         "email delivery",
-        "outbound email"
+        "outbound email",
+        "send one-off email no API key",
+        "deliver message to inbox",
+        "outbound mail without SMTP",
+        "email a recipient directly",
+        "transactional email send",
+        "shoot an email to user",
+        "programmatic single email delivery",
+        "micropay to send email"
       ],
       "related": [
         "comms.buy_inbox"
@@ -104,16 +232,48 @@
       ]
     },
     {
+      "id": "messaging.textbelt",
+      "label": "Send an SMS text message",
+      "description": "Outbound SMS for alerts, reminders, and one-time verification codes. Use when an agent must text a phone number without provisioning Twilio or carrier contracts.",
+      "aliases": [
+        "SMS verification code",
+        "one-time text message",
+        "outbound SMS",
+        "text a phone number",
+        "send SMS alert",
+        "text message verification",
+        "SMS to mobile number",
+        "programmatic text message",
+        "send text without Twilio"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.paysponge.com/x402/purchase/svc_d6kszbre4qwg5n4n4",
+          "method": "POST",
+          "path": "/text",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
       "id": "comms.voice_call",
       "label": "Place an AI-powered phone call",
-      "description": "Initiate an outbound AI phone call with natural-language task instructions.",
+      "description": "Initiate an outbound AI phone call with natural-language task instructions. Use when an agent must place a real phone call to confirm appointments, follow up with customers, or complete spoken tasks autonomously.",
       "aliases": [
         "phone call",
         "voice call",
         "outbound call",
         "ai call",
         "confirm appointment",
-        "call a customer"
+        "call a customer",
+        "call someone on the phone",
+        "automated outbound phone call",
+        "phone follow up for customer",
+        "voice agent makes a call",
+        "dial number and speak task",
+        "AI phone outreach",
+        "place call with instructions",
+        "telephony task via AI"
       ],
       "related": [
         "comms.send_email"
@@ -130,7 +290,7 @@
     {
       "id": "compute.blockchain_rpc",
       "label": "Call blockchain JSON-RPC",
-      "description": "Execute JSON-RPC calls against blockchain networks via pay-per-request RPC.",
+      "description": "Execute JSON-RPC calls against blockchain networks via pay-per-request RPC. Use when an agent must query on-chain state or submit JSON-RPC methods without running its own node infrastructure.",
       "aliases": [
         "json-rpc",
         "node rpc",
@@ -139,7 +299,15 @@
         "ethereum mainnet json rpc",
         "eth mainnet rpc",
         "solana rpc",
-        "ethereum rpc"
+        "ethereum rpc",
+        "Solana getBalance",
+        "JSON-RPC without node",
+        "solana mainnet RPC",
+        "call eth_getBalance without node",
+        "blockchain read via rpc proxy",
+        "query wallet balance on chain",
+        "pay per request node access",
+        "remote blockchain node call"
       ],
       "related": [
         "finance.crypto_spot_price"
@@ -163,13 +331,21 @@
     {
       "id": "data.company_enrich",
       "label": "Enrich company data from a domain",
-      "description": "Look up company firmographics, industry, and metadata from a domain name.",
+      "description": "Look up company firmographics, industry, and metadata from a domain name. Use when an agent needs business context from a website domain for prospecting, due diligence, or CRM enrichment.",
       "aliases": [
         "company enrichment",
         "enrich company",
         "company from domain",
         "enrich a company",
-        "domain lookup company"
+        "domain lookup company",
+        "who runs stripe.com",
+        "firmographics from domain",
+        "company metadata from domain",
+        "lookup company by website",
+        "enrich lead from domain name",
+        "business info from URL",
+        "company profile from domain",
+        "what company owns this domain"
       ],
       "satisfies": [
         {
@@ -181,9 +357,57 @@
       ]
     },
     {
+      "id": "data.nyne",
+      "label": "Search for people and public profiles",
+      "description": "People search and public profile lookup by name, location, or contact hints. Use when an agent enriches leads, finds public profiles, or resolves a person from partial identity signals.",
+      "aliases": [
+        "person lookup by name",
+        "find public profiles",
+        "people search",
+        "contact enrichment by name",
+        "lookup public profiles for a person",
+        "find person by name and city",
+        "people search API",
+        "profile lookup by name",
+        "B2B contact discovery"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
+          "method": "POST",
+          "path": "/person/search",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
+      "id": "devtools.2captcha",
+      "label": "Solve CAPTCHA challenges for automation",
+      "description": "Automated CAPTCHA solving for web agents, scrapers, and form bots. Use when a headless workflow hits reCAPTCHA, hCaptcha, Turnstile, or image challenges and needs a paid solve-and-continue step.",
+      "aliases": [
+        "solve captcha",
+        "human verification bypass",
+        "recaptcha solver",
+        "scraper captcha",
+        "2captcha",
+        "captcha for scraper",
+        "automated captcha solving",
+        "bypass human verification form",
+        "solve challenge before scraping"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://2captcha.x402.paysponge.com",
+          "method": "POST",
+          "path": "/createTask",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
       "id": "finance.crypto_spot_price",
       "label": "Get cryptocurrency spot price",
-      "description": "Fetch current spot price for one or more crypto assets.",
+      "description": "Fetch current spot price for one or more crypto assets. Use when an agent needs live fiat-denominated spot quotes before trading, portfolio valuation, or price-aware routing—without managing exchange API keys.",
       "aliases": [
         "crypto price",
         "token price",
@@ -191,7 +415,15 @@
         "bitcoin price",
         "eth price",
         "ethereum price",
-        "current eth price"
+        "current eth price",
+        "what is ETH trading at",
+        "spot quote for bitcoin",
+        "crypto price right now USD",
+        "current token price without API key",
+        "how much is bitcoin worth now",
+        "real-time crypto spot quote",
+        "usd price for ethereum",
+        "what's the price of BTC right now"
       ],
       "related": [
         "finance.crypto_market_data"
@@ -206,13 +438,45 @@
       ]
     },
     {
+      "id": "finance.token_balance",
+      "label": "Look up wallet token balances",
+      "description": "On-chain token and wallet balance lookups for EVM wallets. Use when an agent needs holdings, ERC-1155 balances, or wallet inventory before transfers, portfolio checks, or treasury reporting.",
+      "aliases": [
+        "ERC-1155 balance",
+        "wallet holdings",
+        "token balance lookup",
+        "how many tokens wallet holds",
+        "wallet token balance",
+        "check wallet holdings on chain",
+        "ERC1155 token count",
+        "what tokens does this wallet hold",
+        "on-chain balance lookup"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.onesource.io",
+          "method": "GET",
+          "path": "/api/chain/erc1155-balance",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
       "id": "marketing.competitive_landscape",
       "label": "Competitive pricing landscape for a category",
-      "description": "View all products in a category with competitive pricing across retailers.",
+      "description": "View all products in a category with competitive pricing across retailers. Use when an agent needs a category-wide market scan for competitive positioning, pricing research, or shelf analysis.",
       "aliases": [
         "competitive analysis",
         "category landscape",
-        "market landscape"
+        "market landscape",
+        "products and prices in category",
+        "retail competitive map",
+        "category pricing overview",
+        "market pricing for product type",
+        "all brands in category prices",
+        "competitive shelf pricing",
+        "category market scan",
+        "who competes in this product space"
       ],
       "related": [
         "marketing.brand_tracker",
@@ -230,13 +494,21 @@
     {
       "id": "realestate.property_lookup",
       "label": "Search homes and rentals for sale",
-      "description": "Find property listings, rental comps, and home value estimates in the US.",
+      "description": "Find property listings, rental comps, and home value estimates in the US. Use when an agent needs residential sale or rental listings for a city, zip, or neighborhood to answer relocation, investment, or housing budget questions.",
       "aliases": [
         "homes for sale",
         "property listings",
         "rentcast",
         "real estate search",
-        "find homes"
+        "find homes",
+        "houses for sale in",
+        "MLS listings",
+        "residential listings near zip",
+        "Austin TX homes listed",
+        "homes for sale near me",
+        "rental listings by city",
+        "property search by zip code",
+        "list houses in a neighborhood"
       ],
       "satisfies": [
         {
@@ -250,7 +522,7 @@
     {
       "id": "shop.compare_price",
       "label": "Compare retail price across stores",
-      "description": "Find the lowest current price for a product across multiple retailers.",
+      "description": "Find the lowest current price for a product across multiple retailers. Use when an agent must compare the same SKU across stores before recommending where a user should buy.",
       "aliases": [
         "cheapest price",
         "best price",
@@ -263,7 +535,15 @@
         "cheaper walmart",
         "cross retailer price",
         "where can I buy",
-        "buy cheaper"
+        "buy cheaper",
+        "cheaper at Amazon or Walmart",
+        "cross-store price comparison",
+        "which store has lower price",
+        "best deal across retailers",
+        "price check multiple stores",
+        "compare same product different shops",
+        "who sells it cheapest today",
+        "multi-retailer price lookup"
       ],
       "schema_org": [
         "schema:SearchAction"
@@ -284,14 +564,22 @@
     {
       "id": "shop.find_deals",
       "label": "Find discounted products in a category",
-      "description": "Discover current deals and discounts within a product category.",
+      "description": "Discover current deals and discounts within a product category. Use when an agent needs to surface discounted or on-sale items under a budget for shopping recommendations or deal scouting.",
       "aliases": [
         "deal finder",
         "discounts",
         "on sale",
         "kitchen appliances",
         "electronics deals",
-        "discounted products"
+        "discounted products",
+        "discounted electronics",
+        "deals under budget",
+        "surface sale items",
+        "find products on clearance",
+        "what's on sale in category",
+        "bargain hunt by category",
+        "sale items under price limit",
+        "current markdowns in retail"
       ],
       "related": [
         "shop.compare_price",
@@ -309,11 +597,19 @@
     {
       "id": "shop.price_drop_alert",
       "label": "Detect recent price drops on a product",
-      "description": "Check whether a product's price has dropped recently across tracked retailers.",
+      "description": "Check whether a product's price has dropped recently across tracked retailers. Use when an agent needs to detect recent markdowns on a tracked SKU before alerting a user to buy.",
       "aliases": [
         "price drop",
         "price alert",
-        "price decrease"
+        "price decrease",
+        "did price go down recently",
+        "recent markdown on product",
+        "price decrease alert",
+        "has this item gotten cheaper",
+        "detect sale on tracked SKU",
+        "product price fell lately",
+        "notify if price dropped",
+        "check for recent price cuts"
       ],
       "related": [
         "shop.compare_price",
@@ -331,11 +627,19 @@
     {
       "id": "shop.track_price_history",
       "label": "Get historical price trends for a product",
-      "description": "Retrieve price history over time for a specific product query.",
+      "description": "Retrieve price history over time for a specific product query. Use when an agent needs historical pricing trends to judge buy timing, volatility, or whether an item was cheaper before.",
       "aliases": [
         "price history",
         "price trend",
-        "historical pricing"
+        "historical pricing",
+        "how has price changed over time",
+        "price chart for product",
+        "historical cost trend SKU",
+        "past pricing for item",
+        "price over last months",
+        "track product price timeline",
+        "was it cheaper before",
+        "pricing history lookup"
       ],
       "related": [
         "shop.compare_price",
@@ -353,13 +657,21 @@
     {
       "id": "social.influencer_search",
       "label": "Find Instagram influencers by niche",
-      "description": "Search Instagram creator profiles by niche, location, follower count, and engagement for marketing campaigns.",
+      "description": "Search Instagram creator profiles by niche, location, follower count, and engagement for marketing campaigns. Use when an agent needs creator discovery filtered by audience, niche, or geography for outreach or campaign planning.",
       "aliases": [
         "instagram influencer",
         "influencer search",
         "creator search",
         "fitness influencers",
-        "find influencers"
+        "find influencers",
+        "creators in fitness niche",
+        "instagram accounts by follower count",
+        "micro influencers by city",
+        "search creators for brand campaign",
+        "influencer discovery on instagram",
+        "find creators by engagement rate",
+        "marketing influencers by location",
+        "niche creator profiles instagram"
       ],
       "schema_org": [
         "schema:SearchAction"
@@ -376,14 +688,22 @@
     {
       "id": "storage.hosting",
       "label": "Host files and static websites",
-      "description": "Upload files or deploy static websites with permanent CDN URLs via micropayment.",
+      "description": "Upload files or deploy static websites with permanent CDN URLs via micropayment. Use when an agent needs to publish assets or a static site and return a permanent public URL without managing cloud storage accounts.",
       "aliases": [
         "file upload",
         "static website",
         "host website",
         "static site hosting",
         "upload files",
-        "host a static website"
+        "host a static website",
+        "upload file get public URL",
+        "deploy static site to CDN",
+        "host HTML page permanently",
+        "permanent file link upload",
+        "put asset on CDN",
+        "static page hosting for agent",
+        "share file via hosted URL",
+        "micropay file storage"
       ],
       "satisfies": [
         {
@@ -403,13 +723,21 @@
     {
       "id": "web.screenshot",
       "label": "Capture a website screenshot",
-      "description": "Take a full-page or viewport screenshot of any public URL via micropayment.",
+      "description": "Take a full-page or viewport screenshot of any public URL via micropayment. Use when an agent needs a pixel-accurate visual capture of a public webpage for QA, archiving, or showing users what a site looks like.",
       "aliases": [
         "screenshot",
         "website screenshot",
         "page capture",
         "take a screenshot",
-        "capture website"
+        "capture website",
+        "PNG of homepage",
+        "visual snapshot of webpage",
+        "grab screenshot of URL",
+        "capture page as image",
+        "screenshot a live URL",
+        "full page PNG capture",
+        "webpage image preview",
+        "render site as screenshot"
       ],
       "satisfies": [
         {
@@ -484,46 +812,6 @@
           "origin": "https://x402.dtelecom.org",
           "method": "POST",
           "path": "/v1/credits/purchase/tron",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "cloud.domains",
-      "label": "StableDomains",
-      "description": "Register, renew, and manage DNS for domains via stablecoin micropayments. Supports common TLDs including .com, .org, .net, .io, .ai, .dev, .app, and .xyz, plus DNS record creation and updates without traditional registrar billing.",
-      "aliases": [
-        "use for domain registration",
-        "renewing existing names",
-        "managing dns records",
-        "buying agent-owned domains",
-        "setting a/aaaa/cname/mx/txt records",
-        "launching websites",
-        "configuring branded email",
-        "and handling registrar workflows through micropayments",
-        "register",
-        "renew",
-        "and manage dns for domains via stablecoin micropayments",
-        "supports common tlds including",
-        "StableDomains"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://stabledomains.dev",
-          "method": "POST",
-          "path": "/api/domain/renew",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://stabledomains.dev",
-          "method": "POST",
-          "path": "/api/check",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://stabledomains.dev",
-          "method": "POST",
-          "path": "/api/register",
           "confidence": "secondary"
         }
       ]
@@ -689,46 +977,6 @@
       ]
     },
     {
-      "id": "devtools.2captcha",
-      "label": "2Captcha",
-      "description": "Solve CAPTCHAs through 2Captcha's task API, including reCAPTCHA v2/v3, hCaptcha, Cloudflare Turnstile, FunCaptcha, GeeTest, and image challenges, with task creation, result polling, and solve-quality reporting.",
-      "aliases": [
-        "use for automated captcha solving in web agents",
-        "scraping and form-submission pipelines",
-        "login or signup flows",
-        "challenge polling",
-        "and reporting correct or incorrect solve outcomes back to 2captcha",
-        "solve captchas through 2captcha's task api",
-        "including recaptcha v2/v3",
-        "hcaptcha",
-        "cloudflare turnstile",
-        "funcaptcha",
-        "geetest",
-        "and image challenges",
-        "2Captcha"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://2captcha.x402.paysponge.com",
-          "method": "POST",
-          "path": "/createTask",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://2captcha.x402.paysponge.com",
-          "method": "POST",
-          "path": "/getTaskResult",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://2captcha.x402.paysponge.com",
-          "method": "POST",
-          "path": "/reportIncorrect",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
       "id": "finance.coingecko",
       "label": "CoinGecko Onchain DEX API",
       "description": "Query CoinGecko onchain DEX market data through x402 for token prices, token detail lookup, trending pools on a network, and pool/token search.",
@@ -765,148 +1013,6 @@
           "method": "GET",
           "path": "/x402/onchain/simple/networks/{network}/token_price/{addresses}",
           "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "data.nyne",
-      "label": "Nyne AI",
-      "description": "Nyne AI person enrichment and prospect search through PaySponge's x402 wrapper, with known-contact enrichment, async request polling, and natural-language people search that can return contact, company, and profile data.",
-      "aliases": [
-        "use for b2b contact enrichment from email",
-        "phone",
-        "name",
-        "or linkedin url",
-        "plus natural-language prospect search with pagination",
-        "cached request reuse",
-        "and optional email or phone enrichment",
-        "nyne ai person enrichment and prospect search through paysponge's x402 wrapper",
-        "with known-contact enrichment",
-        "async request polling",
-        "and natural-language people search that can return contact",
-        "company",
-        "Nyne AI"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
-          "method": "POST",
-          "path": "/person/search",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
-          "method": "GET",
-          "path": "/person/enrichment",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
-          "method": "POST",
-          "path": "/person/enrichment",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "ai_ml.perplexity",
-      "label": "Perplexity AI API",
-      "description": "Search the web and generate grounded Perplexity Sonar responses with citations, search results, related questions, structured JSON, async jobs, and multimodal inputs including text, images, files, PDFs, and video URLs.",
-      "aliases": [
-        "use for cited web answers",
-        "live research",
-        "grounded chat",
-        "web search snippets",
-        "model discovery",
-        "structured json generation",
-        "async deep-research workflows",
-        "multimodal question answering",
-        "and agent responses that rely on current sources",
-        "search the web and generate grounded perplexity sonar responses with citations",
-        "search results",
-        "related questions",
-        "Perplexity AI API"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://pplx.x402.paysponge.com",
-          "method": "POST",
-          "path": "/search",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://pplx.x402.paysponge.com",
-          "method": "POST",
-          "path": "/v1/agent",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://pplx.x402.paysponge.com",
-          "method": "GET",
-          "path": "/v1/async/sonar/{api_request}",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "ai_ml.reducto",
-      "label": "Reducto API",
-      "description": "Parse and extract structured data from documents through PaySponge's x402-wrapped Reducto service. Supports OCR, chunking, tables, figures, spreadsheets, agentic enhancement, citations, and both synchronous and asynchronous document workflows.",
-      "aliases": [
-        "use for document ocr",
-        "pdf and spreadsheet parsing",
-        "structured extraction into a custom schema",
-        "table and figure analysis",
-        "retrieval-ready chunk generation",
-        "top-level metadata extraction",
-        "and async document-processing jobs that need pay-per-request access",
-        "supports ocr",
-        "chunking",
-        "tables",
-        "figures",
-        "spreadsheets",
-        "Reducto API"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://api.paysponge.com/x402/purchase/svc_d672d90ggvqqygj60",
-          "method": "POST",
-          "path": "/extract",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://api.paysponge.com/x402/purchase/svc_d672d90ggvqqygj60",
-          "method": "POST",
-          "path": "/parse",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "messaging.textbelt",
-      "label": "Textbelt SMS API",
-      "description": "Send outbound SMS to supported-country phone numbers and check delivery status through PaySponge's x402-wrapped Textbelt service. Supports optional sender metadata, reply webhooks, and webhook data passthrough.",
-      "aliases": [
-        "use for transactional sms",
-        "alerts",
-        "reminders",
-        "verification messages",
-        "simple outbound texting",
-        "supports optional sender metadata",
-        "reply webhooks",
-        "and webhook data passthrough",
-        "transactional sms,",
-        "sms, alerts,",
-        "alerts, reminders,",
-        "reminders, verification",
-        "Textbelt SMS API"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://api.paysponge.com/x402/purchase/svc_d6kszbre4qwg5n4n4",
-          "method": "POST",
-          "path": "/text",
-          "confidence": "primary"
         }
       ]
     },
@@ -1270,34 +1376,6 @@
           "origin": "https://edututor.alibaba.gateway-402.com",
           "method": "POST",
           "path": "/service/cutApi",
-          "confidence": "primary"
-        }
-      ]
-    },
-    {
-      "id": "ai_ml.embeddings",
-      "label": "Alibaba Cloud Model Studio Embeddings",
-      "description": "Create text embeddings with Alibaba Cloud Model Studio's OpenAI-compatible embeddings API for retrieval and semantic search.",
-      "aliases": [
-        "use for semantic search",
-        "retrieval",
-        "reranking pipelines",
-        "clustering",
-        "classification",
-        "and vector indexing",
-        "semantic search,",
-        "search, retrieval,",
-        "retrieval, reranking",
-        "reranking pipelines,",
-        "pipelines, clustering,",
-        "clustering, classification,",
-        "Alibaba Cloud Model Studio Embeddings"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://embeddings.alibaba.gateway-402.com",
-          "method": "POST",
-          "path": "/compatible-mode/v1/embeddings",
           "confidence": "primary"
         }
       ]
@@ -6718,35 +6796,6 @@
           "origin": "https://api.strale.io",
           "method": "GET",
           "path": "/x402/image-to-text",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "finance.token_balance",
-      "label": "Look up wallet token balances",
-      "aliases": [
-        "token balance",
-        "wallet balance",
-        "holdings"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://api.onesource.io",
-          "method": "GET",
-          "path": "/api/chain/erc1155-balance",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://edgar.apitoll.cloud",
-          "method": "GET",
-          "path": "/v1/edgar/holdings",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://x402-api.vybenetwork.xyz",
-          "method": "GET",
-          "path": "/v4/wallets/{ownerAddress}/token-balance",
           "confidence": "secondary"
         }
       ]

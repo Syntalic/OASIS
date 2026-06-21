@@ -1,6 +1,6 @@
 id: compute.blockchain_rpc
 label: Call blockchain JSON-RPC
-description: Execute JSON-RPC calls against blockchain networks via pay-per-request RPC.
+description: Execute JSON-RPC calls against blockchain networks via pay-per-request RPC. Use when an agent must query on-chain state or submit JSON-RPC methods without running its own node infrastructure.
 aliases:
   - json-rpc
   - node rpc
@@ -10,6 +10,14 @@ aliases:
   - eth mainnet rpc
   - solana rpc
   - ethereum rpc
+  - Solana getBalance
+  - JSON-RPC without node
+  - solana mainnet RPC
+  - call eth_getBalance without node
+  - blockchain read via rpc proxy
+  - query wallet balance on chain
+  - pay per request node access
+  - remote blockchain node call
 related:
   - finance.crypto_spot_price
 satisfies:

@@ -1,0 +1,18 @@
+id: ai_ml.embeddings
+label: Generate text embeddings for retrieval
+description: Dense vector embeddings for semantic search, clustering, and RAG pipelines. Use when an agent needs to embed sentences or documents for retrieval, ranking, or vector indexing without hosting an embedding model.
+aliases:
+  - dense vectors
+  - sentence embeddings
+  - vector indexing
+  - semantic embedding API
+  - batch embeddings
+  - turn sentences into vectors
+  - text embeddings for retrieval
+  - embedding API for semantic search
+  - vectorize text batch
+satisfies:
+  - origin: https://embeddings.alibaba.gateway-402.com
+    method: POST
+    path: /compatible-mode/v1/embeddings
+    confidence: primary

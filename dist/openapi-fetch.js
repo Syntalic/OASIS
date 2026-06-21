@@ -11,7 +11,7 @@ const OPENAPI_PATHS = [
 ];
 const FETCH_HEADERS = {
     Accept: "application/json, application/yaml, text/yaml, */*",
-    "User-Agent": "paid-api-graph/0.1 (+https://github.com/paid-api-graph)",
+    "User-Agent": "oasis/0.1 (+https://github.com/Syntalic/OASIS)",
 };
 export function openapiCandidates(origin) {
     const base = origin.replace(/\/$/, "");

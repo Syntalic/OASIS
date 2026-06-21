@@ -1,7 +1,12 @@
 {
-  "name": "paid-api-graph",
+  "name": "oasis",
   "version": "0.1.0",
   "description": "Vendor-neutral ontology and index for x402 and MPP paid API endpoints",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Syntalic/OASIS.git"
+  },
+  "homepage": "https://syntalic.com",
   "type": "module",
   "license": "MIT",
   "bin": {
@@ -12,13 +17,18 @@
     "spec",
     "ontology"
   ],
+  "packageManager": "pnpm@11.7.0",
   "scripts": {
     "build:ts": "tsc",
     "build:index": "node dist/cli.js build",
-    "build": "npm run build:ts && npm run build:index",
+    "build": "pnpm run build:ts && pnpm run build:index",
     "test": "node --test 'dist/**/*.test.js'",
     "eval": "node dist/cli.js eval",
-    "eval:generate": "npm run build:ts && node dist/eval/generate-queries.js",
+    "eval:resolve": "node dist/cli.js eval:resolve",
+    "eval:hybrid": "node dist/cli.js eval:hybrid",
+    "eval:compare": "node dist/cli.js eval:compare",
+    "eval:generate": "pnpm run build:ts && node dist/eval/generate-queries.js",
+    "embed": "node dist/cli.js embed --scope curated",
     "validate": "node dist/cli.js validate",
     "search": "node dist/cli.js search"
   },
@@ -26,6 +36,8 @@
     "node": ">=20"
   },
   "dependencies": {
+    "@lancedb/lancedb": "^0.30.0",
+    "@xenova/transformers": "^2.17.2",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "commander": "^13.1.0",

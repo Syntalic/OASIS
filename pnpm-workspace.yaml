@@ -1,0 +1,8 @@
+packages:
+  - .
+
+allowBuilds:
+  "@lancedb/lancedb": true
+  onnxruntime-node: true
+  protobufjs: true
+  sharp: true

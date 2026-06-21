@@ -1,0 +1,18 @@
+id: data.nyne
+label: Search for people and public profiles
+description: People search and public profile lookup by name, location, or contact hints. Use when an agent enriches leads, finds public profiles, or resolves a person from partial identity signals.
+aliases:
+  - person lookup by name
+  - find public profiles
+  - people search
+  - contact enrichment by name
+  - lookup public profiles for a person
+  - find person by name and city
+  - people search API
+  - profile lookup by name
+  - B2B contact discovery
+satisfies:
+  - origin: https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8
+    method: POST
+    path: /person/search
+    confidence: primary

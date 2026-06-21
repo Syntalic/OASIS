@@ -1,0 +1,18 @@
+id: ai_ml.reducto
+label: Extract structured data from documents
+description: OCR, PDF parsing, table extraction, and schema-based field extraction from uploaded files. Use when an agent needs to turn invoices, scans, or spreadsheets into structured JSON without running a local OCR pipeline.
+aliases:
+  - document OCR
+  - PDF invoice extraction
+  - scanned PDF fields
+  - table extraction from files
+  - structured document parsing
+  - pull fields from PDF invoice
+  - document OCR and table extraction
+  - parse uploaded PDF
+  - extract data from scanned document
+satisfies:
+  - origin: https://api.paysponge.com/x402/purchase/svc_d672d90ggvqqygj60
+    method: POST
+    path: /extract
+    confidence: primary

@@ -1,10 +1,18 @@
 id: comms.send_email
 label: Send an outbound email
-description: Send a single email message via micropayment without API keys.
+description: Send a single email message via micropayment without API keys. Use when an agent must deliver one outbound email for notifications, confirmations, or replies without configuring SMTP or mail APIs.
 aliases:
   - send email
   - email delivery
   - outbound email
+  - send one-off email no API key
+  - deliver message to inbox
+  - outbound mail without SMTP
+  - email a recipient directly
+  - transactional email send
+  - shoot an email to user
+  - programmatic single email delivery
+  - micropay to send email
 related:
   - comms.buy_inbox
 schema_org:

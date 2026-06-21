@@ -1,6 +1,6 @@
 id: shop.find_deals
 label: Find discounted products in a category
-description: Discover current deals and discounts within a product category.
+description: Discover current deals and discounts within a product category. Use when an agent needs to surface discounted or on-sale items under a budget for shopping recommendations or deal scouting.
 aliases:
   - deal finder
   - discounts
@@ -8,6 +8,14 @@ aliases:
   - kitchen appliances
   - electronics deals
   - discounted products
+  - discounted electronics
+  - deals under budget
+  - surface sale items
+  - find products on clearance
+  - what's on sale in category
+  - bargain hunt by category
+  - sale items under price limit
+  - current markdowns in retail
 related:
   - shop.compare_price
   - shop.price_drop_alert

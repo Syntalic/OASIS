@@ -1,0 +1,18 @@
+id: messaging.textbelt
+label: Send an SMS text message
+description: Outbound SMS for alerts, reminders, and one-time verification codes. Use when an agent must text a phone number without provisioning Twilio or carrier contracts.
+aliases:
+  - SMS verification code
+  - one-time text message
+  - outbound SMS
+  - text a phone number
+  - send SMS alert
+  - text message verification
+  - SMS to mobile number
+  - programmatic text message
+  - send text without Twilio
+satisfies:
+  - origin: https://api.paysponge.com/x402/purchase/svc_d6kszbre4qwg5n4n4
+    method: POST
+    path: /text
+    confidence: primary

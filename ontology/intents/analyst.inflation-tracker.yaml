@@ -1,12 +1,20 @@
 id: analyst.inflation_tracker
 label: Track category price inflation trends
-description: Analyze price inflation and trend direction within a retail category.
+description: Analyze price inflation and trend direction within a retail category. Use when an agent needs category-level inflation trends to explain rising costs, budget impacts, or year-over-year price changes.
 aliases:
   - inflation
   - price inflation
   - category trends
   - grocery prices increased
   - how much have prices increased
+  - grocery prices inflate
+  - CPI category trend
+  - price inflation year over year
+  - how fast are prices rising
+  - category price change over time
+  - inflation trend in groceries
+  - yoy price increase by category
+  - are household goods getting more expensive
 related:
   - analyst.price_dispersion
   - shop.track_price_history

@@ -1,10 +1,18 @@
 id: marketing.competitive_landscape
 label: Competitive pricing landscape for a category
-description: View all products in a category with competitive pricing across retailers.
+description: View all products in a category with competitive pricing across retailers. Use when an agent needs a category-wide market scan for competitive positioning, pricing research, or shelf analysis.
 aliases:
   - competitive analysis
   - category landscape
   - market landscape
+  - products and prices in category
+  - retail competitive map
+  - category pricing overview
+  - market pricing for product type
+  - all brands in category prices
+  - competitive shelf pricing
+  - category market scan
+  - who competes in this product space
 related:
   - marketing.brand_tracker
   - shop.compare_price

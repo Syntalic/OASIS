@@ -1,6 +1,6 @@
 id: finance.crypto_spot_price
 label: Get cryptocurrency spot price
-description: Fetch current spot price for one or more crypto assets.
+description: Fetch current spot price for one or more crypto assets. Use when an agent needs live fiat-denominated spot quotes before trading, portfolio valuation, or price-aware routing—without managing exchange API keys.
 aliases:
   - crypto price
   - token price
@@ -9,6 +9,14 @@ aliases:
   - eth price
   - ethereum price
   - current eth price
+  - what is ETH trading at
+  - spot quote for bitcoin
+  - crypto price right now USD
+  - current token price without API key
+  - how much is bitcoin worth now
+  - real-time crypto spot quote
+  - usd price for ethereum
+  - what's the price of BTC right now
 related:
   - finance.crypto_market_data
 satisfies:

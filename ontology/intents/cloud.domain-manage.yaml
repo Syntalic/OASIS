@@ -1,0 +1,18 @@
+id: cloud.domains
+label: Register or renew domain names
+description: Domain registration, renewal, and DNS management via micropayment. Use when an agent provisions or renews project domains and DNS without traditional registrar billing flows.
+aliases:
+  - renew domain programmatically
+  - domain registration API
+  - DNS management
+  - buy domain
+  - renew my domain name
+  - register domain for project
+  - manage DNS records API
+  - domain renew without registrar UI
+  - programmatic domain renewal
+satisfies:
+  - origin: https://stabledomains.dev
+    method: POST
+    path: /api/domain/renew
+    confidence: primary

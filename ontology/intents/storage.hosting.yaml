@@ -1,6 +1,6 @@
 id: storage.hosting
 label: Host files and static websites
-description: Upload files or deploy static websites with permanent CDN URLs via micropayment.
+description: Upload files or deploy static websites with permanent CDN URLs via micropayment. Use when an agent needs to publish assets or a static site and return a permanent public URL without managing cloud storage accounts.
 aliases:
   - file upload
   - static website
@@ -8,6 +8,14 @@ aliases:
   - static site hosting
   - upload files
   - host a static website
+  - upload file get public URL
+  - deploy static site to CDN
+  - host HTML page permanently
+  - permanent file link upload
+  - put asset on CDN
+  - static page hosting for agent
+  - share file via hosted URL
+  - micropay file storage
 satisfies:
   - origin: https://stableupload.dev
     method: POST
