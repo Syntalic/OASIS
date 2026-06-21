@@ -185,6 +185,64 @@ program
   });
 
 program
+  .command("eval")
+  .description("Run discovery benchmark against golden queries")
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--json", "Output JSON report")
+  .option("--misses", "Show queries that missed workflow@3")
+  .action(async (opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const { runDiscoveryBenchmark, formatReportTable } = await import(
+      "./eval/discovery-benchmark.js"
+    );
+    const reports = await runDiscoveryBenchmark(bundle);
+    if (opts.json) {
+      console.log(JSON.stringify(reports, null, 2));
+      return;
+    }
+    console.log("Discovery benchmark (golden queries)\n");
+    console.log(formatReportTable(reports));
+    if (opts.misses) {
+      const full = reports.find((r) => r.mode === "full");
+      if (full) {
+        const misses = full.results.filter(
+          (r) => r.workflow_rank == null || r.workflow_rank > 3,
+        );
+        if (misses.length) {
+          console.log("\nMisses (full index, workflow@3):");
+          for (const m of misses) {
+            console.log(`  - ${m.id}: "${m.query}" → top: ${m.top_label}`);
+          }
+        } else {
+          console.log("\nNo misses — all queries hit workflow@3.");
+        }
+      }
+    }
+    console.log("\nLegend: intent@k = correct capability in top-k");
+    console.log("        flow@k = correct endpoint via search+resolve in top-k");
+    console.log("        ep@k = correct endpoint row directly in top-k\n");
+    const full = reports.find((r) => r.mode === "full");
+    const paySkills = reports.find((r) => r.mode === "pay-skills-only");
+    if (full && paySkills) {
+      const cov = bundle.endpoints.length;
+      const ps = bundle.endpoints.filter(
+        (e) =>
+          e.provider_fqn &&
+          !e.provider_fqn.startsWith("x402scan/") &&
+          !e.provider_fqn.startsWith("mppscan/") &&
+          !e.provider_fqn.startsWith("mpp-catalog/"),
+      ).length;
+      console.log(`Coverage: ${cov} unified endpoints vs ${ps} pay-skills-only`);
+      console.log(
+        `Full index workflow@3: ${full.workflow_hit_at_3}/${full.endpoint_queries}`,
+      );
+      console.log(
+        `pay-skills-only workflow@3: ${paySkills.workflow_hit_at_3}/${paySkills.endpoint_queries}`,
+      );
+    }
+  });
+
+program
   .command("stats")
   .description("Show index statistics")
   .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))

@@ -1,0 +1,140 @@
+[
+  {
+    "id": "shop-compare-1",
+    "query": "cheapest airpods pro across retailers",
+    "expect_intent": "shop.compare_price",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/shopper/best-price"
+    }
+  },
+  {
+    "id": "shop-compare-2",
+    "query": "find the best price for a product",
+    "expect_intent": "shop.compare_price",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/shopper/best-price"
+    }
+  },
+  {
+    "id": "shop-deals-1",
+    "query": "find discounted electronics deals",
+    "expect_intent": "shop.find_deals",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/shopper/deal-finder"
+    }
+  },
+  {
+    "id": "shop-drop-1",
+    "query": "has the price dropped on this product recently",
+    "expect_intent": "shop.price_drop_alert",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/shopper/price-drop-alert"
+    }
+  },
+  {
+    "id": "shop-history-1",
+    "query": "price history trend for a product",
+    "expect_intent": "shop.track_price_history",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/shopper/price-history"
+    }
+  },
+  {
+    "id": "marketing-landscape-1",
+    "query": "competitive pricing landscape for a category",
+    "expect_intent": "marketing.competitive_landscape",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/marketing/competitive-landscape"
+    }
+  },
+  {
+    "id": "analyst-inflation-1",
+    "query": "track price inflation in grocery category",
+    "expect_intent": "analyst.inflation_tracker",
+    "expect_endpoint": {
+      "origin": "https://api.syntalic.com",
+      "method": "GET",
+      "path": "/v1/analyst/inflation"
+    }
+  },
+  {
+    "id": "comms-email-1",
+    "query": "send an outbound email without api keys",
+    "expect_intent": "comms.send_email",
+    "expect_endpoint": {
+      "origin": "https://stableemail.dev",
+      "method": "POST",
+      "path": "/api/send"
+    }
+  },
+  {
+    "id": "comms-email-2",
+    "query": "email delivery micropayment",
+    "expect_intent": "comms.send_email",
+    "expect_endpoint": {
+      "origin": "https://stableemail.dev",
+      "method": "POST",
+      "path": "/api/send"
+    }
+  },
+  {
+    "id": "comms-voice-1",
+    "query": "place an ai phone call outbound",
+    "expect_intent": "comms.voice_call",
+    "expect_endpoint": {
+      "origin": "https://stablephone.dev",
+      "method": "POST",
+      "path": "/api/call"
+    }
+  },
+  {
+    "id": "finance-crypto-1",
+    "query": "bitcoin spot price usd",
+    "expect_intent": "finance.crypto_spot_price",
+    "expect_endpoint": {
+      "origin": "https://stablecrypto.dev",
+      "method": "POST",
+      "path": "/api/coingecko/price"
+    }
+  },
+  {
+    "id": "compute-rpc-1",
+    "query": "solana json-rpc node call",
+    "expect_intent": "compute.blockchain_rpc",
+    "expect_endpoint": {
+      "origin": "https://x402.quicknode.com",
+      "method": "POST",
+      "path": "/solana-mainnet/"
+    }
+  },
+  {
+    "id": "mpp-fax-1",
+    "query": "send a fax per page micropayment",
+    "expect_endpoint": {
+      "origin": "https://agentfax.val.run",
+      "method": "POST",
+      "path": "/v1/fax"
+    }
+  },
+  {
+    "id": "mpp-agentmail-1",
+    "query": "ai agent email inbox",
+    "expect_endpoint": {
+      "origin": "https://mpp.api.agentmail.to",
+      "method": "POST",
+      "path": "/v0/inboxes"
+    }
+  }
+]

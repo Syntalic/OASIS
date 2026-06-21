@@ -16,7 +16,8 @@
     "build:ts": "tsc",
     "build:index": "node dist/cli.js build",
     "build": "npm run build:ts && npm run build:index",
-    "test": "node --test dist/**/*.test.js",
+    "test": "node --test 'dist/**/*.test.js'",
+    "eval": "node dist/cli.js eval",
     "validate": "node dist/cli.js validate",
     "search": "node dist/cli.js search"
   },

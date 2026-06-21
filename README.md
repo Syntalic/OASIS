@@ -16,6 +16,20 @@ no provider lock-in.
 
 **Index** = fast lookup. **Ontology** = semantic routing across providers.
 
+## Discovery benchmark
+
+Compare this index against baselines (provider-only catalog, pay-skills slice,
+endpoints-only) on golden agent queries:
+
+```bash
+npm test          # includes benchmark assertions
+npm run eval      # print comparison table
+npm run eval -- --misses   # show queries that miss workflow@3
+```
+
+The key metric is **workflow@3**: correct endpoint found via `search → resolve`
+within top 3 results (the intended agent protocol).
+
 ## Quick start
 
 ```bash
