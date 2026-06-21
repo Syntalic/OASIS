@@ -3,6 +3,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { linkCapabilitiesToEndpoints, loadOntology } from "./ontology.js";
 import { parseOpenApi } from "./openapi-parser.js";
+import { ingestMppCatalog } from "./ingest/mpp-catalog.js";
+import { ingestScanSitemap } from "./ingest/scan-sitemap.js";
 import { ingestPaySkills } from "./pay-skills.js";
 import { validateBundle } from "./validate.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -17,6 +19,11 @@ function dedupeEndpoints(endpoints) {
             map.set(ep.id, ep);
             continue;
         }
+        const railKey = (r) => r.protocol;
+        const rails = [...existing.payment.rails, ...ep.payment.rails];
+        const railsDeduped = [
+            ...new Map(rails.map((r) => [railKey(r), r])).values(),
+        ];
         map.set(ep.id, {
             ...existing,
             capabilities: [
@@ -25,6 +32,14 @@ function dedupeEndpoints(endpoints) {
             provider_fqn: existing.provider_fqn ?? ep.provider_fqn,
             provider_title: existing.provider_title ?? ep.provider_title,
             category: existing.category ?? ep.category,
+            summary: ep.summary.length > existing.summary.length ? ep.summary : existing.summary,
+            description: existing.description ?? ep.description,
+            payment: {
+                paid: existing.payment.paid || ep.payment.paid,
+                price_usd: existing.payment.price_usd ?? ep.payment.price_usd,
+                rails: railsDeduped.length ? railsDeduped : existing.payment.rails,
+            },
+            search_text: `${existing.search_text} ${ep.search_text}`.trim(),
         });
     }
     return [...map.values()].sort((a, b) => `${a.origin}${a.path}`.localeCompare(`${b.origin}${b.path}`));
@@ -36,8 +51,10 @@ export async function buildIndex(options = {}) {
     const capabilities = await loadOntology(ontologyDir);
     const sources = [];
     let endpoints = [];
-    const paySkillsDir = options.paySkillsDir ??
-        (options.openapiFile ? undefined : defaultPaySkillsPath());
+    const useScans = options.x402scan !== false || options.mppscan !== false;
+    const paySkillsDir = options.skipPaySkills || options.openapiFile
+        ? options.paySkillsDir
+        : (options.paySkillsDir ?? defaultPaySkillsPath());
     if (paySkillsDir) {
         try {
             await access(paySkillsDir);
@@ -52,6 +69,63 @@ export async function buildIndex(options = {}) {
         }
         catch (err) {
             console.warn(`pay-skills ingest skipped (${paySkillsDir}): ${err.message}`);
+        }
+    }
+    if (options.mppscan !== false) {
+        try {
+            const mpp = await ingestMppCatalog(builtAt);
+            endpoints.push(...mpp);
+            sources.push({
+                name: "mpp-catalog",
+                path: "https://mpp.dev/api/services",
+                endpoints: mpp.length,
+            });
+        }
+        catch (err) {
+            console.warn(`mpp catalog ingest failed: ${err.message}`);
+        }
+    }
+    if (options.x402scan !== false && useScans) {
+        try {
+            const x402 = await ingestScanSitemap({
+                sitemapUrl: "https://www.x402scan.com/sitemap.xml",
+                sourceName: "x402scan",
+                builtAt,
+                maxServers: options.maxScanServers,
+            });
+            endpoints.push(...x402.endpoints);
+            sources.push({
+                name: "x402scan",
+                path: "https://www.x402scan.com/sitemap.xml",
+                providers: x402.origins,
+                endpoints: x402.endpoints.length,
+            });
+            console.log(`  x402scan: ${x402.servers} servers → ${x402.origins} origins → ${x402.endpoints.length} endpoints`);
+        }
+        catch (err) {
+            console.warn(`x402scan ingest failed: ${err.message}`);
+        }
+    }
+    if (options.mppscan !== false && useScans) {
+        try {
+            const mppScan = await ingestScanSitemap({
+                sitemapUrl: "https://www.mppscan.com/sitemap.xml",
+                sourceName: "mppscan",
+                builtAt,
+                maxServers: options.maxScanServers,
+                fetchOpenApi: true,
+            });
+            endpoints.push(...mppScan.endpoints);
+            sources.push({
+                name: "mppscan",
+                path: "https://www.mppscan.com/sitemap.xml",
+                providers: mppScan.origins,
+                endpoints: mppScan.endpoints.length,
+            });
+            console.log(`  mppscan: ${mppScan.servers} servers → ${mppScan.origins} origins → ${mppScan.endpoints.length} endpoints`);
+        }
+        catch (err) {
+            console.warn(`mppscan ingest failed: ${err.message}`);
         }
     }
     if (options.openapiFile) {

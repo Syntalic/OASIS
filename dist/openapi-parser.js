@@ -1,4 +1,5 @@
 import { endpointId } from "./id.js";
+import { canonicalOrigin } from "./origin-aliases.js";
 const HTTP_METHODS = new Set([
     "get",
     "post",
@@ -38,14 +39,27 @@ function extractRails(doc, op) {
     const networks = extractNetworks(doc, op);
     const paymentInfo = op["x-payment-info"];
     const protocols = paymentInfo?.protocols;
+    const offers = paymentInfo?.offers;
     let hasX402 = false;
     let hasMpp = false;
     if (protocols) {
         for (const p of protocols) {
+            if (typeof p === "string" && p === "x402")
+                hasX402 = true;
             if (p.x402)
                 hasX402 = true;
             if (p.mpp || p.tempo)
                 hasMpp = true;
+        }
+    }
+    if (offers) {
+        for (const offer of offers) {
+            const method = String(offer.method ?? "");
+            if (method === "x402" || method === "evm")
+                hasX402 = true;
+            if (["tempo", "mpp", "stripe", "card", "lightning", "solana"].includes(method)) {
+                hasMpp = true;
+            }
         }
     }
     const methods = paymentInfo?.methods;
@@ -56,7 +70,7 @@ function extractRails(doc, op) {
         hasX402 = true;
     if (Object.values(assets).some((a) => a.chain === "tempo"))
         hasMpp = true;
-    if (paymentInfo?.method === "tempo")
+    if (paymentInfo?.method === "tempo" || paymentInfo?.method === "stripe")
         hasMpp = true;
     if (hasX402) {
         rails.push({
@@ -78,6 +92,14 @@ function extractRails(doc, op) {
 }
 function extractPriceUsd(op) {
     const paymentInfo = op["x-payment-info"];
+    const offers = paymentInfo?.offers;
+    if (offers?.[0]?.amount != null) {
+        const raw = Number(offers[0].amount);
+        if (!Number.isNaN(raw)) {
+            const decimals = Number(offers[0].decimals ?? 6);
+            return raw / 10 ** decimals;
+        }
+    }
     const price = paymentInfo?.price;
     if (price?.amount != null) {
         const n = Number(price.amount);
@@ -142,10 +164,10 @@ function buildSearchText(parts) {
         .trim();
 }
 export function parseOpenApi(doc, options) {
-    const origin = normalizeOrigin(options.origin ??
+    const origin = canonicalOrigin(normalizeOrigin(options.origin ??
         doc.servers?.[0]?.url ??
         options.provider?.service_url ??
-        "https://unknown.invalid");
+        "https://unknown.invalid"));
     const guidance = doc.info?.["x-agent-guidance"] ??
         doc.info?.["x-guidance"] ??
         doc.info?.guidance;

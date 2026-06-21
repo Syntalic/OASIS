@@ -37,12 +37,22 @@ program
     .option("--openapi <file>", "Single OpenAPI JSON file to ingest")
     .option("--origin <url>", "Origin URL when ingesting a standalone OpenAPI file")
     .option("-o, --output <dir>", "Output directory", path.join(PACKAGE_ROOT, "dist"))
+    .option("--no-x402scan", "Skip x402scan sitemap ingest")
+    .option("--no-mppscan", "Skip mppscan sitemap + mpp.dev catalog ingest")
+    .option("--skip-pay-skills", "Skip pay-skills ingest")
+    .option("--max-scan-servers <n>", "Limit x402scan/mppscan server pages fetched (debug)")
     .action(async (opts) => {
     const bundle = await buildIndex({
         paySkillsDir: opts.paySkills,
         openapiFile: opts.openapi,
         origin: opts.origin,
         outputDir: opts.output,
+        x402scan: opts.x402scan,
+        mppscan: opts.mppscan,
+        skipPaySkills: Boolean(opts.skipPaySkills),
+        maxScanServers: opts.maxScanServers
+            ? Number(opts.maxScanServers)
+            : undefined,
     });
     if (!bundle.stats.endpoints) {
         console.error("No endpoints indexed. Pass --pay-skills <dir> or --openapi <file>.");

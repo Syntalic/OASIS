@@ -1,6 +1,7 @@
 import { readFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 import { parse as parseYaml } from "yaml";
+import { canonicalOrigin } from "./origin-aliases.js";
 import { parseOpenApi } from "./openapi-parser.js";
 function parseFrontmatter(content) {
     const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
@@ -44,7 +45,7 @@ function providerFromPayMd(payMdPath, providersRoot, frontmatter) {
         description,
         use_case,
         category,
-        service_url: service_url.replace(/\/$/, ""),
+        service_url: canonicalOrigin(service_url.replace(/\/$/, "")),
         openapi_path: String(openapi.path),
         capabilities: frontmatter.capabilities,
     };

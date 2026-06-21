@@ -9,7 +9,7 @@ related:
   - shop.compare_price
   - analyst.inflation_tracker
 satisfies:
-  - origin: https://api.crushrewards.dev
+  - origin: https://api.syntalic.com
     method: GET
     path: /v1/shopper/price-history
     confidence: primary

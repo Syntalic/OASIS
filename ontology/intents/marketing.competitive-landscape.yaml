@@ -9,7 +9,7 @@ related:
   - marketing.brand_tracker
   - shop.compare_price
 satisfies:
-  - origin: https://api.crushrewards.dev
+  - origin: https://api.syntalic.com
     method: GET
     path: /v1/marketing/competitive-landscape
     confidence: primary

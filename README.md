@@ -24,11 +24,18 @@ npm install
 npm run build
 ```
 
-Build ingests a local [pay-skills](https://github.com/solana-foundation/pay-skills) checkout
-if found at `../../crush/api/pay-skills`, or pass an explicit path:
+Build ingests from multiple public catalogs:
+
+| Source | What it pulls |
+|--------|----------------|
+| [pay-skills](https://github.com/solana-foundation/pay-skills) | Committed OpenAPI specs (local checkout) |
+| [x402scan](https://www.x402scan.com) | Server sitemap → resource URLs → per-origin `openapi.json` |
+| [mppscan](https://www.mppscan.com) + [mpp.dev](https://mpp.dev/api/services) | MPP service catalog + mppscan server pages |
 
 ```bash
 npx capindex build --pay-skills /path/to/pay-skills
+npx capindex build --skip-pay-skills          # scans + mpp catalog only
+npx capindex build --no-x402scan --no-mppscan # pay-skills only
 ```
 
 ## CLI
@@ -86,7 +93,12 @@ Rebuild the index. Intent IDs use `domain.snake_case` — provider-agnostic.
 | Source | Flag | Notes |
 |--------|------|-------|
 | pay-skills | `--pay-skills <dir>` | Reads `providers/**/PAY.md` + `openapi.json` |
+| x402scan | on by default | Sitemap → server pages → `openapi.json` per origin |
+| mppscan | on by default | [mpp.dev/api/services](https://mpp.dev/api/services) catalog + mppscan server pages |
 | OpenAPI | `--openapi <file> --origin <url>` | Single-spec ingest |
+
+Origin migrations (e.g. `api.crushrewards.dev` → `api.syntalic.com`) are applied
+automatically via `src/origin-aliases.ts`.
 
 Payment metadata is extracted from OpenAPI extensions:
 

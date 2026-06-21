@@ -1,7 +1,7 @@
 {
   "index_version": "0.1.0",
   "spec_version": "0.1.0",
-  "built_at": "2026-06-20T18:40:43.261Z",
+  "built_at": "2026-06-21T11:46:03.418Z",
   "capabilities": [
     {
       "id": "analyst.inflation_tracker",
@@ -18,7 +18,7 @@
       ],
       "satisfies": [
         {
-          "origin": "https://api.crushrewards.dev",
+          "origin": "https://api.syntalic.com",
           "method": "GET",
           "path": "/v1/analyst/inflation",
           "confidence": "primary"
@@ -132,7 +132,7 @@
       ],
       "satisfies": [
         {
-          "origin": "https://api.crushrewards.dev",
+          "origin": "https://api.syntalic.com",
           "method": "GET",
           "path": "/v1/marketing/competitive-landscape",
           "confidence": "primary"
@@ -158,7 +158,7 @@
       ],
       "satisfies": [
         {
-          "origin": "https://api.crushrewards.dev",
+          "origin": "https://api.syntalic.com",
           "method": "GET",
           "path": "/v1/shopper/best-price",
           "confidence": "primary"
@@ -180,7 +180,7 @@
       ],
       "satisfies": [
         {
-          "origin": "https://api.crushrewards.dev",
+          "origin": "https://api.syntalic.com",
           "method": "GET",
           "path": "/v1/shopper/deal-finder",
           "confidence": "primary"
@@ -202,7 +202,7 @@
       ],
       "satisfies": [
         {
-          "origin": "https://api.crushrewards.dev",
+          "origin": "https://api.syntalic.com",
           "method": "GET",
           "path": "/v1/shopper/price-drop-alert",
           "confidence": "primary"
@@ -224,7 +224,7 @@
       ],
       "satisfies": [
         {
-          "origin": "https://api.crushrewards.dev",
+          "origin": "https://api.syntalic.com",
           "method": "GET",
           "path": "/v1/shopper/price-history",
           "confidence": "primary"

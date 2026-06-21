@@ -9,7 +9,7 @@ related:
   - analyst.price_dispersion
   - shop.track_price_history
 satisfies:
-  - origin: https://api.crushrewards.dev
+  - origin: https://api.syntalic.com
     method: GET
     path: /v1/analyst/inflation
     confidence: primary
