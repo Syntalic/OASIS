@@ -11,6 +11,18 @@ function parseFrontmatter(content: string): Record<string, unknown> {
   return (parseYaml(match[1]) as Record<string, unknown>) ?? {};
 }
 
+function parseSpendPatterns(content: string): string[] {
+  const body = content.replace(/^---[\s\S]*?---\r?\n?/, "");
+  const match = body.match(/## Spend-aware usage\r?\n([\s\S]*?)(?:\r?\n## |\r?\n---|$)/i);
+  if (!match) return [];
+  const patterns: string[] = [];
+  for (const line of match[1].split("\n")) {
+    const bullet = line.replace(/^[\s-*•]+/, "").trim();
+    if (bullet.length >= 12) patterns.push(bullet);
+  }
+  return patterns;
+}
+
 async function findPayMdFiles(root: string): Promise<string[]> {
   const results: string[] = [];
 
@@ -34,6 +46,7 @@ function providerFromPayMd(
   payMdPath: string,
   providersRoot: string,
   frontmatter: Record<string, unknown>,
+  content: string,
 ): PaySkillsProvider | null {
   const relDir = path.dirname(path.relative(providersRoot, payMdPath));
   const fqn = relDir.split(path.sep).join("/");
@@ -57,6 +70,7 @@ function providerFromPayMd(
     service_url: canonicalOrigin(service_url.replace(/\/$/, "")),
     openapi_path: String(openapi.path),
     capabilities: frontmatter.capabilities as string[] | undefined,
+    spend_patterns: parseSpendPatterns(content),
   };
 }
 
@@ -72,7 +86,7 @@ export async function ingestPaySkills(
   for (const payMdPath of payMdFiles) {
     const raw = await readFile(payMdPath, "utf8");
     const frontmatter = parseFrontmatter(raw);
-    const provider = providerFromPayMd(payMdPath, providersRoot, frontmatter);
+    const provider = providerFromPayMd(payMdPath, providersRoot, frontmatter, raw);
     if (!provider) continue;
 
     const openapiFull = path.join(path.dirname(payMdPath), provider.openapi_path);

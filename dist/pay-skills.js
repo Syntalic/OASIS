@@ -9,6 +9,19 @@ function parseFrontmatter(content) {
         return {};
     return parseYaml(match[1]) ?? {};
 }
+function parseSpendPatterns(content) {
+    const body = content.replace(/^---[\s\S]*?---\r?\n?/, "");
+    const match = body.match(/## Spend-aware usage\r?\n([\s\S]*?)(?:\r?\n## |\r?\n---|$)/i);
+    if (!match)
+        return [];
+    const patterns = [];
+    for (const line of match[1].split("\n")) {
+        const bullet = line.replace(/^[\s-*•]+/, "").trim();
+        if (bullet.length >= 12)
+            patterns.push(bullet);
+    }
+    return patterns;
+}
 async function findPayMdFiles(root) {
     const results = [];
     async function walk(dir) {
@@ -26,7 +39,7 @@ async function findPayMdFiles(root) {
     await walk(root);
     return results;
 }
-function providerFromPayMd(payMdPath, providersRoot, frontmatter) {
+function providerFromPayMd(payMdPath, providersRoot, frontmatter, content) {
     const relDir = path.dirname(path.relative(providersRoot, payMdPath));
     const fqn = relDir.split(path.sep).join("/");
     const name = String(frontmatter.name ?? path.basename(relDir));
@@ -48,6 +61,7 @@ function providerFromPayMd(payMdPath, providersRoot, frontmatter) {
         service_url: canonicalOrigin(service_url.replace(/\/$/, "")),
         openapi_path: String(openapi.path),
         capabilities: frontmatter.capabilities,
+        spend_patterns: parseSpendPatterns(content),
     };
 }
 export async function ingestPaySkills(paySkillsDir, builtAt) {
@@ -58,7 +72,7 @@ export async function ingestPaySkills(paySkillsDir, builtAt) {
     for (const payMdPath of payMdFiles) {
         const raw = await readFile(payMdPath, "utf8");
         const frontmatter = parseFrontmatter(raw);
-        const provider = providerFromPayMd(payMdPath, providersRoot, frontmatter);
+        const provider = providerFromPayMd(payMdPath, providersRoot, frontmatter, raw);
         if (!provider)
             continue;
         const openapiFull = path.join(path.dirname(payMdPath), provider.openapi_path);

@@ -1,7 +1,7 @@
 import type { EndpointRecord, HttpMethod, PaymentInfo } from "../types.js";
 import { endpointId } from "../id.js";
 import { canonicalOrigin, canonicalResourceUrl } from "../origin-aliases.js";
-import { parseOpenApi } from "../openapi-parser.js";
+import { fetchOpenApiForOrigin, isStubEndpoint } from "../openapi-fetch.js";
 
 const RESOURCE_PATTERNS = [
   /https:\/\/[a-zA-Z0-9._-]+\.[a-z]{2,}\/v\d+\/[a-zA-Z0-9_./-]+/g,
@@ -130,19 +130,47 @@ async function mapPool<T, R>(
   return results;
 }
 
-async function tryFetchOpenApi(origin: string, builtAt: string): Promise<EndpointRecord[]> {
-  const url = `${origin.replace(/\/$/, "")}/openapi.json`;
-  try {
-    const res = await fetch(url, {
-      headers: { Accept: "application/json" },
-      signal: AbortSignal.timeout(15_000),
+function mergeEndpointRecords(
+  merged: Map<string, EndpointRecord>,
+  ep: EndpointRecord,
+  sourceName: string,
+): void {
+  const key = ep.id;
+  const existing = merged.get(key);
+  if (!existing) {
+    merged.set(key, {
+      ...ep,
+      provider_fqn: ep.provider_fqn ?? `${sourceName}/${ep.origin.replace(/^https?:\/\//, "")}`,
+      search_text: `${ep.search_text} ${sourceName}`.trim(),
     });
-    if (!res.ok) return [];
-    const doc = (await res.json()) as Record<string, unknown>;
-    return parseOpenApi(doc, { origin, builtAt });
-  } catch {
-    return [];
+    return;
   }
+  const prefer =
+    isStubEndpoint(existing) && !isStubEndpoint(ep)
+      ? ep
+      : !isStubEndpoint(existing) && isStubEndpoint(ep)
+        ? existing
+        : ep.summary.length > existing.summary.length
+          ? ep
+          : existing;
+  const other = prefer === ep ? existing : ep;
+  merged.set(key, {
+    ...other,
+    ...prefer,
+    description: prefer.description ?? other.description,
+    inputs: prefer.inputs?.length ? prefer.inputs : other.inputs,
+    operation_id: prefer.operation_id ?? other.operation_id,
+    tags: prefer.tags?.length ? prefer.tags : other.tags,
+    provider_title: prefer.provider_title ?? other.provider_title,
+    category: prefer.category ?? other.category,
+    payment: {
+      paid: prefer.payment.paid || other.payment.paid,
+      price_usd: prefer.payment.price_usd ?? other.payment.price_usd,
+      rails: prefer.payment.rails.length ? prefer.payment.rails : other.payment.rails,
+    },
+    provider_fqn: existing.provider_fqn ?? ep.provider_fqn,
+    search_text: `${existing.search_text} ${ep.search_text} ${sourceName}`.trim(),
+  });
 }
 
 export async function ingestScanSitemap(
@@ -185,32 +213,32 @@ export async function ingestScanSitemap(
   let enriched: EndpointRecord[] = [];
 
   if (options.fetchOpenApi !== false) {
-    const openapiRecords = await mapPool(origins, 8, (origin) =>
-      tryFetchOpenApi(origin, options.builtAt),
-    );
+    const openapiRecords = await mapPool(origins, 12, async (origin) => {
+      const result = await fetchOpenApiForOrigin(origin, options.builtAt);
+      return result.endpoints;
+    });
     enriched = openapiRecords.flat();
   }
 
   const merged = new Map<string, EndpointRecord>();
   for (const ep of [...stubRecords, ...enriched]) {
-    const key = ep.id;
-    const existing = merged.get(key);
-    if (!existing) {
-      merged.set(key, {
-        ...ep,
-        provider_fqn: ep.provider_fqn ?? `${options.sourceName}/${ep.origin}`,
-        search_text: `${ep.search_text} ${options.sourceName}`.trim(),
-      });
-      continue;
+    mergeEndpointRecords(merged, ep, options.sourceName);
+  }
+
+  if (options.fetchOpenApi !== false) {
+    const stubOrigins = new Set<string>();
+    for (const ep of merged.values()) {
+      if (isStubEndpoint(ep)) stubOrigins.add(ep.origin);
     }
-    merged.set(key, {
-      ...existing,
-      ...ep,
-      summary: ep.summary.length > existing.summary.length ? ep.summary : existing.summary,
-      payment: ep.payment.rails.length ? ep.payment : existing.payment,
-      provider_fqn: existing.provider_fqn ?? ep.provider_fqn,
-      search_text: `${existing.search_text} ${options.sourceName}`.trim(),
-    });
+    if (stubOrigins.size > 0) {
+      const backfill = await mapPool([...stubOrigins], 16, async (origin) => {
+        const result = await fetchOpenApiForOrigin(origin, options.builtAt, 20_000);
+        return result.endpoints;
+      });
+      for (const ep of backfill.flat()) {
+        mergeEndpointRecords(merged, ep, options.sourceName);
+      }
+    }
   }
 
   return {

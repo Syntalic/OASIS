@@ -1,0 +1,22 @@
+id: comms.agent_inbox
+label: Create an AI agent email inbox
+description: Provision a dedicated inbox for an AI agent to send and receive email via micropayment.
+aliases:
+  - ai agent email inbox
+  - agent inbox
+  - create agent inbox
+  - agentmail inbox
+  - programmatic inbox
+related:
+  - comms.send_email
+schema_org:
+  - schema:EmailMessage
+satisfies:
+  - origin: https://mpp.api.agentmail.to
+    method: POST
+    path: /v0/inboxes
+    confidence: primary
+  - origin: https://x402.api.agentmail.to
+    method: POST
+    path: /v0/inboxes
+    confidence: secondary

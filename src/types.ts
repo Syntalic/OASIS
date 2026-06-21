@@ -68,6 +68,27 @@ export interface PaySkillsProvider {
   service_url: string;
   openapi_path: string;
   capabilities?: string[];
+  spend_patterns?: string[];
+}
+
+export interface ProviderRecord {
+  fqn: string;
+  title: string;
+  description?: string;
+  use_case?: string;
+  category?: string;
+  categories?: string[];
+  service_url: string;
+  origins: string[];
+  endpoint_count: number;
+  payment_rails: string[];
+  min_price_usd?: number;
+  guidance_available?: boolean;
+  spend_patterns?: string[];
+  alternatives?: string[];
+  capabilities?: string[];
+  sources: Array<"pay-skills" | "mpp-catalog" | "x402scan" | "mppscan" | "openapi">;
+  search_text: string;
 }
 
 export interface IndexBundle {
@@ -85,9 +106,12 @@ export interface IndexBundle {
     endpoints: number;
     capabilities: number;
     origins: number;
+    capability_links?: number;
+    stub_endpoints?: number;
   };
   endpoints: EndpointRecord[];
   capabilities: CapabilityIntent[];
+  providers?: ProviderRecord[];
 }
 
 export interface SearchHit {

@@ -86,6 +86,12 @@ program
     console.log(`  origins:   ${bundle.stats.origins}`);
     console.log(`  endpoints: ${bundle.stats.endpoints}`);
     console.log(`  intents:   ${bundle.stats.capabilities}`);
+    if (bundle.stats.capability_links != null) {
+      console.log(`  linked:    ${bundle.stats.capability_links} endpoints with capability tags`);
+    }
+    if (bundle.stats.stub_endpoints != null) {
+      console.log(`  stubs:     ${bundle.stats.stub_endpoints} thin endpoint records`);
+    }
     console.log(`  output:    ${opts.output}`);
   });
 

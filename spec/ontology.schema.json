@@ -28,7 +28,15 @@
         "providers": { "type": "integer" },
         "endpoints": { "type": "integer" },
         "capabilities": { "type": "integer" },
-        "origins": { "type": "integer" }
+        "origins": { "type": "integer" },
+        "capability_links": { "type": "integer" },
+        "stub_endpoints": { "type": "integer" }
+      }
+    },
+    "providers": {
+      "type": "array",
+      "items": {
+        "$ref": "https://paid-api-graph.dev/spec/provider-record.schema.json"
       }
     },
     "endpoints": {

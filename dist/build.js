@@ -2,45 +2,57 @@ import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { linkCapabilitiesToEndpoints, loadOntology } from "./ontology.js";
+import { expandOntologyFromKeywords, expandOntologyFromProviders, inferCapabilityLinks, } from "./ontology-expand.js";
+import { isStubEndpoint } from "./openapi-fetch.js";
 import { parseOpenApi } from "./openapi-parser.js";
 import { ingestMppCatalog } from "./ingest/mpp-catalog.js";
 import { ingestScanSitemap } from "./ingest/scan-sitemap.js";
 import { ingestPaySkills } from "./pay-skills.js";
+import { buildProviderRecords, enrichEndpointsWithProviders } from "./providers.js";
 import { validateBundle } from "./validate.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..");
 const SPEC_VERSION = "0.1.0";
 const INDEX_VERSION = "0.1.0";
+function mergeEndpointPair(existing, ep) {
+    const prefer = isStubEndpoint(existing) && !isStubEndpoint(ep)
+        ? ep
+        : !isStubEndpoint(existing) && isStubEndpoint(ep)
+            ? existing
+            : ep;
+    const other = prefer === ep ? existing : ep;
+    const railKey = (r) => r.protocol;
+    const rails = [...existing.payment.rails, ...ep.payment.rails];
+    const railsDeduped = [...new Map(rails.map((r) => [railKey(r), r])).values()];
+    return {
+        ...other,
+        ...prefer,
+        capabilities: [
+            ...new Set([...(existing.capabilities ?? []), ...(ep.capabilities ?? [])]),
+        ],
+        provider_fqn: existing.provider_fqn ?? ep.provider_fqn,
+        provider_title: prefer.provider_title ?? other.provider_title,
+        category: prefer.category ?? other.category,
+        summary: prefer.summary.length >= other.summary.length ? prefer.summary : other.summary,
+        description: prefer.description ?? other.description,
+        inputs: prefer.inputs?.length ? prefer.inputs : other.inputs,
+        operation_id: prefer.operation_id ?? other.operation_id,
+        tags: prefer.tags?.length ? prefer.tags : other.tags,
+        guidance_available: prefer.guidance_available || other.guidance_available,
+        openapi_url: prefer.openapi_url ?? other.openapi_url,
+        payment: {
+            paid: existing.payment.paid || ep.payment.paid,
+            price_usd: prefer.payment.price_usd ?? other.payment.price_usd,
+            rails: railsDeduped.length ? railsDeduped : existing.payment.rails,
+        },
+        search_text: `${existing.search_text} ${ep.search_text}`.trim(),
+    };
+}
 function dedupeEndpoints(endpoints) {
     const map = new Map();
     for (const ep of endpoints) {
         const existing = map.get(ep.id);
-        if (!existing) {
-            map.set(ep.id, ep);
-            continue;
-        }
-        const railKey = (r) => r.protocol;
-        const rails = [...existing.payment.rails, ...ep.payment.rails];
-        const railsDeduped = [
-            ...new Map(rails.map((r) => [railKey(r), r])).values(),
-        ];
-        map.set(ep.id, {
-            ...existing,
-            capabilities: [
-                ...new Set([...(existing.capabilities ?? []), ...(ep.capabilities ?? [])]),
-            ],
-            provider_fqn: existing.provider_fqn ?? ep.provider_fqn,
-            provider_title: existing.provider_title ?? ep.provider_title,
-            category: existing.category ?? ep.category,
-            summary: ep.summary.length > existing.summary.length ? ep.summary : existing.summary,
-            description: existing.description ?? ep.description,
-            payment: {
-                paid: existing.payment.paid || ep.payment.paid,
-                price_usd: existing.payment.price_usd ?? ep.payment.price_usd,
-                rails: railsDeduped.length ? railsDeduped : existing.payment.rails,
-            },
-            search_text: `${existing.search_text} ${ep.search_text}`.trim(),
-        });
+        map.set(ep.id, existing ? mergeEndpointPair(existing, ep) : ep);
     }
     return [...map.values()].sort((a, b) => `${a.origin}${a.path}`.localeCompare(`${b.origin}${b.path}`));
 }
@@ -48,9 +60,10 @@ export async function buildIndex(options = {}) {
     const builtAt = new Date().toISOString();
     const outputDir = options.outputDir ?? path.join(PACKAGE_ROOT, "dist");
     const ontologyDir = options.ontologyDir ?? path.join(PACKAGE_ROOT, "ontology", "intents");
-    const capabilities = await loadOntology(ontologyDir);
+    const curatedCapabilities = await loadOntology(ontologyDir);
     const sources = [];
     let endpoints = [];
+    let paySkillsProviders = [];
     const useScans = options.x402scan !== false || options.mppscan !== false;
     const paySkillsDir = options.skipPaySkills || options.openapiFile
         ? options.paySkillsDir
@@ -59,6 +72,7 @@ export async function buildIndex(options = {}) {
         try {
             await access(paySkillsDir);
             const ingested = await ingestPaySkills(paySkillsDir, builtAt);
+            paySkillsProviders = ingested.providers;
             endpoints.push(...ingested.endpoints);
             sources.push({
                 name: "pay-skills",
@@ -92,6 +106,7 @@ export async function buildIndex(options = {}) {
                 sourceName: "x402scan",
                 builtAt,
                 maxServers: options.maxScanServers,
+                fetchOpenApi: true,
             });
             endpoints.push(...x402.endpoints);
             sources.push({
@@ -143,27 +158,36 @@ export async function buildIndex(options = {}) {
         });
     }
     endpoints = dedupeEndpoints(endpoints);
+    const providers = buildProviderRecords(endpoints, paySkillsProviders);
+    enrichEndpointsWithProviders(endpoints, providers);
+    let capabilities = expandOntologyFromProviders(curatedCapabilities, paySkillsProviders, endpoints);
+    capabilities = expandOntologyFromKeywords(capabilities, endpoints);
     const endpointIndex = new Map();
     for (const ep of endpoints) {
         endpointIndex.set(`${ep.origin}|${ep.method}|${ep.path}`, ep);
     }
     linkCapabilitiesToEndpoints(capabilities, endpointIndex);
+    const capabilityLinks = inferCapabilityLinks(capabilities, endpointIndex);
     endpoints = [...endpointIndex.values()].sort((a, b) => `${a.origin}${a.path}`.localeCompare(`${b.origin}${b.path}`));
     const origins = new Set(endpoints.map((e) => e.origin));
-    const providers = new Set(endpoints.map((e) => e.provider_fqn).filter(Boolean));
+    const stubEndpoints = endpoints.filter(isStubEndpoint).length;
+    const linkedEndpoints = endpoints.filter((e) => e.capabilities?.length).length;
     const bundle = {
         index_version: INDEX_VERSION,
         spec_version: SPEC_VERSION,
         built_at: builtAt,
         sources,
         stats: {
-            providers: providers.size,
+            providers: providers.length,
             endpoints: endpoints.length,
             capabilities: capabilities.length,
             origins: origins.size,
+            capability_links: linkedEndpoints,
+            stub_endpoints: stubEndpoints,
         },
         endpoints,
         capabilities,
+        providers,
     };
     const issues = await validateBundle(bundle);
     if (issues.length > 0) {
@@ -185,6 +209,13 @@ export async function buildIndex(options = {}) {
         spec_version: bundle.spec_version,
         built_at: bundle.built_at,
         capabilities: bundle.capabilities,
+    }, null, 2));
+    await writeFile(path.join(outputDir, "providers.json"), JSON.stringify({
+        index_version: bundle.index_version,
+        spec_version: bundle.spec_version,
+        built_at: bundle.built_at,
+        stats: { providers: providers.length },
+        providers: bundle.providers,
     }, null, 2));
     return bundle;
 }

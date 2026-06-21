@@ -64,6 +64,12 @@ program
     console.log(`  origins:   ${bundle.stats.origins}`);
     console.log(`  endpoints: ${bundle.stats.endpoints}`);
     console.log(`  intents:   ${bundle.stats.capabilities}`);
+    if (bundle.stats.capability_links != null) {
+        console.log(`  linked:    ${bundle.stats.capability_links} endpoints with capability tags`);
+    }
+    if (bundle.stats.stub_endpoints != null) {
+        console.log(`  stubs:     ${bundle.stats.stub_endpoints} thin endpoint records`);
+    }
     console.log(`  output:    ${opts.output}`);
 });
 program
@@ -188,8 +194,8 @@ program
             !e.provider_fqn.startsWith("mppscan/") &&
             !e.provider_fqn.startsWith("mpp-catalog/")).length;
         console.log(`Coverage: ${cov} unified endpoints vs ${ps} pay-skills-only`);
-        console.log(`Full index endpoint@3: ${full.endpoint_hit_at_3}/${full.results.filter((r) => r.endpoint_rank != null).length}`);
-        console.log(`pay-skills-only endpoint@3: ${paySkills.endpoint_hit_at_3}/${paySkills.results.filter((r) => r.endpoint_rank != null).length}`);
+        console.log(`Full index workflow@3: ${full.workflow_hit_at_3}/${full.endpoint_queries}`);
+        console.log(`pay-skills-only workflow@3: ${paySkills.workflow_hit_at_3}/${paySkills.endpoint_queries}`);
     }
 });
 program

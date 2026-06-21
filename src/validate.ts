@@ -22,18 +22,22 @@ export async function loadSchemas(): Promise<{
   const ajv = new Ajv({ allErrors: true, strict: false, validateSchema: false });
   addFormats(ajv);
 
-  const [endpointSchema, capabilitySchema, indexSchema] = await Promise.all([
-    readFile(path.join(specDir, "endpoint-record.schema.json"), "utf8"),
-    readFile(path.join(specDir, "capability.schema.json"), "utf8"),
-    readFile(path.join(specDir, "ontology.schema.json"), "utf8"),
-  ]);
+  const [endpointSchema, capabilitySchema, providerSchema, indexSchema] =
+    await Promise.all([
+      readFile(path.join(specDir, "endpoint-record.schema.json"), "utf8"),
+      readFile(path.join(specDir, "capability.schema.json"), "utf8"),
+      readFile(path.join(specDir, "provider-record.schema.json"), "utf8"),
+      readFile(path.join(specDir, "ontology.schema.json"), "utf8"),
+    ]);
 
   const endpointParsed = JSON.parse(endpointSchema);
   const capabilityParsed = JSON.parse(capabilitySchema);
+  const providerParsed = JSON.parse(providerSchema);
   const indexParsed = JSON.parse(indexSchema);
 
   ajv.addSchema(endpointParsed);
   ajv.addSchema(capabilityParsed);
+  ajv.addSchema(providerParsed);
   const validateEndpoint = ajv.compile(endpointParsed);
   const validateCapability = ajv.compile(capabilityParsed);
   const validateIndex = ajv.compile(indexParsed);

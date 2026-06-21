@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://paid-api-graph.dev/spec/provider-record.schema.json",
+  "title": "ProviderRecord",
+  "type": "object",
+  "required": ["fqn", "title", "service_url", "origins", "endpoint_count", "payment_rails", "sources", "search_text"],
+  "additionalProperties": false,
+  "properties": {
+    "fqn": { "type": "string" },
+    "title": { "type": "string" },
+    "description": { "type": "string" },
+    "use_case": { "type": "string" },
+    "category": { "type": "string" },
+    "categories": { "type": "array", "items": { "type": "string" } },
+    "service_url": { "type": "string", "format": "uri" },
+    "origins": { "type": "array", "items": { "type": "string", "format": "uri" } },
+    "endpoint_count": { "type": "integer", "minimum": 0 },
+    "payment_rails": { "type": "array", "items": { "type": "string" } },
+    "min_price_usd": { "type": "number", "minimum": 0 },
+    "guidance_available": { "type": "boolean" },
+    "spend_patterns": { "type": "array", "items": { "type": "string" } },
+    "alternatives": { "type": "array", "items": { "type": "string" } },
+    "capabilities": { "type": "array", "items": { "type": "string" } },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["pay-skills", "mpp-catalog", "x402scan", "mppscan", "openapi"]
+      }
+    },
+    "search_text": { "type": "string" }
+  }
+}

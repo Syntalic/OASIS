@@ -131,6 +131,7 @@
   {
     "id": "mpp-agentmail-1",
     "query": "ai agent email inbox",
+    "expect_intent": "comms.agent_inbox",
     "expect_endpoint": {
       "origin": "https://mpp.api.agentmail.to",
       "method": "POST",

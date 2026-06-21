@@ -71,11 +71,32 @@ function expectedEndpointId(expect: EvalQuery["expect_endpoint"]): string | null
 
 function searchProvidersOnly(
   query: string,
-  endpoints: EndpointRecord[],
+  bundle: IndexBundle,
   limit: number,
 ): SearchHit[] {
+  if (bundle.providers?.length) {
+    const proxyEndpoints: EndpointRecord[] = bundle.providers.map((p) => ({
+      id: p.fqn,
+      origin: p.service_url,
+      method: "GET",
+      path: "/",
+      summary: p.title,
+      description: p.description,
+      provider_fqn: p.fqn,
+      provider_title: p.title,
+      category: p.category,
+      payment: { paid: true, rails: p.payment_rails.map((r) => ({ protocol: r as "x402" | "mpp" })) },
+      search_text: p.search_text,
+      built_at: bundle.built_at,
+    }));
+    return searchIndex(query, proxyEndpoints, [], limit).map((h) => ({
+      ...h,
+      kind: "endpoint" as const,
+    }));
+  }
+
   const byProvider = new Map<string, EndpointRecord>();
-  for (const ep of endpoints) {
+  for (const ep of bundle.endpoints) {
     const key = ep.provider_fqn ?? ep.origin;
     if (!byProvider.has(key)) byProvider.set(key, ep);
   }
@@ -120,7 +141,7 @@ function runSearch(
     case "endpoints-only":
       return searchIndex(query, endpoints, [], limit);
     case "providers-only":
-      return searchProvidersOnly(query, endpoints, limit);
+      return searchProvidersOnly(query, bundle, limit);
     case "pay-skills-only":
       return searchIndex(query, endpoints, [], limit);
     default:
