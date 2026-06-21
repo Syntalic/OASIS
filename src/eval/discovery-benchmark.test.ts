@@ -82,7 +82,7 @@ describe("discovery benchmark", () => {
       `intent@3 ${full.intent_hit_at_3}/${intentTotal}`,
     );
     assert.ok(
-      full.workflow_hit_at_3 >= Math.floor(epTotal * 0.65),
+      full.workflow_hit_at_3 >= Math.floor(epTotal * 0.9),
       `workflow@3 ${full.workflow_hit_at_3}/${epTotal}`,
     );
     assert.ok(

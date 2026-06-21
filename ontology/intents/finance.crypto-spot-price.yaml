@@ -6,6 +6,9 @@ aliases:
   - token price
   - coin price
   - bitcoin price
+  - eth price
+  - ethereum price
+  - current eth price
 related:
   - finance.crypto_market_data
 satisfies:

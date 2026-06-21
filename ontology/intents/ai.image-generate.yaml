@@ -1,0 +1,14 @@
+id: ai.image_generate
+label: Generate an image from a text prompt
+description: Text-to-image generation via AI models with per-image micropayment.
+aliases:
+  - generate image
+  - text to image
+  - image from prompt
+  - ai image generation
+  - fast sdxl
+satisfies:
+  - origin: https://fal.x402.paysponge.com
+    method: POST
+    path: /fal-ai/fast-sdxl
+    confidence: primary

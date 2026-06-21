@@ -93,7 +93,7 @@ function workflowRank(hits, expectedIntent, expectedEndpointId, capabilities, en
         const hit = hits[i];
         if (hit.endpoint_id === expectedEndpointId)
             return i + 1;
-        if (hit.capability_id && hit.capability_id === expectedIntent) {
+        if (hit.capability_id) {
             const intent = capabilities.find((c) => c.id === hit.capability_id);
             if (intent) {
                 const resolved = resolveIntentToEndpointIds(intent, endpoints);

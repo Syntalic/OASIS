@@ -1,0 +1,14 @@
+id: data.company_enrich
+label: Enrich company data from a domain
+description: Look up company firmographics, industry, and metadata from a domain name.
+aliases:
+  - company enrichment
+  - enrich company
+  - company from domain
+  - enrich a company
+  - domain lookup company
+satisfies:
+  - origin: https://abstract-company-enrichment.mpp.paywithlocus.com
+    method: POST
+    path: /abstract-company-enrichment/lookup
+    confidence: primary

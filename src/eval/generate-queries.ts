@@ -387,9 +387,9 @@ const HAND_CURATED: EvalQuery[] = [
     query: "find instagram influencers in fitness niche",
     expect_intent: "social.influencer_search",
     expect_endpoint: {
-      origin: "https://api.socialintel.ai",
+      origin: "https://api.socialintel.dev",
       method: "GET",
-      path: "/v1/influencers/search",
+      path: "/v1/search",
     },
   },
   {
@@ -409,7 +409,7 @@ const HAND_CURATED: EvalQuery[] = [
     expect_endpoint: {
       origin: "https://stableupload.dev",
       method: "POST",
-      path: "/api/upload",
+      path: "/api/site",
     },
   },
 ];

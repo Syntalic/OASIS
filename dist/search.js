@@ -1,9 +1,14 @@
+const GENERIC_SUMMARY = /^(authenticate|prove action|delete a memory|get mcp|api info|free health|purchase |buy )/i;
+const STOPWORDS = new Set([
+    "the", "and", "for", "with", "from", "that", "this", "your", "need", "want",
+    "paid", "api", "via", "micropayment", "agent", "without", "keys",
+]);
 function tokenize(text) {
     return text
         .toLowerCase()
         .replace(/[^a-z0-9._\s-]/g, " ")
         .split(/\s+/)
-        .filter((t) => t.length > 1);
+        .filter((t) => t.length > 1 && !STOPWORDS.has(t));
 }
 function scoreTokens(queryTokens, corpus) {
     if (queryTokens.length === 0)
@@ -24,34 +29,64 @@ function scoreTokens(queryTokens, corpus) {
     }
     return hits / queryTokens.length;
 }
+function phraseBoost(query, phrases) {
+    const q = query.toLowerCase().replace(/[^a-z0-9._\s-]/g, " ");
+    let boost = 0;
+    for (const phrase of phrases) {
+        const p = phrase.toLowerCase().trim();
+        if (p.length < 4)
+            continue;
+        if (q.includes(p)) {
+            boost += Math.min(1.5, 0.4 + p.split(/\s+/).length * 0.15);
+        }
+    }
+    return boost;
+}
+function intentIdBoost(query, intentId) {
+    const q = query.toLowerCase();
+    const parts = intentId.replace(/[._-]/g, " ").split(/\s+/).filter((p) => p.length > 2);
+    if (parts.length === 0)
+        return 0;
+    const matched = parts.filter((p) => q.includes(p)).length;
+    return matched / parts.length * 0.4;
+}
 export function searchIndex(query, endpoints, capabilities, limit = 10) {
     const queryTokens = tokenize(query);
     const hits = [];
     for (const cap of capabilities) {
-        const corpus = [
-            cap.id,
+        const phrases = [
             cap.label,
             cap.description,
             ...(cap.aliases ?? []),
-            ...(cap.schema_org ?? []),
-        ]
-            .filter(Boolean)
-            .join(" ");
-        const score = scoreTokens(queryTokens, corpus);
+        ].filter(Boolean);
+        const corpus = [cap.id, ...phrases, ...(cap.schema_org ?? [])].join(" ");
+        const tokenScore = scoreTokens(queryTokens, corpus);
+        const boost = phraseBoost(query, phrases) +
+            intentIdBoost(query, cap.id);
+        const score = tokenScore + boost;
         if (score <= 0)
             continue;
         hits.push({
             kind: "capability",
-            score: score * 1.2,
+            score: score * 1.6,
             capability_id: cap.id,
             label: cap.label,
             summary: cap.description ?? cap.label,
         });
     }
     for (const ep of endpoints) {
-        const score = scoreTokens(queryTokens, ep.search_text);
+        let score = scoreTokens(queryTokens, ep.search_text);
         if (score <= 0)
             continue;
+        if (GENERIC_SUMMARY.test(ep.summary))
+            score *= 0.35;
+        if (/gas|fmv|trademark|proxy pattern/i.test(ep.summary) && /price|call|enrich|screenshot|homes/i.test(query)) {
+            score *= 0.15;
+        }
+        if (ep.guidance_available)
+            score *= 1.15;
+        if (ep.payment.price_usd != null)
+            score *= 1.05;
         hits.push({
             kind: "endpoint",
             score,

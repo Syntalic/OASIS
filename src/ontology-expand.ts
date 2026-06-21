@@ -1,3 +1,4 @@
+import { pickPrimaryEndpoints } from "./endpoint-pick.js";
 import type { CapabilityIntent, EndpointRecord, PaySkillsProvider } from "./types.js";
 
 function slugify(value: string): string {
@@ -20,27 +21,6 @@ function aliasesFromText(...parts: Array<string | undefined>): string[] {
     phrases.add(`${words[i]} ${words[i + 1]}`);
   }
   return [...phrases].slice(0, 12);
-}
-
-function endpointRichness(ep: EndpointRecord): number {
-  let score = 0;
-  if (ep.description) score += 3;
-  if (ep.inputs?.length) score += ep.inputs.length;
-  if (ep.payment.price_usd != null) score += 2;
-  if (ep.payment.paid) score += 1;
-  score -= ep.path.split("/").filter(Boolean).length * 0.2;
-  return score;
-}
-
-function pickPrimaryEndpoints(
-  endpoints: EndpointRecord[],
-  max = 3,
-): EndpointRecord[] {
-  const paid = endpoints.filter((e) => e.payment.paid || e.payment.rails.length);
-  const pool = paid.length ? paid : endpoints;
-  return [...pool]
-    .sort((a, b) => endpointRichness(b) - endpointRichness(a))
-    .slice(0, max);
 }
 
 function intentIdForProvider(provider: PaySkillsProvider): string {
@@ -71,18 +51,28 @@ export function expandOntologyFromProviders(
 
   const generated: CapabilityIntent[] = [];
 
+  const curatedOrigins = new Set(
+    curated.flatMap((c) => c.satisfies.map((s) => s.origin.replace(/\/$/, ""))),
+  );
+
   for (const provider of paySkillsProviders) {
     const id = intentIdForProvider(provider);
     if (existingIds.has(id)) continue;
+    if (curatedOrigins.has(provider.service_url.replace(/\/$/, ""))) continue;
     const eps = byFqn.get(provider.fqn) ?? [];
-    const primary = pickPrimaryEndpoints(eps);
+    const primary = pickPrimaryEndpoints(eps, { provider, max: 3 });
     if (!primary.length) continue;
+
+    const aliases = [
+      ...aliasesFromText(provider.use_case, provider.description),
+      provider.title,
+    ].filter((a, i, arr) => arr.indexOf(a) === i);
 
     generated.push({
       id,
       label: provider.title,
       description: provider.description ?? provider.use_case,
-      aliases: aliasesFromText(provider.title, provider.use_case, provider.description),
+      aliases,
       satisfies: primary.map((ep, i) => ({
         origin: ep.origin,
         method: ep.method,
@@ -105,15 +95,16 @@ export function expandOntologyFromProviders(
   for (const [serviceId, eps] of mppByService) {
     const id = intentIdForMpp(serviceId, eps[0]?.category);
     if (existingIds.has(id)) continue;
-    const primary = pickPrimaryEndpoints(eps);
+    const primary = pickPrimaryEndpoints(eps, { serviceId, max: 3 });
     if (!primary.length) continue;
     const title = eps[0]?.provider_title ?? serviceId;
+    const desc = eps[0]?.description ?? `${title} via MPP micropayment`;
 
     generated.push({
       id,
       label: title,
-      description: eps[0]?.description ?? `${title} via MPP micropayment`,
-      aliases: aliasesFromText(title, serviceId, eps[0]?.category, eps[0]?.description),
+      description: desc,
+      aliases: aliasesFromText(desc, title, serviceId.replace(/-/g, " "), eps[0]?.category),
       satisfies: primary.map((ep, i) => ({
         origin: ep.origin,
         method: ep.method,
@@ -138,8 +129,9 @@ const KEYWORD_INTENTS: Array<{
     label: "Create an AI agent email inbox",
     aliases: ["agent inbox", "ai agent email", "agentmail inbox", "create inbox"],
     match: (ep) =>
-      /inbox/i.test(ep.path) &&
-      (ep.origin.includes("agentmail") || /inbox/i.test(ep.summary)),
+      /\/v0\/inboxes$/i.test(ep.path) &&
+      ep.method === "POST" &&
+      ep.origin.includes("agentmail"),
   },
   {
     id: "comms.send_fax",
@@ -152,14 +144,17 @@ const KEYWORD_INTENTS: Array<{
     label: "Scrape or fetch a web page",
     aliases: ["scrape", "web scrape", "fetch page", "crawl url"],
     match: (ep) =>
-      /scrape|crawl|fetch.*page/i.test(`${ep.summary} ${ep.path}`),
+      /scrape/i.test(`${ep.summary} ${ep.path}`) &&
+      !/proxy|storage|interest/i.test(`${ep.summary} ${ep.path}`),
   },
   {
     id: "data.company_enrich",
     label: "Enrich company data from domain",
     aliases: ["company enrichment", "enrich company", "domain lookup company"],
     match: (ep) =>
-      /enrich|company.*lookup/i.test(`${ep.summary} ${ep.path} ${ep.description ?? ""}`),
+      /company.*enrich|enrich.*company|company-enrichment/i.test(
+        `${ep.summary} ${ep.path} ${ep.provider_fqn ?? ""} ${ep.origin}`,
+      ),
   },
   {
     id: "ai.image_generate",
@@ -174,8 +169,8 @@ const KEYWORD_INTENTS: Array<{
     label: "LLM text completion or chat",
     aliases: ["llm", "chat completion", "gpt", "claude", "perplexity"],
     match: (ep) =>
-      /chat|completion|llm|perplexity|anthropic|openai/i.test(
-        `${ep.summary} ${ep.path} ${ep.provider_title ?? ""}`,
+      /perplexity|sonar|anthropic|openai|chat.?completion/i.test(
+        `${ep.summary} ${ep.path} ${ep.provider_fqn ?? ""} ${ep.origin}`,
       ),
   },
   {
@@ -200,7 +195,9 @@ const KEYWORD_INTENTS: Array<{
     id: "finance.token_balance",
     label: "Look up wallet token balances",
     aliases: ["token balance", "wallet balance", "holdings"],
-    match: (ep) => /balance|holdings/i.test(`${ep.summary} ${ep.path}`),
+    match: (ep) =>
+      /token.?balance|wallet.?balance|holdings/i.test(`${ep.summary} ${ep.path}`) &&
+      !/nft|ownerof|proxy/i.test(`${ep.summary} ${ep.path}`),
   },
   {
     id: "social.influencer_search",
@@ -245,7 +242,7 @@ export function expandOntologyFromKeywords(
   for (const template of KEYWORD_INTENTS) {
     if (existingIds.has(template.id)) continue;
     const matches = endpoints.filter(template.match);
-    const primary = pickPrimaryEndpoints(matches);
+    const primary = pickPrimaryEndpoints(matches, { max: 3 });
     if (!primary.length) continue;
 
     generated.push({

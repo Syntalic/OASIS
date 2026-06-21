@@ -1,8 +1,28 @@
 {
   "index_version": "0.1.0",
   "spec_version": "0.1.0",
-  "built_at": "2026-06-21T12:02:30.633Z",
+  "built_at": "2026-06-21T14:33:09.945Z",
   "capabilities": [
+    {
+      "id": "ai.image_generate",
+      "label": "Generate an image from a text prompt",
+      "description": "Text-to-image generation via AI models with per-image micropayment.",
+      "aliases": [
+        "generate image",
+        "text to image",
+        "image from prompt",
+        "ai image generation",
+        "fast sdxl"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://fal.x402.paysponge.com",
+          "method": "POST",
+          "path": "/fal-ai/fast-sdxl",
+          "confidence": "primary"
+        }
+      ]
+    },
     {
       "id": "analyst.inflation_tracker",
       "label": "Track category price inflation trends",
@@ -10,7 +30,9 @@
       "aliases": [
         "inflation",
         "price inflation",
-        "category trends"
+        "category trends",
+        "grocery prices increased",
+        "how much have prices increased"
       ],
       "related": [
         "analyst.price_dispersion",
@@ -89,7 +111,9 @@
         "phone call",
         "voice call",
         "outbound call",
-        "ai call"
+        "ai call",
+        "confirm appointment",
+        "call a customer"
       ],
       "related": [
         "comms.send_email"
@@ -111,6 +135,9 @@
         "json-rpc",
         "node rpc",
         "blockchain node",
+        "solana json-rpc",
+        "ethereum mainnet json rpc",
+        "eth mainnet rpc",
         "solana rpc",
         "ethereum rpc"
       ],
@@ -122,8 +149,34 @@
           "origin": "https://x402.quicknode.com",
           "method": "POST",
           "path": "/solana-mainnet/",
-          "confidence": "primary",
+          "confidence": "primary"
+        },
+        {
+          "origin": "https://x402.quicknode.com",
+          "method": "POST",
+          "path": "/ethereum-mainnet/",
+          "confidence": "secondary",
           "notes": "QuickNode x402 JSON-RPC proxy (140+ network paths available)"
+        }
+      ]
+    },
+    {
+      "id": "data.company_enrich",
+      "label": "Enrich company data from a domain",
+      "description": "Look up company firmographics, industry, and metadata from a domain name.",
+      "aliases": [
+        "company enrichment",
+        "enrich company",
+        "company from domain",
+        "enrich a company",
+        "domain lookup company"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://abstract-company-enrichment.mpp.paywithlocus.com",
+          "method": "POST",
+          "path": "/abstract-company-enrichment/lookup",
+          "confidence": "primary"
         }
       ]
     },
@@ -135,7 +188,10 @@
         "crypto price",
         "token price",
         "coin price",
-        "bitcoin price"
+        "bitcoin price",
+        "eth price",
+        "ethereum price",
+        "current eth price"
       ],
       "related": [
         "finance.crypto_market_data"
@@ -172,6 +228,26 @@
       ]
     },
     {
+      "id": "realestate.property_lookup",
+      "label": "Search homes and rentals for sale",
+      "description": "Find property listings, rental comps, and home value estimates in the US.",
+      "aliases": [
+        "homes for sale",
+        "property listings",
+        "rentcast",
+        "real estate search",
+        "find homes"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://rentcast.x402.paysponge.com",
+          "method": "GET",
+          "path": "/listings/sale",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
       "id": "shop.compare_price",
       "label": "Compare retail price across stores",
       "description": "Find the lowest current price for a product across multiple retailers.",
@@ -182,7 +258,12 @@
         "compare prices",
         "cheapest airpods",
         "airpods pro",
-        "lowest price"
+        "lowest price",
+        "walmart or amazon",
+        "cheaper walmart",
+        "cross retailer price",
+        "where can I buy",
+        "buy cheaper"
       ],
       "schema_org": [
         "schema:SearchAction"
@@ -207,7 +288,10 @@
       "aliases": [
         "deal finder",
         "discounts",
-        "on sale"
+        "on sale",
+        "kitchen appliances",
+        "electronics deals",
+        "discounted products"
       ],
       "related": [
         "shop.compare_price",
@@ -267,41 +351,72 @@
       ]
     },
     {
-      "id": "messaging.email",
-      "label": "AgentMail",
-      "description": "Create and operate dedicated email inboxes for AI agents. Supports programmatic inbox creation, outbound sending, inbound message retrieval, unique agent addresses, workflow automation, and no manual account setup for email-based agent tasks.",
+      "id": "social.influencer_search",
+      "label": "Find Instagram influencers by niche",
+      "description": "Search Instagram creator profiles by niche, location, follower count, and engagement for marketing campaigns.",
       "aliases": [
-        "agentmail use for giving agents their own email address",
-        "sending outbound email",
-        "receiving replies",
-        "monitoring inboxes",
-        "automating email-based workflows",
-        "collecting verification messages",
-        "routing support mail",
-        "and managing correspondence without manual setup",
-        "create and operate dedicated email inboxes for ai agents",
-        "supports programmatic inbox creation",
-        "outbound sending",
-        "inbound message retrieval"
+        "instagram influencer",
+        "influencer search",
+        "creator search",
+        "fitness influencers",
+        "find influencers"
+      ],
+      "schema_org": [
+        "schema:SearchAction"
       ],
       "satisfies": [
         {
-          "origin": "https://x402.api.agentmail.to",
+          "origin": "https://api.socialintel.dev",
           "method": "GET",
-          "path": "/v0/inboxes/{inbox_id}/messages",
+          "path": "/v1/search",
+          "confidence": "primary"
+        }
+      ]
+    },
+    {
+      "id": "storage.hosting",
+      "label": "Host files and static websites",
+      "description": "Upload files or deploy static websites with permanent CDN URLs via micropayment.",
+      "aliases": [
+        "file upload",
+        "static website",
+        "host website",
+        "static site hosting",
+        "upload files",
+        "host a static website"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://stableupload.dev",
+          "method": "POST",
+          "path": "/api/upload",
           "confidence": "primary"
         },
         {
-          "origin": "https://x402.api.agentmail.to",
-          "method": "GET",
-          "path": "/v0/inboxes/{inbox_id}/threads",
+          "origin": "https://stableupload.dev",
+          "method": "POST",
+          "path": "/api/site",
           "confidence": "secondary"
-        },
+        }
+      ]
+    },
+    {
+      "id": "web.screenshot",
+      "label": "Capture a website screenshot",
+      "description": "Take a full-page or viewport screenshot of any public URL via micropayment.",
+      "aliases": [
+        "screenshot",
+        "website screenshot",
+        "page capture",
+        "take a screenshot",
+        "capture website"
+      ],
+      "satisfies": [
         {
-          "origin": "https://x402.api.agentmail.to",
+          "origin": "https://screenshotone.x402.paysponge.com",
           "method": "GET",
-          "path": "/v0/pods/{pod_id}/threads",
-          "confidence": "secondary"
+          "path": "/take",
+          "confidence": "primary"
         }
       ]
     },
@@ -310,7 +425,7 @@
       "label": "Clustly",
       "description": "Tip any X (Twitter) handle in Solana USDC via x402. Registered Clustly users receive directly to their linked Solana wallet; unregistered handles are escrowed in a Privy-custodied placeholder pocket the recipient can claim later via X OAuth.",
       "aliases": [
-        "clustly use for paying any x handle in usdc without a wallet address",
+        "use for paying any x handle in usdc without a wallet address",
         "tipping content",
         "micropayments",
         "programmatic rewards",
@@ -318,10 +433,11 @@
         "and routing funds to recipients who do not yet have a crypto wallet",
         "tip any x (twitter) handle in solana usdc via x402",
         "registered clustly users receive directly to their linked solana wallet",
-        "clustly paying",
         "paying handle",
         "handle usdc",
-        "usdc without"
+        "usdc without",
+        "without wallet",
+        "Clustly"
       ],
       "satisfies": [
         {
@@ -333,50 +449,11 @@
       ]
     },
     {
-      "id": "shopping.pricing",
-      "label": "Crush Rewards",
-      "description": "Track competitive retail pricing across Amazon, Walmart, Costco, Home Depot, Nordstrom, IKEA, and other US/Canadian retailers. Returns live prices, availability, deal alerts, brand positioning, inflation trends, and price-drop signals.",
-      "aliases": [
-        "crush rewards use for comparing prices across major us and canadian retailers",
-        "monitoring deal alerts",
-        "tracking price drops",
-        "checking product availability",
-        "analyzing brand positioning",
-        "competitive pricing research",
-        "ecommerce intelligence",
-        "and shopping recommendations",
-        "track competitive retail pricing across amazon",
-        "walmart",
-        "costco",
-        "home depot"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/analyst/inflation",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/marketing/promo-intelligence",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/shopper/price-history",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
       "id": "ai_ml.voice",
       "label": "dTelecom",
       "description": "Use wallet-authenticated WebRTC voice, speech-to-text, and text-to-speech APIs for AI agents. Supports realtime bidirectional voice sessions, transcription, speech synthesis, low-latency communication, and pay-per-use voice workflows.",
       "aliases": [
-        "dtelecom use for realtime ai voice conversations",
+        "use for realtime ai voice conversations",
         "webrtc calling",
         "speech-to-text transcription",
         "text-to-speech playback",
@@ -387,7 +464,8 @@
         "and programmable voice workflows",
         "use wallet-authenticated webrtc voice",
         "speech-to-text",
-        "and text-to-speech apis for ai agents"
+        "and text-to-speech apis for ai agents",
+        "dTelecom"
       ],
       "satisfies": [
         {
@@ -411,50 +489,11 @@
       ]
     },
     {
-      "id": "finance.market_data",
-      "label": "StableCrypto",
-      "description": "Access crypto market and on-chain data through CoinGecko, DefiLlama, Alchemy, and Etherscan. Covers prices, DEX pools, DeFi TVL, yields, bridges, treasuries, token balances, transactions, contracts, logs, gas, and Ethereum stats.",
-      "aliases": [
-        "stablecrypto use for crypto prices",
-        "market charts",
-        "defi analytics",
-        "tvl and yield research",
-        "dex pool data",
-        "wallet token balances",
-        "ethereum transfers",
-        "contract metadata",
-        "gas estimates",
-        "bridge volume",
-        "stablecoin supply",
-        "treasury holdings"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://stablecrypto.dev",
-          "method": "POST",
-          "path": "/api/etherscan/logs/getLogs",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://stablecrypto.dev",
-          "method": "POST",
-          "path": "/api/alchemy/transfers/asset-transfers",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://stablecrypto.dev",
-          "method": "POST",
-          "path": "/api/coingecko/markets",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
       "id": "cloud.domains",
       "label": "StableDomains",
       "description": "Register, renew, and manage DNS for domains via stablecoin micropayments. Supports common TLDs including .com, .org, .net, .io, .ai, .dev, .app, and .xyz, plus DNS record creation and updates without traditional registrar billing.",
       "aliases": [
-        "stabledomains use for domain registration",
+        "use for domain registration",
         "renewing existing names",
         "managing dns records",
         "buying agent-owned domains",
@@ -465,25 +504,26 @@
         "register",
         "renew",
         "and manage dns for domains via stablecoin micropayments",
-        "supports common tlds including"
+        "supports common tlds including",
+        "StableDomains"
       ],
       "satisfies": [
         {
           "origin": "https://stabledomains.dev",
           "method": "POST",
-          "path": "/api/register",
+          "path": "/api/domain/renew",
           "confidence": "primary"
         },
         {
           "origin": "https://stabledomains.dev",
           "method": "POST",
-          "path": "/api/domain/renew",
+          "path": "/api/check",
           "confidence": "secondary"
         },
         {
           "origin": "https://stabledomains.dev",
           "method": "POST",
-          "path": "/api/check",
+          "path": "/api/register",
           "confidence": "secondary"
         }
       ]
@@ -493,7 +533,7 @@
       "label": "StableEnrich",
       "description": "Unified enrichment gateway for Apollo, Exa, Firecrawl, Google Maps, Hunter, Minerva, Reddit, Serper, Whitepages, Cloudflare, and more. Covers people and company enrichment, web search, scraping, maps, email verification, and property data.",
       "aliases": [
-        "stableenrich use for contact enrichment",
+        "use for contact enrichment",
         "company lookup",
         "prospect search",
         "web search",
@@ -504,25 +544,26 @@
         "social profile enrichment",
         "reddit research",
         "news and shopping search",
-        "people search"
+        "people search",
+        "StableEnrich"
       ],
       "satisfies": [
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/exa/search",
+          "path": "/api/serper/people-image-search",
           "confidence": "primary"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/people-search",
+          "path": "/api/reddit/search",
           "confidence": "secondary"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/whitepages/person-search",
+          "path": "/api/exa/search",
           "confidence": "secondary"
         }
       ]
@@ -532,7 +573,7 @@
       "label": "StableMerch",
       "description": "Order custom printed merchandise from images or generated artwork via micropayments. Supports standard shirts, heavyweight shirts, mugs, multiple sizes and colors, uploaded image assets, worldwide shipping, and no traditional ecommerce checkout.",
       "aliases": [
-        "stablemerch use for creating and shipping custom shirts or mugs",
+        "use for creating and shipping custom shirts or mugs",
         "turning ai-generated art into physical merchandise",
         "ordering branded swag",
         "fulfillment for user-provided images",
@@ -543,7 +584,8 @@
         "supports standard shirts",
         "heavyweight shirts",
         "mugs",
-        "multiple sizes and colors"
+        "multiple sizes and colors",
+        "StableMerch"
       ],
       "satisfies": [
         {
@@ -567,50 +609,11 @@
       ]
     },
     {
-      "id": "messaging.calls",
-      "label": "StablePhone",
-      "description": "Make AI-powered outbound phone calls, buy dedicated phone numbers, extend number leases, and look up iMessage or FaceTime capability. Supports call IDs, caller ID continuity, global phone workflows, and pay-per-call voice automation.",
-      "aliases": [
-        "stablephone use for ai phone calls",
-        "outbound voice tasks",
-        "call automation",
-        "dedicated caller id numbers",
-        "renewing phone number leases",
-        "checking imessage or facetime availability",
-        "appointment calls",
-        "reminders",
-        "surveys",
-        "support outreach",
-        "and phone-based agent workflows",
-        "make ai-powered outbound phone calls"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://stablephone.dev",
-          "method": "POST",
-          "path": "/api/call",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://stablephone.dev",
-          "method": "POST",
-          "path": "/api/number",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://stablephone.dev",
-          "method": "POST",
-          "path": "/api/lookup",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
       "id": "media.social_data",
       "label": "StableSocial",
       "description": "Retrieve social media data from TikTok, Instagram, Facebook, and Reddit. Covers profiles, posts, comments, followers, following lists, search results, subreddit content, engagement metrics, captions, authors, timestamps, and nested threads.",
       "aliases": [
-        "stablesocial use for social profile lookup",
+        "use for social profile lookup",
         "post retrieval",
         "comment analysis",
         "follower and following lists",
@@ -621,64 +624,26 @@
         "creator intelligence",
         "and content discovery",
         "retrieve social media data from tiktok",
-        "instagram"
+        "instagram",
+        "StableSocial"
       ],
       "satisfies": [
-        {
-          "origin": "https://stablesocial.dev",
-          "method": "POST",
-          "path": "/api/tiktok/post-comments",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://stablesocial.dev",
-          "method": "POST",
-          "path": "/api/tiktok/search",
-          "confidence": "secondary"
-        },
         {
           "origin": "https://stablesocial.dev",
           "method": "POST",
           "path": "/api/facebook/post-comments",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "storage.hosting",
-      "label": "StableUpload",
-      "description": "Upload files for permanent CDN URLs or deploy static websites from zip archives via micropayments. Supports durable artifact hosting, generated download links, static site subdomains, renewals, and simple file or site publishing for agents.",
-      "aliases": [
-        "stableupload use for hosting files",
-        "sharing generated artifacts",
-        "publishing static websites",
-        "uploading zip deployments",
-        "creating permanent cdn download urls",
-        "serving images or documents",
-        "agent-generated deliverables",
-        "simple web hosting",
-        "and renewing site deployments",
-        "supports durable artifact hosting",
-        "generated download links",
-        "static site subdomains"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://stableupload.dev",
-          "method": "POST",
-          "path": "/api/upload",
           "confidence": "primary"
         },
         {
-          "origin": "https://stableupload.dev",
+          "origin": "https://stablesocial.dev",
           "method": "POST",
-          "path": "/api/site",
+          "path": "/api/instagram/comment-replies",
           "confidence": "secondary"
         },
         {
-          "origin": "https://stableupload.dev",
-          "method": "GET",
-          "path": "/api/uploads",
+          "origin": "https://stablesocial.dev",
+          "method": "POST",
+          "path": "/api/instagram/post-comments",
           "confidence": "secondary"
         }
       ]
@@ -688,7 +653,7 @@
       "label": "Nansen API",
       "description": "On-chain analytics API covering smart money flows, token metrics, wallet profiling, Nansen Score, perpetual markets, prediction markets, and token screening across multiple blockchains.",
       "aliases": [
-        "nansen api use for smart money tracking",
+        "use for smart money tracking",
         "wallet profiling and pnl analysis",
         "token holder and flow analytics",
         "on-chain signal discovery",
@@ -699,25 +664,26 @@
         "token metrics",
         "wallet profiling",
         "nansen score",
-        "perpetual markets"
+        "perpetual markets",
+        "Nansen API"
       ],
       "satisfies": [
         {
           "origin": "https://api.nansen.ai",
           "method": "POST",
-          "path": "/api/v1/perp-leaderboard",
+          "path": "/api/v1/smart-money/historical-holdings",
           "confidence": "primary"
         },
         {
           "origin": "https://api.nansen.ai",
           "method": "POST",
-          "path": "/api/v1/perp-screener",
+          "path": "/api/v1/tgm/perp-pnl-leaderboard",
           "confidence": "secondary"
         },
         {
           "origin": "https://api.nansen.ai",
           "method": "POST",
-          "path": "/api/v1/token-screener",
+          "path": "/api/v1/smart-money/netflow",
           "confidence": "secondary"
         }
       ]
@@ -727,7 +693,7 @@
       "label": "2Captcha",
       "description": "Solve CAPTCHAs through 2Captcha's task API, including reCAPTCHA v2/v3, hCaptcha, Cloudflare Turnstile, FunCaptcha, GeeTest, and image challenges, with task creation, result polling, and solve-quality reporting.",
       "aliases": [
-        "2captcha use for automated captcha solving in web agents",
+        "use for automated captcha solving in web agents",
         "scraping and form-submission pipelines",
         "login or signup flows",
         "challenge polling",
@@ -738,7 +704,8 @@
         "cloudflare turnstile",
         "funcaptcha",
         "geetest",
-        "and image challenges"
+        "and image challenges",
+        "2Captcha"
       ],
       "satisfies": [
         {
@@ -756,7 +723,7 @@
         {
           "origin": "https://2captcha.x402.paysponge.com",
           "method": "POST",
-          "path": "/reportCorrect",
+          "path": "/reportIncorrect",
           "confidence": "secondary"
         }
       ]
@@ -766,7 +733,7 @@
       "label": "CoinGecko Onchain DEX API",
       "description": "Query CoinGecko onchain DEX market data through x402 for token prices, token detail lookup, trending pools on a network, and pool/token search.",
       "aliases": [
-        "coingecko onchain dex api use for onchain token pricing",
+        "use for onchain token pricing",
         "token detail enrichment",
         "trending-pool discovery on a network",
         "and search across geckoterminal market data",
@@ -774,67 +741,29 @@
         "token detail lookup",
         "trending pools on a network",
         "and pool/token search",
-        "coingecko onchain",
-        "onchain onchain",
         "onchain token",
-        "token pricing,"
+        "token pricing,",
+        "pricing, token",
+        "token detail",
+        "CoinGecko Onchain DEX API"
       ],
       "satisfies": [
         {
           "origin": "https://pro-api.coingecko.com/api/v3/x402/onchain",
           "method": "GET",
-          "path": "/x402/simple/price",
+          "path": "/x402/onchain/search/pools",
           "confidence": "primary"
+        },
+        {
+          "origin": "https://pro-api.coingecko.com/api/v3/x402/onchain",
+          "method": "GET",
+          "path": "/x402/onchain/networks/{network}/tokens/{address}",
+          "confidence": "secondary"
         },
         {
           "origin": "https://pro-api.coingecko.com/api/v3/x402/onchain",
           "method": "GET",
           "path": "/x402/onchain/simple/networks/{network}/token_price/{addresses}",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://pro-api.coingecko.com/api/v3/x402/onchain",
-          "method": "GET",
-          "path": "/x402/onchain/networks/{network}/trending_pools",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "media.fal",
-      "label": "fal.ai",
-      "description": "Generate images and videos with fal.ai models including Fast SDXL, FLUX Schnell/Dev/Pro/Ultra, Recraft v3, Stable Diffusion 3.5 Large, Stable Video, and MiniMax Video. Supports async request retrieval, status polling, and cancellation.",
-      "aliases": [
-        "ai use for text-to-image",
-        "design graphics",
-        "illustration",
-        "photo-style renders",
-        "premium flux generations",
-        "video generation",
-        "creative asset pipelines",
-        "and async media workflows that need request polling or cancellation",
-        "generate images and videos with fal",
-        "ai models including fast sdxl",
-        "flux schnell/dev/pro/ultra",
-        "recraft v3"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://fal.x402.paysponge.com",
-          "method": "POST",
-          "path": "/fal-ai/fast-sdxl",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://fal.x402.paysponge.com",
-          "method": "POST",
-          "path": "/fal-ai/recraft-v3",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://fal.x402.paysponge.com",
-          "method": "POST",
-          "path": "/fal-ai/stable-diffusion-v35-large",
           "confidence": "secondary"
         }
       ]
@@ -844,7 +773,7 @@
       "label": "Nyne AI",
       "description": "Nyne AI person enrichment and prospect search through PaySponge's x402 wrapper, with known-contact enrichment, async request polling, and natural-language people search that can return contact, company, and profile data.",
       "aliases": [
-        "nyne ai use for b2b contact enrichment from email",
+        "use for b2b contact enrichment from email",
         "phone",
         "name",
         "or linkedin url",
@@ -855,25 +784,26 @@
         "with known-contact enrichment",
         "async request polling",
         "and natural-language people search that can return contact",
-        "company"
+        "company",
+        "Nyne AI"
       ],
       "satisfies": [
         {
           "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
-          "method": "GET",
-          "path": "/person/enrichment",
+          "method": "POST",
+          "path": "/person/search",
           "confidence": "primary"
         },
         {
           "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
-          "method": "POST",
+          "method": "GET",
           "path": "/person/enrichment",
           "confidence": "secondary"
         },
         {
           "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
           "method": "POST",
-          "path": "/person/search",
+          "path": "/person/enrichment",
           "confidence": "secondary"
         }
       ]
@@ -883,7 +813,7 @@
       "label": "Perplexity AI API",
       "description": "Search the web and generate grounded Perplexity Sonar responses with citations, search results, related questions, structured JSON, async jobs, and multimodal inputs including text, images, files, PDFs, and video URLs.",
       "aliases": [
-        "perplexity ai api use for cited web answers",
+        "use for cited web answers",
         "live research",
         "grounded chat",
         "web search snippets",
@@ -894,25 +824,26 @@
         "and agent responses that rely on current sources",
         "search the web and generate grounded perplexity sonar responses with citations",
         "search results",
-        "related questions"
+        "related questions",
+        "Perplexity AI API"
       ],
       "satisfies": [
         {
           "origin": "https://pplx.x402.paysponge.com",
-          "method": "GET",
-          "path": "/v1/async/sonar/{api_request}",
+          "method": "POST",
+          "path": "/search",
           "confidence": "primary"
         },
         {
           "origin": "https://pplx.x402.paysponge.com",
           "method": "POST",
-          "path": "/search",
+          "path": "/v1/agent",
           "confidence": "secondary"
         },
         {
           "origin": "https://pplx.x402.paysponge.com",
-          "method": "POST",
-          "path": "/v1/agent",
+          "method": "GET",
+          "path": "/v1/async/sonar/{api_request}",
           "confidence": "secondary"
         }
       ]
@@ -922,7 +853,7 @@
       "label": "Reducto API",
       "description": "Parse and extract structured data from documents through PaySponge's x402-wrapped Reducto service. Supports OCR, chunking, tables, figures, spreadsheets, agentic enhancement, citations, and both synchronous and asynchronous document workflows.",
       "aliases": [
-        "reducto api use for document ocr",
+        "use for document ocr",
         "pdf and spreadsheet parsing",
         "structured extraction into a custom schema",
         "table and figure analysis",
@@ -933,7 +864,8 @@
         "chunking",
         "tables",
         "figures",
-        "spreadsheets"
+        "spreadsheets",
+        "Reducto API"
       ],
       "satisfies": [
         {
@@ -951,89 +883,11 @@
       ]
     },
     {
-      "id": "data.rentcast",
-      "label": "RentCast API",
-      "description": "Search US property records, sale listings, rental listings, market stats, rent estimates, and value estimates with geographic filters, structured housing attributes, listing detail lookups, and comparable-property data for real-estate workflows.",
-      "aliases": [
-        "rentcast api use for us real-estate search",
-        "rental comps",
-        "home value estimates",
-        "rent estimates",
-        "zip-level market analysis",
-        "sale and rental listing lookup",
-        "property detail enrichment",
-        "investor research",
-        "and housing data workflows that need structured filters",
-        "search us property records",
-        "sale listings",
-        "rental listings"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://rentcast.x402.paysponge.com",
-          "method": "GET",
-          "path": "/listings/sale",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://rentcast.x402.paysponge.com",
-          "method": "GET",
-          "path": "/listings/rental/long-term",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://rentcast.x402.paysponge.com",
-          "method": "GET",
-          "path": "/properties",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "media.screenshotone",
-      "label": "ScreenshotOne",
-      "description": "Capture website screenshots, PDFs, rendered HTML, and animated video or GIF output from URLs or HTML payloads using ScreenshotOne, with GET and POST capture routes for browser-rendered visual web artifacts.",
-      "aliases": [
-        "screenshotone use for webpage screenshots",
-        "visual regression artifacts",
-        "pdf capture",
-        "rendered html capture",
-        "website preview images",
-        "gif or video page recordings",
-        "and browser-rendered visual outputs from a url or html input",
-        "capture website screenshots",
-        "pdfs",
-        "rendered html",
-        "and animated video or gif output from urls or html payloads using screenshotone",
-        "with get and post capture routes for browser-rendered visual web artifacts"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://screenshotone.x402.paysponge.com",
-          "method": "GET",
-          "path": "/animate",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://screenshotone.x402.paysponge.com",
-          "method": "GET",
-          "path": "/take",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://screenshotone.x402.paysponge.com",
-          "method": "POST",
-          "path": "/take",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
       "id": "messaging.textbelt",
       "label": "Textbelt SMS API",
       "description": "Send outbound SMS to supported-country phone numbers and check delivery status through PaySponge's x402-wrapped Textbelt service. Supports optional sender metadata, reply webhooks, and webhook data passthrough.",
       "aliases": [
-        "textbelt sms api use for transactional sms",
+        "use for transactional sms",
         "alerts",
         "reminders",
         "verification messages",
@@ -1041,10 +895,11 @@
         "supports optional sender metadata",
         "reply webhooks",
         "and webhook data passthrough",
-        "textbelt transactional",
         "transactional sms,",
         "sms, alerts,",
-        "alerts, reminders,"
+        "alerts, reminders,",
+        "reminders, verification",
+        "Textbelt SMS API"
       ],
       "satisfies": [
         {
@@ -1060,7 +915,7 @@
       "label": "Tripadvisor",
       "description": "Search Tripadvisor locations and retrieve details, reviews, and photos for hotels, restaurants, and attractions worldwide, including nearby discovery and content lookups for travel, local search, and place-enrichment workflows.",
       "aliases": [
-        "tripadvisor use for hotel and restaurant discovery",
+        "use for hotel and restaurant discovery",
         "attraction lookup",
         "nearby travel search",
         "place-detail enrichment",
@@ -1071,19 +926,20 @@
         "reviews",
         "and photos for hotels",
         "restaurants",
-        "and attractions worldwide"
+        "and attractions worldwide",
+        "Tripadvisor"
       ],
       "satisfies": [
         {
           "origin": "https://tripadvisor.x402.paysponge.com",
           "method": "GET",
-          "path": "/api/v1/location/nearby_search",
+          "path": "/api/v1/location/search",
           "confidence": "primary"
         },
         {
           "origin": "https://tripadvisor.x402.paysponge.com",
           "method": "GET",
-          "path": "/api/v1/location/search",
+          "path": "/api/v1/location/nearby_search",
           "confidence": "secondary"
         },
         {
@@ -1099,7 +955,7 @@
       "label": "Wolfram Alpha",
       "description": "Query Wolfram|Alpha for computational knowledge, short answers, simple image results, and full structured query output for math, science, finance, units, dates, geography, and fact-based problem solving.",
       "aliases": [
-        "wolfram alpha use for math and science questions",
+        "use for math and science questions",
         "unit conversion",
         "formula evaluation",
         "fact lookup",
@@ -1110,25 +966,26 @@
         "query wolfram|alpha for computational knowledge",
         "short answers",
         "simple image results",
-        "and full structured query output for math"
+        "and full structured query output for math",
+        "Wolfram Alpha"
       ],
       "satisfies": [
         {
           "origin": "https://wolframalpha.x402.paysponge.com",
           "method": "GET",
-          "path": "/v1/result",
+          "path": "/v2/query",
           "confidence": "primary"
         },
         {
           "origin": "https://wolframalpha.x402.paysponge.com",
           "method": "GET",
-          "path": "/v1/simple",
+          "path": "/v1/result",
           "confidence": "secondary"
         },
         {
           "origin": "https://wolframalpha.x402.paysponge.com",
           "method": "GET",
-          "path": "/v2/query",
+          "path": "/v1/simple",
           "confidence": "secondary"
         }
       ]
@@ -1138,7 +995,7 @@
       "label": "Purch",
       "description": "Search and buy products from Amazon and Shopify with USDC on Solana. Includes an AI shopping assistant, dynamic-priced product purchase flow, and Purch Vault for digital goods (skills, knowledge, personas) with downloadable artifacts.",
       "aliases": [
-        "purch use for product search",
+        "use for product search",
         "amazon and shopify shopping",
         "ai shopping assistance",
         "price and review comparison",
@@ -1149,19 +1006,20 @@
         "search and buy products from amazon and shopify with usdc on solana",
         "includes an ai shopping assistant",
         "dynamic-priced product purchase flow",
-        "and purch vault for digital goods (skills"
+        "and purch vault for digital goods (skills",
+        "Purch"
       ],
       "satisfies": [
         {
           "origin": "https://api.purch.xyz",
-          "method": "GET",
-          "path": "/x402/vault/search",
+          "method": "POST",
+          "path": "/x402/buy",
           "confidence": "primary"
         },
         {
           "origin": "https://api.purch.xyz",
           "method": "GET",
-          "path": "/x402/search",
+          "path": "/x402/vault/search",
           "confidence": "secondary"
         },
         {
@@ -1173,82 +1031,11 @@
       ]
     },
     {
-      "id": "compute.rpc",
-      "label": "Quicknode",
-      "description": "Pay-per-request JSON-RPC endpoints for 140+ blockchain networks. Each chain is its own path (e.g. solana-mainnet, ethereum-mainnet). Supports SIWX session auth, x402 micropayments, dynamic per-method pricing, and direct node access without infrastructure.",
-      "aliases": [
-        "quicknode use for blockchain json-rpc",
-        "querying account or contract state",
-        "submitting transactions",
-        "solana rpc",
-        "evm rpc",
-        "multi-chain dapps",
-        "block and transaction lookups",
-        "devnet/testnet access",
-        "and scalable chain reads with pay-per-request billing",
-        "pay-per-request json-rpc endpoints for 140+ blockchain networks",
-        "each chain is its own path (e",
-        "solana-mainnet"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://x402.quicknode.com",
-          "method": "POST",
-          "path": "/sql/rest/v1/query",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://x402.quicknode.com",
-          "method": "POST",
-          "path": "/0g-galileo/",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://x402.quicknode.com",
-          "method": "POST",
-          "path": "/0g-mainnet/",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "data.influencer_search",
-      "label": "Social Intel",
-      "description": "Find Instagram influencers across 33M+ profiles by niche, country, city, follower count, and gender. Returns username, bio, follower count, engagement metrics, business contact email (~50% coverage), and creator categories for marketing discovery.",
-      "aliases": [
-        "social intel use for instagram influencer discovery",
-        "creator search",
-        "niche keyword matching",
-        "audience demographics",
-        "engagement rate filtering",
-        "follower count ranges",
-        "geographic targeting",
-        "campaign planning",
-        "brand partnerships",
-        "and marketing lead lists",
-        "find instagram influencers across 33m+ profiles by niche",
-        "country"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://api.socialintel.dev",
-          "method": "GET",
-          "path": "/v1/search",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://api.socialintel.dev",
-          "method": "POST",
-          "path": "/v1/search",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
       "id": "search.agentexplorer",
       "label": "Alibaba Cloud Agent Skills Explorer",
       "description": "Search and retrieve data with Alibaba Cloud Agent Skills Explorer, including retrieve the content of the Agent Skill file, obtain information about all Agent Skills categories, and search Alibaba Cloud Agent Skills, for search and discovery workflows.",
       "aliases": [
+        "use for retrieve the content of the agent skill file",
         "obtain information about all agent skills categories",
         "search alibaba cloud agent skills",
         "and related catalog discovery",
@@ -1258,21 +1045,21 @@
         "including retrieve the content of the agent skill file",
         "and search alibaba cloud agent skills",
         "for search and discovery workflows",
-        "alibaba cloud",
-        "cloud agent",
-        "agent skills"
+        "retrieve content",
+        "content agent",
+        "Alibaba Cloud Agent Skills Explorer"
       ],
       "satisfies": [
         {
           "origin": "https://agentexplorer.alibaba.gateway-402.com",
           "method": "GET",
-          "path": "/openapi/skills",
+          "path": "/openapi/skills/{skillName}",
           "confidence": "primary"
         },
         {
           "origin": "https://agentexplorer.alibaba.gateway-402.com",
           "method": "GET",
-          "path": "/openapi/skills/{skillName}",
+          "path": "/openapi/skills",
           "confidence": "secondary"
         },
         {
@@ -1288,7 +1075,7 @@
       "label": "Alibaba Cloud AI Generation",
       "description": "Run image and video analysis or generation with Alibaba Cloud AI Generation, including cosplay - Anime Character Generation, interactive Full-image Segmentation, and interactive Scribble-based Segmentation.",
       "aliases": [
-        "alibaba cloud ai generation use for cosplay - anime character generation",
+        "use for cosplay - anime character generation",
         "interactive full-image segmentation",
         "interactive scribble-based segmentation",
         "and related image or video generation",
@@ -1299,7 +1086,8 @@
         "run image and video analysis or generation with alibaba cloud ai generation",
         "including cosplay - anime character generation",
         "and interactive scribble-based segmentation",
-        "alibaba cloud"
+        "cosplay anime",
+        "Alibaba Cloud AI Generation"
       ],
       "satisfies": [
         {
@@ -1311,13 +1099,13 @@
         {
           "origin": "https://aigen.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/interactive-full-segmentation",
+          "path": "/interactive-scribble-segmentation",
           "confidence": "secondary"
         },
         {
           "origin": "https://aigen.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/interactive-scribble-segmentation",
+          "path": "/interactive-full-segmentation",
           "confidence": "secondary"
         }
       ]
@@ -1327,7 +1115,7 @@
       "label": "Alibaba Cloud AnyTrans",
       "description": "Translate and localize content with Alibaba Cloud AnyTrans, including text Translation, batch Text Translation, and batch Web Page Translation, for multilingual workflows.",
       "aliases": [
-        "alibaba cloud anytrans use for text translation",
+        "use for text translation",
         "batch text translation",
         "batch web page translation",
         "and related translation",
@@ -1337,20 +1125,21 @@
         "including text translation",
         "and batch web page translation",
         "for multilingual workflows",
-        "alibaba cloud",
-        "cloud anytrans"
+        "text translation,",
+        "translation, batch",
+        "Alibaba Cloud AnyTrans"
       ],
       "satisfies": [
         {
           "origin": "https://anytrans.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/anytrans/translate/batch",
+          "path": "/anytrans/translate/batchForHtml",
           "confidence": "primary"
         },
         {
           "origin": "https://anytrans.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/anytrans/translate/batchForHtml",
+          "path": "/anytrans/translate/batch",
           "confidence": "secondary"
         },
         {
@@ -1366,7 +1155,7 @@
       "label": "Alibaba Cloud CAPTCHA",
       "description": "Run moderation, verification, and risk checks with Alibaba Cloud CAPTCHA, including intelligent Verification Code Authentication.",
       "aliases": [
-        "alibaba cloud captcha use for intelligent verification code authentication",
+        "use for intelligent verification code authentication",
         "and related moderation",
         "compliance",
         "identity verification",
@@ -1376,8 +1165,9 @@
         "verification",
         "and risk checks with alibaba cloud captcha",
         "including intelligent verification code authentication",
-        "alibaba cloud",
-        "cloud captcha"
+        "intelligent verification",
+        "verification code",
+        "Alibaba Cloud CAPTCHA"
       ],
       "satisfies": [
         {
@@ -1393,7 +1183,7 @@
       "label": "Alibaba Cloud Contact Center AI",
       "description": "Analyze conversations, images, and assistant tasks with Alibaba Cloud Contact Center AI, including real-time Analysis of Audio Files, the Tongyi Xiaomi CCAI - Conversation Analysis AIO application by task type, and image Content Analysis.",
       "aliases": [
-        "alibaba cloud contact center ai use for real-time analysis of audio files",
+        "use for real-time analysis of audio files",
         "the tongyi xiaomi ccai - conversation analysis aio application by task type",
         "image content analysis",
         "and related conversation analysis",
@@ -1404,25 +1194,26 @@
         "and assistant tasks with alibaba cloud contact center ai",
         "including real-time analysis of audio files",
         "and image content analysis",
-        "alibaba cloud"
+        "real-time analysis",
+        "Alibaba Cloud Contact Center AI"
       ],
       "satisfies": [
         {
           "origin": "https://contactcenterai.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/{workspaceId}/ccai/app/{appId}/analyze_conversation",
+          "path": "/{workspaceId}/ccai/app/{appId}/completion_message",
           "confidence": "primary"
         },
         {
           "origin": "https://contactcenterai.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/{workspaceId}/ccai/app/{appId}/analyzeAudioSync",
+          "path": "/{workspaceId}/ccai/app/{appId}/completion",
           "confidence": "secondary"
         },
         {
           "origin": "https://contactcenterai.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/{workspaceId}/ccai/app/{appId}/completion",
+          "path": "/{workspaceId}/ccai/app/{appId}/analyzeImage",
           "confidence": "secondary"
         }
       ]
@@ -1432,18 +1223,19 @@
       "label": "Alibaba Cloud Document Parse Service",
       "description": "Extract text and structured document data with Alibaba Cloud Document Parse Service, including document Mind Parsing, for OCR workflows.",
       "aliases": [
-        "alibaba cloud document parse service use for document mind parsing",
+        "use for document mind parsing",
         "and related document ocr",
         "structured extraction",
         "and image-to-text parsing",
         "including document mind parsing",
         "for ocr workflows",
-        "alibaba cloud",
-        "cloud document",
-        "document parse",
-        "parse service",
-        "service document",
-        "document mind"
+        "document mind",
+        "mind parsing,",
+        "parsing, related",
+        "related document",
+        "document ocr,",
+        "ocr, structured",
+        "Alibaba Cloud Document Parse Service"
       ],
       "satisfies": [
         {
@@ -1459,18 +1251,19 @@
       "label": "Alibaba Cloud EduTutor",
       "description": "Extract text and structured document data with Alibaba Cloud EduTutor, including exam Paper Question Segmentation, for OCR workflows.",
       "aliases": [
-        "alibaba cloud edututor use for exam paper question segmentation",
+        "use for exam paper question segmentation",
         "and related document ocr",
         "structured extraction",
         "and image-to-text parsing",
         "extract text and structured document data with alibaba cloud edututor",
         "including exam paper question segmentation",
         "for ocr workflows",
-        "alibaba cloud",
-        "cloud edututor",
-        "edututor exam",
         "exam paper",
-        "paper question"
+        "paper question",
+        "question segmentation,",
+        "segmentation, related",
+        "related document",
+        "Alibaba Cloud EduTutor"
       ],
       "satisfies": [
         {
@@ -1486,18 +1279,19 @@
       "label": "Alibaba Cloud Model Studio Embeddings",
       "description": "Create text embeddings with Alibaba Cloud Model Studio's OpenAI-compatible embeddings API for retrieval and semantic search.",
       "aliases": [
-        "alibaba cloud model studio embeddings use for semantic search",
+        "use for semantic search",
         "retrieval",
         "reranking pipelines",
         "clustering",
         "classification",
         "and vector indexing",
-        "alibaba cloud",
-        "cloud model",
-        "model studio",
-        "studio embeddings",
-        "embeddings semantic",
-        "semantic search,"
+        "semantic search,",
+        "search, retrieval,",
+        "retrieval, reranking",
+        "reranking pipelines,",
+        "pipelines, clustering,",
+        "clustering, classification,",
+        "Alibaba Cloud Model Studio Embeddings"
       ],
       "satisfies": [
         {
@@ -1513,7 +1307,7 @@
       "label": "Alibaba Cloud Facebody",
       "description": "Run image and video analysis or generation with Alibaba Cloud Facebody, including face Information Desensitization, human Pose Keypoints, and face Comparison.",
       "aliases": [
-        "alibaba cloud facebody use for face information desensitization",
+        "use for face information desensitization",
         "human pose keypoints",
         "face comparison",
         "and related image or video generation",
@@ -1524,25 +1318,26 @@
         "run image and video analysis or generation with alibaba cloud facebody",
         "including face information desensitization",
         "and face comparison",
-        "alibaba cloud"
+        "face information",
+        "Alibaba Cloud Facebody"
       ],
       "satisfies": [
         {
           "origin": "https://facebody.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/generate-human-anime-style",
+          "path": "/detect-face",
           "confidence": "primary"
         },
         {
           "origin": "https://facebody.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/blur-face",
+          "path": "/body-posture",
           "confidence": "secondary"
         },
         {
           "origin": "https://facebody.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/body-posture",
+          "path": "/enhance-face",
           "confidence": "secondary"
         }
       ]
@@ -1552,7 +1347,7 @@
       "label": "Alibaba Cloud FaRui",
       "description": "Extract contract fields, generate review results, and answer legal questions with Alibaba Cloud FaRui.",
       "aliases": [
-        "alibaba cloud farui use for contract extraction",
+        "use for contract extraction",
         "generate contract review result",
         "legal consultation",
         "and related contract review",
@@ -1562,20 +1357,21 @@
         "extract contract fields",
         "generate review results",
         "and answer legal questions with alibaba cloud farui",
-        "alibaba cloud",
-        "cloud farui"
+        "contract extraction,",
+        "extraction, generate",
+        "Alibaba Cloud FaRui"
       ],
       "satisfies": [
         {
           "origin": "https://farui.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/{workspaceId}/farui/search/case/fulltext",
+          "path": "/{workspaceId}/pop/contract/extraction",
           "confidence": "primary"
         },
         {
           "origin": "https://farui.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/{workspaceId}/farui/search/law/query",
+          "path": "/{workspaceId}/farui/contract/result/genarate",
           "confidence": "secondary"
         },
         {
@@ -1591,7 +1387,7 @@
       "label": "Alibaba Cloud Goods Tech",
       "description": "Run image and video analysis or generation with Alibaba Cloud Goods Tech, including product Categorization.",
       "aliases": [
-        "alibaba cloud goods tech use for product categorization",
+        "use for product categorization",
         "and related image or video generation",
         "enhancement",
         "detection",
@@ -1599,10 +1395,11 @@
         "and visual analysis",
         "run image and video analysis or generation with alibaba cloud goods tech",
         "including product categorization",
-        "alibaba cloud",
-        "cloud goods",
-        "goods tech",
-        "tech product"
+        "product categorization,",
+        "categorization, related",
+        "related image",
+        "image video",
+        "Alibaba Cloud Goods Tech"
       ],
       "satisfies": [
         {
@@ -1618,7 +1415,7 @@
       "label": "Alibaba Cloud Green",
       "description": "Run moderation, verification, and risk checks with Alibaba Cloud Green, including imageBatchModeration, imageModeration, and multiModalAgent.",
       "aliases": [
-        "alibaba cloud green use for imagebatchmoderation",
+        "use for imagebatchmoderation",
         "imagemoderation",
         "multimodalagent",
         "and related moderation",
@@ -1629,25 +1426,26 @@
         "run moderation",
         "verification",
         "and risk checks with alibaba cloud green",
-        "including imagebatchmoderation"
+        "including imagebatchmoderation",
+        "Alibaba Cloud Green"
       ],
       "satisfies": [
         {
           "origin": "https://green.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/image-batch-moderation",
+          "path": "/text-moderation-plus",
           "confidence": "primary"
         },
         {
           "origin": "https://green.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/image-moderation",
+          "path": "/text-moderation",
           "confidence": "secondary"
         },
         {
           "origin": "https://green.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/multi-modal-agent",
+          "path": "/image-batch-moderation",
           "confidence": "secondary"
         }
       ]
@@ -1657,7 +1455,7 @@
       "label": "Alibaba Cloud Image Audit",
       "description": "Run moderation, verification, and risk checks with Alibaba Cloud Image Audit, including image Content Moderation and text Content Moderation.",
       "aliases": [
-        "alibaba cloud image audit use for image content moderation",
+        "use for image content moderation",
         "text content moderation",
         "and related moderation",
         "compliance",
@@ -1668,7 +1466,8 @@
         "verification",
         "and risk checks with alibaba cloud image audit",
         "including image content moderation and text content moderation",
-        "alibaba cloud"
+        "image content",
+        "Alibaba Cloud Image Audit"
       ],
       "satisfies": [
         {
@@ -1690,7 +1489,7 @@
       "label": "Alibaba Cloud Image Recognition",
       "description": "Run image and video analysis or generation with Alibaba Cloud Image Recognition, including garbage Classification Detection, element Detection, and certificate Photo Quality Review.",
       "aliases": [
-        "alibaba cloud image recognition use for garbage classification detection",
+        "use for garbage classification detection",
         "element detection",
         "certificate photo quality review",
         "and related image or video generation",
@@ -1701,25 +1500,26 @@
         "run image and video analysis or generation with alibaba cloud image recognition",
         "including garbage classification detection",
         "and certificate photo quality review",
-        "alibaba cloud"
+        "garbage classification",
+        "Alibaba Cloud Image Recognition"
       ],
       "satisfies": [
         {
           "origin": "https://imagerecog.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/classifying-rubbish",
+          "path": "/evaluate-certificate-quality",
           "confidence": "primary"
         },
         {
           "origin": "https://imagerecog.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/detect-image-elements",
+          "path": "/classifying-rubbish",
           "confidence": "secondary"
         },
         {
           "origin": "https://imagerecog.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/evaluate-certificate-quality",
+          "path": "/detect-image-elements",
           "confidence": "secondary"
         }
       ]
@@ -1729,7 +1529,7 @@
       "label": "Alibaba Cloud Image Segmentation",
       "description": "Run image and video analysis or generation with Alibaba Cloud Image Segmentation, including sky Replacement, facial Feature Segmentation, and fine-Grained Mask Segmentation.",
       "aliases": [
-        "alibaba cloud image segmentation use for sky replacement",
+        "use for sky replacement",
         "facial feature segmentation",
         "fine-grained mask segmentation",
         "and related image or video generation",
@@ -1740,13 +1540,14 @@
         "run image and video analysis or generation with alibaba cloud image segmentation",
         "including sky replacement",
         "and fine-grained mask segmentation",
-        "alibaba cloud"
+        "replacement, facial",
+        "Alibaba Cloud Image Segmentation"
       ],
       "satisfies": [
         {
           "origin": "https://imageseg.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/segment-cloth",
+          "path": "/parse-face",
           "confidence": "primary"
         },
         {
@@ -1758,7 +1559,7 @@
         {
           "origin": "https://imageseg.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/segment-body",
+          "path": "/refine-mask",
           "confidence": "secondary"
         }
       ]
@@ -1768,6 +1569,7 @@
       "label": "Alibaba Cloud Intelligent Speech Interaction",
       "description": "Process speech and audio with Alibaba Cloud Intelligent Speech Interaction, including short-form voice command recognition, conversational speech input, and voice search, for transcription and voice workflows.",
       "aliases": [
+        "use for short-form voice command recognition",
         "conversational speech input",
         "voice search",
         "accessibility audio",
@@ -1776,10 +1578,10 @@
         "including short-form voice command recognition",
         "and voice search",
         "for transcription and voice workflows",
-        "alibaba cloud",
-        "cloud intelligent",
-        "intelligent speech",
-        "speech interaction"
+        "short-form voice",
+        "voice command",
+        "command recognition,",
+        "Alibaba Cloud Intelligent Speech Interaction"
       ],
       "satisfies": [
         {
@@ -1801,7 +1603,7 @@
       "label": "Alibaba Cloud Information Query Service",
       "description": "Search and retrieve data with Alibaba Cloud Information Query Service, including enhanced Search, general Search, and globalSearch - International Version (To Be Published), for search and discovery workflows.",
       "aliases": [
-        "alibaba cloud information query service use for enhanced search",
+        "use for enhanced search",
         "general search",
         "globalsearch - international version (to be published)",
         "and related catalog discovery",
@@ -1811,26 +1613,27 @@
         "including enhanced search",
         "and globalsearch - international version (to be published)",
         "for search and discovery workflows",
-        "alibaba cloud",
-        "cloud information"
+        "enhanced search,",
+        "search, general",
+        "Alibaba Cloud Information Query Service"
       ],
       "satisfies": [
         {
           "origin": "https://iqs.alibaba.gateway-402.com",
           "method": "GET",
-          "path": "/linked-retrieval/linked-retrieval-entry/v2/linkedRetrieval/commands/genericSearch",
+          "path": "/linked-retrieval/linked-retrieval-entry/v1/iqs/search/global",
           "confidence": "primary"
         },
         {
           "origin": "https://iqs.alibaba.gateway-402.com",
           "method": "GET",
-          "path": "/linked-retrieval/linked-retrieval-entry/v1/iqs/search/global",
+          "path": "/linked-retrieval/linked-retrieval-entry/v2/linkedRetrieval/commands/genericAdvancedSearch",
           "confidence": "secondary"
         },
         {
           "origin": "https://iqs.alibaba.gateway-402.com",
           "method": "GET",
-          "path": "/linked-retrieval/linked-retrieval-entry/v2/linkedRetrieval/commands/genericAdvancedSearch",
+          "path": "/linked-retrieval/linked-retrieval-entry/v2/linkedRetrieval/commands/genericSearch",
           "confidence": "secondary"
         }
       ]
@@ -1840,7 +1643,7 @@
       "label": "Alibaba Cloud IVPD",
       "description": "Run image and video analysis or generation with Alibaba Cloud IVPD, including resize Image, element detection, and style Transfer.",
       "aliases": [
-        "alibaba cloud ivpd use for resize image",
+        "use for resize image",
         "element detection",
         "style transfer",
         "and related image or video generation",
@@ -1851,25 +1654,26 @@
         "run image and video analysis or generation with alibaba cloud ivpd",
         "including resize image",
         "and style transfer",
-        "alibaba cloud"
+        "resize image,",
+        "Alibaba Cloud IVPD"
       ],
       "satisfies": [
         {
           "origin": "https://ivpd.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/change-image-size",
+          "path": "/extend-image-style",
           "confidence": "primary"
         },
         {
           "origin": "https://ivpd.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/detect-image-elements",
+          "path": "/recognize-image-style",
           "confidence": "secondary"
         },
         {
           "origin": "https://ivpd.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/extend-image-style",
+          "path": "/segment-image",
           "confidence": "secondary"
         }
       ]
@@ -1879,18 +1683,19 @@
       "label": "Alibaba Cloud Machine Translation",
       "description": "Translate text with Alibaba Cloud Machine Translation's REST APIs for general-purpose and e-commerce scenarios.",
       "aliases": [
-        "alibaba cloud machine translation use for synchronous text translation",
+        "use for synchronous text translation",
         "localization",
         "buyer-seller communication",
-        "alibaba cloud",
-        "cloud machine",
-        "machine translation",
-        "translation synchronous",
         "synchronous text",
         "text translation,",
         "translation, localization,",
         "localization, buyer-seller",
-        "buyer-seller communication,"
+        "buyer-seller communication,",
+        "communication, e-commerce",
+        "e-commerce content",
+        "content workflows",
+        "workflows that",
+        "Alibaba Cloud Machine Translation"
       ],
       "satisfies": [
         {
@@ -1912,7 +1717,7 @@
       "label": "Alibaba Cloud Object Detection",
       "description": "Run image and video analysis or generation with Alibaba Cloud Object Detection, including iPC Image Object Detection, cat and Mouse Recognition, and entity Detection.",
       "aliases": [
-        "alibaba cloud object detection use for ipc image object detection",
+        "use for ipc image object detection",
         "cat and mouse recognition",
         "entity detection",
         "and related image or video generation",
@@ -1923,25 +1728,26 @@
         "run image and video analysis or generation with alibaba cloud object detection",
         "including ipc image object detection",
         "and entity detection",
-        "alibaba cloud"
+        "image object",
+        "Alibaba Cloud Object Detection"
       ],
       "satisfies": [
         {
           "origin": "https://objectdet.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/detect-main-body",
+          "path": "/detect-ipcobject",
           "confidence": "primary"
         },
         {
           "origin": "https://objectdet.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/detect-ipcobject",
+          "path": "/detect-kitchen-animals",
           "confidence": "secondary"
         },
         {
           "origin": "https://objectdet.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/detect-kitchen-animals",
+          "path": "/detect-object",
           "confidence": "secondary"
         }
       ]
@@ -1951,18 +1757,19 @@
       "label": "Alibaba Cloud Model Studio OCR",
       "description": "Extract text and structured content from images with Qwen OCR through Alibaba Cloud Model Studio's OpenAI-compatible chat completions API.",
       "aliases": [
-        "alibaba cloud model studio ocr use for receipt extraction",
+        "use for receipt extraction",
         "invoice parsing",
         "document ocr",
         "table extraction",
         "and multilingual image text recognition",
-        "alibaba cloud",
-        "cloud model",
-        "model studio",
-        "studio receipt",
         "receipt extraction,",
         "extraction, invoice",
-        "invoice parsing,"
+        "invoice parsing,",
+        "parsing, document",
+        "document ocr,",
+        "ocr, table",
+        "table extraction,",
+        "Alibaba Cloud Model Studio OCR"
       ],
       "satisfies": [
         {
@@ -1978,7 +1785,7 @@
       "label": "Alibaba Cloud OCR API",
       "description": "Extract text and structured document data with Alibaba Cloud OCR API, including high-Precision Full-Text Recognition, air Travel Itinerary Recognition, and unified OCR Recognition, for OCR workflows.",
       "aliases": [
-        "alibaba cloud ocr api use for high-precision full-text recognition",
+        "use for high-precision full-text recognition",
         "air travel itinerary recognition",
         "unified ocr recognition",
         "and related document ocr",
@@ -1988,20 +1795,21 @@
         "including high-precision full-text recognition",
         "and unified ocr recognition",
         "for ocr workflows",
-        "alibaba cloud",
-        "cloud high-precision"
+        "high-precision full-text",
+        "full-text recognition,",
+        "Alibaba Cloud OCR API"
       ],
       "satisfies": [
         {
           "origin": "https://ocr-api.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/recognize-all-text",
+          "path": "/recognize-general-structure",
           "confidence": "primary"
         },
         {
           "origin": "https://ocr-api.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/recognize-document-structure",
+          "path": "/recognize-exit-entry-permit-to-mainland",
           "confidence": "secondary"
         },
         {
@@ -2017,18 +1825,19 @@
       "label": "Alibaba Cloud PAI Model Gallery",
       "description": "Search and retrieve data with Alibaba Cloud PAI Model Gallery, including retrieve the ModelGallery model list, for search and discovery workflows.",
       "aliases": [
-        "alibaba cloud pai model gallery use for retrieve the modelgallery model list",
+        "use for retrieve the modelgallery model list",
         "and related catalog discovery",
         "skill lookup",
         "and search routing",
         "search and retrieve data with alibaba cloud pai model gallery",
         "including retrieve the modelgallery model list",
         "for search and discovery workflows",
-        "alibaba cloud",
-        "cloud model",
-        "model gallery",
-        "gallery retrieve",
-        "retrieve modelgallery"
+        "retrieve modelgallery",
+        "modelgallery model",
+        "model list,",
+        "list, related",
+        "related catalog",
+        "Alibaba Cloud PAI Model Gallery"
       ],
       "satisfies": [
         {
@@ -2044,7 +1853,7 @@
       "label": "Alibaba Cloud Responsible AI",
       "description": "Run moderation, verification, and risk checks with Alibaba Cloud Responsible AI, including batch content synchronization detection, synchronize detection for a single piece of content, and synchronous Detection of Model Input Content.",
       "aliases": [
-        "alibaba cloud responsible ai use for batch content synchronization detection",
+        "use for batch content synchronization detection",
         "synchronize detection for a single piece of content",
         "synchronous detection of model input content",
         "and related moderation",
@@ -2055,13 +1864,14 @@
         "run moderation",
         "verification",
         "and risk checks with alibaba cloud responsible ai",
-        "including batch content synchronization detection"
+        "including batch content synchronization detection",
+        "Alibaba Cloud Responsible AI"
       ],
       "satisfies": [
         {
           "origin": "https://rai.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/batch-content-sync-detect",
+          "path": "/model-input-content-sync-detect",
           "confidence": "primary"
         },
         {
@@ -2073,7 +1883,7 @@
         {
           "origin": "https://rai.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/model-input-content-sync-detect",
+          "path": "/model-output-content-sync-detect",
           "confidence": "secondary"
         }
       ]
@@ -2083,7 +1893,7 @@
       "label": "Alibaba Cloud SAF",
       "description": "Run moderation, verification, and risk checks with Alibaba Cloud SAF, including multi-Scenario Risk Identification and Detection, decision Engine for Malaysian Cluster, and decision Engine Singapore Cluster.",
       "aliases": [
-        "alibaba cloud saf use for multi-scenario risk identification and detection",
+        "use for multi-scenario risk identification and detection",
         "decision engine for malaysian cluster",
         "decision engine singapore cluster",
         "and related moderation",
@@ -2094,7 +1904,8 @@
         "run moderation",
         "verification",
         "and risk checks with alibaba cloud saf",
-        "including multi-scenario risk identification and detection"
+        "including multi-scenario risk identification and detection",
+        "Alibaba Cloud SAF"
       ],
       "satisfies": [
         {
@@ -2106,13 +1917,13 @@
         {
           "origin": "https://saf.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/execute-request-sg",
+          "path": "/execute-request",
           "confidence": "secondary"
         },
         {
           "origin": "https://saf.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/execute-request",
+          "path": "/execute-request-sg",
           "confidence": "secondary"
         }
       ]
@@ -2122,30 +1933,31 @@
       "label": "Alibaba Cloud Model Studio Speech Recognition",
       "description": "Transcribe audio files with Qwen ASR through Alibaba Cloud Model Studio's asynchronous speech recognition API.",
       "aliases": [
-        "alibaba cloud model studio speech recognition use for audio transcription",
+        "use for audio transcription",
         "meeting notes",
         "subtitle generation",
         "interview transcription",
         "voice note processing",
         "and multilingual speech-to-text",
-        "alibaba cloud",
-        "cloud model",
-        "model studio",
-        "studio speech",
-        "speech recognition",
-        "recognition audio"
+        "audio transcription,",
+        "transcription, meeting",
+        "meeting notes,",
+        "notes, subtitle",
+        "subtitle generation,",
+        "generation, interview",
+        "Alibaba Cloud Model Studio Speech Recognition"
       ],
       "satisfies": [
         {
           "origin": "https://speech.alibaba.gateway-402.com",
-          "method": "GET",
-          "path": "/api/v1/tasks/{taskId}",
+          "method": "POST",
+          "path": "/api/v1/services/audio/asr/transcription",
           "confidence": "primary"
         },
         {
           "origin": "https://speech.alibaba.gateway-402.com",
-          "method": "POST",
-          "path": "/api/v1/services/audio/asr/transcription",
+          "method": "GET",
+          "path": "/api/v1/tasks/{taskId}",
           "confidence": "secondary"
         }
       ]
@@ -2155,18 +1967,19 @@
       "label": "Alibaba Cloud Model Studio Text-to-Speech",
       "description": "Synthesize speech with Qwen TTS through Alibaba Cloud Model Studio's multimodal generation API.",
       "aliases": [
-        "alibaba cloud model studio text-to-speech use for voiceovers",
+        "use for voiceovers",
         "accessibility audio",
         "narration",
         "dubbing",
         "spoken product copy",
         "and synthetic voice generation",
-        "alibaba cloud",
-        "cloud model",
-        "model studio",
-        "studio text-to-speech",
-        "text-to-speech voiceovers,",
-        "voiceovers, accessibility"
+        "voiceovers, accessibility",
+        "accessibility audio,",
+        "audio, narration,",
+        "narration, dubbing,",
+        "dubbing, spoken",
+        "spoken product",
+        "Alibaba Cloud Model Studio Text-to-Speech"
       ],
       "satisfies": [
         {
@@ -2182,18 +1995,19 @@
       "label": "Alibaba Cloud Model Studio Translation",
       "description": "Translate text with Qwen-MT through Alibaba Cloud Model Studio's OpenAI-compatible chat completions API.",
       "aliases": [
-        "alibaba cloud model studio translation use for single-turn machine translation",
+        "use for single-turn machine translation",
         "localization",
         "multilingual content generation",
         "and cross-language messaging",
-        "alibaba cloud",
-        "cloud model",
-        "model studio",
-        "studio translation",
-        "translation single-turn",
         "single-turn machine",
         "machine translation,",
-        "translation, localization,"
+        "translation, localization,",
+        "localization, multilingual",
+        "multilingual content",
+        "content generation,",
+        "generation, cross-language",
+        "cross-language messaging.",
+        "Alibaba Cloud Model Studio Translation"
       ],
       "satisfies": [
         {
@@ -2209,7 +2023,7 @@
       "label": "Alibaba Cloud OCR (VIAPI)",
       "description": "Extract text and structured document data with Alibaba Cloud OCR (VIAPI), including bank Card Recognition, business License Recognition, and general Recognition, for OCR workflows.",
       "aliases": [
-        "alibaba cloud ocr (viapi) use for bank card recognition",
+        "use for bank card recognition",
         "business license recognition",
         "general recognition",
         "and related document ocr",
@@ -2219,26 +2033,27 @@
         "including bank card recognition",
         "and general recognition",
         "for ocr workflows",
-        "alibaba cloud",
-        "cloud (viapi)"
+        "bank card",
+        "card recognition,",
+        "Alibaba Cloud OCR (VIAPI)"
       ],
       "satisfies": [
         {
           "origin": "https://viapi-ocr.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/recognize-vincode",
+          "path": "/recognize-bank-card",
           "confidence": "primary"
         },
         {
           "origin": "https://viapi-ocr.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/recognize-bank-card",
+          "path": "/recognize-identity-card",
           "confidence": "secondary"
         },
         {
           "origin": "https://viapi-ocr.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/recognize-business-license",
+          "path": "/recognize-character",
           "confidence": "secondary"
         }
       ]
@@ -2248,7 +2063,7 @@
       "label": "Alibaba Cloud Video Enhancement",
       "description": "Run image and video analysis or generation with Alibaba Cloud Video Enhancement, including video Rendering Intent, video Aspect Ratio Transformation, and video Portrait Enhancement.",
       "aliases": [
-        "alibaba cloud video enhancement use for video rendering intent",
+        "use for video rendering intent",
         "video aspect ratio transformation",
         "video portrait enhancement",
         "and related image or video generation",
@@ -2259,19 +2074,20 @@
         "run image and video analysis or generation with alibaba cloud video enhancement",
         "including video rendering intent",
         "and video portrait enhancement",
-        "alibaba cloud"
+        "video rendering",
+        "Alibaba Cloud Video Enhancement"
       ],
       "satisfies": [
         {
           "origin": "https://videoenhan.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/adjust-video-color",
+          "path": "/change-video-size",
           "confidence": "primary"
         },
         {
           "origin": "https://videoenhan.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/change-video-size",
+          "path": "/adjust-video-color",
           "confidence": "secondary"
         },
         {
@@ -2287,7 +2103,7 @@
       "label": "Alibaba Cloud Video Recognition",
       "description": "Run image and video analysis or generation with Alibaba Cloud Video Recognition, including shot parsing, video Quality Assessment, and video Thumbnail.",
       "aliases": [
-        "alibaba cloud video recognition use for shot parsing",
+        "use for shot parsing",
         "video quality assessment",
         "video thumbnail",
         "and related image or video generation",
@@ -2298,7 +2114,8 @@
         "run image and video analysis or generation with alibaba cloud video recognition",
         "including shot parsing",
         "and video thumbnail",
-        "alibaba cloud"
+        "shot parsing,",
+        "Alibaba Cloud Video Recognition"
       ],
       "satisfies": [
         {
@@ -2310,13 +2127,13 @@
         {
           "origin": "https://videorecog.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/evaluate-video-quality",
+          "path": "/generate-video-cover",
           "confidence": "secondary"
         },
         {
           "origin": "https://videorecog.alibaba.gateway-402.com",
           "method": "POST",
-          "path": "/generate-video-cover",
+          "path": "/evaluate-video-quality",
           "confidence": "secondary"
         }
       ]
@@ -2326,7 +2143,7 @@
       "label": "Alibaba Cloud Video Segmentation",
       "description": "Run image and video analysis or generation with Alibaba Cloud Video Segmentation, including video Portrait Segmentation.",
       "aliases": [
-        "alibaba cloud video segmentation use for video portrait segmentation",
+        "use for video portrait segmentation",
         "and related image or video generation",
         "enhancement",
         "detection",
@@ -2334,10 +2151,11 @@
         "and visual analysis",
         "run image and video analysis or generation with alibaba cloud video segmentation",
         "including video portrait segmentation",
-        "alibaba cloud",
-        "cloud video",
-        "video segmentation",
-        "segmentation video"
+        "video portrait",
+        "portrait segmentation,",
+        "segmentation, related",
+        "related image",
+        "Alibaba Cloud Video Segmentation"
       ],
       "satisfies": [
         {
@@ -2353,7 +2171,7 @@
       "label": "BigQuery API",
       "description": "Run SQL over BigQuery and 255 public datasets: crypto, weather, healthcare, genomics, patents, GitHub, PyPI, Stack Overflow, census, Wikipedia, real estate, transportation, satellite imagery, NLP corpora, SEC filings, and IoT.",
       "aliases": [
-        "bigquery api use for data analytics",
+        "use for data analytics",
         "market research",
         "fact-finding from public datasets",
         "blockchain and crypto analysis",
@@ -2364,19 +2182,20 @@
         "and large-scale structured data retrieval",
         "run sql over bigquery and 255 public datasets: crypto",
         "weather",
-        "healthcare"
+        "healthcare",
+        "BigQuery API"
       ],
       "satisfies": [
         {
           "origin": "https://bigquery.google.gateway-402.com/bigquery/v2",
-          "method": "GET",
-          "path": "/projects/{projectId}/queries/{jobId}",
+          "method": "POST",
+          "path": "/projects/{projectId}/queries",
           "confidence": "primary"
         },
         {
           "origin": "https://bigquery.google.gateway-402.com/bigquery/v2",
-          "method": "POST",
-          "path": "/projects/{projectId}/queries",
+          "method": "GET",
+          "path": "/projects/{projectId}/queries/{jobId}",
           "confidence": "secondary"
         }
       ]
@@ -2386,7 +2205,7 @@
       "label": "Google Civic Information API",
       "description": "Look up US civic data by address: elected representatives, offices, political divisions, elections, polling locations, ballot contests, and voter guidance, with official contact info, social links, photos, and district metadata.",
       "aliases": [
-        "google civic information api use for finding elected officials",
+        "use for finding elected officials",
         "election lookup",
         "polling place search",
         "ballot and contest research",
@@ -2397,7 +2216,8 @@
         "and address-to-district resolution",
         "look up us civic data by address: elected representatives",
         "offices",
-        "political divisions"
+        "political divisions",
+        "Google Civic Information API"
       ],
       "satisfies": [
         {
@@ -2425,7 +2245,7 @@
       "label": "Fact Check Tools API",
       "description": "Search Google ClaimReview fact-check data across 100+ publishers. Returns checked claims, ratings, claimants, publishers, review URLs, claim dates, and pages for politics, health, science, viral images, and misinformation.",
       "aliases": [
-        "fact check tools api use for claim verification",
+        "use for claim verification",
         "misinformation checks",
         "media literacy tools",
         "newsroom research",
@@ -2436,7 +2256,8 @@
         "and finding prior fact-check coverage",
         "search google claimreview fact-check data across 100+ publishers",
         "returns checked claims",
-        "ratings"
+        "ratings",
+        "Fact Check Tools API"
       ],
       "satisfies": [
         {
@@ -2452,7 +2273,7 @@
       "label": "Knowledge Graph Search API",
       "description": "Search Google Knowledge Graph for entities including people, places, organizations, events, and things. Returns canonical names, descriptions, types, URLs, images, detailed scores, and structured identifiers from 500B+ facts.",
       "aliases": [
-        "knowledge graph search api use for entity lookup",
+        "use for entity lookup",
         "name disambiguation",
         "canonical descriptions",
         "enriching search results",
@@ -2463,7 +2284,8 @@
         "and organizations",
         "and attaching structured knowledge to records",
         "search google knowledge graph for entities including people",
-        "organizations"
+        "organizations",
+        "Knowledge Graph Search API"
       ],
       "satisfies": [
         {
@@ -2479,7 +2301,7 @@
       "label": "Cloud Natural Language API",
       "description": "Analyze text with Google NLP: sentiment, emotion, named entities, entity salience, content categories, moderation categories, syntax, and all-in-one annotation. Supports multilingual text analytics for documents, reviews, tickets, and articles.",
       "aliases": [
-        "cloud natural language api use for sentiment analysis",
+        "use for sentiment analysis",
         "opinion mining",
         "entity extraction",
         "content classification",
@@ -2490,7 +2312,8 @@
         "syntax analysis",
         "document annotation",
         "and multilingual text intelligence",
-        "analyze text with google nlp: sentiment"
+        "analyze text with google nlp: sentiment",
+        "Cloud Natural Language API"
       ],
       "satisfies": [
         {
@@ -2502,13 +2325,13 @@
         {
           "origin": "https://language.google.gateway-402.com",
           "method": "POST",
-          "path": "/v2/documents:analyzeSentiment",
+          "path": "/v2/documents:moderateText",
           "confidence": "secondary"
         },
         {
           "origin": "https://language.google.gateway-402.com",
           "method": "POST",
-          "path": "/v2/documents:annotateText",
+          "path": "/v2/documents:analyzeSentiment",
           "confidence": "secondary"
         }
       ]
@@ -2518,7 +2341,7 @@
       "label": "Places API (New)",
       "description": "Search and inspect Google Places worldwide. Find businesses and points of interest, run nearby or text search, autocomplete addresses, retrieve place details, ratings, reviews, hours, photos, contact info, websites, and location metadata.",
       "aliases": [
-        "places api (new) use for restaurant and business search",
+        "use for restaurant and business search",
         "hotel and poi lookup",
         "local discovery",
         "address autocomplete",
@@ -2529,19 +2352,20 @@
         "lead generation",
         "and place metadata enrichment",
         "search and inspect google places worldwide",
-        "find businesses and points of interest"
+        "find businesses and points of interest",
+        "Places API (New)"
       ],
       "satisfies": [
         {
           "origin": "https://places.google.gateway-402.com",
           "method": "POST",
-          "path": "/v1/places:autocomplete",
+          "path": "/v1/places:searchNearby",
           "confidence": "primary"
         },
         {
           "origin": "https://places.google.gateway-402.com",
           "method": "POST",
-          "path": "/v1/places:searchNearby",
+          "path": "/v1/places:autocomplete",
           "confidence": "secondary"
         },
         {
@@ -2557,7 +2381,7 @@
       "label": "Cloud Video Intelligence API",
       "description": "Analyze video content asynchronously with Google Video Intelligence. Detect labels, shots, explicit content, speech, on-screen text, logos, object tracks, scene changes, and searchable metadata for uploaded or cloud-hosted videos.",
       "aliases": [
-        "cloud video intelligence api use for video indexing",
+        "use for video indexing",
         "content moderation",
         "scene and shot detection",
         "object tracking",
@@ -2568,7 +2392,8 @@
         "compliance review",
         "archive tagging",
         "and extracting structured video metadata",
-        "analyze video content asynchronously with google video intelligence"
+        "analyze video content asynchronously with google video intelligence",
+        "Cloud Video Intelligence API"
       ],
       "satisfies": [
         {
@@ -2584,7 +2409,7 @@
       "label": "Cloud Vision API",
       "description": "Analyze images with Google Cloud Vision ML. Detect objects, faces, text/OCR, labels, landmarks, logos, safe-search signals, web entities, crop hints, dominant colors, and product-search reference images across image, PDF, and TIFF inputs.",
       "aliases": [
-        "cloud vision api use for ocr",
+        "use for ocr",
         "image labeling",
         "object and face detection",
         "content moderation",
@@ -2595,7 +2420,8 @@
         "crop hints",
         "color analysis",
         "and visual metadata enrichment",
-        "analyze images with google cloud vision ml"
+        "analyze images with google cloud vision ml",
+        "Cloud Vision API"
       ],
       "satisfies": [
         {
@@ -2613,7 +2439,7 @@
         {
           "origin": "https://vision.google.gateway-402.com",
           "method": "POST",
-          "path": "/v1/images:annotate",
+          "path": "/v1/images:asyncBatchAnnotate",
           "confidence": "secondary"
         }
       ]
@@ -2623,11 +2449,12 @@
       "label": "Company Enrichment",
       "description": "Lookup",
       "aliases": [
-        "company enrichment abstract-company-enrichment data lookup",
+        "lookup company enrichment abstract company enrichment data",
+        "lookup company",
         "company enrichment",
-        "enrichment abstract-company-enrichment",
-        "abstract-company-enrichment data",
-        "data lookup"
+        "enrichment abstract",
+        "abstract company",
+        "enrichment data"
       ],
       "satisfies": [
         {
@@ -2643,11 +2470,12 @@
       "label": "Email Reputation",
       "description": "Check",
       "aliases": [
-        "email reputation abstract-email-reputation data check",
+        "check email reputation abstract email reputation data",
+        "check email",
         "email reputation",
-        "reputation abstract-email-reputation",
-        "abstract-email-reputation data",
-        "data check"
+        "reputation abstract",
+        "abstract email",
+        "reputation data"
       ],
       "satisfies": [
         {
@@ -2663,11 +2491,12 @@
       "label": "Exchange Rates",
       "description": "Convert",
       "aliases": [
-        "exchange rates abstract-exchange-rates data convert",
+        "convert exchange rates abstract exchange rates data",
+        "convert exchange",
         "exchange rates",
-        "rates abstract-exchange-rates",
-        "abstract-exchange-rates data",
-        "data convert"
+        "rates abstract",
+        "abstract exchange",
+        "rates data"
       ],
       "satisfies": [
         {
@@ -2695,10 +2524,11 @@
       "label": "Holidays",
       "description": "Lookup",
       "aliases": [
-        "holidays abstract-holidays data lookup",
-        "holidays abstract-holidays",
-        "abstract-holidays data",
-        "data lookup"
+        "lookup holidays abstract holidays data",
+        "lookup holidays",
+        "holidays abstract",
+        "abstract holidays",
+        "holidays data"
       ],
       "satisfies": [
         {
@@ -2714,11 +2544,12 @@
       "label": "IBAN Validation",
       "description": "Validate",
       "aliases": [
-        "iban validation abstract-iban-validation data validate",
+        "validate iban validation abstract iban validation data",
+        "validate iban",
         "iban validation",
-        "validation abstract-iban-validation",
-        "abstract-iban-validation data",
-        "data validate"
+        "validation abstract",
+        "abstract iban",
+        "validation data"
       ],
       "satisfies": [
         {
@@ -2734,10 +2565,11 @@
       "label": "IP Intelligence",
       "description": "Lookup",
       "aliases": [
-        "ip intelligence abstract-ip-intelligence data lookup",
-        "intelligence abstract-ip-intelligence",
-        "abstract-ip-intelligence data",
-        "data lookup"
+        "lookup ip intelligence abstract ip intelligence data",
+        "lookup intelligence",
+        "intelligence abstract",
+        "abstract intelligence",
+        "intelligence data"
       ],
       "satisfies": [
         {
@@ -2753,11 +2585,12 @@
       "label": "Phone Intelligence",
       "description": "Lookup",
       "aliases": [
-        "phone intelligence abstract-phone-intelligence data lookup",
+        "lookup phone intelligence abstract phone intelligence data",
+        "lookup phone",
         "phone intelligence",
-        "intelligence abstract-phone-intelligence",
-        "abstract-phone-intelligence data",
-        "data lookup"
+        "intelligence abstract",
+        "abstract phone",
+        "intelligence data"
       ],
       "satisfies": [
         {
@@ -2773,11 +2606,12 @@
       "label": "Timezone",
       "description": "Convert Time",
       "aliases": [
-        "timezone abstract-timezone data convert time",
-        "timezone abstract-timezone",
-        "abstract-timezone data",
-        "data convert",
-        "convert time"
+        "convert time timezone abstract timezone data",
+        "convert time",
+        "time timezone",
+        "timezone abstract",
+        "abstract timezone",
+        "timezone data"
       ],
       "satisfies": [
         {
@@ -2799,9 +2633,9 @@
       "label": "VAT",
       "description": "Calculate",
       "aliases": [
-        "vat abstract-vat data calculate",
-        "abstract-vat data",
-        "data calculate"
+        "calculate vat abstract vat data",
+        "calculate abstract",
+        "abstract data"
       ],
       "satisfies": [
         {
@@ -2829,9 +2663,10 @@
       "label": "Web Scraping",
       "description": "Scrape",
       "aliases": [
-        "web scraping abstract-web-scraping web scrape",
-        "scraping abstract-web-scraping",
-        "abstract-web-scraping scrape"
+        "scrape web scraping abstract web scraping web",
+        "scrape scraping",
+        "scraping abstract",
+        "abstract scraping"
       ],
       "satisfies": [
         {
@@ -2847,14 +2682,14 @@
       "label": "agentfax",
       "description": "Send a fax to any phone number — priced per page",
       "aliases": [
-        "agentfax agentfax social send a fax to any phone number — priced per page",
-        "agentfax agentfax",
-        "agentfax social",
-        "social send",
+        "send a fax to any phone number — priced per page agentfax agentfax social",
         "send phone",
         "phone number",
         "number priced",
-        "priced page"
+        "priced page",
+        "page agentfax",
+        "agentfax agentfax",
+        "agentfax social"
       ],
       "satisfies": [
         {
@@ -2870,12 +2705,12 @@
       "label": "Allium",
       "description": "Get latest token prices",
       "aliases": [
-        "allium allium blockchain get latest token prices",
-        "allium allium",
-        "allium blockchain",
-        "blockchain latest",
+        "get latest token prices allium allium blockchain",
         "latest token",
-        "token prices"
+        "token prices",
+        "prices allium",
+        "allium allium",
+        "allium blockchain"
       ],
       "satisfies": [
         {
@@ -2903,13 +2738,13 @@
       "label": "Martin Estate Winery",
       "description": "List purchasable wines",
       "aliases": [
-        "martin estate winery martin-estate web list purchasable wines",
+        "list purchasable wines martin estate winery martin estate web",
+        "list purchasable",
+        "purchasable wines",
+        "wines martin",
         "martin estate",
         "estate winery",
-        "winery martin-estate",
-        "martin-estate list",
-        "list purchasable",
-        "purchasable wines"
+        "winery martin"
       ],
       "satisfies": [
         {
@@ -2937,11 +2772,11 @@
       "label": "Prospect Butcher",
       "description": "Purchase a sandwich",
       "aliases": [
-        "prospect butcher prospect-butcher web purchase a sandwich",
+        "purchase a sandwich prospect butcher prospect butcher web",
+        "purchase sandwich",
+        "sandwich prospect",
         "prospect butcher",
-        "butcher prospect-butcher",
-        "prospect-butcher purchase",
-        "purchase sandwich"
+        "butcher prospect"
       ],
       "satisfies": [
         {
@@ -2957,14 +2792,14 @@
       "label": "Sayer & Stone",
       "description": "List products with embedded variants",
       "aliases": [
-        "sayer & stone sayer-and-stone web list products with embedded variants",
-        "sayer stone",
-        "stone sayer-and-stone",
-        "sayer-and-stone list",
+        "list products with embedded variants sayer & stone sayer and stone web",
         "list products",
         "products with",
         "with embedded",
-        "embedded variants"
+        "embedded variants",
+        "variants sayer",
+        "sayer stone",
+        "stone sayer"
       ],
       "satisfies": [
         {
@@ -2992,12 +2827,12 @@
       "label": "Alpha Vantage",
       "description": "Balance Sheet",
       "aliases": [
-        "alpha vantage alphavantage data balance sheet",
+        "balance sheet alpha vantage alphavantage data",
+        "balance sheet",
+        "sheet alpha",
         "alpha vantage",
         "vantage alphavantage",
-        "alphavantage data",
-        "data balance",
-        "balance sheet"
+        "alphavantage data"
       ],
       "satisfies": [
         {
@@ -3025,13 +2860,13 @@
       "label": "Anthropic",
       "description": "OpenAI-compatible chat completions (auto-converted to Anthropic format)",
       "aliases": [
-        "anthropic anthropic",
-        "anthropic openai-compatible",
         "openai-compatible chat",
         "chat completions",
         "completions (auto-converted",
         "(auto-converted anthropic",
-        "anthropic format)"
+        "anthropic format)",
+        "format) anthropic",
+        "anthropic anthropic"
       ],
       "satisfies": [
         {
@@ -3053,25 +2888,25 @@
       "label": "Auto.exchange",
       "description": "List all available agents on the marketplace",
       "aliases": [
-        "auto",
-        "exchange autoexchange ai list all available agents on the marketplace",
-        "auto.exchange autoexchange",
-        "autoexchange list",
+        "list all available agents on the marketplace auto",
+        "exchange autoexchange ai",
         "list available",
         "available agents",
-        "agents marketplace"
+        "agents marketplace",
+        "marketplace auto.exchange",
+        "auto.exchange autoexchange"
       ],
       "satisfies": [
         {
           "origin": "https://api.auto.exchange",
-          "method": "POST",
-          "path": "/agents/:id/run",
+          "method": "GET",
+          "path": "/agents",
           "confidence": "primary"
         },
         {
           "origin": "https://api.auto.exchange",
-          "method": "GET",
-          "path": "/agents",
+          "method": "POST",
+          "path": "/agents/:id/run",
           "confidence": "secondary"
         },
         {
@@ -3087,12 +2922,12 @@
       "label": "Dune",
       "description": "Download CSV results for an execution",
       "aliases": [
-        "dune dune data download csv results for an execution",
-        "dune dune",
-        "dune data",
-        "data download",
+        "download csv results for an execution dune dune data",
         "download results",
-        "results execution"
+        "results execution",
+        "execution dune",
+        "dune dune",
+        "dune data"
       ],
       "satisfies": [
         {
@@ -3120,13 +2955,13 @@
       "label": "molty.cash",
       "description": "Tip or hire an X user with USDC",
       "aliases": [
-        "molty",
-        "cash moltycash ai tip or hire an x user with usdc",
-        "molty.cash moltycash",
-        "moltycash hire",
+        "tip or hire an x user with usdc molty",
+        "cash moltycash ai",
         "hire user",
         "user with",
-        "with usdc"
+        "with usdc",
+        "usdc molty.cash",
+        "molty.cash moltycash"
       ],
       "satisfies": [
         {
@@ -3148,24 +2983,24 @@
       "label": "Apollo",
       "description": "Bulk Organization Enrichment",
       "aliases": [
-        "apollo apollo data bulk organization enrichment",
-        "apollo apollo",
-        "apollo data",
-        "data bulk",
+        "bulk organization enrichment apollo apollo data",
         "bulk organization",
-        "organization enrichment"
+        "organization enrichment",
+        "enrichment apollo",
+        "apollo apollo",
+        "apollo data"
       ],
       "satisfies": [
         {
           "origin": "https://apollo.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/apollo/people-enrichment",
+          "path": "/apollo/org-search",
           "confidence": "primary"
         },
         {
           "origin": "https://apollo.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/apollo/org-search",
+          "path": "/apollo/people-enrichment",
           "confidence": "secondary"
         },
         {
@@ -3181,12 +3016,12 @@
       "label": "AviationStack",
       "description": "Aircraft types lookup",
       "aliases": [
-        "aviationstack aviationstack data aircraft types lookup",
-        "aviationstack aviationstack",
-        "aviationstack data",
-        "data aircraft",
+        "aircraft types lookup aviationstack aviationstack data",
         "aircraft types",
-        "types lookup"
+        "types lookup",
+        "lookup aviationstack",
+        "aviationstack aviationstack",
+        "aviationstack data"
       ],
       "satisfies": [
         {
@@ -3214,10 +3049,10 @@
       "label": "Billboard",
       "description": "Get Price",
       "aliases": [
-        "billboard billboard data get price",
+        "get price billboard billboard data",
+        "price billboard",
         "billboard billboard",
-        "billboard data",
-        "data price"
+        "billboard data"
       ],
       "satisfies": [
         {
@@ -3239,10 +3074,10 @@
       "label": "Brave Search",
       "description": "AI Answers",
       "aliases": [
-        "brave search brave search ai answers",
+        "ai answers brave search brave search",
+        "answers brave",
         "brave search",
-        "search brave",
-        "search answers"
+        "search brave"
       ],
       "satisfies": [
         {
@@ -3270,10 +3105,10 @@
       "label": "BuiltWith",
       "description": "Company to URL",
       "aliases": [
-        "builtwith builtwith data company to url",
+        "company to url builtwith builtwith data",
+        "company builtwith",
         "builtwith builtwith",
-        "builtwith data",
-        "data company"
+        "builtwith data"
       ],
       "satisfies": [
         {
@@ -3301,12 +3136,12 @@
       "label": "Clado",
       "description": "Bulk Contact Enrichment",
       "aliases": [
-        "clado clado data bulk contact enrichment",
-        "clado clado",
-        "clado data",
-        "data bulk",
+        "bulk contact enrichment clado clado data",
         "bulk contact",
-        "contact enrichment"
+        "contact enrichment",
+        "enrichment clado",
+        "clado clado",
+        "clado data"
       ],
       "satisfies": [
         {
@@ -3334,12 +3169,12 @@
       "label": "Stripe Climate",
       "description": "Create a climate contribution",
       "aliases": [
-        "stripe climate stripe-climate web create a climate contribution",
-        "stripe climate",
-        "climate stripe-climate",
-        "stripe-climate create",
+        "create a climate contribution stripe climate stripe climate web",
         "create climate",
-        "climate contribution"
+        "climate contribution",
+        "contribution stripe",
+        "stripe climate",
+        "climate stripe"
       ],
       "satisfies": [
         {
@@ -3355,12 +3190,12 @@
       "label": "Code Storage",
       "description": "Create a Git repository",
       "aliases": [
-        "code storage codestorage storage create a git repository",
+        "create a git repository code storage codestorage storage",
+        "create repository",
+        "repository code",
         "code storage",
         "storage codestorage",
-        "codestorage storage",
-        "storage create",
-        "create repository"
+        "codestorage storage"
       ],
       "satisfies": [
         {
@@ -3382,28 +3217,28 @@
       "label": "CoinGecko",
       "description": "Categories",
       "aliases": [
-        "coingecko coingecko data categories",
+        "categories coingecko coingecko data",
+        "categories coingecko",
         "coingecko coingecko",
-        "coingecko data",
-        "data categories"
+        "coingecko data"
       ],
       "satisfies": [
         {
           "origin": "https://coingecko.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/coingecko/coins-markets",
+          "path": "/coingecko/coin-data",
           "confidence": "primary"
         },
         {
           "origin": "https://coingecko.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/coingecko/coin-data",
+          "path": "/coingecko/coins-markets",
           "confidence": "secondary"
         },
         {
           "origin": "https://coingecko.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/coingecko/simple-price",
+          "path": "/coingecko/market-chart",
           "confidence": "secondary"
         }
       ]
@@ -3413,29 +3248,29 @@
       "label": "Deepgram",
       "description": "Analyze Text",
       "aliases": [
-        "deepgram deepgram data analyze text",
+        "analyze text deepgram deepgram data",
+        "analyze text",
+        "text deepgram",
         "deepgram deepgram",
-        "deepgram data",
-        "data analyze",
-        "analyze text"
+        "deepgram data"
       ],
       "satisfies": [
         {
           "origin": "https://deepgram.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/deepgram/analyze",
+          "path": "/deepgram/transcribe",
           "confidence": "primary"
         },
         {
           "origin": "https://deepgram.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/deepgram/list-models",
+          "path": "/deepgram/analyze",
           "confidence": "secondary"
         },
         {
           "origin": "https://deepgram.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/deepgram/speak",
+          "path": "/deepgram/list-models",
           "confidence": "secondary"
         }
       ]
@@ -3445,28 +3280,28 @@
       "label": "DeepL",
       "description": "Languages",
       "aliases": [
-        "deepl deepl data languages",
+        "languages deepl deepl data",
+        "languages deepl",
         "deepl deepl",
-        "deepl data",
-        "data languages"
+        "deepl data"
       ],
       "satisfies": [
         {
           "origin": "https://deepl.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/deepl/languages",
+          "path": "/deepl/translate",
           "confidence": "primary"
         },
         {
           "origin": "https://deepl.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/deepl/rephrase",
+          "path": "/deepl/languages",
           "confidence": "secondary"
         },
         {
           "origin": "https://deepl.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/deepl/translate",
+          "path": "/deepl/rephrase",
           "confidence": "secondary"
         }
       ]
@@ -3476,9 +3311,9 @@
       "label": "DeepSeek",
       "description": "Chat",
       "aliases": [
-        "deepseek deepseek ai chat",
-        "deepseek deepseek",
-        "deepseek chat"
+        "chat deepseek deepseek ai",
+        "chat deepseek",
+        "deepseek deepseek"
       ],
       "satisfies": [
         {
@@ -3506,10 +3341,10 @@
       "label": "Diffbot KG",
       "description": "Enhance",
       "aliases": [
-        "diffbot kg diffbot-kg data enhance",
-        "diffbot diffbot-kg",
-        "diffbot-kg data",
-        "data enhance"
+        "enhance diffbot kg diffbot kg data",
+        "enhance diffbot",
+        "diffbot diffbot",
+        "diffbot data"
       ],
       "satisfies": [
         {
@@ -3531,10 +3366,10 @@
       "label": "Diffbot NL",
       "description": "Analyze Text",
       "aliases": [
-        "diffbot nl diffbot-nl ai analyze text",
-        "diffbot diffbot-nl",
-        "diffbot-nl analyze",
-        "analyze text"
+        "analyze text diffbot nl diffbot nl ai",
+        "analyze text",
+        "text diffbot",
+        "diffbot diffbot"
       ],
       "satisfies": [
         {
@@ -3550,9 +3385,9 @@
       "label": "Diffbot",
       "description": "Analyze",
       "aliases": [
-        "diffbot diffbot web analyze",
-        "diffbot diffbot",
-        "diffbot analyze"
+        "analyze diffbot diffbot web",
+        "analyze diffbot",
+        "diffbot diffbot"
       ],
       "satisfies": [
         {
@@ -3580,23 +3415,23 @@
       "label": "DripStack",
       "description": "List publications (free)",
       "aliases": [
-        "dripstack dripstack web list publications (free)",
-        "dripstack dripstack",
-        "dripstack list",
+        "list publications (free) dripstack dripstack web",
         "list publications",
-        "publications (free)"
+        "publications (free)",
+        "(free) dripstack",
+        "dripstack dripstack"
       ],
       "satisfies": [
         {
           "origin": "https://dripstack.xyz",
           "method": "GET",
-          "path": "/api/v1/publications/:publicationSlug/:postSlug",
+          "path": "/api/v1/publications",
           "confidence": "primary"
         },
         {
           "origin": "https://dripstack.xyz",
           "method": "GET",
-          "path": "/api/v1/publications",
+          "path": "/api/v1/publications/:publicationSlug/:postSlug",
           "confidence": "secondary"
         },
         {
@@ -3612,13 +3447,14 @@
       "label": "EDGAR Full-Text Search",
       "description": "Search Filings",
       "aliases": [
-        "edgar full-text search edgar-search data search filings",
+        "search filings edgar full-text search edgar search data",
+        "search filings",
+        "filings edgar",
         "edgar full-text",
         "full-text search",
-        "search edgar-search",
-        "edgar-search data",
-        "data search",
-        "search filings"
+        "search edgar",
+        "edgar search",
+        "search data"
       ],
       "satisfies": [
         {
@@ -3634,12 +3470,12 @@
       "label": "EDGAR (SEC)",
       "description": "Company Concept",
       "aliases": [
-        "edgar (sec) edgar data company concept",
+        "company concept edgar (sec) edgar data",
+        "company concept",
+        "concept edgar",
         "edgar (sec)",
         "(sec) edgar",
-        "edgar data",
-        "data company",
-        "company concept"
+        "edgar data"
       ],
       "satisfies": [
         {
@@ -3667,9 +3503,9 @@
       "label": "Exa",
       "description": "Get AI-powered answers",
       "aliases": [
-        "exa exa search get ai-powered answers",
-        "search ai-powered",
-        "ai-powered answers"
+        "get ai-powered answers exa exa search",
+        "ai-powered answers",
+        "answers search"
       ],
       "satisfies": [
         {
@@ -3697,11 +3533,11 @@
       "label": "fal.ai",
       "description": "fal.ai model generation",
       "aliases": [
-        "ai fal ai fal",
-        "ai model generation",
-        "fal.ai fal.ai",
+        "ai model generation fal",
+        "ai fal ai",
         "fal.ai model",
-        "model generation"
+        "model generation",
+        "generation fal.ai"
       ],
       "satisfies": [
         {
@@ -3729,10 +3565,10 @@
       "label": "Firecrawl",
       "description": "Crawl a website",
       "aliases": [
-        "firecrawl firecrawl web crawl a website",
-        "firecrawl firecrawl",
-        "firecrawl crawl",
-        "crawl website"
+        "crawl a website firecrawl firecrawl web",
+        "crawl website",
+        "website firecrawl",
+        "firecrawl firecrawl"
       ],
       "satisfies": [
         {
@@ -3760,11 +3596,11 @@
       "label": "FlightAPI",
       "description": "Track a flight",
       "aliases": [
-        "flightapi flightapi data track a flight",
+        "track a flight flightapi flightapi data",
+        "track flight",
+        "flight flightapi",
         "flightapi flightapi",
-        "flightapi data",
-        "data track",
-        "track flight"
+        "flightapi data"
       ],
       "satisfies": [
         {
@@ -3792,13 +3628,13 @@
       "label": "Google Gemini",
       "description": "List cached contents (free)",
       "aliases": [
-        "google gemini gemini ai list cached contents (free)",
-        "google gemini",
-        "gemini gemini",
-        "gemini list",
+        "list cached contents (free) google gemini gemini ai",
         "list cached",
         "cached contents",
-        "contents (free)"
+        "contents (free)",
+        "(free) google",
+        "google gemini",
+        "gemini gemini"
       ],
       "satisfies": [
         {
@@ -3826,11 +3662,11 @@
       "label": "GoFlightLabs",
       "description": "Airports by filter",
       "aliases": [
-        "goflightlabs goflightlabs data airports by filter",
+        "airports by filter goflightlabs goflightlabs data",
+        "airports filter",
+        "filter goflightlabs",
         "goflightlabs goflightlabs",
-        "goflightlabs data",
-        "data airports",
-        "airports filter"
+        "goflightlabs data"
       ],
       "satisfies": [
         {
@@ -3858,14 +3694,14 @@
       "label": "Google Maps",
       "description": "Look up an aerial view video",
       "aliases": [
-        "google maps googlemaps data look up an aerial view video",
-        "google maps",
-        "maps googlemaps",
-        "googlemaps data",
-        "data look",
+        "look up an aerial view video google maps googlemaps data",
         "look aerial",
         "aerial view",
-        "view video"
+        "view video",
+        "video google",
+        "google maps",
+        "maps googlemaps",
+        "googlemaps data"
       ],
       "satisfies": [
         {
@@ -3893,18 +3729,18 @@
       "label": "GovLaws",
       "description": "Recent Federal Register change events filtered by agency, citation, or lookback",
       "aliases": [
-        "govlaws govlaws data recent federal register change events filtered by agency",
+        "recent federal register change events filtered by agency",
         "citation",
-        "or lookback",
-        "govlaws govlaws",
-        "govlaws data",
-        "data recent",
+        "or lookback govlaws govlaws data",
         "recent federal",
         "federal register",
         "register change",
         "change events",
         "events filtered",
-        "filtered agency,"
+        "filtered agency,",
+        "agency, citation,",
+        "citation, lookback",
+        "lookback govlaws"
       ],
       "satisfies": [
         {
@@ -3932,18 +3768,18 @@
       "label": "Codex",
       "description": "GraphQL query (token data, trades, liquidity, NFTs, wallets)",
       "aliases": [
-        "codex codex blockchain graphql query (token data",
+        "graphql query (token data",
         "trades",
         "liquidity",
         "nfts",
-        "wallets)",
-        "codex codex",
-        "codex blockchain",
-        "blockchain graphql",
+        "wallets) codex codex blockchain",
         "graphql query",
         "query (token",
         "(token data,",
-        "data, trades,"
+        "data, trades,",
+        "trades, liquidity,",
+        "liquidity, nfts,",
+        "nfts, wallets)"
       ],
       "satisfies": [
         {
@@ -3959,10 +3795,10 @@
       "label": "Grok",
       "description": "Chat Completions",
       "aliases": [
-        "grok grok ai chat completions",
-        "grok grok",
-        "grok chat",
-        "chat completions"
+        "chat completions grok grok ai",
+        "chat completions",
+        "completions grok",
+        "grok grok"
       ],
       "satisfies": [
         {
@@ -3990,10 +3826,10 @@
       "label": "Groq",
       "description": "Chat Completion",
       "aliases": [
-        "groq groq ai chat completion",
-        "groq groq",
-        "groq chat",
-        "chat completion"
+        "chat completion groq groq ai",
+        "chat completion",
+        "completion groq",
+        "groq groq"
       ],
       "satisfies": [
         {
@@ -4015,11 +3851,11 @@
       "label": "Hunter",
       "description": "Combined Enrichment",
       "aliases": [
-        "hunter hunter data combined enrichment",
+        "combined enrichment hunter hunter data",
+        "combined enrichment",
+        "enrichment hunter",
         "hunter hunter",
-        "hunter data",
-        "data combined",
-        "combined enrichment"
+        "hunter data"
       ],
       "satisfies": [
         {
@@ -4047,10 +3883,10 @@
       "label": "IPinfo",
       "description": "IP Lite",
       "aliases": [
-        "ipinfo ipinfo data ip lite",
+        "ip lite ipinfo ipinfo data",
+        "lite ipinfo",
         "ipinfo ipinfo",
-        "ipinfo data",
-        "data lite"
+        "ipinfo data"
       ],
       "satisfies": [
         {
@@ -4072,11 +3908,11 @@
       "label": "Judge0",
       "description": "Execute Code",
       "aliases": [
-        "judge0 judge0 compute execute code",
+        "execute code judge0 judge0 compute",
+        "execute code",
+        "code judge0",
         "judge0 judge0",
-        "judge0 compute",
-        "compute execute",
-        "execute code"
+        "judge0 compute"
       ],
       "satisfies": [
         {
@@ -4088,13 +3924,13 @@
         {
           "origin": "https://judge0.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/judge0/get-submission",
+          "path": "/judge0/list-languages",
           "confidence": "secondary"
         },
         {
           "origin": "https://judge0.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/judge0/list-languages",
+          "path": "/judge0/list-statuses",
           "confidence": "secondary"
         }
       ]
@@ -4104,11 +3940,11 @@
       "label": "KicksDB",
       "description": "Daily CSV snapshot",
       "aliases": [
-        "kicksdb kicksdb data daily csv snapshot",
+        "daily csv snapshot kicksdb kicksdb data",
+        "daily snapshot",
+        "snapshot kicksdb",
         "kicksdb kicksdb",
-        "kicksdb data",
-        "data daily",
-        "daily snapshot"
+        "kicksdb data"
       ],
       "satisfies": [
         {
@@ -4136,10 +3972,10 @@
       "label": "Mapbox",
       "description": "Directions",
       "aliases": [
-        "mapbox mapbox data directions",
+        "directions mapbox mapbox data",
+        "directions mapbox",
         "mapbox mapbox",
-        "mapbox data",
-        "data directions"
+        "mapbox data"
       ],
       "satisfies": [
         {
@@ -4167,10 +4003,10 @@
       "label": "Mathpix",
       "description": "Process Image",
       "aliases": [
-        "mathpix mathpix ai process image",
-        "mathpix mathpix",
-        "mathpix process",
-        "process image"
+        "process image mathpix mathpix ai",
+        "process image",
+        "image mathpix",
+        "mathpix mathpix"
       ],
       "satisfies": [
         {
@@ -4192,14 +4028,14 @@
       "label": "Megapot",
       "description": "Purchase a Megapot lottery ticket for a recipient wallet",
       "aliases": [
-        "megapot megapot web purchase a megapot lottery ticket for a recipient wallet",
-        "megapot megapot",
-        "megapot purchase",
+        "purchase a megapot lottery ticket for a recipient wallet megapot megapot web",
         "purchase megapot",
         "megapot lottery",
         "lottery ticket",
         "ticket recipient",
-        "recipient wallet"
+        "recipient wallet",
+        "wallet megapot",
+        "megapot megapot"
       ],
       "satisfies": [
         {
@@ -4221,10 +4057,10 @@
       "label": "Mistral AI",
       "description": "Chat Completion",
       "aliases": [
-        "mistral ai mistral ai chat completion",
-        "mistral mistral",
-        "mistral chat",
-        "chat completion"
+        "chat completion mistral ai mistral ai",
+        "chat completion",
+        "completion mistral",
+        "mistral mistral"
       ],
       "satisfies": [
         {
@@ -4252,13 +4088,13 @@
       "label": "Modal",
       "description": "Create a sandbox for code execution",
       "aliases": [
-        "modal modal compute create a sandbox for code execution",
-        "modal modal",
-        "modal compute",
-        "compute create",
+        "create a sandbox for code execution modal modal compute",
         "create sandbox",
         "sandbox code",
-        "code execution"
+        "code execution",
+        "execution modal",
+        "modal modal",
+        "modal compute"
       ],
       "satisfies": [
         {
@@ -4286,7 +4122,7 @@
       "label": "Alchemy",
       "description": "NFT API v3",
       "aliases": [
-        "alchemy alchemy blockchain nft api v3",
+        "nft api v3 alchemy alchemy blockchain",
         "alchemy alchemy",
         "alchemy blockchain"
       ],
@@ -4316,10 +4152,10 @@
       "label": "AgentMail",
       "description": "List API keys",
       "aliases": [
-        "agentmail agentmail ai list api keys",
-        "agentmail agentmail",
-        "agentmail list",
-        "list keys"
+        "list api keys agentmail agentmail ai",
+        "list keys",
+        "keys agentmail",
+        "agentmail agentmail"
       ],
       "satisfies": [
         {
@@ -4347,10 +4183,10 @@
       "label": "Browserbase",
       "description": "Terminate session",
       "aliases": [
-        "browserbase browserbase web terminate session",
-        "browserbase browserbase",
-        "browserbase terminate",
-        "terminate session"
+        "terminate session browserbase browserbase web",
+        "terminate session",
+        "session browserbase",
+        "browserbase browserbase"
       ],
       "satisfies": [
         {
@@ -4378,33 +4214,33 @@
       "label": "Build With Locus",
       "description": "Create Postgres or Redis addon",
       "aliases": [
-        "build with locus buildwithlocus compute create postgres or redis addon",
+        "create postgres or redis addon build with locus buildwithlocus compute",
+        "create postgres",
+        "postgres redis",
+        "redis addon",
+        "addon build",
         "build with",
         "with locus",
         "locus buildwithlocus",
-        "buildwithlocus compute",
-        "compute create",
-        "create postgres",
-        "postgres redis",
-        "redis addon"
+        "buildwithlocus compute"
       ],
       "satisfies": [
         {
           "origin": "https://mpp.buildwithlocus.com",
           "method": "POST",
-          "path": "/v1/auth/mpp-sign-up",
+          "path": "/v1/billing/mpp-top-up",
           "confidence": "primary"
         },
         {
           "origin": "https://mpp.buildwithlocus.com",
           "method": "POST",
-          "path": "/v1/billing/mpp-top-up",
+          "path": "/v1/addons",
           "confidence": "secondary"
         },
         {
           "origin": "https://mpp.buildwithlocus.com",
           "method": "POST",
-          "path": "/v1/addons",
+          "path": "/v1/deployments",
           "confidence": "secondary"
         }
       ]
@@ -4414,14 +4250,14 @@
       "label": "Conduit",
       "description": "JSON-RPC calls - $0.00005 per call",
       "aliases": [
-        "conduit conduit blockchain json-rpc calls - $0",
-        "00005 per call",
-        "conduit conduit",
-        "conduit blockchain",
-        "blockchain json-rpc",
+        "json-rpc calls - $0",
+        "00005 per call conduit conduit blockchain",
         "json-rpc calls",
         "calls $0.00005",
-        "$0.00005 call"
+        "$0.00005 call",
+        "call conduit",
+        "conduit conduit",
+        "conduit blockchain"
       ],
       "satisfies": [
         {
@@ -4437,14 +4273,14 @@
       "label": "Doma",
       "description": "Register a domain — price varies by TLD and domain name",
       "aliases": [
-        "doma doma web register a domain — price varies by tld and domain name",
-        "doma doma",
-        "doma register",
+        "register a domain — price varies by tld and domain name doma doma web",
         "register domain",
         "domain price",
         "price varies",
         "varies domain",
-        "domain name"
+        "domain name",
+        "name doma",
+        "doma doma"
       ],
       "satisfies": [
         {
@@ -4460,18 +4296,18 @@
       "label": "AgentMail via Orthogonal",
       "description": "Create a new email inbox. Inboxes cost $2/month. Inboxes with no API activity for 30+ days are automatically deleted",
       "aliases": [
-        "agentmail via orthogonal orth-agentmail ai create a new email inbox",
+        "create a new email inbox",
         "inboxes cost $2/month",
-        "inboxes with no api activity for 30+ days are automatically deleted",
-        "agentmail orthogonal",
-        "orthogonal orth-agentmail",
-        "orth-agentmail create",
         "create email",
         "email inbox.",
         "inbox. inboxes",
         "inboxes cost",
         "cost $2/month.",
-        "$2/month. inboxes"
+        "$2/month. inboxes",
+        "inboxes with",
+        "with activity",
+        "activity days",
+        "days automatically"
       ],
       "satisfies": [
         {
@@ -4499,18 +4335,18 @@
       "label": "AgentPhone",
       "description": "Start agent signup. Sends a 6-digit OTP to the human's email. Returns a verification_id. No auth required.",
       "aliases": [
-        "agentphone orth-agentphone social start agent signup",
+        "start agent signup",
         "sends a 6-digit otp to the human's email",
         "returns a verification_id",
         "no auth required",
-        "agentphone orth-agentphone",
-        "orth-agentphone social",
-        "social start",
+        "agentphone orth agentphone social",
         "start agent",
         "agent signup.",
         "signup. sends",
         "sends 6-digit",
-        "6-digit human's"
+        "6-digit human's",
+        "human's email.",
+        "email. returns"
       ],
       "satisfies": [
         {
@@ -4538,18 +4374,18 @@
       "label": "Andi Search API",
       "description": "Fast, high-quality search API with intelligent ranking, instant answers, and result enrichment.",
       "aliases": [
-        "andi search api orth-andi search fast",
+        "fast",
         "high-quality search api with intelligent ranking",
         "instant answers",
         "and result enrichment",
-        "andi search",
-        "search orth-andi",
-        "orth-andi search",
-        "search fast,",
+        "andi search api orth andi search",
         "fast, high-quality",
         "high-quality search",
         "search with",
-        "with intelligent"
+        "with intelligent",
+        "intelligent ranking,",
+        "ranking, instant",
+        "instant answers,"
       ],
       "satisfies": [
         {
@@ -4565,10 +4401,9 @@
       "label": "Apollo API",
       "description": "Search Apollo database for companies matching filters. Returns up to 100 results per page.",
       "aliases": [
+        "search apollo database for companies matching filters",
         "returns up to 100 results per page",
-        "apollo orth-apollo",
-        "orth-apollo data",
-        "data search",
+        "apollo api orth apollo data",
         "search apollo",
         "apollo database",
         "database companies",
@@ -4576,7 +4411,8 @@
         "matching filters.",
         "filters. returns",
         "returns results",
-        "results page."
+        "results page.",
+        "page. apollo"
       ],
       "satisfies": [
         {
@@ -4604,13 +4440,15 @@
       "label": "Aviato",
       "description": "Get companies acquired by the specified company.",
       "aliases": [
-        "aviato orth-aviato data get companies acquired by the specified company",
-        "aviato orth-aviato",
-        "orth-aviato data",
-        "data companies",
+        "get companies acquired by the specified company",
+        "aviato orth aviato data",
         "companies acquired",
         "acquired specified",
-        "specified company."
+        "specified company.",
+        "company. aviato",
+        "aviato orth",
+        "orth aviato",
+        "aviato data"
       ],
       "satisfies": [
         {
@@ -4638,18 +4476,18 @@
       "label": "Baseten Model APIs",
       "description": "Send a conversation to a model and get a completion back. Works exactly like the OpenAI chat completions endpoint. Pass",
       "aliases": [
+        "send a conversation to a model and get a completion back",
         "works exactly like the openai chat completions endpoint",
-        "pass",
-        "baseten model",
-        "model apis",
-        "apis orth-baseten",
-        "orth-baseten send",
+        "pass baseten model apis orth baseten ai",
         "send conversation",
         "conversation model",
         "model completion",
         "completion back.",
         "back. works",
-        "works exactly"
+        "works exactly",
+        "exactly like",
+        "like openai",
+        "openai chat"
       ],
       "satisfies": [
         {
@@ -4665,18 +4503,18 @@
       "label": "Brand.dev API",
       "description": "Beta feature: Extract product information from a brand’s website. Brand.dev will analyze the website and return a list",
       "aliases": [
+        "beta feature: extract product information from a brand’s website",
         "brand",
-        "dev will analyze the website and return a list",
-        "brand.dev orth-brand-dev",
-        "orth-brand-dev data",
-        "data beta",
+        "dev will analyze the website and return a list brand",
+        "dev api orth brand dev data",
         "beta feature:",
         "feature: extract",
         "extract product",
         "product information",
         "information from",
         "from brand’s",
-        "brand’s website."
+        "brand’s website.",
+        "website. brand.dev"
       ],
       "satisfies": [
         {
@@ -4704,18 +4542,18 @@
       "label": "Bytemine",
       "description": "Enrich a company by name, website, LinkedIn URL, or company_id. Returns full profile with description, industries",
       "aliases": [
-        "bytemine orth-bytemine data enrich a company by name",
+        "enrich a company by name",
         "website",
         "linkedin url",
         "or company_id",
         "returns full profile with description",
-        "industries",
-        "bytemine orth-bytemine",
-        "orth-bytemine data",
-        "data enrich",
+        "industries bytemine orth bytemine data",
         "enrich company",
         "company name,",
-        "name, website,"
+        "name, website,",
+        "website, linkedin",
+        "linkedin url,",
+        "url, company_id."
       ],
       "satisfies": [
         {
@@ -4743,18 +4581,18 @@
       "label": "CaptainData",
       "description": "List employees of a given company. Returns paginated results. The company_uid path parameter is the LinkedIn company ID",
       "aliases": [
-        "captaindata orth-captaindata data list employees of a given company",
+        "list employees of a given company",
         "returns paginated results",
-        "the company_uid path parameter is the linkedin company id",
-        "captaindata orth-captaindata",
-        "orth-captaindata data",
-        "data list",
         "list employees",
         "employees given",
         "given company.",
         "company. returns",
         "returns paginated",
-        "paginated results."
+        "paginated results.",
+        "results. company_uid",
+        "company_uid path",
+        "path parameter",
+        "parameter linkedin"
       ],
       "satisfies": [
         {
@@ -4782,18 +4620,18 @@
       "label": "Company Enrich",
       "description": "Get a company's full profile by its CompanyEnrich ID. Returns name, domain, industry, employee count, revenue",
       "aliases": [
+        "get a company's full profile by its companyenrich id",
         "returns name",
         "domain",
         "industry",
         "employee count",
-        "revenue",
-        "company enrich",
-        "enrich orth-company-enrich",
-        "orth-company-enrich data",
-        "data company's",
+        "revenue company enrich orth company enrich data",
         "company's full",
         "full profile",
-        "profile companyenrich"
+        "profile companyenrich",
+        "companyenrich returns",
+        "returns name,",
+        "name, domain,"
       ],
       "satisfies": [
         {
@@ -4821,14 +4659,16 @@
       "label": "ContactOut",
       "description": "Get company information from domain names.",
       "aliases": [
-        "contactout orth-contactout data get company information from domain names",
-        "contactout orth-contactout",
-        "orth-contactout data",
-        "data company",
+        "get company information from domain names",
+        "contactout orth contactout data",
         "company information",
         "information from",
         "from domain",
-        "domain names."
+        "domain names.",
+        "names. contactout",
+        "contactout orth",
+        "orth contactout",
+        "contactout data"
       ],
       "satisfies": [
         {
@@ -4856,18 +4696,18 @@
       "label": "Context.dev",
       "description": "Beta feature: Given a single URL, determines if it is a product detail page, classifies the platform/product type, and",
       "aliases": [
-        "context",
-        "dev orth-context-dev web beta feature: given a single url",
+        "beta feature: given a single url",
         "determines if it is a product detail page",
         "classifies the platform/product type",
-        "context.dev orth-context-dev",
-        "orth-context-dev beta",
+        "and context",
+        "dev orth context dev web",
         "beta feature:",
         "feature: given",
         "given single",
         "single url,",
         "url, determines",
-        "determines product"
+        "determines product",
+        "product detail"
       ],
       "satisfies": [
         {
@@ -4895,10 +4735,7 @@
       "label": "Coresignal",
       "description": "Get a full company profile by its Coresignal numeric ID. Use IDs returned by the 'Base Company Search (Filter)' or",
       "aliases": [
-        "use ids returned by the 'base company search (filter)' or",
-        "coresignal orth-coresignal",
-        "orth-coresignal data",
-        "data full",
+        "get a full company profile by its coresignal numeric id",
         "full company",
         "company profile",
         "profile coresignal",
@@ -4906,7 +4743,10 @@
         "numeric returned",
         "returned 'base",
         "'base company",
-        "company search"
+        "company search",
+        "search (filter)'",
+        "(filter)' coresignal",
+        "coresignal orth"
       ],
       "satisfies": [
         {
@@ -4934,18 +4774,18 @@
       "label": "Crustdata",
       "description": "Get Gartner Peer Insights review data for companies. Filter by review rating, company ID, and other metrics. Returns a",
       "aliases": [
+        "get gartner peer insights review data for companies",
         "filter by review rating",
         "company id",
         "and other metrics",
-        "returns a",
-        "crustdata orth-crustdata",
-        "orth-crustdata data",
-        "data gartner",
+        "returns a crustdata orth crustdata data",
         "gartner peer",
         "peer insights",
         "insights review",
         "review data",
-        "data companies."
+        "data companies.",
+        "companies. filter",
+        "filter review"
       ],
       "satisfies": [
         {
@@ -4973,9 +4813,6 @@
       "label": "Didit API",
       "description": "The AML Screening API allows you to screen individuals or companies against global watchlists and high-risk databases",
       "aliases": [
-        "didit orth-didit",
-        "orth-didit data",
-        "data screening",
         "screening allows",
         "allows screen",
         "screen individuals",
@@ -4984,7 +4821,10 @@
         "against global",
         "global watchlists",
         "watchlists high-risk",
-        "high-risk databases"
+        "high-risk databases",
+        "databases didit",
+        "didit orth",
+        "orth didit"
       ],
       "satisfies": [
         {
@@ -5012,18 +4852,18 @@
       "label": "Edges",
       "description": "Extract the list of affiliated companies (subsidiaries, parent companies) linked to a LinkedIn company page.",
       "aliases": [
-        "edges orth-edges data extract the list of affiliated companies (subsidiaries",
+        "extract the list of affiliated companies (subsidiaries",
         "parent companies) linked to a linkedin company page",
-        "edges orth-edges",
-        "orth-edges data",
-        "data extract",
+        "edges orth edges data",
         "extract list",
         "list affiliated",
         "affiliated companies",
         "companies (subsidiaries,",
         "(subsidiaries, parent",
         "parent companies)",
-        "companies) linked"
+        "companies) linked",
+        "linked linkedin",
+        "linkedin company"
       ],
       "satisfies": [
         {
@@ -5051,18 +4891,18 @@
       "label": "Fantastic Jobs",
       "description": "Returns new jobs from 54 ATS platforms (company career pages). Refreshed hourly. Supports 30+ filters including title",
       "aliases": [
+        "returns new jobs from 54 ats platforms (company career pages)",
         "refreshed hourly",
-        "supports 30+ filters including title",
-        "fantastic jobs",
-        "jobs orth-fantastic-jobs",
-        "orth-fantastic-jobs data",
-        "data returns",
+        "supports 30+ filters including title fantastic jobs orth fantastic jobs data",
         "returns jobs",
         "jobs from",
         "from platforms",
         "platforms (company",
         "(company career",
-        "career pages)."
+        "career pages).",
+        "pages). refreshed",
+        "refreshed hourly.",
+        "hourly. supports"
       ],
       "satisfies": [
         {
@@ -5090,16 +4930,18 @@
       "label": "Fiber AI API",
       "description": "Get total count of companies and people matching search filters in one call.",
       "aliases": [
-        "fiber orth-fiber",
-        "orth-fiber data",
-        "data total",
+        "get total count of companies and people matching search filters in one call",
+        "fiber ai api orth fiber data",
         "total count",
         "count companies",
         "companies people",
         "people matching",
         "matching search",
         "search filters",
-        "filters call."
+        "filters call.",
+        "call. fiber",
+        "fiber orth",
+        "orth fiber"
       ],
       "satisfies": [
         {
@@ -5127,18 +4969,18 @@
       "label": "Fundable",
       "description": "Search for companies using filters, includes latest funding round",
       "aliases": [
-        "fundable orth-fundable data search for companies using filters",
-        "includes latest funding round",
-        "fundable orth-fundable",
-        "orth-fundable data",
-        "data search",
+        "search for companies using filters",
+        "includes latest funding round fundable orth fundable data",
         "search companies",
         "companies using",
         "using filters,",
         "filters, includes",
         "includes latest",
         "latest funding",
-        "funding round"
+        "funding round",
+        "round fundable",
+        "fundable orth",
+        "orth fundable"
       ],
       "satisfies": [
         {
@@ -5166,18 +5008,18 @@
       "label": "Happenstance",
       "description": "Start a new person research request. Include as many details as possible about the person in the description field",
       "aliases": [
-        "happenstance orth-happenstance data start a new person research request",
-        "include as many details as possible about the person in the description field",
-        "happenstance orth-happenstance",
-        "orth-happenstance data",
-        "data start",
+        "start a new person research request",
         "start person",
         "person research",
         "research request.",
         "request. include",
         "include many",
         "many details",
-        "details possible"
+        "details possible",
+        "possible about",
+        "about person",
+        "person description",
+        "description field"
       ],
       "satisfies": [
         {
@@ -5193,18 +5035,18 @@
       "label": "Influencers Club",
       "description": "Compare audience overlap between 2-10 creators on a given platform. Returns per-creator overlap and unique audience",
       "aliases": [
-        "returns per-creator overlap and unique audience",
-        "influencers club",
-        "club orth-influencers-club",
-        "orth-influencers-club social",
-        "social compare",
+        "compare audience overlap between 2-10 creators on a given platform",
         "compare audience",
         "audience overlap",
         "overlap between",
         "between 2-10",
         "2-10 creators",
         "creators given",
-        "given platform."
+        "given platform.",
+        "platform. returns",
+        "returns per-creator",
+        "per-creator overlap",
+        "overlap unique"
       ],
       "satisfies": [
         {
@@ -5232,9 +5074,8 @@
       "label": "Linkup API",
       "description": "The /fetch endpoint allows you to fetch a single webpage from a given URL.",
       "aliases": [
-        "linkup orth-linkup",
-        "orth-linkup search",
-        "search /fetch",
+        "the /fetch endpoint allows you to fetch a single webpage from a given url",
+        "linkup api orth linkup search",
         "/fetch endpoint",
         "endpoint allows",
         "allows fetch",
@@ -5242,7 +5083,9 @@
         "single webpage",
         "webpage from",
         "from given",
-        "given url."
+        "given url.",
+        "url. linkup",
+        "linkup orth"
       ],
       "satisfies": [
         {
@@ -5264,14 +5107,16 @@
       "label": "Notte",
       "description": "Start an AI agent to autonomously complete a browser task.",
       "aliases": [
-        "notte orth-notte web start an ai agent to autonomously complete a browser task",
-        "notte orth-notte",
-        "orth-notte start",
+        "start an ai agent to autonomously complete a browser task",
+        "notte orth notte web",
         "start agent",
         "agent autonomously",
         "autonomously complete",
         "complete browser",
-        "browser task."
+        "browser task.",
+        "task. notte",
+        "notte orth",
+        "orth notte"
       ],
       "satisfies": [
         {
@@ -5299,16 +5144,18 @@
       "label": "Nyne.ai",
       "description": "Start async check if a company sells a specific product/service.",
       "aliases": [
+        "start async check if a company sells a specific product/service",
         "nyne",
-        "nyne.ai orth-nyne",
-        "orth-nyne data",
-        "data start",
+        "ai orth nyne data",
         "start async",
         "async check",
         "check company",
         "company sells",
         "sells specific",
-        "specific product/service."
+        "specific product/service.",
+        "product/service. nyne.ai",
+        "nyne.ai orth",
+        "orth nyne"
       ],
       "satisfies": [
         {
@@ -5336,18 +5183,18 @@
       "label": "Ocean.io",
       "description": "Match a company with Ocean.io database and enrich it with additional information (industry, size, revenue",
       "aliases": [
-        "ocean",
-        "io orth-ocean-io data match a company with ocean",
+        "match a company with ocean",
         "io database and enrich it with additional information (industry",
         "size",
-        "revenue",
-        "ocean.io orth-ocean-io",
-        "orth-ocean-io data",
-        "data match",
+        "revenue ocean",
+        "io orth ocean io data",
         "match company",
         "company with",
         "with ocean.io",
-        "ocean.io database"
+        "ocean.io database",
+        "database enrich",
+        "enrich with",
+        "with additional"
       ],
       "satisfies": [
         {
@@ -5375,9 +5222,7 @@
       "label": "Olostep API",
       "description": "The AI will perform actions like searching and browsing web pages to find the answer to the provided task. Execution",
       "aliases": [
-        "execution",
-        "olostep orth-olostep",
-        "orth-olostep will",
+        "execution olostep api orth olostep web",
         "will perform",
         "perform actions",
         "actions like",
@@ -5386,7 +5231,9 @@
         "browsing pages",
         "pages find",
         "find answer",
-        "answer provided"
+        "answer provided",
+        "provided task.",
+        "task. execution"
       ],
       "satisfies": [
         {
@@ -5414,13 +5261,14 @@
       "label": "OpenFunnel",
       "description": "Create Account Audience Endpoint",
       "aliases": [
-        "openfunnel orth-openfunnel data create account audience endpoint",
-        "openfunnel orth-openfunnel",
-        "orth-openfunnel data",
-        "data create",
+        "create account audience endpoint openfunnel orth openfunnel data",
         "create account",
         "account audience",
-        "audience endpoint"
+        "audience endpoint",
+        "endpoint openfunnel",
+        "openfunnel orth",
+        "orth openfunnel",
+        "openfunnel data"
       ],
       "satisfies": [
         {
@@ -5448,16 +5296,18 @@
       "label": "Openmart",
       "description": "Fetch full business records by openmart_id or google_place_id. Up to 100 IDs.",
       "aliases": [
+        "fetch full business records by openmart_id or google_place_id",
         "up to 100 ids",
-        "openmart orth-openmart",
-        "orth-openmart data",
-        "data fetch",
+        "openmart orth openmart data",
         "fetch full",
         "full business",
         "business records",
         "records openmart_id",
         "openmart_id google_place_id.",
-        "google_place_id. ids."
+        "google_place_id. ids.",
+        "ids. openmart",
+        "openmart orth",
+        "orth openmart"
       ],
       "satisfies": [
         {
@@ -5485,18 +5335,18 @@
       "label": "People Data Labs",
       "description": "Enrich a company by name, website, ticker, or LinkedIn URL. Returns full company profile with industry, size, location",
       "aliases": [
-        "people data labs orth-peopledatalabs data enrich a company by name",
+        "enrich a company by name",
         "website",
         "ticker",
         "or linkedin url",
         "returns full company profile with industry",
         "size",
-        "location",
-        "people data",
-        "data labs",
-        "labs orth-peopledatalabs",
-        "orth-peopledatalabs data",
-        "data enrich"
+        "location people data labs orth peopledatalabs data",
+        "enrich company",
+        "company name,",
+        "name, website,",
+        "website, ticker,",
+        "ticker, linkedin"
       ],
       "satisfies": [
         {
@@ -5524,18 +5374,18 @@
       "label": "Precip AI - Hyperlocal Weather Data API",
       "description": "Hourly cloud cover fraction (0-1, where 0 is clear and 1 is overcast)",
       "aliases": [
-        "where 0 is clear and 1 is overcast)",
-        "precip hyperlocal",
-        "hyperlocal weather",
-        "weather data",
-        "data orth-precip",
-        "orth-precip data",
-        "data hourly",
+        "hourly cloud cover fraction (0-1",
         "hourly cloud",
         "cloud cover",
         "cover fraction",
         "fraction (0-1,",
-        "(0-1, where"
+        "(0-1, where",
+        "where clear",
+        "clear overcast)",
+        "overcast) precip",
+        "precip hyperlocal",
+        "hyperlocal weather",
+        "weather data"
       ],
       "satisfies": [
         {
@@ -5563,12 +5413,13 @@
       "label": "PredictLeads",
       "description": "Get business connections for a specific company",
       "aliases": [
-        "predictleads orth-predictleads",
-        "orth-predictleads data",
-        "data business",
         "business connections",
         "connections specific",
-        "specific company"
+        "specific company",
+        "company predictleads",
+        "predictleads orth",
+        "orth predictleads",
+        "predictleads data"
       ],
       "satisfies": [
         {
@@ -5596,9 +5447,8 @@
       "label": "Riveter API",
       "description": "Copy link Define the structure of your output directly in the API request. This endpoint allows you to define both your",
       "aliases": [
-        "this endpoint allows you to define both your",
-        "riveter orth-riveter",
-        "orth-riveter copy",
+        "copy link define the structure of your output directly in the api request",
+        "this endpoint allows you to define both your riveter api orth riveter web",
         "copy link",
         "link define",
         "define structure",
@@ -5607,7 +5457,8 @@
         "output directly",
         "directly request.",
         "request. this",
-        "this endpoint"
+        "this endpoint",
+        "endpoint allows"
       ],
       "satisfies": [
         {
@@ -5629,12 +5480,13 @@
       "label": "Scrape Creators",
       "description": "Amazon Shop",
       "aliases": [
-        "scrape creators orth-scrapecreators social amazon shop",
+        "amazon shop scrape creators orth scrapecreators social",
+        "amazon shop",
+        "shop scrape",
         "scrape creators",
-        "creators orth-scrapecreators",
-        "orth-scrapecreators social",
-        "social amazon",
-        "amazon shop"
+        "creators orth",
+        "orth scrapecreators",
+        "scrapecreators social"
       ],
       "satisfies": [
         {
@@ -5662,8 +5514,8 @@
       "label": "ScrapeGraphAI",
       "description": "Start a website crawl from a seed URL with configurable depth and page limits.",
       "aliases": [
-        "scrapegraphai orth-scrapegraphai",
-        "orth-scrapegraphai start",
+        "start a website crawl from a seed url with configurable depth and page limits",
+        "scrapegraphai orth scrapegraphai web",
         "start website",
         "website crawl",
         "crawl from",
@@ -5672,7 +5524,8 @@
         "with configurable",
         "configurable depth",
         "depth page",
-        "page limits."
+        "page limits.",
+        "limits. scrapegraphai"
       ],
       "satisfies": [
         {
@@ -5700,15 +5553,18 @@
       "label": "Seltz",
       "description": "Search the web and return matching documents with URLs and content.",
       "aliases": [
-        "seltz orth-seltz",
-        "orth-seltz search",
-        "search search",
+        "search the web and return matching documents with urls and content",
+        "seltz orth seltz search",
         "search return",
         "return matching",
         "matching documents",
         "documents with",
         "with urls",
-        "urls content."
+        "urls content.",
+        "content. seltz",
+        "seltz orth",
+        "orth seltz",
+        "seltz search"
       ],
       "satisfies": [
         {
@@ -5724,18 +5580,18 @@
       "label": "Serper Scrape",
       "description": "Scrape any webpage and extract its content as clean text, markdown, or raw HTML. Handles JavaScript-rendered pages",
       "aliases": [
+        "scrape any webpage and extract its content as clean text",
         "markdown",
         "or raw html",
-        "handles javascript-rendered pages",
-        "serper scrape",
-        "scrape orth-serper-scrape",
-        "orth-serper-scrape scrape",
+        "handles javascript-rendered pages serper scrape orth serper scrape web",
         "scrape webpage",
         "webpage extract",
         "extract content",
         "content clean",
         "clean text,",
-        "text, markdown,"
+        "text, markdown,",
+        "markdown, html.",
+        "html. handles"
       ],
       "satisfies": [
         {
@@ -5751,18 +5607,18 @@
       "label": "Serper",
       "description": "Google Autocomplete - returns search query suggestions based on a prefix. Use for keyword research, SEO, understanding",
       "aliases": [
+        "google autocomplete - returns search query suggestions based on a prefix",
         "use for keyword research",
-        "understanding",
-        "serper orth-serper",
-        "orth-serper search",
-        "search google",
+        "understanding serper orth serper search",
         "google autocomplete",
         "autocomplete returns",
         "returns search",
         "search query",
         "query suggestions",
         "suggestions based",
-        "based prefix."
+        "based prefix.",
+        "prefix. keyword",
+        "keyword research,"
       ],
       "satisfies": [
         {
@@ -5790,9 +5646,8 @@
       "label": "Sixtyfour API",
       "description": "Enrich company data with additional information and find associated people.",
       "aliases": [
-        "sixtyfour orth-sixtyfour",
-        "orth-sixtyfour data",
-        "data enrich",
+        "enrich company data with additional information and find associated people",
+        "sixtyfour api orth sixtyfour data",
         "enrich company",
         "company data",
         "data with",
@@ -5800,7 +5655,9 @@
         "additional information",
         "information find",
         "find associated",
-        "associated people."
+        "associated people.",
+        "people. sixtyfour",
+        "sixtyfour orth"
       ],
       "satisfies": [
         {
@@ -5828,18 +5685,18 @@
       "label": "Tako via Orthogonal",
       "description": "Analyze a Tako Knowledge Card and get AI-generated insights. Returns plain-text observations about trends, growth",
       "aliases": [
+        "analyze a tako knowledge card and get ai-generated insights",
         "returns plain-text observations about trends",
-        "growth",
-        "tako orthogonal",
-        "orthogonal orth-tako",
-        "orth-tako search",
-        "search analyze",
+        "growth tako via orthogonal orth tako search",
         "analyze tako",
         "tako knowledge",
         "knowledge card",
         "card ai-generated",
         "ai-generated insights.",
-        "insights. returns"
+        "insights. returns",
+        "returns plain-text",
+        "plain-text observations",
+        "observations about"
       ],
       "satisfies": [
         {
@@ -5867,9 +5724,6 @@
       "label": "Tavily API",
       "description": "Tavily Crawl is a graph-based website traversal tool that can explore hundreds of paths in parallel with built-in",
       "aliases": [
-        "tavily orth-tavily",
-        "orth-tavily search",
-        "search tavily",
         "tavily crawl",
         "crawl graph-based",
         "graph-based website",
@@ -5878,7 +5732,10 @@
         "tool that",
         "that explore",
         "explore hundreds",
-        "hundreds paths"
+        "hundreds paths",
+        "paths parallel",
+        "parallel with",
+        "with built-in"
       ],
       "satisfies": [
         {
@@ -5906,9 +5763,8 @@
       "label": "Tomba API",
       "description": "Find the email address of a blog post author from the article URL.",
       "aliases": [
-        "tomba orth-tomba",
-        "orth-tomba data",
-        "data find",
+        "find the email address of a blog post author from the article url",
+        "tomba api orth tomba data",
         "find email",
         "email address",
         "address blog",
@@ -5916,7 +5772,9 @@
         "post author",
         "author from",
         "from article",
-        "article url."
+        "article url.",
+        "url. tomba",
+        "tomba orth"
       ],
       "satisfies": [
         {
@@ -5944,10 +5802,7 @@
       "label": "Voygr",
       "description": "Check whether a business exists at the given address and whether it is open or closed. Returns existence_status",
       "aliases": [
-        "returns existence_status",
-        "voygr orth-voygr",
-        "orth-voygr data",
-        "data check",
+        "returns existence_status voygr orth voygr data",
         "check whether",
         "whether business",
         "business exists",
@@ -5955,7 +5810,10 @@
         "given address",
         "address whether",
         "whether open",
-        "open closed."
+        "open closed.",
+        "closed. returns",
+        "returns existence_status",
+        "existence_status voygr"
       ],
       "satisfies": [
         {
@@ -5971,18 +5829,18 @@
       "label": "Pinata IPFS",
       "description": "Upload file to IPFS — dynamic pricing based on file size ($0.10/GB/month, min $0.01)",
       "aliases": [
+        "upload file to ipfs — dynamic pricing based on file size ($0",
         "10/gb/month",
         "min $0",
-        "pinata ipfs",
-        "ipfs pinata",
-        "pinata storage",
-        "storage upload",
+        "01) pinata ipfs pinata storage",
         "upload file",
         "file ipfs",
         "ipfs dynamic",
         "dynamic pricing",
         "pricing based",
-        "based file"
+        "based file",
+        "file size",
+        "size ($0.10/gb/month,"
       ],
       "satisfies": [
         {
@@ -6004,14 +5862,14 @@
       "label": "Quicknode",
       "description": "JSON-RPC calls - $0.001 per call",
       "aliases": [
-        "quicknode quicknode blockchain json-rpc calls - $0",
-        "001 per call",
-        "quicknode quicknode",
-        "quicknode blockchain",
-        "blockchain json-rpc",
+        "json-rpc calls - $0",
+        "001 per call quicknode quicknode blockchain",
         "json-rpc calls",
         "calls $0.001",
-        "$0.001 call"
+        "$0.001 call",
+        "call quicknode",
+        "quicknode quicknode",
+        "quicknode blockchain"
       ],
       "satisfies": [
         {
@@ -6033,9 +5891,9 @@
       "label": "OpenAI",
       "description": "Text-to-speech",
       "aliases": [
-        "openai openai ai text-to-speech",
-        "openai openai",
-        "openai text-to-speech"
+        "text-to-speech openai openai ai",
+        "text-to-speech openai",
+        "openai openai"
       ],
       "satisfies": [
         {
@@ -6063,18 +5921,18 @@
       "label": "OpenRouter",
       "description": "Chat completions (GPT-4, Claude, Llama, etc.) - price varies by model",
       "aliases": [
-        "openrouter openrouter ai chat completions (gpt-4",
+        "chat completions (gpt-4",
         "claude",
         "llama",
-        ") - price varies by model",
-        "openrouter openrouter",
-        "openrouter chat",
+        ") - price varies by model openrouter openrouter ai",
         "chat completions",
         "completions (gpt-4,",
         "(gpt-4, claude,",
         "claude, llama,",
         "llama, etc.)",
-        "etc.) price"
+        "etc.) price",
+        "price varies",
+        "varies model"
       ],
       "satisfies": [
         {
@@ -6090,28 +5948,28 @@
       "label": "OpenWeather",
       "description": "Air Quality",
       "aliases": [
-        "openweather openweather data air quality",
+        "air quality openweather openweather data",
+        "quality openweather",
         "openweather openweather",
-        "openweather data",
-        "data quality"
+        "openweather data"
       ],
       "satisfies": [
         {
           "origin": "https://openweather.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/openweather/forecast-5day",
+          "path": "/openweather/air-quality",
           "confidence": "primary"
         },
         {
           "origin": "https://openweather.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/openweather/onecall",
+          "path": "/openweather/current-weather",
           "confidence": "secondary"
         },
         {
           "origin": "https://openweather.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/openweather/current-weather",
+          "path": "/openweather/forecast-5day",
           "confidence": "secondary"
         }
       ]
@@ -6121,13 +5979,13 @@
       "label": "Oxylabs",
       "description": "Scrape a public URL with optional geo-targeting and JS rendering",
       "aliases": [
-        "oxylabs oxylabs",
-        "oxylabs scrape",
         "scrape public",
         "public with",
         "with optional",
         "optional geo-targeting",
-        "geo-targeting rendering"
+        "geo-targeting rendering",
+        "rendering oxylabs",
+        "oxylabs oxylabs"
       ],
       "satisfies": [
         {
@@ -6143,12 +6001,12 @@
       "label": "Papercut",
       "description": "Write and send an agent-penned postcard",
       "aliases": [
-        "papercut papercut ai write and send an agent-penned postcard",
-        "papercut papercut",
-        "papercut write",
+        "write and send an agent-penned postcard papercut papercut ai",
         "write send",
         "send agent-penned",
-        "agent-penned postcard"
+        "agent-penned postcard",
+        "postcard papercut",
+        "papercut papercut"
       ],
       "satisfies": [
         {
@@ -6164,12 +6022,12 @@
       "label": "Parallel",
       "description": "Extract page content",
       "aliases": [
-        "parallel parallel search extract page content",
-        "parallel parallel",
-        "parallel search",
-        "search extract",
+        "extract page content parallel parallel search",
         "extract page",
-        "page content"
+        "page content",
+        "content parallel",
+        "parallel parallel",
+        "parallel search"
       ],
       "satisfies": [
         {
@@ -6197,10 +6055,10 @@
       "label": "Perplexity",
       "description": "Sonar Chat",
       "aliases": [
-        "perplexity perplexity ai sonar chat",
-        "perplexity perplexity",
-        "perplexity sonar",
-        "sonar chat"
+        "sonar chat perplexity perplexity ai",
+        "sonar chat",
+        "chat perplexity",
+        "perplexity perplexity"
       ],
       "satisfies": [
         {
@@ -6229,8 +6087,7 @@
       "description": "Unauthenticated calls return 402 Payment Required with WWW-Authenticate: Payment challenges. Retry the exact same body with Authorization: Payment after settlement.",
       "aliases": [
         "retry the exact same body with authorization: payment after settlement",
-        "postalform postalform",
-        "postalform unauthenticated",
+        "postalform postalform web",
         "unauthenticated calls",
         "calls return",
         "return payment",
@@ -6239,7 +6096,8 @@
         "with www-authenticate:",
         "www-authenticate: payment",
         "payment challenges.",
-        "challenges. retry"
+        "challenges. retry",
+        "retry exact"
       ],
       "satisfies": [
         {
@@ -6263,31 +6121,63 @@
       ]
     },
     {
+      "id": "data.rentcast",
+      "label": "RentCast",
+      "description": "Market Statistics",
+      "aliases": [
+        "market statistics rentcast rentcast data",
+        "market statistics",
+        "statistics rentcast",
+        "rentcast rentcast",
+        "rentcast data"
+      ],
+      "satisfies": [
+        {
+          "origin": "https://rentcast.mpp.paywithlocus.com",
+          "method": "POST",
+          "path": "/rentcast/markets",
+          "confidence": "primary"
+        },
+        {
+          "origin": "https://rentcast.mpp.paywithlocus.com",
+          "method": "POST",
+          "path": "/rentcast/properties",
+          "confidence": "secondary"
+        },
+        {
+          "origin": "https://rentcast.mpp.paywithlocus.com",
+          "method": "POST",
+          "path": "/rentcast/property-by-id",
+          "confidence": "secondary"
+        }
+      ]
+    },
+    {
       "id": "ai.replicate",
       "label": "Replicate",
       "description": "Get Model",
       "aliases": [
-        "replicate replicate ai get model",
-        "replicate replicate",
-        "replicate model"
+        "get model replicate replicate ai",
+        "model replicate",
+        "replicate replicate"
       ],
       "satisfies": [
         {
           "origin": "https://replicate.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/replicate/get-model",
+          "path": "/replicate/list-models",
           "confidence": "primary"
         },
         {
           "origin": "https://replicate.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/replicate/get-prediction",
+          "path": "/replicate/run",
           "confidence": "secondary"
         },
         {
           "origin": "https://replicate.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/replicate/list-models",
+          "path": "/replicate/get-model",
           "confidence": "secondary"
         }
       ]
@@ -6297,13 +6187,13 @@
       "label": "Tempo RPC",
       "description": "JSON-RPC calls - $0.001 per call",
       "aliases": [
-        "tempo rpc rpc blockchain json-rpc calls - $0",
-        "001 per call",
-        "tempo blockchain",
-        "blockchain json-rpc",
+        "json-rpc calls - $0",
+        "001 per call tempo rpc rpc blockchain",
         "json-rpc calls",
         "calls $0.001",
-        "$0.001 call"
+        "$0.001 call",
+        "call tempo",
+        "tempo blockchain"
       ],
       "satisfies": [
         {
@@ -6319,11 +6209,11 @@
       "label": "ScreenshotOne",
       "description": "Take Screenshot",
       "aliases": [
-        "screenshotone screenshotone compute take screenshot",
+        "take screenshot screenshotone screenshotone compute",
+        "take screenshot",
+        "screenshot screenshotone",
         "screenshotone screenshotone",
-        "screenshotone compute",
-        "compute take",
-        "take screenshot"
+        "screenshotone compute"
       ],
       "satisfies": [
         {
@@ -6339,12 +6229,12 @@
       "label": "SerpApi",
       "description": "Google Flights search",
       "aliases": [
-        "serpapi serpapi search google flights search",
-        "serpapi serpapi",
-        "serpapi search",
-        "search google",
+        "google flights search serpapi serpapi search",
         "google flights",
-        "flights search"
+        "flights search",
+        "search serpapi",
+        "serpapi serpapi",
+        "serpapi search"
       ],
       "satisfies": [
         {
@@ -6360,11 +6250,11 @@
       "label": "SpyFu",
       "description": "Ad history research",
       "aliases": [
-        "spyfu spyfu data ad history research",
+        "ad history research spyfu spyfu data",
+        "history research",
+        "research spyfu",
         "spyfu spyfu",
-        "spyfu data",
-        "data history",
-        "history research"
+        "spyfu data"
       ],
       "satisfies": [
         {
@@ -6392,10 +6282,10 @@
       "label": "Stability AI",
       "description": "Audio Inpaint",
       "aliases": [
-        "stability ai stability-ai ai audio inpaint",
-        "stability stability-ai",
-        "stability-ai audio",
-        "audio inpaint"
+        "audio inpaint stability ai stability ai ai",
+        "audio inpaint",
+        "inpaint stability",
+        "stability stability"
       ],
       "satisfies": [
         {
@@ -6423,14 +6313,14 @@
       "label": "StableEnrich",
       "description": "Scrape full LinkedIn profile data",
       "aliases": [
-        "stableenrich stableenrich data scrape full linkedin profile data",
-        "stableenrich stableenrich",
-        "stableenrich data",
-        "data scrape",
+        "scrape full linkedin profile data stableenrich stableenrich data",
         "scrape full",
         "full linkedin",
         "linkedin profile",
-        "profile data"
+        "profile data",
+        "data stableenrich",
+        "stableenrich stableenrich",
+        "stableenrich data"
       ],
       "satisfies": [
         {
@@ -6446,29 +6336,29 @@
       "label": "StableStudio",
       "description": "Flux 2 Pro image editing",
       "aliases": [
-        "stablestudio stablestudio ai flux 2 pro image editing",
-        "stablestudio stablestudio",
-        "stablestudio flux",
+        "flux 2 pro image editing stablestudio stablestudio ai",
         "flux image",
-        "image editing"
+        "image editing",
+        "editing stablestudio",
+        "stablestudio stablestudio"
       ],
       "satisfies": [
         {
           "origin": "https://stablestudio.dev",
           "method": "POST",
-          "path": "/api/generate/seedance-fast/i2v",
+          "path": "/api/generate/nano-banana/edit",
           "confidence": "primary"
         },
         {
           "origin": "https://stablestudio.dev",
           "method": "POST",
-          "path": "/api/generate/seedance/i2v",
+          "path": "/api/upload",
           "confidence": "secondary"
         },
         {
           "origin": "https://stablestudio.dev",
           "method": "POST",
-          "path": "/api/generate/flux-2-pro/edit",
+          "path": "/api/generate/nano-banana/generate",
           "confidence": "secondary"
         }
       ]
@@ -6478,33 +6368,33 @@
       "label": "https://stabletravel.dev",
       "description": "Search activities within a geographic square",
       "aliases": [
-        "https://stabletravel",
-        "dev stabletravel data search activities within a geographic square",
-        "https://stabletravel.dev stabletravel",
-        "stabletravel data",
-        "data search",
+        "search activities within a geographic square https://stabletravel",
+        "dev stabletravel data",
         "search activities",
         "activities within",
         "within geographic",
-        "geographic square"
+        "geographic square",
+        "square https://stabletravel.dev",
+        "https://stabletravel.dev stabletravel",
+        "stabletravel data"
       ],
       "satisfies": [
         {
           "origin": "https://stabletravel.dev",
-          "method": "POST",
-          "path": "/api/transfers/search",
+          "method": "GET",
+          "path": "/api/activities/by-square",
           "confidence": "primary"
         },
         {
           "origin": "https://stabletravel.dev",
-          "method": "GET",
-          "path": "/api/hotels/search",
+          "method": "POST",
+          "path": "/api/flights/search",
           "confidence": "secondary"
         },
         {
           "origin": "https://stabletravel.dev",
           "method": "GET",
-          "path": "/api/hotels/search/by-hotel",
+          "path": "/api/hotels/autocomplete",
           "confidence": "secondary"
         }
       ]
@@ -6514,11 +6404,11 @@
       "label": "Object Storage",
       "description": "List objects",
       "aliases": [
-        "object storage storage storage list objects",
+        "list objects object storage storage storage",
+        "list objects",
+        "objects object",
         "object storage",
-        "storage storage",
-        "storage list",
-        "list objects"
+        "storage storage"
       ],
       "satisfies": [
         {
@@ -6546,10 +6436,10 @@
       "label": "Suno",
       "description": "Generate Lyrics",
       "aliases": [
-        "suno suno ai generate lyrics",
-        "suno suno",
-        "suno generate",
-        "generate lyrics"
+        "generate lyrics suno suno ai",
+        "generate lyrics",
+        "lyrics suno",
+        "suno suno"
       ],
       "satisfies": [
         {
@@ -6577,15 +6467,15 @@
       "label": "Tako",
       "description": "Edit a chart using a natural language prompt",
       "aliases": [
-        "tako tako data edit a chart using a natural language prompt",
-        "tako tako",
-        "tako data",
-        "data edit",
+        "edit a chart using a natural language prompt tako tako data",
         "edit chart",
         "chart using",
         "using natural",
         "natural language",
-        "language prompt"
+        "language prompt",
+        "prompt tako",
+        "tako tako",
+        "tako data"
       ],
       "satisfies": [
         {
@@ -6613,10 +6503,10 @@
       "label": "Tavily",
       "description": "Crawl",
       "aliases": [
-        "tavily tavily search crawl",
+        "crawl tavily tavily search",
+        "crawl tavily",
         "tavily tavily",
-        "tavily search",
-        "search crawl"
+        "tavily search"
       ],
       "satisfies": [
         {
@@ -6644,12 +6534,12 @@
       "label": "2Captcha",
       "description": "Submit a captcha task for solving",
       "aliases": [
-        "2captcha twocaptcha web submit a captcha task for solving",
-        "2captcha twocaptcha",
-        "twocaptcha submit",
+        "submit a captcha task for solving 2captcha twocaptcha web",
         "submit captcha",
         "captcha task",
-        "task solving"
+        "task solving",
+        "solving 2captcha",
+        "2captcha twocaptcha"
       ],
       "satisfies": [
         {
@@ -6696,78 +6586,19 @@
         {
           "origin": "https://hirescrape.com",
           "method": "POST",
-          "path": "/api/tools/tiktok",
+          "path": "/api/tools/instagram",
           "confidence": "primary"
         },
         {
-          "origin": "https://www.hirescrape.com",
+          "origin": "https://hirescrape.com",
           "method": "POST",
-          "path": "/api/tools/tiktok",
+          "path": "/api/tools/jobs",
           "confidence": "secondary"
         },
         {
           "origin": "https://hirescrape.com",
           "method": "POST",
-          "path": "/api/tools/youtube",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "data.company_enrich",
-      "label": "Enrich company data from domain",
-      "aliases": [
-        "company enrichment",
-        "enrich company",
-        "domain lookup company"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://stablepeopledata.dev",
-          "method": "POST",
-          "path": "/api/pdl/person/enrich",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://api.deepnets.ai",
-          "method": "GET",
-          "path": "/api/trending",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://stablepeopledata.dev",
-          "method": "POST",
-          "path": "/api/pdl/company/enrich",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "ai.image_generate",
-      "label": "Generate an image with AI",
-      "aliases": [
-        "image generation",
-        "generate image",
-        "text to image",
-        "ai image"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://stablemesh.dev",
-          "method": "POST",
-          "path": "/api/image-to-3d",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://stablemesh.dev",
-          "method": "POST",
-          "path": "/api/multi-image-to-3d",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://stableflare.dev",
-          "method": "POST",
-          "path": "/api/images/transform",
+          "path": "/api/tools/tiktok",
           "confidence": "secondary"
         }
       ]
@@ -6784,21 +6615,21 @@
       ],
       "satisfies": [
         {
-          "origin": "https://blockrun-web-vbsbhh7lea-uc.a.run.app",
-          "method": "POST",
-          "path": "/api/v1/messages",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://blockrun.ai",
-          "method": "POST",
-          "path": "/api/v1/messages",
-          "confidence": "secondary"
-        },
-        {
           "origin": "https://api.clusterprotocol.ai",
           "method": "POST",
           "path": "/v1/chat/completions",
+          "confidence": "primary"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "POST",
+          "path": "/v1/chat/completions",
+          "confidence": "secondary"
+        },
+        {
+          "origin": "https://testing.cn2.ai",
+          "method": "POST",
+          "path": "/chat/completions",
           "confidence": "secondary"
         }
       ]
@@ -6816,19 +6647,19 @@
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/universal-3-pro",
+          "path": "/x402/grok-stt",
           "confidence": "primary"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/grok-stt",
+          "path": "/x402/speech-2.8-hd",
           "confidence": "secondary"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/speech-2.8-hd",
+          "path": "/x402/speech-2.8-turbo",
           "confidence": "secondary"
         }
       ]
@@ -6884,9 +6715,9 @@
           "confidence": "secondary"
         },
         {
-          "origin": "https://apibase.pro",
-          "method": "POST",
-          "path": "/api/v1/tools/ocr.extract_text/call",
+          "origin": "https://api.strale.io",
+          "method": "GET",
+          "path": "/x402/image-to-text",
           "confidence": "secondary"
         }
       ]
@@ -6901,79 +6732,21 @@
       ],
       "satisfies": [
         {
+          "origin": "https://api.onesource.io",
+          "method": "GET",
+          "path": "/api/chain/erc1155-balance",
+          "confidence": "primary"
+        },
+        {
+          "origin": "https://edgar.apitoll.cloud",
+          "method": "GET",
+          "path": "/v1/edgar/holdings",
+          "confidence": "secondary"
+        },
+        {
           "origin": "https://x402-api.vybenetwork.xyz",
           "method": "GET",
           "path": "/v4/wallets/{ownerAddress}/token-balance",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://defi-api.agenticfi.wtf",
-          "method": "GET",
-          "path": "/api/wallet/balances/{address}",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://x402-api.vybenetwork.xyz",
-          "method": "GET",
-          "path": "/v4/wallets/{ownerAddress}/token-accounts-balance-ts",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "social.influencer_search",
-      "label": "Find social media influencers",
-      "aliases": [
-        "influencer",
-        "creator search",
-        "instagram influencer"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://socialx402.com",
-          "method": "POST",
-          "path": "/api/sc/facebook/marketplace/search",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://stablesocial.dev",
-          "method": "POST",
-          "path": "/api/sc/facebook/marketplace/search",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://socialx402.com",
-          "method": "POST",
-          "path": "/api/sc/tiktok/ad-library/search",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "web.screenshot",
-      "label": "Capture a website screenshot",
-      "aliases": [
-        "screenshot",
-        "page capture",
-        "website snapshot"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://screenshotx402.com",
-          "method": "POST",
-          "path": "/tool/take_screenshot",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "POST",
-          "path": "/api/ai/screenshot",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://screenshotx402.com",
-          "method": "POST",
-          "path": "/tool/analyze_screenshot",
           "confidence": "secondary"
         }
       ]
@@ -6994,9 +6767,9 @@
           "confidence": "primary"
         },
         {
-          "origin": "https://stableapify.dev",
+          "origin": "https://twocaptcha.mpp.tempo.xyz",
           "method": "POST",
-          "path": "/api/actors/neatrat/upwork-job-scraper/call",
+          "path": "/getTaskResult",
           "confidence": "secondary"
         },
         {
@@ -7017,51 +6790,21 @@
       ],
       "satisfies": [
         {
-          "origin": "https://stabletravel.dev",
+          "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/api/transfers/search",
+          "path": "/x402/flux-2-pro-preview",
           "confidence": "primary"
         },
         {
-          "origin": "https://stabletravel.dev",
-          "method": "GET",
-          "path": "/api/google-flights/search",
-          "confidence": "secondary"
-        },
-        {
-          "origin": "https://stabletravel.dev",
-          "method": "GET",
-          "path": "/api/hotels/search",
-          "confidence": "secondary"
-        }
-      ]
-    },
-    {
-      "id": "realestate.property_lookup",
-      "label": "Look up property and rental data",
-      "aliases": [
-        "rentcast",
-        "property data",
-        "rental estimate",
-        "real estate"
-      ],
-      "satisfies": [
-        {
-          "origin": "https://stableestate.dev",
+          "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/api/apartments/search",
-          "confidence": "primary"
-        },
-        {
-          "origin": "https://rentcast.x402.paysponge.com",
-          "method": "GET",
-          "path": "/listings/sale",
+          "path": "/x402/grok-imagine-video-1.5-preview",
           "confidence": "secondary"
         },
         {
-          "origin": "https://rentcast.x402.paysponge.com",
-          "method": "GET",
-          "path": "/listings/rental/long-term",
+          "origin": "https://gpt55.558686.xyz",
+          "method": "POST",
+          "path": "/v1/tools/code-review",
           "confidence": "secondary"
         }
       ]

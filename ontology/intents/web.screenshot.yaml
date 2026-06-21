@@ -1,0 +1,14 @@
+id: web.screenshot
+label: Capture a website screenshot
+description: Take a full-page or viewport screenshot of any public URL via micropayment.
+aliases:
+  - screenshot
+  - website screenshot
+  - page capture
+  - take a screenshot
+  - capture website
+satisfies:
+  - origin: https://screenshotone.x402.paysponge.com
+    method: GET
+    path: /take
+    confidence: primary

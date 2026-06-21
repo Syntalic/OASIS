@@ -1,0 +1,19 @@
+id: storage.hosting
+label: Host files and static websites
+description: Upload files or deploy static websites with permanent CDN URLs via micropayment.
+aliases:
+  - file upload
+  - static website
+  - host website
+  - static site hosting
+  - upload files
+  - host a static website
+satisfies:
+  - origin: https://stableupload.dev
+    method: POST
+    path: /api/upload
+    confidence: primary
+  - origin: https://stableupload.dev
+    method: POST
+    path: /api/site
+    confidence: secondary

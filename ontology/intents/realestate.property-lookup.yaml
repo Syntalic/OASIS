@@ -1,0 +1,14 @@
+id: realestate.property_lookup
+label: Search homes and rentals for sale
+description: Find property listings, rental comps, and home value estimates in the US.
+aliases:
+  - homes for sale
+  - property listings
+  - rentcast
+  - real estate search
+  - find homes
+satisfies:
+  - origin: https://rentcast.x402.paysponge.com
+    method: GET
+    path: /listings/sale
+    confidence: primary

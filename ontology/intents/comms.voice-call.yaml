@@ -6,6 +6,8 @@ aliases:
   - voice call
   - outbound call
   - ai call
+  - confirm appointment
+  - call a customer
 related:
   - comms.send_email
 satisfies:

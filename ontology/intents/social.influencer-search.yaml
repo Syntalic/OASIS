@@ -1,0 +1,16 @@
+id: social.influencer_search
+label: Find Instagram influencers by niche
+description: Search Instagram creator profiles by niche, location, follower count, and engagement for marketing campaigns.
+aliases:
+  - instagram influencer
+  - influencer search
+  - creator search
+  - fitness influencers
+  - find influencers
+schema_org:
+  - schema:SearchAction
+satisfies:
+  - origin: https://api.socialintel.dev
+    method: GET
+    path: /v1/search
+    confidence: primary

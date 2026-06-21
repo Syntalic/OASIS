@@ -5,6 +5,9 @@ aliases:
   - json-rpc
   - node rpc
   - blockchain node
+  - solana json-rpc
+  - ethereum mainnet json rpc
+  - eth mainnet rpc
   - solana rpc
   - ethereum rpc
 related:
@@ -14,4 +17,8 @@ satisfies:
     method: POST
     path: /solana-mainnet/
     confidence: primary
+  - origin: https://x402.quicknode.com
+    method: POST
+    path: /ethereum-mainnet/
+    confidence: secondary
     notes: QuickNode x402 JSON-RPC proxy (140+ network paths available)
