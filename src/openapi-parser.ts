@@ -29,6 +29,7 @@ interface OpenApiDoc {
     guidance?: string;
   };
   paths?: Record<string, Record<string, unknown>>;
+  components?: Record<string, unknown>;
   "x-faremeter-assets"?: Record<string, { chain?: string }>;
 }
 
@@ -162,21 +163,80 @@ function isPaid(op: Record<string, unknown>): boolean {
   );
 }
 
-function extractInputs(op: Record<string, unknown>): string[] {
+/** Resolve a local `#/components/...` JSON pointer; foreign/remote refs → undefined. */
+function resolveRef(
+  doc: OpenApiDoc,
+  ref: string,
+): Record<string, unknown> | undefined {
+  if (!ref.startsWith("#/")) return undefined;
+  let cur: unknown = doc;
+  for (const part of ref.slice(2).split("/")) {
+    if (cur && typeof cur === "object") {
+      cur = (cur as Record<string, unknown>)[decodeURIComponent(part)];
+    } else return undefined;
+  }
+  return cur && typeof cur === "object"
+    ? (cur as Record<string, unknown>)
+    : undefined;
+}
+
+/** Property names of a schema, resolving $ref and merging allOf/oneOf/anyOf/items. */
+function schemaPropertyNames(
+  doc: OpenApiDoc,
+  schema: Record<string, unknown> | undefined,
+  depth = 0,
+): string[] {
+  if (!schema || depth > 6) return [];
+  if (typeof schema.$ref === "string") {
+    return schemaPropertyNames(doc, resolveRef(doc, schema.$ref), depth + 1);
+  }
+  const out = new Set<string>();
+  const props = schema.properties as Record<string, unknown> | undefined;
+  if (props) for (const key of Object.keys(props)) out.add(key);
+  for (const comb of ["allOf", "oneOf", "anyOf"] as const) {
+    const arr = schema[comb] as Array<Record<string, unknown>> | undefined;
+    if (Array.isArray(arr)) {
+      for (const sub of arr) {
+        for (const n of schemaPropertyNames(doc, sub, depth + 1)) out.add(n);
+      }
+    }
+  }
+  const items = schema.items as Record<string, unknown> | undefined;
+  if (items) for (const n of schemaPropertyNames(doc, items, depth + 1)) out.add(n);
+  return [...out];
+}
+
+/**
+ * Endpoint input parameter names, for the resolve-relevance signal. Covers
+ * query/path/header `parameters` AND requestBody properties across every content
+ * type (json, multipart/form-data, x-www-form-urlencoded), resolving local
+ * `$ref` schemas and merging allOf/oneOf — POST bodies are frequently a `$ref`
+ * to a component, which the previous json-properties-only scan dropped entirely.
+ */
+function extractInputs(op: Record<string, unknown>, doc: OpenApiDoc): string[] {
   const inputs = new Set<string>();
+
   const params = op.parameters as Array<Record<string, unknown>> | undefined;
   if (params) {
-    for (const p of params) {
+    for (const raw of params) {
+      const p =
+        typeof raw.$ref === "string" ? (resolveRef(doc, raw.$ref) ?? raw) : raw;
       if (typeof p.name === "string") inputs.add(p.name);
     }
   }
-  const body = op.requestBody as Record<string, unknown> | undefined;
-  const content = body?.content as Record<string, Record<string, unknown>> | undefined;
-  const jsonSchema = content?.["application/json"]?.schema as Record<string, unknown> | undefined;
-  const props = jsonSchema?.properties as Record<string, unknown> | undefined;
-  if (props) {
-    for (const key of Object.keys(props)) inputs.add(key);
+
+  let body = op.requestBody as Record<string, unknown> | undefined;
+  if (body && typeof body.$ref === "string") body = resolveRef(doc, body.$ref);
+  const content = body?.content as
+    | Record<string, Record<string, unknown>>
+    | undefined;
+  if (content) {
+    for (const media of Object.values(content)) {
+      const schema = media?.schema as Record<string, unknown> | undefined;
+      for (const name of schemaPropertyNames(doc, schema)) inputs.add(name);
+    }
   }
+
   return [...inputs];
 }
 
@@ -265,7 +325,7 @@ export function parseOpenApi(
         provider_title: provider?.title,
         category: provider?.category,
         capabilities: options.capabilityIds,
-        inputs: extractInputs(op),
+        inputs: extractInputs(op, doc),
         payment,
         guidance_available: guidanceAvailable,
         openapi_url: openapiUrl,
