@@ -110,8 +110,10 @@ resolves the traps — `serp/google` → `search.web`, `citations` →
 `ai.web_research`, `invoice fields` → `ai.document_extract` over `data.ocr`, etc.
 **related@links 15/15** confirms the typed-link graph surfaces the right
 neighbors — both *alternatives* (shop pricing, comms channels, crypto, audio,
-places, web-search) and *next steps* via `pipes_to` (transcribe→translate,
-search→scrape, ocr→translate, translate→speak). `resolve --intent` returns this
+places, web-search), *next steps* via `pipes_to` (transcribe→translate,
+search→scrape, ocr→translate, translate→speak), and *prior steps* via the
+generated `fed_by` inverse (backward planning — e.g. resolving `ai.embeddings`
+shows it is fed by transcribe/ocr/translate). `resolve --intent` returns this
 neighborhood as the agent's pivot set (see `traversal.md`).
 
 Remaining tracked follow-up:

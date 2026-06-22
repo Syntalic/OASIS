@@ -95,6 +95,7 @@ export interface CapabilityLink {
     | "alternative_of"
     | "sibling_of"
     | "pipes_to"
+    | "fed_by"
     | "narrower_of"
     | "broader_of";
   to: string;

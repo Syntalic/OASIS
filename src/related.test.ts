@@ -51,4 +51,16 @@ describe("relatedOptions", () => {
   it("returns [] for an intent with no links", () => {
     assert.deepEqual(relatedOptions(bundle.capabilities[1], bundle), []);
   });
+
+  it("labels pipes_to / fed_by as next / prior step", () => {
+    const b: IndexBundle = {
+      ...bundle,
+      capabilities: [
+        cap("p.a", "Producer", [{ type: "pipes_to", to: "p.b" }]),
+        cap("p.b", "Consumer", [{ type: "fed_by", to: "p.a" }]),
+      ],
+    };
+    assert.equal(relatedOptions(b.capabilities[0], b)[0].relation_label, "next step");
+    assert.equal(relatedOptions(b.capabilities[1], b)[0].relation_label, "prior step");
+  });
 });

@@ -103,12 +103,19 @@ export function materializeCuratedIntents(
   return ordered;
 }
 
-/** Inverse of each directed/symmetric link type (pipes_to has no inverse yet). */
+/**
+ * Inverse of each directed/symmetric link type. `pipes_to` (forward, "next
+ * step") generates `fed_by` (backward, "what produces my input"), enabling
+ * backward planning from a held artifact. `fed_by` is not itself a key, so a
+ * generated inverse never spawns another (and authored pipes_to always wins
+ * the dedup).
+ */
 const LINK_INVERSE: Record<string, CapabilityLink["type"]> = {
   alternative_of: "alternative_of",
   sibling_of: "sibling_of",
   broader_of: "narrower_of",
   narrower_of: "broader_of",
+  pipes_to: "fed_by",
 };
 
 /**

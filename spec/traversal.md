@@ -52,7 +52,9 @@ Resolution returns:
   `intent_id`, `label`, `top_endpoint`). For an agent that is unsure or wants
   options, this is the pivot set: `alternative` (a substitute for the same
   task), `more specific` / `more general` (narrow or broaden the task),
-  `related` (same family), `next step` (pipes to a follow-on task).
+  `related` (same family), `next step` (pipes to a follow-on task), or
+  `prior step` (a task that produces this one's input — backward planning from a
+  goal: "to get embeddings, first transcribe/ocr/translate").
 
 ## Step 3 — Schema
 

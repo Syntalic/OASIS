@@ -29,6 +29,7 @@ const RELATION_LABEL: Record<CapabilityLink["type"], string> = {
   narrower_of: "more general",
   sibling_of: "related",
   pipes_to: "next step",
+  fed_by: "prior step",
 };
 const RELATION_ORDER: CapabilityLink["type"][] = [
   "alternative_of",
@@ -36,6 +37,7 @@ const RELATION_ORDER: CapabilityLink["type"][] = [
   "broader_of",
   "sibling_of",
   "pipes_to",
+  "fed_by",
 ];
 
 /**
