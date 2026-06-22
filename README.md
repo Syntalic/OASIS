@@ -91,6 +91,7 @@ pnpm exec capindex resolve --intent shop.compare_price
 pnpm exec capindex validate                                 # validate dist/index.json
 pnpm exec capindex taxonomy --json                          # controlled vocab (to contribute)
 pnpm exec capindex validate-source <intent.yaml>            # SAME check CI runs on a PR
+pnpm exec capindex validate-binding [file]                  # authoritative endpoint→capability bindings
 ```
 
 ## Contributing a service

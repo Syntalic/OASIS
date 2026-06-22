@@ -11,6 +11,7 @@ import { curatedCapabilitiesForSearch } from "../dist/curated-search.js";
 import { defaultLanceDir } from "../dist/embed/lance-index.js";
 import { getTaxonomy } from "../dist/taxonomy.js";
 import { validateSourceIntent } from "../dist/validate-source.js";
+import { validateBinding } from "../dist/binding.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "..", "dist");
@@ -118,6 +119,7 @@ export async function handleTool(name, args) {
   if (name === "oasis_find") return oasisFind(args ?? {});
   if (name === "oasis_taxonomy") return getTaxonomy();
   if (name === "oasis_validate") return validateSourceIntent(args?.intent ?? args ?? {});
+  if (name === "oasis_validate_binding") return validateBinding(args?.binding ?? args ?? {}, bundle.endpoints);
   return { error: `unknown tool: ${name}` };
 }
 
@@ -163,6 +165,16 @@ const SERVER_TOOLS = [
       type: "object",
       properties: { intent: { type: "object", description: "The capability intent object to validate." } },
       required: ["intent"],
+    },
+  },
+  {
+    name: "oasis_validate_binding",
+    description:
+      "Validate an authored endpoint→capability binding for a service: schema + capability ids exist in the taxonomy + whether the endpoints are in the index. Returns { valid, errors, warnings }. SAME check CI runs on the PR.",
+    schema: {
+      type: "object",
+      properties: { binding: { type: "object", description: "Service binding: { bindings: [{ origin, method, path, capabilities }] }." } },
+      required: ["binding"],
     },
   },
 ];

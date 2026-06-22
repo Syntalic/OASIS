@@ -13,6 +13,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { applyBindings, loadBindings } from "./binding.js";
 import { deriveEndpointFacets } from "./build.js";
 import { materializeCuratedIntents } from "./materialize-satisfies.js";
 import { loadOntologySources } from "./ontology.js";
@@ -63,6 +64,12 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
   const bundle = JSON.parse(raw) as IndexBundle;
 
   const endpoints = bundle.endpoints.map(deriveEndpointFacets);
+
+  // Apply authored endpoint→capability bindings as an authoritative override BEFORE
+  // re-materializing satisfies, so a maintainer can correct the heuristic binder.
+  const appliedBindings = applyBindings(endpoints, await loadBindings());
+  if (appliedBindings) console.error(`  applied ${appliedBindings} authored endpoint binding(s)`);
+
   const facetByKey = new Map<string, EndpointRecord["facets"]>();
   for (const ep of endpoints) {
     facetByKey.set(`${ep.origin}|${ep.method}|${ep.path}`, ep.facets);

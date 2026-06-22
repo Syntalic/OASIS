@@ -1,6 +1,7 @@
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { applyBindings, loadBindings } from "./binding.js";
 import { materializeCuratedIntents } from "./materialize-satisfies.js";
 import { linkCapabilitiesToEndpoints, loadOntologySources } from "./ontology.js";
 import {
@@ -422,6 +423,10 @@ export async function buildIndex(options: BuildOptions = {}): Promise<IndexBundl
   endpoints = [...endpointIndex.values()]
     .map(deriveEndpointFacets)
     .sort((a, b) => `${a.origin}${a.path}`.localeCompare(`${b.origin}${b.path}`));
+
+  // Authored bindings override the heuristic endpoint.capabilities before re-materialize.
+  const appliedBindings = applyBindings(endpoints, await loadBindings());
+  if (appliedBindings) console.log(`  applied ${appliedBindings} authored endpoint binding(s)`);
 
   // Re-materialize curated satisfies[] now that endpoint.capabilities is populated
   // (linkCapabilitiesToEndpoints, above). The first pass at materialize time ran

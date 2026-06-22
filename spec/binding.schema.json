@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://syntalic.com/oasis/spec/binding.schema.json",
+  "title": "ServiceBinding",
+  "description": "Authoritative endpoint→capability bindings for a service, authored by a maintainer or service owner. Applied at index build / enrich-facets time to OVERRIDE the heuristic binder for the listed endpoints. The minimal, certain core of a contributed service's curation: endpoint identity + capability ids (richer per-endpoint facets/price come later).",
+  "type": "object",
+  "required": ["bindings"],
+  "additionalProperties": false,
+  "properties": {
+    "provider": { "type": "string", "description": "Human label for the service (informational)." },
+    "note": { "type": "string", "description": "Why this binding exists (e.g. fixing a heuristic mis-bind)." },
+    "bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/Binding" }
+    }
+  },
+  "$defs": {
+    "Binding": {
+      "type": "object",
+      "required": ["origin", "method", "path", "capabilities"],
+      "additionalProperties": false,
+      "properties": {
+        "origin": { "type": "string", "format": "uri" },
+        "method": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"] },
+        "path": { "type": "string", "pattern": "^/" },
+        "capabilities": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The complete, authoritative set of capability ids this endpoint satisfies (replaces the heuristic binding for this endpoint).",
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9._-]*$" }
+        }
+      }
+    }
+  }
+}

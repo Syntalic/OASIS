@@ -24,6 +24,8 @@ jobs:
       # Gate every contributed task intent against the controlled taxonomy (schema,
       # facet/entity vocab, link targets). Same validator the curator tool + MCP use.
       - run: node dist/cli.js validate-source
+      # Gate authored endpoint→capability bindings (schema + capability ids in the taxonomy).
+      - run: node dist/cli.js validate-binding
       # Smoke-test the build -> validate -> search pipeline OFFLINE from a fixture
       # (no catalog crawl), so CI stays fast and deterministic.
       - run: node dist/cli.js build --openapi fixtures/minimal.openapi.json --origin https://api.example.com --no-x402scan --no-mppscan --skip-pay-skills -o /tmp/capindex-dist

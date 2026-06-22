@@ -270,6 +270,37 @@ program
   });
 
 program
+  .command("validate-binding [file]")
+  .description("Validate authored endpoint→capability binding(s) (ontology/bindings) against the taxonomy")
+  .option("-d, --dist <dir>", "Dist dir for endpoint-match warnings", path.join(PACKAGE_ROOT, "dist"))
+  .action(async (file: string | undefined, opts) => {
+    const { validateBindingFile, validateAllBindings } = await import("./binding.js");
+    let endpoints;
+    try {
+      endpoints = (await loadBundle(opts.dist)).endpoints;
+    } catch {
+      /* index optional — capability/schema checks still run */
+    }
+    const results = file
+      ? [{ file, result: await validateBindingFile(file, endpoints) }]
+      : await validateAllBindings(undefined, endpoints);
+    let failed = 0;
+    for (const { file: f, result } of results) {
+      for (const e of result.errors) {
+        console.error(`✗ ${f}: ${e}`);
+        failed += 1;
+      }
+      for (const w of result.warnings) console.error(`⚠ ${f}: ${w}`);
+    }
+    if (failed > 0) {
+      console.error(`\n${failed} binding error(s)`);
+      process.exitCode = 1;
+      return;
+    }
+    console.log(`${results.length} binding file(s) valid`);
+  });
+
+program
   .command("embed")
   .description("Build LanceDB vector index from capabilities and providers")
   .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))

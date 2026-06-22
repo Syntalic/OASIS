@@ -1,0 +1,13 @@
+# Authoritative endpoint→capability binding for a service. Applied at index build /
+# enrich-facets time to OVERRIDE the heuristic binder for the listed endpoints — the same
+# mechanism a maintainer uses to correct a heuristic mis-bind, and the certain core of a
+# contributed service's curation. Validate before a PR:
+#   pnpm exec capindex validate-binding ontology/bindings/example.yaml
+provider: 2s.io (example)
+note: Example — asserts an endpoint's capability authoritatively. capabilities[] is the complete set the endpoint satisfies and replaces the heuristic binding for it.
+bindings:
+  - origin: https://2s.io
+    method: GET
+    path: /api/stocks/quote
+    capabilities:
+      - finance.stock_quote

@@ -68,16 +68,22 @@ was polluted. The model:
   that checks for gaming. Ranking uses objective signals (price/rails/quality), never the
   contributor's self-description, so over-tagging buys nothing.
 
-### Open piece: the per-service binding artifact
+### The per-service binding artifact
 
-The contribution toolchain today authors **task intents** (the capabilities). The common
-case — "bind my service's 20 endpoints onto existing capabilities" — needs an authored
-**per-service binding artifact**: a committed file the curator produces stating
-`{endpoint → capabilities, facets, price, rails}` for a service, validated in CI (paths
-exist in the spec, capabilities exist in the taxonomy), and ingested at build time to
-*replace* the heuristic binder for that service. That file format is the keystone that
-makes distributed curation work end-to-end and retires the heuristic binding entirely. It
-is designed-but-not-built; it's the next concrete step.
+The contribution toolchain authors **task intents** (the capabilities). The common case —
+"bind my service's endpoints onto existing capabilities" — uses a **per-service binding
+artifact** under `ontology/bindings/`: a committed file stating `{origin, method, path →
+capabilities}` for a service, validated against the taxonomy (`capindex validate-binding`,
+in CI and the `oasis_validate_binding` MCP tool) and applied at build / `enrich-facets`
+time to **authoritatively override** the heuristic binder for those endpoints.
+
+The **certain core is built** ([`spec/binding.schema.json`](../spec/binding.schema.json),
+`src/binding.ts`): endpoint identity + capability ids — the same identity the index already
+keys on, so there is nothing to guess. It is immediately useful as a maintainer tool to
+correct any binding the heuristic gets wrong. The **richer format** (per-endpoint facets,
+price, and ingesting a brand-new service's OpenAPI alongside the binding) layers on at the
+first real service onboarding, when a real spec can validate the format rather than us
+guessing it.
 
 ## Still to measure
 
