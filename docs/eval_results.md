@@ -177,6 +177,39 @@ index rebuild (resolve-side) are separate, lower-priority levers.
 
 ---
 
+## End-to-end agent probe (the real validation)
+
+Offline `discover@k` / `select@k` are proxies. The actual question is: when a real
+LLM uses OASIS to pick a tool, does it land on the right one? `mcp/probe.mjs`
+drives Claude (Sonnet 4.6) through `oasis_search → oasis_resolve → pick` on 18
+real, oblique tasks and scores at the capability level (an alternative endpoint
+of the right capability counts — picking a *different* weather API than the
+golden one is still success).
+
+| metric | result |
+|---|---|
+| expected capability in search top-3 (discovery) | 16/18 (89%) |
+| agent **resolved** the right capability (selection) | **17/18 (94%)** |
+| agent **chose an endpoint** of the right capability (end-to-end) | **15/18 (83%)** |
+
+Of the 3 "misses", **2 were valid alternatives** the agent legitimately picked via
+the typed links (`ai.web_research`→`search.web`; `maps.places`→`travel.place_reviews`)
+— effectively ~17/18 useful. Only one is a true miss (`data.translate_text` didn't
+surface in top-3 — a discovery gap).
+
+**Two conclusions this settles:**
+1. **The discovery work pays off end-to-end** — a real LLM picks the right
+   capability ~94% and a usable endpoint ~83% of the time.
+2. **Resolve precision (`select@1` ≈ 19%) does not matter for the LLM use case.**
+   The agent resolves the right *capability* and picks a usable endpoint from the
+   candidate list regardless of within-intent rank — `select@1`-vs-a-single-golden
+   was measuring the wrong thing. The cap raise (recall) and query-aware resolve
+   are kept as reasonable defaults, but the planned endpoint-embedding /
+   resolve-ranking work is **not** worth building: the probe shows it would
+   optimize a metric the consumer doesn't use.
+
+---
+
 ## Method definitions
 
 | Method | What it simulates |

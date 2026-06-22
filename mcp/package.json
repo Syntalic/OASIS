@@ -1,0 +1,15 @@
+{
+  "name": "oasis-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Local MCP server + agent probe for the OASIS index (out-of-tree; not part of the standard).",
+  "scripts": {
+    "server": "node server.mjs",
+    "probe": "node --env-file=../.env probe.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.105.0",
+    "@modelcontextprotocol/sdk": "^1.29.0"
+  }
+}
