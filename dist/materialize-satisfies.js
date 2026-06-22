@@ -38,7 +38,10 @@ function mergeLinksWithRelated(source) {
 }
 export function materializeCuratedIntent(source, endpoints) {
     const matches = matchEndpointsForIntent(source.id, endpoints);
-    const ranked = rankEndpointsNeutral(matches, MAX_SATISFIES);
+    // Pass the source's typed ports so satisfies[] is ordered by per-intent
+    // relevance (input-identifier / output-entity overlap), not just the neutral
+    // quality prior — this is what lands the best-fit endpoint at satisfies[0].
+    const ranked = rankEndpointsNeutral(matches, MAX_SATISFIES, source);
     const satisfies = ranked.map((ep) => endpointToRef(ep));
     const links = mergeLinksWithRelated(source);
     return {

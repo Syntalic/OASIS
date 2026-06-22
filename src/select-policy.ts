@@ -25,7 +25,9 @@ export function selectEndpointsForIntent(
   max = 10,
 ): EndpointRecord[] {
   const candidates = satisfiesRefsToEndpoints(intent.satisfies, endpoints);
-  return rankEndpointsNeutral(candidates, max);
+  // Pass the intent so its typed ports drive the per-relevance term, not just
+  // the neutral quality prior.
+  return rankEndpointsNeutral(candidates, max, intent);
 }
 
 export function selectRank(

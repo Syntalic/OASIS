@@ -14,6 +14,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { deriveEndpointFacets } from "./build.js";
+import { materializeCuratedIntents } from "./materialize-satisfies.js";
+import { loadOntologySources } from "./ontology.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..");
 /** Re-derive a capability's facets from the endpoints it satisfies (domain only). */
@@ -48,8 +50,19 @@ export async function enrichFacets(distDir) {
     for (const ep of endpoints) {
         facetByKey.set(`${ep.origin}|${ep.method}|${ep.path}`, ep.facets);
     }
+    // Re-materialize curated capabilities from the YAML sources over the frozen
+    // endpoint set (the build's materialize step, run offline). This carries the
+    // authored ports/facets/links AND the relevance-ranked satisfies[] ordering
+    // into dist — `deriveCapabilityFacets` alone only patched a derived domain.
+    const ontologyDir = path.join(PACKAGE_ROOT, "ontology", "intents");
+    const sources = await loadOntologySources(ontologyDir);
+    const curated = materializeCuratedIntents(sources, endpoints);
+    const curatedIds = new Set(curated.map((c) => c.id));
+    // Preserve non-curated (provider-derived) capabilities; backfill their facets.
     let derived = 0;
-    const capabilities = bundle.capabilities.map((cap) => {
+    const preserved = bundle.capabilities
+        .filter((cap) => !curatedIds.has(cap.id))
+        .map((cap) => {
         if (cap.facets)
             return cap;
         const facets = deriveCapabilityFacets(cap, facetByKey);
@@ -58,6 +71,7 @@ export async function enrichFacets(distDir) {
         derived += 1;
         return { ...cap, facets };
     });
+    const capabilities = [...curated, ...preserved];
     const next = { ...bundle, endpoints, capabilities };
     await writeFile(indexPath, JSON.stringify(next, null, 2));
     await writeFile(path.join(distDir, "endpoints.json"), JSON.stringify({

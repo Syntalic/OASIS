@@ -26,67 +26,76 @@
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/flux-2-flex"
+          "path": "/x402/flux-2-flex",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/flux-2-max"
+          "path": "/x402/flux-2-max",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/flux-2-pro-preview"
+          "path": "/x402/flux-2-pro-preview",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/gpt-image-1.5"
+          "path": "/x402/gpt-image-1.5",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/gpt-image-2"
+          "path": "/x402/gpt-image-2",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/grok-imagine-image"
+          "path": "/x402/grok-imagine-image",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/grok-imagine-image-quality"
+          "path": "/x402/grok-imagine-image-quality",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/grok-imagine-video-1.5-preview"
+          "path": "/x402/grok-imagine-video-1.5-preview",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/hailuo-2.3-fast"
+          "path": "/x402/hailuo-2.3-fast",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/hh1-i2v"
+          "path": "/x402/hh1-i2v",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/krea-2-large"
+          "path": "/x402/krea-2-large",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/krea-2-medium"
+          "path": "/x402/krea-2-medium",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "ai"
-      }
+      ]
     },
     {
       "id": "ai.llm_complete",
@@ -111,67 +120,76 @@
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "POST",
-          "path": "/v1/tools/code-review"
+          "path": "/v1/tools/code-review",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "GET",
-          "path": "/v1/tools/eip712-signature-risk-decoder"
+          "path": "/v1/tools/eip712-signature-risk-decoder",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "POST",
-          "path": "/v1/tools/eip712-signature-risk-decoder"
+          "path": "/v1/tools/eip712-signature-risk-decoder",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "GET",
-          "path": "/v1/tools/evm-transaction-risk-decoder"
+          "path": "/v1/tools/evm-transaction-risk-decoder",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "POST",
-          "path": "/v1/tools/evm-transaction-risk-decoder"
+          "path": "/v1/tools/evm-transaction-risk-decoder",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "POST",
-          "path": "/v1/tools/extract-json"
+          "path": "/v1/tools/extract-json",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "GET",
-          "path": "/v1/tools/json-validate"
+          "path": "/v1/tools/json-validate",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "POST",
-          "path": "/v1/tools/json-validate"
+          "path": "/v1/tools/json-validate",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "POST",
-          "path": "/v1/tools/rewrite"
+          "path": "/v1/tools/rewrite",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "GET",
-          "path": "/v1/tools/url-links"
+          "path": "/v1/tools/url-links",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "POST",
-          "path": "/v1/tools/url-links"
+          "path": "/v1/tools/url-links",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "GET",
-          "path": "/v1/tools/url-text"
+          "path": "/v1/tools/url-text",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "crypto"
-      }
+      ]
     },
     {
       "id": "ai.speech_to_text",
@@ -188,71 +206,107 @@
         "transcribe voice memo",
         "speech recognition API"
       ],
+      "consumes": [
+        {
+          "entity": "AudioClip",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Text",
+          "role": "payload",
+          "format": "text"
+        }
+      ],
+      "facets": {
+        "domain": "ai",
+        "action": "transform",
+        "modality": [
+          "text"
+        ]
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "ai.text_to_speech",
+          "note": "same audio family, inverse direction (audio to text vs text to audio), not substitutable"
+        }
+      ],
       "satisfies": [
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/gov/congress-hearing"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/gov/congress-record"
-        },
-        {
-          "origin": "https://api.entit.ai",
-          "method": "POST",
-          "path": "/v1/jobs"
-        },
-        {
-          "origin": "https://gpt55.558686.xyz",
-          "method": "POST",
-          "path": "/v1/tools/summarize"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "POST",
-          "path": "/api/transcribe/audio"
-        },
-        {
-          "origin": "https://entit.ai",
-          "method": "POST",
-          "path": "/v1/jobs"
-        },
-        {
-          "origin": "https://glim.sh",
-          "method": "POST",
-          "path": "/api/v1/youtube/get"
-        },
-        {
-          "origin": "https://surf.cascade.fyi",
-          "method": "POST",
-          "path": "/api/v1/youtube/get"
-        },
-        {
-          "origin": "https://twitter.surf.cascade.fyi",
-          "method": "POST",
-          "path": "/api/v1/youtube/get"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "POST",
-          "path": "/api/ai/describe-image"
-        },
         {
           "origin": "https://blockrun-web-vbsbhh7lea-uc.a.run.app",
           "method": "POST",
-          "path": "/api/v1/voice/call"
+          "path": "/api/v1/voice/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://blockrun.ai",
           "method": "POST",
-          "path": "/api/v1/voice/call"
+          "path": "/api/v1/voice/call",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/gov/congress-hearing",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "POST",
+          "path": "/api/transcribe/audio",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/word/define",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://apibase.pro",
+          "method": "POST",
+          "path": "/api/v1/tools/transcribe.submit/call",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://openai.cn2.ai",
+          "method": "POST",
+          "path": "/v1/audio/transcriptions",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/gov/congress-record",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.entit.ai",
+          "method": "POST",
+          "path": "/v1/jobs",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.jarvisclaw.ai",
+          "method": "POST",
+          "path": "/v1/audio/transcriptions",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://app.suedeai.xyz",
+          "method": "POST",
+          "path": "/v1/midi",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "POST",
+          "path": "/v1/tools/summarize",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "crypto"
-      }
+      ]
     },
     {
       "id": "ai.text_to_speech",
@@ -269,71 +323,100 @@
         "convert text to voice",
         "text to audio file"
       ],
+      "consumes": [
+        {
+          "entity": "Text",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "AudioClip",
+          "role": "payload",
+          "format": "audio"
+        }
+      ],
+      "facets": {
+        "domain": "ai",
+        "action": "transform",
+        "modality": [
+          "audio"
+        ]
+      },
       "satisfies": [
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/tts-1.5-max"
+          "path": "/x402/tts-1.5-max",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/tts-1.5-mini"
+          "path": "/x402/tts-1.5-mini",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/tts-2"
-        },
-        {
-          "origin": "https://api.clusterprotocol.ai",
-          "method": "POST",
-          "path": "/v1/chat/completions"
-        },
-        {
-          "origin": "https://api.clusterprotocol.ai",
-          "method": "POST",
-          "path": "/v1/rerank"
+          "path": "/x402/tts-2",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/tts-1"
+          "path": "/x402/tts-1",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.glianalabs.com",
           "method": "POST",
-          "path": "/x402/tts-1-hd"
+          "path": "/x402/tts-1-hd",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.clusterprotocol.ai",
           "method": "POST",
-          "path": "/v1/agents/execute"
-        },
-        {
-          "origin": "https://api.clusterprotocol.ai",
-          "method": "POST",
-          "path": "/v1/audio/speech"
-        },
-        {
-          "origin": "https://api.clusterprotocol.ai",
-          "method": "POST",
-          "path": "/v1/images/generations"
+          "path": "/v1/audio/speech",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.xona-agent.com",
           "method": "POST",
-          "path": "/audio/elevenlabs-music"
+          "path": "/audio/x-text-to-speech",
+          "source": "match_hint"
         },
         {
-          "origin": "https://api.xona-agent.com",
+          "origin": "https://api.jarvisclaw.ai",
           "method": "POST",
-          "path": "/image/designer"
+          "path": "/v1/audio/speech",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://openai.cn2.ai",
+          "method": "POST",
+          "path": "/v1/audio/speech",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablevoice.dev",
+          "method": "POST",
+          "path": "/api/recording-tokens",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablevoice.dev",
+          "method": "POST",
+          "path": "/api/speech",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.clusterprotocol.ai",
+          "method": "POST",
+          "path": "/v1/embeddings",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "ai"
-      }
+      ]
     },
     {
       "id": "ai.embeddings",
@@ -354,67 +437,76 @@
         {
           "origin": "https://testing.cn2.ai",
           "method": "POST",
-          "path": "/chat/completions"
+          "path": "/chat/completions",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.clusterprotocol.ai",
           "method": "POST",
-          "path": "/v1/embeddings"
+          "path": "/v1/embeddings",
+          "source": "match_hint"
         },
         {
           "origin": "https://embedpay.melis.ai",
           "method": "POST",
-          "path": "/embed"
+          "path": "/embed",
+          "source": "match_hint"
         },
         {
           "origin": "https://openai.cn2.ai",
           "method": "POST",
-          "path": "/v1/chat/completions"
+          "path": "/v1/chat/completions",
+          "source": "match_hint"
         },
         {
           "origin": "https://openai.cn2.ai",
           "method": "POST",
-          "path": "/v1/images/edits"
+          "path": "/v1/images/edits",
+          "source": "match_hint"
         },
         {
           "origin": "https://openai.cn2.ai",
           "method": "POST",
-          "path": "/v1/images/generations"
+          "path": "/v1/images/generations",
+          "source": "match_hint"
         },
         {
           "origin": "https://testing.cn2.ai",
           "method": "POST",
-          "path": "/embeddings"
+          "path": "/embeddings",
+          "source": "match_hint"
         },
         {
           "origin": "https://openai.cn2.ai",
           "method": "POST",
-          "path": "/v1/audio/speech"
+          "path": "/v1/audio/speech",
+          "source": "match_hint"
         },
         {
           "origin": "https://openai.cn2.ai",
           "method": "POST",
-          "path": "/v1/audio/transcriptions"
+          "path": "/v1/audio/transcriptions",
+          "source": "match_hint"
         },
         {
           "origin": "https://openai.cn2.ai",
           "method": "POST",
-          "path": "/v1/embeddings"
+          "path": "/v1/embeddings",
+          "source": "match_hint"
         },
         {
           "origin": "https://testing.cn2.ai",
           "method": "POST",
-          "path": "/echo"
+          "path": "/echo",
+          "source": "match_hint"
         },
         {
           "origin": "https://testing.cn2.ai",
           "method": "POST",
-          "path": "/error"
+          "path": "/error",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "ai"
-      }
+      ]
     },
     {
       "id": "ai.web_research",
@@ -431,71 +523,101 @@
         "current events lookup with sources",
         "cited web research API"
       ],
+      "consumes": [
+        {
+          "entity": "Query",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "CitedAnswer",
+          "role": "payload"
+        }
+      ],
+      "facets": {
+        "domain": "ai",
+        "action": "search",
+        "modality": [
+          "citations",
+          "text"
+        ],
+        "freshness": "realtime"
+      },
       "satisfies": [
         {
           "origin": "https://agentoracle.co",
           "method": "POST",
-          "path": "/evaluate"
+          "path": "/research",
+          "source": "match_hint"
         },
         {
           "origin": "https://stablestudio.dev",
           "method": "POST",
-          "path": "/api/generate/nano-banana/edit"
-        },
-        {
-          "origin": "https://stablestudio.dev",
-          "method": "POST",
-          "path": "/api/upload"
+          "path": "/api/generate/nano-banana/edit",
+          "source": "match_hint"
         },
         {
           "origin": "https://agentoracle.co",
           "method": "POST",
-          "path": "/deep-research"
+          "path": "/deep-research",
+          "source": "match_hint"
         },
         {
           "origin": "https://agentoracle.co",
           "method": "POST",
-          "path": "/research"
-        },
-        {
-          "origin": "https://scan.convrgent.ai",
-          "method": "POST",
-          "path": "/api/aeo/compare"
+          "path": "/research/batch",
+          "source": "match_hint"
         },
         {
           "origin": "https://stablestudio.dev",
           "method": "POST",
-          "path": "/api/generate/nano-banana/generate"
+          "path": "/api/generate/nano-banana/generate",
+          "source": "match_hint"
         },
         {
           "origin": "https://achillesalpha.com",
           "method": "POST",
-          "path": "/x402/publish-signal"
-        },
-        {
-          "origin": "https://agentoracle.co",
-          "method": "POST",
-          "path": "/research/batch"
-        },
-        {
-          "origin": "https://scan.convrgent.ai",
-          "method": "POST",
-          "path": "/api/aeo/audit"
-        },
-        {
-          "origin": "https://scan.convrgent.ai",
-          "method": "POST",
-          "path": "/api/aeo/fix"
+          "path": "/x402/publish-signal",
+          "source": "match_hint"
         },
         {
           "origin": "https://stablestudio.dev",
           "method": "POST",
-          "path": "/api/generate/flux-2-pro/edit"
+          "path": "/api/generate/flux-2-pro/edit",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablestudio.dev",
+          "method": "POST",
+          "path": "/api/generate/flux-2-pro/generate",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablestudio.dev",
+          "method": "POST",
+          "path": "/api/generate/gpt-image-1.5/edit",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablestudio.dev",
+          "method": "POST",
+          "path": "/api/generate/gpt-image-1.5/generate",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablestudio.dev",
+          "method": "POST",
+          "path": "/api/generate/grok-video/generate",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablestudio.dev",
+          "method": "POST",
+          "path": "/api/generate/seedance-fast/i2v",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "ai"
-      }
+      ]
     },
     {
       "id": "ai.document_extract",
@@ -512,71 +634,107 @@
         "parse uploaded PDF",
         "extract data from scanned document"
       ],
+      "consumes": [
+        {
+          "entity": "Document",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload",
+          "format": "json"
+        }
+      ],
+      "facets": {
+        "domain": "ai",
+        "action": "extract",
+        "modality": [
+          "json"
+        ]
+      },
+      "links": [
+        {
+          "type": "broader_of",
+          "to": "data.ocr",
+          "note": "document_extract parses full documents into structured fields; OCR is the narrower pixels-to-text variant"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://2s.io",
           "method": "POST",
-          "path": "/api/ai/extract"
+          "path": "/api/ai/extract",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.agentinternetruntime.com",
           "method": "POST",
-          "path": "/v1/extract"
-        },
-        {
-          "origin": "https://api.strale.io",
-          "method": "POST",
-          "path": "/x402/invoice-extract"
+          "path": "/v1/extract",
+          "source": "match_hint"
         },
         {
           "origin": "https://firecrawl.mpp.tempo.xyz",
           "method": "POST",
-          "path": "/v1/extract"
-        },
-        {
-          "origin": "https://mpp.orthogonal.com/bytemine",
-          "method": "POST",
-          "path": "/crawl/extract"
-        },
-        {
-          "origin": "https://x402.charliemorrison.dev",
-          "method": "GET",
-          "path": "/extract"
-        },
-        {
-          "origin": "https://x402.valkyry.fr",
-          "method": "POST",
-          "path": "/extract"
+          "path": "/v1/extract",
+          "source": "match_hint"
         },
         {
           "origin": "https://agent-memory-api-bix5.onrender.com",
           "method": "POST",
-          "path": "/api/recall/extract"
+          "path": "/api/recall/extract",
+          "source": "match_hint"
         },
         {
-          "origin": "https://mercury-x402-jed.fly.dev",
-          "method": "GET",
-          "path": "/buy/extract"
-        },
-        {
-          "origin": "https://mercury-x402-jed.fly.dev",
-          "method": "GET",
-          "path": "/buy/table"
-        },
-        {
-          "origin": "https://mpp.orthogonal.com/tavily",
+          "origin": "https://api.strale.io",
           "method": "POST",
-          "path": "/extract"
+          "path": "/x402/invoice-extract",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://mpp.orthogonal.com/bytemine",
+          "method": "POST",
+          "path": "/crawl/extract",
+          "source": "match_hint"
         },
         {
           "origin": "https://skim402.com",
           "method": "POST",
-          "path": "/api/v2/extract"
+          "path": "/api/v2/extract",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableproduct.dev",
+          "method": "POST",
+          "path": "/api/wirecutter/extract",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://x402.charliemorrison.dev",
+          "method": "GET",
+          "path": "/extract",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://x402.valkyry.fr",
+          "method": "POST",
+          "path": "/extract",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://mercury-x402-jed.fly.dev",
+          "method": "GET",
+          "path": "/buy/extract",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://mercury-x402-jed.fly.dev",
+          "method": "GET",
+          "path": "/buy/table",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "web"
-      }
+      ]
     },
     {
       "id": "analyst.inflation_tracker",
@@ -597,71 +755,105 @@
         "yoy price increase by category",
         "are household goods getting more expensive"
       ],
+      "consumes": [
+        {
+          "entity": "ProductCategory",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "PriceSignal",
+          "role": "payload",
+          "cardinality": "many"
+        }
+      ],
+      "facets": {
+        "domain": "analyst",
+        "action": "analyze",
+        "freshness": "historical"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "marketing.competitive_landscape",
+          "note": "same category pricing-intel family, differs by purpose (inflation trend vs competitive scan); repoints dangling related analyst.price_dispersion"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/inflation"
+          "path": "/v1/analyst/inflation",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/retailer-index"
+          "path": "/v1/analyst/retailer-index",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/brand-tracker"
+          "path": "/v1/marketing/competitive-landscape",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/competitive-landscape"
+          "path": "/v1/shopper/deal-finder",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/promo-intelligence"
+          "path": "/v1/analyst/category-summary",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/shopper/best-price"
+          "path": "/v1/analyst/price-dispersion",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/shopper/deal-finder"
+          "path": "/v1/marketing/price-positioning",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/shopper/price-drop-alert"
+          "path": "/v1/marketing/promo-intelligence",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/shopper/price-history"
+          "path": "/v1/marketing/brand-tracker",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/category-summary"
+          "path": "/v1/shopper/best-price",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/price-dispersion"
+          "path": "/v1/shopper/price-drop-alert",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/price-positioning"
+          "path": "/v1/shopper/price-history",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "shop"
-      }
+      ]
     },
     {
       "id": "cloud.domains",
@@ -678,56 +870,78 @@
         "domain renew without registrar UI",
         "programmatic domain renewal"
       ],
+      "consumes": [
+        {
+          "entity": "Domain",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Domain",
+          "role": "identifier"
+        }
+      ],
+      "facets": {
+        "domain": "cloud",
+        "action": "provision"
+      },
       "satisfies": [
         {
           "origin": "https://palmyr.ai",
           "method": "POST",
-          "path": "/domains/register"
+          "path": "/domains/register",
+          "source": "match_hint"
         },
         {
           "origin": "https://palmyr.ai",
           "method": "GET",
-          "path": "/domains/pricing"
+          "path": "/domains/pricing",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.strale.io",
           "method": "GET",
-          "path": "/x402/domain-age-check"
+          "path": "/x402/domain-age-check",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/namesilo.domain_register/call"
+          "path": "/api/v1/tools/namesilo.domain_register/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.doma.xyz",
           "method": "POST",
-          "path": "/register"
+          "path": "/register",
+          "source": "match_hint"
         },
         {
           "origin": "https://stabledomains.dev",
           "method": "POST",
-          "path": "/api/register"
+          "path": "/api/register",
+          "source": "match_hint"
         },
         {
           "origin": "https://stabledomains.dev",
           "method": "POST",
-          "path": "/api/check"
+          "path": "/api/check",
+          "source": "match_hint"
         },
         {
           "origin": "https://stabledomains.dev",
           "method": "POST",
-          "path": "/api/domain/renew"
+          "path": "/api/domain/renew",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.buildwithlocus.com",
           "method": "POST",
-          "path": "/v1/domains"
+          "path": "/v1/domains",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "cloud"
-      }
+      ]
     },
     {
       "id": "comms.agent_inbox",
@@ -748,26 +962,36 @@
         "agent email account setup",
         "polling inbox for AI workflows"
       ],
+      "produces": [
+        {
+          "entity": "Mailbox",
+          "role": "identifier"
+        }
+      ],
+      "facets": {
+        "domain": "comms",
+        "action": "provision"
+      },
       "satisfies": [
         {
           "origin": "https://mpp.orthogonal.com/agentmail",
           "method": "POST",
-          "path": "/v0/inboxes"
+          "path": "/v0/inboxes",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.api.agentmail.to",
           "method": "POST",
-          "path": "/v0/inboxes"
+          "path": "/v0/inboxes",
+          "source": "match_hint"
         },
         {
           "origin": "https://x402.api.agentmail.to",
           "method": "POST",
-          "path": "/v0/inboxes"
+          "path": "/v0/inboxes",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "ai"
-      }
+      ]
     },
     {
       "id": "comms.send_email",
@@ -786,71 +1010,122 @@
         "programmatic single email delivery",
         "micropay to send email"
       ],
+      "consumes": [
+        {
+          "entity": "Contact",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Message",
+          "role": "payload",
+          "format": "email"
+        }
+      ],
+      "facets": {
+        "domain": "comms",
+        "action": "send",
+        "modality": [
+          "text"
+        ]
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "comms.send_fax",
+          "note": "same outbound-send family, differs by channel (email vs fax)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "comms.send_sms",
+          "note": "same outbound-send family, differs by channel (email vs SMS)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "comms.voice_call",
+          "note": "same outbound-send family, differs by channel (email vs voice call)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "comms.agent_inbox",
+          "note": "same comms family; agent_inbox provisions the mailbox these senders deliver from; was dangling related comms.buy_inbox"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://stableemail.dev",
           "method": "POST",
-          "path": "/api/send"
+          "path": "/api/send",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableemail.dev",
           "method": "POST",
-          "path": "/api/inbox/send"
+          "path": "/api/inbox/send",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableemail.dev",
           "method": "POST",
-          "path": "/api/subdomain/send"
+          "path": "/api/subdomain/send",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "POST",
-          "path": "/api/feedback/send"
-        },
-        {
-          "origin": "https://palmyr.ai",
-          "method": "POST",
-          "path": "/email/inboxes/{id}/send"
-        },
-        {
-          "origin": "https://mpp.orthogonal.com/didit",
-          "method": "POST",
-          "path": "/v3/email/send"
+          "path": "/api/feedback/send",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.orthogonal.com/agentmail",
           "method": "POST",
-          "path": "/v0/inboxes/:inbox_id/messages/send"
+          "path": "/v0/inboxes/:inbox_id/messages/send",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://mpp.orthogonal.com/didit",
+          "method": "POST",
+          "path": "/v3/email/send",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://palmyr.ai",
+          "method": "POST",
+          "path": "/email/inboxes/{id}/send",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://x402.api.agentmail.to",
+          "method": "POST",
+          "path": "/v0/inboxes/{inbox_id}/drafts/{draft_id}/send",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://x402.api.agentmail.to",
+          "method": "POST",
+          "path": "/v0/inboxes/{inbox_id}/messages/send",
+          "source": "match_hint"
         },
         {
           "origin": "https://email-send-production.up.railway.app",
           "method": "GET",
-          "path": "/api/send"
+          "path": "/api/send",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.api.agentmail.to",
           "method": "POST",
-          "path": "/v0/inboxes/:inbox_id/messages/send"
+          "path": "/v0/inboxes/:inbox_id/messages/send",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableemail.dev",
           "method": "GET",
-          "path": "/api/send"
-        },
-        {
-          "origin": "https://mpp.api.agentmail.to",
-          "method": "POST",
-          "path": "/v0/inboxes/:inbox_id/drafts/:draft_id/send"
-        },
-        {
-          "origin": "https://stableemail.dev",
-          "method": "GET",
-          "path": "/api/inbox/send"
+          "path": "/api/send",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "social"
-      }
+      ]
     },
     {
       "id": "comms.send_fax",
@@ -867,16 +1142,51 @@
         "programmatic fax delivery",
         "fax without a phone line"
       ],
+      "consumes": [
+        {
+          "entity": "Contact",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Message",
+          "role": "payload",
+          "format": "fax"
+        }
+      ],
+      "facets": {
+        "domain": "comms",
+        "action": "send",
+        "modality": [
+          "image"
+        ]
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "comms.send_sms",
+          "note": "same outbound-send family, differs by channel (fax vs SMS)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "comms.voice_call",
+          "note": "same outbound-send family, differs by channel (fax vs voice call)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "comms.agent_inbox",
+          "note": "same comms family; agent_inbox provisions a mailbox rather than sending"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://agentfax.val.run",
           "method": "POST",
-          "path": "/v1/fax"
+          "path": "/v1/fax",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "social"
-      }
+      ]
     },
     {
       "id": "comms.voice_call",
@@ -898,71 +1208,117 @@
         "place call with instructions",
         "telephony task via AI"
       ],
+      "consumes": [
+        {
+          "entity": "Contact",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Message",
+          "role": "payload",
+          "format": "voice"
+        }
+      ],
+      "facets": {
+        "domain": "comms",
+        "action": "send",
+        "modality": [
+          "audio"
+        ]
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "comms.agent_inbox",
+          "note": "same comms family; agent_inbox provisions a mailbox rather than placing a call"
+        },
+        {
+          "type": "sibling_of",
+          "to": "ai.speech_to_text",
+          "note": "same audio family, differs by direction (place a call vs audio to text)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "ai.text_to_speech",
+          "note": "same audio family, differs by direction (place a call vs text to audio)"
+        }
+      ],
       "satisfies": [
         {
-          "origin": "https://stablephone.dev",
-          "method": "POST",
-          "path": "/api/call"
-        },
-        {
-          "origin": "https://bill-negotiation-api.lewis-6d8.workers.dev",
-          "method": "POST",
-          "path": "/negotiate"
-        },
-        {
           "origin": "https://sol.blockrun.ai",
           "method": "POST",
-          "path": "/api/v1/voice/call"
-        },
-        {
-          "origin": "https://sol.blockrun.ai",
-          "method": "POST",
-          "path": "/api/v1/search"
+          "path": "/api/v1/voice/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://stablephone.dev",
           "method": "POST",
-          "path": "/api/number"
+          "path": "/api/call",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablephone.dev",
+          "method": "POST",
+          "path": "/api/number",
+          "source": "match_hint"
         },
         {
           "origin": "https://blockrun-web-vbsbhh7lea-uc.a.run.app",
           "method": "POST",
-          "path": "/api/v1/voice/call"
+          "path": "/api/v1/voice/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://blockrun.ai",
           "method": "POST",
-          "path": "/api/v1/voice/call"
-        },
-        {
-          "origin": "https://sol.blockrun.ai",
-          "method": "POST",
-          "path": "/api/v1/chat/completions"
-        },
-        {
-          "origin": "https://sol.blockrun.ai",
-          "method": "POST",
-          "path": "/api/v1/images/image2image"
-        },
-        {
-          "origin": "https://sol.blockrun.ai",
-          "method": "GET",
-          "path": "/api/v1/surf/exchange/klines"
-        },
-        {
-          "origin": "https://stablephone.dev",
-          "method": "POST",
-          "path": "/api/lookup"
+          "path": "/api/v1/voice/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.orthogonal.com/agentphone",
           "method": "POST",
-          "path": "/v1/agents"
+          "path": "/v1/messages",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://bill-negotiation-api.lewis-6d8.workers.dev",
+          "method": "POST",
+          "path": "/negotiate",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://mpp.orthogonal.com/agentphone",
+          "method": "POST",
+          "path": "/v1/calls",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablephone.dev",
+          "method": "POST",
+          "path": "/api/lookup",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://mpp.orthogonal.com/agentphone",
+          "method": "POST",
+          "path": "/v1/numbers",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://sol.blockrun.ai",
+          "method": "POST",
+          "path": "/api/v1/phone/numbers/buy",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://sol.blockrun.ai",
+          "method": "GET",
+          "path": "/api/v1/surf/market/etf",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "ai"
-      }
+      ]
     },
     {
       "id": "compute.blockchain_rpc",
@@ -986,71 +1342,98 @@
         "pay per request node access",
         "remote blockchain node call"
       ],
+      "consumes": [
+        {
+          "entity": "BlockchainNetwork",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload",
+          "format": "json"
+        }
+      ],
+      "facets": {
+        "domain": "compute",
+        "action": "execute",
+        "freshness": "realtime"
+      },
       "satisfies": [
+        {
+          "origin": "https://api.onesource.io",
+          "method": "POST",
+          "path": "/api/chain/estimate-gas",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.onesource.io",
+          "method": "POST",
+          "path": "/api/chain/call",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.onesource.io",
+          "method": "GET",
+          "path": "/api/chain/erc20-transfers",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.onesource.io",
+          "method": "GET",
+          "path": "/api/chain/events",
+          "source": "match_hint"
+        },
         {
           "origin": "https://api.aitrailblazer.net",
           "method": "POST",
-          "path": "/mcp"
+          "path": "/mcp",
+          "source": "match_hint"
         },
         {
-          "origin": "https://api.molty.cash",
-          "method": "POST",
-          "path": "/a2a"
+          "origin": "https://api.onesource.io",
+          "method": "GET",
+          "path": "/api/chain/allowance",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.onesource.io",
+          "method": "GET",
+          "path": "/api/chain/erc1155-balance",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.onesource.io",
+          "method": "GET",
+          "path": "/api/chain/erc721-tokens",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.onesource.io",
+          "method": "GET",
+          "path": "/api/chain/storage",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.justaname.id",
           "method": "GET",
-          "path": "/ens/v2/reverse"
-        },
-        {
-          "origin": "https://api.onesource.io",
-          "method": "POST",
-          "path": "/api/chain/call"
+          "path": "/ens/v2/reverse",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.onesource.io",
           "method": "GET",
-          "path": "/api/chain/erc20-transfers"
-        },
-        {
-          "origin": "https://api.onesource.io",
-          "method": "POST",
-          "path": "/api/chain/estimate-gas"
+          "path": "/api/chain/erc20-balance",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.onesource.io",
           "method": "GET",
-          "path": "/api/chain/events"
-        },
-        {
-          "origin": "https://three.ws",
-          "method": "POST",
-          "path": "/api/mcp"
-        },
-        {
-          "origin": "https://three.ws",
-          "method": "POST",
-          "path": "/api/x402/pump-launch"
-        },
-        {
-          "origin": "https://amalgix.io",
-          "method": "POST",
-          "path": "/mcp"
-        },
-        {
-          "origin": "https://api.loyalspark.online",
-          "method": "POST",
-          "path": "/x402-gateway/recipient-mcp-tools/accept_p2p_offer"
-        },
-        {
-          "origin": "https://api.loyalspark.online",
-          "method": "POST",
-          "path": "/x402-gateway/recipient-mcp-tools/cancel_p2p_offer"
+          "path": "/api/chain/live-balance",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "crypto"
-      }
+      ]
     },
     {
       "id": "data.company_enrich",
@@ -1071,71 +1454,113 @@
         "company profile from domain",
         "what company owns this domain"
       ],
-      "satisfies": [
+      "consumes": [
         {
-          "origin": "https://lion-x402.lionmaster-operations.workers.dev",
-          "method": "GET",
-          "path": "/api/x402/adaptive-query"
-        },
+          "entity": "Domain",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
         {
-          "origin": "https://lion-x402.lionmaster-operations.workers.dev",
-          "method": "GET",
-          "path": "/api/x402/compliance-bundle-json"
-        },
-        {
-          "origin": "https://lion-x402.lionmaster-operations.workers.dev",
-          "method": "GET",
-          "path": "/api/x402/composite-bundle-json"
-        },
-        {
-          "origin": "https://lion-x402.lionmaster-operations.workers.dev",
-          "method": "GET",
-          "path": "/api/x402/enrich-v1-json"
-        },
-        {
-          "origin": "https://lion-x402.lionmaster-operations.workers.dev",
-          "method": "GET",
-          "path": "/api/x402/poi-business-search-json"
-        },
-        {
-          "origin": "https://lionx402.com",
-          "method": "GET",
-          "path": "/api/x402/adaptive-query"
-        },
-        {
-          "origin": "https://lionx402.com",
-          "method": "GET",
-          "path": "/api/x402/compliance-bundle-json"
-        },
-        {
-          "origin": "https://lionx402.com",
-          "method": "GET",
-          "path": "/api/x402/composite-bundle-json"
-        },
-        {
-          "origin": "https://lionx402.com",
-          "method": "GET",
-          "path": "/api/x402/enrich-v1-json"
-        },
-        {
-          "origin": "https://lionx402.com",
-          "method": "GET",
-          "path": "/api/x402/poi-business-search-json"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/apollo/org-search"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/apollo/people-enrich"
+          "entity": "Company",
+          "role": "payload"
         }
       ],
       "facets": {
-        "domain": "crypto"
-      }
+        "domain": "data",
+        "action": "lookup"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "media.social_data",
+          "note": "same identity family, differs by entity x purpose (Company firmographics vs social posts)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "data.whois_lookup",
+          "note": "same domain family, differs by purpose (enrich the owning company vs read DNS/WHOIS)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "cloud.domains",
+          "note": "same domain family, differs by action (enrich vs register/provision)"
+        }
+      ],
+      "satisfies": [
+        {
+          "origin": "https://apollo.mpp.paywithlocus.com",
+          "method": "POST",
+          "path": "/apollo/org-enrichment",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://lion-x402.lionmaster-operations.workers.dev",
+          "method": "GET",
+          "path": "/api/x402/compliance-bundle-json",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://lion-x402.lionmaster-operations.workers.dev",
+          "method": "GET",
+          "path": "/api/x402/enrich-v1-json",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://lionx402.com",
+          "method": "GET",
+          "path": "/api/x402/compliance-bundle-json",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://lionx402.com",
+          "method": "GET",
+          "path": "/api/x402/enrich-v1-json",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://mpp.orthogonal.com/company-enrich",
+          "method": "GET",
+          "path": "/companies",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stable-deepline.dev",
+          "method": "POST",
+          "path": "/api/ads/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stable-deepline.dev",
+          "method": "POST",
+          "path": "/api/contacts/by-role",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stable-deepline.dev",
+          "method": "POST",
+          "path": "/api/email/work",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stable-deepline.dev",
+          "method": "POST",
+          "path": "/api/linkedin/find",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableenrich.dev",
+          "method": "POST",
+          "path": "/api/apollo/org-enrich",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableenrich.dev",
+          "method": "POST",
+          "path": "/api/apollo/people-enrich",
+          "source": "match_hint"
+        }
+      ]
     },
     {
       "id": "data.compute_answer",
@@ -1161,42 +1586,46 @@
         {
           "origin": "https://wolframalpha.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/wolframalpha/simple"
+          "path": "/wolframalpha/simple",
+          "source": "match_hint"
         },
         {
           "origin": "https://wolframalpha.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/wolframalpha/spoken"
+          "path": "/wolframalpha/spoken",
+          "source": "match_hint"
         },
         {
           "origin": "https://wolframalpha.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/wolframalpha/full-results"
+          "path": "/wolframalpha/full-results",
+          "source": "match_hint"
         },
         {
           "origin": "https://wolframalpha.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/wolframalpha/short-answer"
+          "path": "/wolframalpha/short-answer",
+          "source": "match_hint"
         },
         {
           "origin": "https://wolframalpha.x402.paysponge.com",
           "method": "GET",
-          "path": "/v1/result"
+          "path": "/v1/result",
+          "source": "match_hint"
         },
         {
           "origin": "https://wolframalpha.x402.paysponge.com",
           "method": "GET",
-          "path": "/v1/simple"
+          "path": "/v1/simple",
+          "source": "match_hint"
         },
         {
           "origin": "https://wolframalpha.x402.paysponge.com",
           "method": "GET",
-          "path": "/v2/query"
+          "path": "/v2/query",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "data"
-      }
+      ]
     },
     {
       "id": "data.email_validate",
@@ -1217,67 +1646,76 @@
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/org-search"
+          "path": "/api/apollo/org-search",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/people-enrich"
+          "path": "/api/apollo/people-enrich",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/people-search"
+          "path": "/api/apollo/people-search",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/clado/contacts-enrich"
+          "path": "/api/clado/contacts-enrich",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/exa/contents"
+          "path": "/api/exa/contents",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/exa/find-similar"
+          "path": "/api/exa/find-similar",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/influencer/enrich-by-social"
+          "path": "/api/influencer/enrich-by-social",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/serper/shopping"
+          "path": "/api/serper/shopping",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/whitepages/person-search"
+          "path": "/api/whitepages/person-search",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/whitepages/property-search"
+          "path": "/api/whitepages/property-search",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/exa/answer"
+          "path": "/api/exa/answer",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/google-maps/nearby-search/full"
+          "path": "/api/google-maps/nearby-search/full",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "data"
-      }
+      ]
     },
     {
       "id": "data.exchange_rates",
@@ -1294,71 +1732,98 @@
         "foreign exchange API",
         "get rate between currencies"
       ],
+      "consumes": [
+        {
+          "entity": "Currency",
+          "role": "identifier",
+          "cardinality": "many"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "MarketQuote",
+          "role": "payload"
+        }
+      ],
+      "facets": {
+        "domain": "data",
+        "action": "lookup",
+        "freshness": "realtime"
+      },
       "satisfies": [
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/fx/timeseries"
+          "path": "/api/convert/currency",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/treasury/exchange-rates"
+          "path": "/api/fx/timeseries",
+          "source": "match_hint"
         },
         {
-          "origin": "https://market2000.xyz",
-          "method": "POST",
-          "path": "/trading/scan"
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/treasury/exchange-rates",
+          "source": "match_hint"
         },
         {
           "origin": "https://remit-compare.up.railway.app",
           "method": "POST",
-          "path": "/mpp/compare"
+          "path": "/mpp/compare",
+          "source": "match_hint"
         },
         {
           "origin": "https://remit-compare.up.railway.app",
           "method": "POST",
-          "path": "/x402/compare"
+          "path": "/x402/compare",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/convert/currency"
+          "path": "/api/fx/rates",
+          "source": "match_hint"
         },
         {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/fx/rates"
+          "origin": "https://alphavantage.mpp.paywithlocus.com",
+          "method": "POST",
+          "path": "/alphavantage/currency-exchange-rate",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://x402.agoragentic.com",
+          "method": "POST",
+          "path": "/v1/fx-rate-historical",
+          "source": "match_hint"
         },
         {
           "origin": "https://market2000.xyz",
           "method": "POST",
-          "path": "/forward_distribution"
+          "path": "/forward_distribution",
+          "source": "match_hint"
         },
         {
           "origin": "https://market2000.xyz",
           "method": "POST",
-          "path": "/get_patterns_ohlc"
+          "path": "/get_patterns_ohlc",
+          "source": "match_hint"
         },
         {
           "origin": "https://market2000.xyz",
           "method": "POST",
-          "path": "/get_patterns_raw"
+          "path": "/get_patterns_raw",
+          "source": "match_hint"
         },
         {
           "origin": "https://market2000.xyz",
           "method": "POST",
-          "path": "/pattern_alert"
-        },
-        {
-          "origin": "https://market2000.xyz",
-          "method": "POST",
-          "path": "/pattern_backtest"
+          "path": "/pattern_alert",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "finance"
-      }
+      ]
     },
     {
       "id": "data.ip_lookup",
@@ -1379,67 +1844,76 @@
         {
           "origin": "https://ip.coggler.com",
           "method": "POST",
-          "path": "/ip"
+          "path": "/ip",
+          "source": "match_hint"
         },
         {
           "origin": "https://ai.verifik.co",
           "method": "GET",
-          "path": "/api/ip-lookup"
+          "path": "/api/ip-lookup",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.strale.io",
           "method": "POST",
-          "path": "/x402/beneficial-ownership-lookup"
+          "path": "/x402/beneficial-ownership-lookup",
+          "source": "match_hint"
         },
         {
           "origin": "https://ip402.xyz",
           "method": "GET",
-          "path": "/v1/geo"
+          "path": "/v1/geo",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/geo/ip"
+          "path": "/api/geo/ip",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.strale.io",
           "method": "GET",
-          "path": "/x402/ip-geolocation"
+          "path": "/x402/ip-geolocation",
+          "source": "match_hint"
         },
         {
           "origin": "https://verifik.x402.paysponge.com",
           "method": "GET",
-          "path": "/v2/ip-lookup"
+          "path": "/v2/ip-lookup",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/geo.ip_geolocation/call"
+          "path": "/api/v1/tools/geo.ip_geolocation/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/ip.bulk_lookup/call"
+          "path": "/api/v1/tools/ip.bulk_lookup/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/ip.lookup/call"
+          "path": "/api/v1/tools/ip.lookup/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://x402-apis-eta.vercel.app",
           "method": "GET",
-          "path": "/api/domain-infra"
+          "path": "/api/domain-infra",
+          "source": "match_hint"
         },
         {
           "origin": "https://abstract-ip-intelligence.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/abstract-ip-intelligence/lookup"
+          "path": "/abstract-ip-intelligence/lookup",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "data"
-      }
+      ]
     },
     {
       "id": "data.job_search",
@@ -1465,67 +1939,76 @@
         {
           "origin": "https://api.swedata.org",
           "method": "GET",
-          "path": "/jobs"
+          "path": "/jobs",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.swedata.org",
           "method": "POST",
-          "path": "/jobs"
+          "path": "/jobs",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/gov/usajobs"
+          "path": "/api/gov/usajobs",
+          "source": "match_hint"
         },
         {
           "origin": "https://hirescrape.com",
           "method": "POST",
-          "path": "/api/tools/jobs"
+          "path": "/api/tools/jobs",
+          "source": "match_hint"
         },
         {
           "origin": "https://www.hirescrape.com",
           "method": "POST",
-          "path": "/api/tools/jobs"
+          "path": "/api/tools/jobs",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.strale.io",
           "method": "GET",
-          "path": "/x402/job-board-search"
+          "path": "/x402/job-board-search",
+          "source": "match_hint"
         },
         {
           "origin": "https://hirescrape.com",
           "method": "POST",
-          "path": "/api/tools/linkedin"
+          "path": "/api/tools/linkedin",
+          "source": "match_hint"
         },
         {
           "origin": "https://stablejobs.dev",
           "method": "POST",
-          "path": "/api/coresignal/job-search"
+          "path": "/api/coresignal/job-search",
+          "source": "match_hint"
         },
         {
           "origin": "https://www.hirescrape.com",
           "method": "POST",
-          "path": "/api/tools/linkedin"
+          "path": "/api/tools/linkedin",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/adzuna.search/call"
+          "path": "/api/v1/tools/adzuna.search/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/jobs.job_search/call"
+          "path": "/api/v1/tools/jobs.job_search/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/jooble.search/call"
+          "path": "/api/v1/tools/jooble.search/call",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "data"
-      }
+      ]
     },
     {
       "id": "data.person_search",
@@ -1542,71 +2025,114 @@
         "profile lookup by name",
         "B2B contact discovery"
       ],
+      "consumes": [
+        {
+          "entity": "Query",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Person",
+          "role": "payload",
+          "cardinality": "many"
+        }
+      ],
+      "facets": {
+        "domain": "data",
+        "action": "search"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "social.influencer_search",
+          "note": "same identity-lookup family, differs by entity (Person vs SocialProfile)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "data.company_enrich",
+          "note": "same identity-lookup family, differs by entity x purpose (Person vs Company from domain)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "media.social_data",
+          "note": "same identity family, differs by purpose (resolve a person vs fetch social posts)"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://api.iris-ai.dev",
           "method": "POST",
-          "path": "/campaigns"
+          "path": "/campaigns",
+          "source": "match_hint"
         },
         {
           "origin": "https://iris-ai.dev",
           "method": "POST",
-          "path": "/campaigns"
+          "path": "/campaigns",
+          "source": "match_hint"
         },
         {
           "origin": "https://www.iris-ai.dev",
           "method": "POST",
-          "path": "/campaigns"
+          "path": "/campaigns",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/org-search"
+          "path": "/api/apollo/people-search",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/people-enrich"
+          "path": "/api/whitepages/person-search",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/people-search"
+          "path": "/api/serper/shopping",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://apollo.mpp.paywithlocus.com",
+          "method": "POST",
+          "path": "/apollo/people-search",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/clado/contacts-enrich"
+          "path": "/api/apollo/people-enrich",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/exa/contents"
+          "path": "/api/exa/answer",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/exa/find-similar"
+          "path": "/api/google-maps/nearby-search/full",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/serper/shopping"
+          "path": "/api/google-maps/nearby-search/partial",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/whitepages/person-search"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/whitepages/property-search"
+          "path": "/api/google-maps/text-search/full",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "data"
-      }
+      ]
     },
     {
       "id": "data.ocr",
@@ -1623,71 +2149,100 @@
         "recognize text in image",
         "photo text extraction"
       ],
+      "consumes": [
+        {
+          "entity": "Image",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Text",
+          "role": "payload",
+          "format": "text"
+        }
+      ],
+      "facets": {
+        "domain": "data",
+        "action": "extract",
+        "modality": [
+          "text"
+        ]
+      },
       "satisfies": [
         {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/gov/house-votes"
+          "origin": "https://ai.verifik.co",
+          "method": "POST",
+          "path": "/api/ocr/scan-gpt",
+          "source": "match_hint"
         },
         {
           "origin": "https://ai.verifik.co",
           "method": "POST",
-          "path": "/api/ocr/scan-gpt"
-        },
-        {
-          "origin": "https://ai.verifik.co",
-          "method": "POST",
-          "path": "/api/ocr/scan-studio"
+          "path": "/api/ocr/scan-studio",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "POST",
-          "path": "/api/ai/describe-image"
-        },
-        {
-          "origin": "https://x402.dtelecom.org",
-          "method": "POST",
-          "path": "/v1/credits/purchase"
+          "path": "/api/ai/describe-image",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.strale.io",
           "method": "GET",
-          "path": "/x402/image-to-text"
+          "path": "/x402/payment-reference-generate",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/gov/house-votes",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.strale.io",
           "method": "GET",
-          "path": "/x402/payment-reference-generate"
-        },
-        {
-          "origin": "https://apibase.pro",
-          "method": "POST",
-          "path": "/api/v1/tools/cdc.query/call"
-        },
-        {
-          "origin": "https://apibase.pro",
-          "method": "POST",
-          "path": "/api/v1/tools/ocr.extract_text/call"
+          "path": "/x402/image-to-text",
+          "source": "match_hint"
         },
         {
           "origin": "https://verifik.x402.paysponge.com",
           "method": "POST",
-          "path": "/v2/ocr/scan-gpt"
+          "path": "/v2/ocr/scan-gpt",
+          "source": "match_hint"
         },
         {
           "origin": "https://verifik.x402.paysponge.com",
           "method": "POST",
-          "path": "/v2/ocr/scan-studio"
+          "path": "/v2/ocr/scan-studio",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://apibase.pro",
+          "method": "POST",
+          "path": "/api/v1/tools/ocr.extract_text/call",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://visionex.x402tools.xyz",
+          "method": "POST",
+          "path": "/v1/extract",
+          "source": "match_hint"
         },
         {
           "origin": "https://x402.valkyry.fr",
           "method": "POST",
-          "path": "/pdf-to-markdown"
+          "path": "/pdf-to-markdown",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://mathpix.mpp.paywithlocus.com",
+          "method": "POST",
+          "path": "/mathpix/process-image",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "ai"
-      }
+      ]
     },
     {
       "id": "data.phone_validate",
@@ -1708,67 +2263,76 @@
         {
           "origin": "https://api.invoket.com",
           "method": "GET",
-          "path": "/phone/validate"
+          "path": "/phone/validate",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.strale.io",
           "method": "GET",
-          "path": "/x402/phone-validate"
+          "path": "/x402/phone-validate",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.orthogonal.com/tomba",
           "method": "GET",
-          "path": "/v1/phone-validator"
+          "path": "/v1/phone-validator",
+          "source": "match_hint"
         },
         {
           "origin": "https://torify.dev",
           "method": "GET",
-          "path": "/v1/phone/validate"
+          "path": "/v1/phone/validate",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.interzoid.com",
           "method": "GET",
-          "path": "/getphoneprofile"
+          "path": "/getphoneprofile",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/ipqs.phone_check/call"
+          "path": "/api/v1/tools/ipqs.phone_check/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/twilio.lookup/call"
+          "path": "/api/v1/tools/twilio.lookup/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.orthogonal.com/fiber",
           "method": "POST",
-          "path": "/v1/validate-phone/single"
+          "path": "/v1/validate-phone/single",
+          "source": "match_hint"
         },
         {
           "origin": "https://sol.blockrun.ai",
           "method": "POST",
-          "path": "/api/v1/phone/lookup"
+          "path": "/api/v1/phone/lookup",
+          "source": "match_hint"
         },
         {
           "origin": "https://blockrun-web-vbsbhh7lea-uc.a.run.app",
           "method": "POST",
-          "path": "/api/v1/phone/lookup"
+          "path": "/api/v1/phone/lookup",
+          "source": "match_hint"
         },
         {
           "origin": "https://blockrun.ai",
           "method": "POST",
-          "path": "/api/v1/phone/lookup"
+          "path": "/api/v1/phone/lookup",
+          "source": "match_hint"
         },
         {
           "origin": "https://abstract-phone-intelligence.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/abstract-phone-intelligence/lookup"
+          "path": "/abstract-phone-intelligence/lookup",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "data"
-      }
+      ]
     },
     {
       "id": "data.translate_text",
@@ -1789,67 +2353,76 @@
         {
           "origin": "https://api.aitrailblazer.net",
           "method": "POST",
-          "path": "/mcp"
+          "path": "/mcp",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.aitrailblazer.net",
           "method": "GET",
-          "path": "/v1/covenant-stress"
+          "path": "/v1/covenant-stress",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/calendar/holidays"
+          "path": "/api/calendar/holidays",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.aitrailblazer.net",
           "method": "GET",
-          "path": "/mpp/v1/covenant-stress"
+          "path": "/mpp/v1/covenant-stress",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.aitrailblazer.net",
           "method": "GET",
-          "path": "/v1/alpha-opportunities"
+          "path": "/v1/alpha-opportunities",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.aitrailblazer.net",
           "method": "GET",
-          "path": "/v1/atlas-history/{ticker}"
+          "path": "/v1/atlas-history/{ticker}",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.aitrailblazer.net",
           "method": "GET",
-          "path": "/v1/atlas7/calculation-history"
+          "path": "/v1/atlas7/calculation-history",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.aitrailblazer.net",
           "method": "POST",
-          "path": "/v1/bundles/company-report"
+          "path": "/v1/bundles/company-report",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.aitrailblazer.net",
           "method": "GET",
-          "path": "/v1/company-fundamentals/{ticker}"
+          "path": "/v1/company-fundamentals/{ticker}",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.aitrailblazer.net",
           "method": "GET",
-          "path": "/v1/company-report/{ticker}"
+          "path": "/v1/company-report/{ticker}",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.aitrailblazer.net",
           "method": "GET",
-          "path": "/v1/covenant/stress"
+          "path": "/v1/covenant/stress",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.aitrailblazer.net",
           "method": "GET",
-          "path": "/v1/daily-changes/evidence"
+          "path": "/v1/daily-changes/evidence",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "finance"
-      }
+      ]
     },
     {
       "id": "data.weather_forecast",
@@ -1870,67 +2443,76 @@
         {
           "origin": "https://x402.nichospt.net",
           "method": "POST",
-          "path": "/screenshot"
+          "path": "/screenshot",
+          "source": "match_hint"
         },
         {
           "origin": "https://x402.nichospt.net",
           "method": "POST",
-          "path": "/timezone-math"
+          "path": "/timezone-math",
+          "source": "match_hint"
         },
         {
           "origin": "https://aviationapis.com",
           "method": "POST",
-          "path": "/density-altitude"
+          "path": "/density-altitude",
+          "source": "match_hint"
         },
         {
           "origin": "https://x402.nichospt.net",
           "method": "POST",
-          "path": "/color-palette"
+          "path": "/color-palette",
+          "source": "match_hint"
         },
         {
           "origin": "https://x402.nichospt.net",
           "method": "POST",
-          "path": "/fake-data"
+          "path": "/fake-data",
+          "source": "match_hint"
         },
         {
           "origin": "https://x402.nichospt.net",
           "method": "POST",
-          "path": "/hash"
+          "path": "/hash",
+          "source": "match_hint"
         },
         {
           "origin": "https://x402.nichospt.net",
           "method": "POST",
-          "path": "/qr-code"
+          "path": "/qr-code",
+          "source": "match_hint"
         },
         {
           "origin": "https://x402.nichospt.net",
           "method": "POST",
-          "path": "/slugify"
+          "path": "/slugify",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/agriculture/stats"
+          "path": "/api/agriculture/stats",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "POST",
-          "path": "/api/ai/screenshot"
+          "path": "/api/ai/screenshot",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/airport/near"
+          "path": "/api/airport/near",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/aviation/accidents"
+          "path": "/api/aviation/accidents",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "web"
-      }
+      ]
     },
     {
       "id": "data.web_scrape",
@@ -1947,71 +2529,107 @@
         "get webpage HTML",
         "scrape public site"
       ],
-      "satisfies": [
+      "consumes": [
         {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "POST",
-          "path": "/mcp"
-        },
+          "entity": "Webpage",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
         {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/covenant-stress"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/mpp/v1/covenant-stress"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/alpha-opportunities"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/atlas-history/{ticker}"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/atlas7/calculation-history"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "POST",
-          "path": "/v1/bundles/company-report"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/company-fundamentals/{ticker}"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/company-report/{ticker}"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/covenant/stress"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/daily-changes/evidence"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/market-spectra-field-map/{product}"
+          "entity": "WebContent",
+          "role": "payload",
+          "format": "html"
         }
       ],
       "facets": {
-        "domain": "finance"
-      }
+        "domain": "web",
+        "action": "extract",
+        "modality": [
+          "html"
+        ]
+      },
+      "links": [
+        {
+          "type": "broader_of",
+          "to": "web.markdown_extract",
+          "note": "web_scrape returns raw HTML; markdown_extract is the narrower clean-markdown variant"
+        }
+      ],
+      "satisfies": [
+        {
+          "origin": "https://hirescrape.com",
+          "method": "POST",
+          "path": "/api/tools/jobs",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://www.hirescrape.com",
+          "method": "POST",
+          "path": "/api/tools/jobs",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://agentkit0.com",
+          "method": "POST",
+          "path": "/api/web/scrape",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "GET",
+          "path": "/v1/tools/url-links",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "POST",
+          "path": "/v1/tools/url-links",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "GET",
+          "path": "/v1/tools/url-text",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "POST",
+          "path": "/v1/tools/url-text",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableflare.dev",
+          "method": "POST",
+          "path": "/api/browser/content",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableflare.dev",
+          "method": "POST",
+          "path": "/api/browser/json",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableflare.dev",
+          "method": "POST",
+          "path": "/api/browser/links",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableflare.dev",
+          "method": "POST",
+          "path": "/api/browser/pdf",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableflare.dev",
+          "method": "POST",
+          "path": "/api/browser/scrape",
+          "source": "match_hint"
+        }
+      ]
     },
     {
       "id": "data.whois_lookup",
@@ -2028,71 +2646,105 @@
         "domain registration info",
         "lookup nameserver records"
       ],
-      "satisfies": [
+      "consumes": [
         {
-          "origin": "https://2s.io",
-          "method": "POST",
-          "path": "/api/agent/marketplace/register"
-        },
+          "entity": "Domain",
+          "role": "identifier",
+          "cardinality": "many"
+        }
+      ],
+      "produces": [
         {
-          "origin": "https://x402.nichospt.net",
-          "method": "POST",
-          "path": "/dns-lookup"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/dns/lookup"
-        },
-        {
-          "origin": "https://x402.nichospt.net",
-          "method": "POST",
-          "path": "/email-validate"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/email/validate"
-        },
-        {
-          "origin": "https://api.mcpkeeper.com",
-          "method": "POST",
-          "path": "/mcp/memory-plane/__tool__/get_context_for_task"
-        },
-        {
-          "origin": "https://api.mcpkeeper.com",
-          "method": "POST",
-          "path": "/mcp/memory-plane/__tool__/get_memory_timeline"
-        },
-        {
-          "origin": "https://api.mcpkeeper.com",
-          "method": "POST",
-          "path": "/mcp/memory-plane/__tool__/record_memory_event"
-        },
-        {
-          "origin": "https://api.mcpkeeper.com",
-          "method": "POST",
-          "path": "/mcp/memory-plane/__tool__/search_memory"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/domain/intel"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/domain/whois"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/net/asn"
+          "entity": "DnsRecord",
+          "role": "payload",
+          "cardinality": "many"
         }
       ],
       "facets": {
-        "domain": "cloud"
-      }
+        "domain": "data",
+        "action": "lookup"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "cloud.domains",
+          "note": "same domain family, differs by action (read DNS/WHOIS vs register/provision)"
+        }
+      ],
+      "satisfies": [
+        {
+          "origin": "https://x402.nichospt.net",
+          "method": "POST",
+          "path": "/dns-lookup",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/dns/lookup",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/domain/intel",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/domain/whois",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://apibase.pro",
+          "method": "POST",
+          "path": "/api/v1/tools/cloudflare.dns_create/call",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.strale.io",
+          "method": "GET",
+          "path": "/x402/dns-lookup",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.strale.io",
+          "method": "GET",
+          "path": "/x402/mx-lookup",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.strale.io",
+          "method": "GET",
+          "path": "/x402/whois-lookup",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://apibase.pro",
+          "method": "POST",
+          "path": "/api/v1/tools/whois.lookup/call",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/net/asn",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://apibase.pro",
+          "method": "POST",
+          "path": "/api/v1/tools/cloudflare.dns_list/call",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://apibase.pro",
+          "method": "POST",
+          "path": "/api/v1/tools/whois.availability/call",
+          "source": "match_hint"
+        }
+      ]
     },
     {
       "id": "devtools.captcha_solve",
@@ -2113,67 +2765,76 @@
         {
           "origin": "https://api.safebrowz.com",
           "method": "POST",
-          "path": "/v1/detect"
+          "path": "/v1/detect",
+          "source": "match_hint"
         },
         {
           "origin": "https://web-unlocker.200ok.xyz",
           "method": "POST",
-          "path": "/unlock"
+          "path": "/unlock",
+          "source": "match_hint"
         },
         {
           "origin": "https://megapot.mpp.paysponge.com",
           "method": "POST",
-          "path": "/purchase"
+          "path": "/purchase",
+          "source": "match_hint"
         },
         {
           "origin": "https://megapot.mpp.paysponge.com",
           "method": "POST",
-          "path": "/status"
+          "path": "/status",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.orthogonal.com/notte",
           "method": "POST",
-          "path": "/scrape"
+          "path": "/scrape",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.orthogonal.com/notte",
           "method": "POST",
-          "path": "/scrape_from_html"
+          "path": "/scrape_from_html",
+          "source": "match_hint"
         },
         {
           "origin": "https://twocaptcha.mpp.tempo.xyz",
           "method": "POST",
-          "path": "/createTask"
+          "path": "/createTask",
+          "source": "match_hint"
         },
         {
           "origin": "https://climate.stripe.dev",
           "method": "POST",
-          "path": "/api/contribute"
+          "path": "/api/contribute",
+          "source": "match_hint"
         },
         {
           "origin": "https://firecrawl.mpp.tempo.xyz",
           "method": "POST",
-          "path": "/v1/extract"
+          "path": "/v1/extract",
+          "source": "match_hint"
         },
         {
           "origin": "https://agents.sayerandstone.com",
           "method": "GET",
-          "path": "/catalog"
+          "path": "/catalog",
+          "source": "match_hint"
         },
         {
           "origin": "https://agents.sayerandstone.com",
           "method": "POST",
-          "path": "/purchase"
+          "path": "/purchase",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.orthogonal.com/notte",
           "method": "POST",
-          "path": "/sessions/:session_id/cookies"
+          "path": "/sessions/:session_id/cookies",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "web"
-      }
+      ]
     },
     {
       "id": "finance.crypto_spot_price",
@@ -2196,71 +2857,124 @@
         "usd price for ethereum",
         "what's the price of BTC right now"
       ],
+      "consumes": [
+        {
+          "entity": "CryptoAsset",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "MarketQuote",
+          "role": "payload"
+        }
+      ],
+      "facets": {
+        "domain": "finance",
+        "action": "lookup",
+        "freshness": "realtime"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "finance.stock_quote",
+          "note": "same lookup-a-live-quote family, differs only by entity (CryptoAsset vs Ticker)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "data.exchange_rates",
+          "note": "same lookup-a-live-quote family, differs only by entity (CryptoAsset vs Currency)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "finance.token_balance",
+          "note": "same crypto asset family, differs by action (price lookup vs wallet holdings)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "finance.onchain_analytics",
+          "note": "same crypto family, differs by action (price lookup vs analyze flows); was dangling related finance.crypto_market_data"
+        },
+        {
+          "type": "sibling_of",
+          "to": "compute.blockchain_rpc",
+          "note": "same crypto family, differs by action (price lookup vs execute JSON-RPC)"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://api.syraa.fun",
           "method": "GET",
-          "path": "/assets"
+          "path": "/assets",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syraa.fun",
           "method": "GET",
-          "path": "/coingecko"
-        },
-        {
-          "origin": "https://api.syraa.fun",
-          "method": "GET",
-          "path": "/indicator"
+          "path": "/indicator",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syraa.fun",
           "method": "POST",
-          "path": "/indicator"
+          "path": "/indicator",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syraa.fun",
           "method": "GET",
-          "path": "/signal"
+          "path": "/signal",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syraa.fun",
           "method": "POST",
-          "path": "/signal"
+          "path": "/signal",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.agentgoods.io",
           "method": "GET",
-          "path": "/price"
+          "path": "/price",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syraa.fun",
           "method": "GET",
-          "path": "/jupiter/quote"
+          "path": "/coingecko",
+          "source": "match_hint"
         },
         {
-          "origin": "https://api.syraa.fun",
-          "method": "POST",
-          "path": "/jupiter/quote"
+          "origin": "https://crypto.apitoll.cloud",
+          "method": "GET",
+          "path": "/v1/crypto/yields",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syraa.fun",
           "method": "GET",
-          "path": "/pumpfun/scout"
+          "path": "/news",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syraa.fun",
           "method": "GET",
-          "path": "/rise"
+          "path": "/pumpfun/scout",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syraa.fun",
+          "method": "GET",
+          "path": "/rise",
+          "source": "match_hint"
         },
         {
           "origin": "https://coingecko.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/coingecko/simple-token-price"
+          "path": "/coingecko/simple-token-price",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "crypto"
-      }
+      ]
     },
     {
       "id": "finance.onchain_analytics",
@@ -2277,71 +2991,105 @@
         "on-chain signal discovery",
         "crypto wallet intelligence"
       ],
+      "consumes": [
+        {
+          "entity": "WalletAddress",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload",
+          "format": "json"
+        }
+      ],
+      "facets": {
+        "domain": "finance",
+        "action": "analyze",
+        "freshness": "recent"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "compute.blockchain_rpc",
+          "note": "same on-chain family, differs by action (analyze flows vs execute JSON-RPC)"
+        }
+      ],
       "satisfies": [
+        {
+          "origin": "https://lionx402.com",
+          "method": "GET",
+          "path": "/api/x402/location-solar-enrichment-json",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://lionx402.com",
+          "method": "GET",
+          "path": "/api/x402/poi-business-search-json",
+          "source": "match_hint"
+        },
         {
           "origin": "https://api.solenrich.com",
           "method": "POST",
-          "path": "/entrypoints/smart-money-flow/invoke"
+          "path": "/entrypoints/smart-money-flow/invoke",
+          "source": "match_hint"
         },
         {
-          "origin": "https://edgar.apitoll.cloud",
+          "origin": "https://defi-api.agenticfi.wtf",
           "method": "GET",
-          "path": "/v1/edgar/filings"
-        },
-        {
-          "origin": "https://lion-x402.lionmaster-operations.workers.dev",
-          "method": "GET",
-          "path": "/api/x402/adaptive-query"
+          "path": "/api/wallet/transactions/{address}",
+          "source": "match_hint"
         },
         {
           "origin": "https://lion-x402.lionmaster-operations.workers.dev",
           "method": "GET",
-          "path": "/api/x402/compliance-bundle-json"
+          "path": "/api/x402/adaptive-query",
+          "source": "match_hint"
         },
         {
           "origin": "https://lion-x402.lionmaster-operations.workers.dev",
           "method": "GET",
-          "path": "/api/x402/composite-bundle-json"
+          "path": "/api/x402/compliance-bundle-json",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://lion-x402.lionmaster-operations.workers.dev",
+          "method": "GET",
+          "path": "/api/x402/composite-bundle-json",
+          "source": "match_hint"
         },
         {
           "origin": "https://lionx402.com",
           "method": "GET",
-          "path": "/api/x402/adaptive-query"
+          "path": "/api/x402/adaptive-query",
+          "source": "match_hint"
         },
         {
           "origin": "https://lionx402.com",
           "method": "GET",
-          "path": "/api/x402/compliance-bundle-json"
+          "path": "/api/x402/compliance-bundle-json",
+          "source": "match_hint"
         },
         {
           "origin": "https://lionx402.com",
           "method": "GET",
-          "path": "/api/x402/composite-bundle-json"
-        },
-        {
-          "origin": "https://lionx402.com",
-          "method": "GET",
-          "path": "/api/x402/enrich-v1-json"
-        },
-        {
-          "origin": "https://lionx402.com",
-          "method": "GET",
-          "path": "/api/x402/poi-business-search-json"
+          "path": "/api/x402/composite-bundle-json",
+          "source": "match_hint"
         },
         {
           "origin": "https://www.solenrich.com",
           "method": "POST",
-          "path": "/entrypoints/smart-money-flow/invoke"
+          "path": "/entrypoints/smart-money-flow/invoke",
+          "source": "match_hint"
         },
         {
-          "origin": "https://api.vibe.airforce",
-          "method": "POST",
-          "path": "/api/x402/vibe-tools/swap-quote"
+          "origin": "https://lionx402.com",
+          "method": "GET",
+          "path": "/api/x402/sanctions-screen-json",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "crypto"
-      }
+      ]
     },
     {
       "id": "finance.stock_quote",
@@ -2358,71 +3106,104 @@
         "real time stock price",
         "get quote for ticker"
       ],
-      "satisfies": [
+      "consumes": [
         {
-          "origin": "https://api.agentgoods.io",
-          "method": "GET",
-          "path": "/market"
-        },
+          "entity": "Ticker",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
         {
-          "origin": "https://api.predictionmarketdata.io",
-          "method": "GET",
-          "path": "/exchanges"
-        },
-        {
-          "origin": "https://api.predictionmarketdata.io",
-          "method": "GET",
-          "path": "/prediction-markets"
-        },
-        {
-          "origin": "https://api.predictionmarketdata.io",
-          "method": "GET",
-          "path": "/price-history"
-        },
-        {
-          "origin": "https://api.syraa.fun",
-          "method": "GET",
-          "path": "/assets"
-        },
-        {
-          "origin": "https://api.syraa.fun",
-          "method": "GET",
-          "path": "/coingecko"
-        },
-        {
-          "origin": "https://api.syraa.fun",
-          "method": "GET",
-          "path": "/indicator"
-        },
-        {
-          "origin": "https://api.syraa.fun",
-          "method": "POST",
-          "path": "/indicator"
-        },
-        {
-          "origin": "https://api.syraa.fun",
-          "method": "GET",
-          "path": "/signal"
-        },
-        {
-          "origin": "https://api.syraa.fun",
-          "method": "POST",
-          "path": "/signal"
-        },
-        {
-          "origin": "https://api.agentgoods.io",
-          "method": "GET",
-          "path": "/price"
-        },
-        {
-          "origin": "https://api.syraa.fun",
-          "method": "GET",
-          "path": "/jupiter/quote"
+          "entity": "MarketQuote",
+          "role": "payload"
         }
       ],
       "facets": {
-        "domain": "crypto"
-      }
+        "domain": "finance",
+        "action": "lookup",
+        "freshness": "realtime"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "data.exchange_rates",
+          "note": "same lookup-a-live-quote family, differs only by entity (Ticker vs Currency)"
+        }
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.syraa.fun",
+          "method": "GET",
+          "path": "/indicator",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syraa.fun",
+          "method": "POST",
+          "path": "/indicator",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://market2000.xyz",
+          "method": "POST",
+          "path": "/forward_distribution",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://market2000.xyz",
+          "method": "POST",
+          "path": "/get_patterns_ohlc",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://market2000.xyz",
+          "method": "POST",
+          "path": "/get_patterns_raw",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://market2000.xyz",
+          "method": "POST",
+          "path": "/pattern_alert",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://market2000.xyz",
+          "method": "POST",
+          "path": "/pattern_backtest",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://market2000.xyz",
+          "method": "POST",
+          "path": "/playbook",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://market2000.xyz",
+          "method": "POST",
+          "path": "/position_size",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://market2000.xyz",
+          "method": "POST",
+          "path": "/trading/signal",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syraa.fun",
+          "method": "GET",
+          "path": "/event",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syraa.fun",
+          "method": "GET",
+          "path": "/news",
+          "source": "match_hint"
+        }
+      ]
     },
     {
       "id": "finance.token_balance",
@@ -2439,71 +3220,110 @@
         "what tokens does this wallet hold",
         "on-chain balance lookup"
       ],
+      "consumes": [
+        {
+          "entity": "WalletAddress",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload",
+          "format": "json"
+        }
+      ],
+      "facets": {
+        "domain": "finance",
+        "action": "lookup",
+        "freshness": "realtime"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "finance.onchain_analytics",
+          "note": "same crypto wallet family, differs by action (read holdings vs analyze flows)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "compute.blockchain_rpc",
+          "note": "same on-chain family, differs by action (read balance vs execute JSON-RPC)"
+        }
+      ],
       "satisfies": [
         {
-          "origin": "https://2s.io",
+          "origin": "https://defi-api.agenticfi.wtf",
           "method": "GET",
-          "path": "/api/treasury/debt"
-        },
-        {
-          "origin": "https://edgar.apitoll.cloud",
-          "method": "GET",
-          "path": "/v1/edgar/filings"
-        },
-        {
-          "origin": "https://gpt55.558686.xyz",
-          "method": "GET",
-          "path": "/v1/tools/evm-transaction-risk-decoder"
-        },
-        {
-          "origin": "https://gpt55.558686.xyz",
-          "method": "POST",
-          "path": "/v1/tools/evm-transaction-risk-decoder"
+          "path": "/api/wallet/transactions/{address}",
+          "source": "match_hint"
         },
         {
           "origin": "https://merx.exchange",
           "method": "POST",
-          "path": "/x402/tron/receive"
-        },
-        {
-          "origin": "https://merx.exchange",
-          "method": "POST",
-          "path": "/x402/tron/watch"
-        },
-        {
-          "origin": "https://edgar.apitoll.cloud",
-          "method": "GET",
-          "path": "/v1/edgar/holdings"
-        },
-        {
-          "origin": "https://edgar.apitoll.cloud",
-          "method": "GET",
-          "path": "/v1/edgar/insider"
-        },
-        {
-          "origin": "https://merx.exchange",
-          "method": "POST",
-          "path": "/x402/tron/estimate"
-        },
-        {
-          "origin": "https://merx.exchange",
-          "method": "POST",
-          "path": "/x402/tron/invoice"
+          "path": "/x402/tron/watch",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/finance/thirteen-f"
+          "path": "/api/treasury/debt",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.solenrich.com",
           "method": "POST",
-          "path": "/entrypoints/wallet-history/invoke"
+          "path": "/entrypoints/wallet-history/invoke",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "GET",
+          "path": "/v1/tools/evm-transaction-risk-decoder",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "POST",
+          "path": "/v1/tools/evm-transaction-risk-decoder",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://www.solenrich.com",
+          "method": "POST",
+          "path": "/entrypoints/wallet-history/invoke",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://x402.valkyry.fr",
+          "method": "POST",
+          "path": "/wallet-balance",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.loyalspark.online",
+          "method": "GET",
+          "path": "/x402-gateway/balance",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.solenrich.com",
+          "method": "POST",
+          "path": "/entrypoints/enrich-wallet-light/invoke",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://defi-api.agenticfi.wtf",
+          "method": "GET",
+          "path": "/api/token/info/{address}",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://defi-api.agenticfi.wtf",
+          "method": "GET",
+          "path": "/api/wallet/balances/{address}",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "finance"
-      }
+      ]
     },
     {
       "id": "maps.places",
@@ -2520,71 +3340,104 @@
         "address autocomplete",
         "search coffee shops in Austin"
       ],
+      "consumes": [
+        {
+          "entity": "Query",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Place",
+          "role": "payload",
+          "cardinality": "many"
+        }
+      ],
+      "facets": {
+        "domain": "maps",
+        "action": "lookup"
+      },
+      "links": [
+        {
+          "type": "alternative_of",
+          "to": "travel.place_reviews",
+          "note": "near-twin place lookup competing for the same query; maps resolves local POIs, place_reviews returns traveler reviews"
+        }
+      ],
       "satisfies": [
         {
-          "origin": "https://api.agentgoods.io",
+          "origin": "https://2s.io",
           "method": "GET",
-          "path": "/market"
+          "path": "/api/factcheck/search",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.iris-ai.dev",
           "method": "POST",
-          "path": "/campaigns"
+          "path": "/campaigns",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.predictionmarketdata.io",
           "method": "GET",
-          "path": "/exchanges"
-        },
-        {
-          "origin": "https://api.predictionmarketdata.io",
-          "method": "GET",
-          "path": "/prediction-markets"
-        },
-        {
-          "origin": "https://api.predictionmarketdata.io",
-          "method": "GET",
-          "path": "/price-history"
+          "path": "/prediction-markets",
+          "source": "match_hint"
         },
         {
           "origin": "https://iris-ai.dev",
           "method": "POST",
-          "path": "/campaigns"
+          "path": "/campaigns",
+          "source": "match_hint"
         },
         {
           "origin": "https://www.iris-ai.dev",
           "method": "POST",
-          "path": "/campaigns"
+          "path": "/campaigns",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/business/entity-screen",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/gov/contract-opportunities",
+          "source": "match_hint"
         },
         {
           "origin": "https://agentndx-production.up.railway.app",
           "method": "GET",
-          "path": "/api/search"
+          "path": "/api/search",
+          "source": "match_hint"
         },
         {
-          "origin": "https://api.agentgoods.io",
+          "origin": "https://api.travelx402.io.vn",
           "method": "GET",
-          "path": "/price"
+          "path": "/v1/places/search",
+          "source": "match_hint"
         },
         {
-          "origin": "https://api.deepnets.ai",
-          "method": "GET",
-          "path": "/api/trending"
-        },
-        {
-          "origin": "https://conc-exe.xyz",
+          "origin": "https://ethglobalskills-x402.vercel.app",
           "method": "POST",
-          "path": "/api/concierge"
+          "path": "/api/projects",
+          "source": "match_hint"
         },
         {
-          "origin": "https://conc-exe.xyz",
+          "origin": "https://test-orpin-phi-32.vercel.app",
+          "method": "POST",
+          "path": "/api/projects",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/concierge-intel-airdrop"
+          "path": "/api/book/search",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "crypto"
-      }
+      ]
     },
     {
       "id": "marketing.competitive_landscape",
@@ -2603,71 +3456,110 @@
         "category market scan",
         "who competes in this product space"
       ],
+      "consumes": [
+        {
+          "entity": "ProductCategory",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "PriceSignal",
+          "role": "payload",
+          "cardinality": "many"
+        }
+      ],
+      "facets": {
+        "domain": "marketing",
+        "action": "analyze",
+        "freshness": "realtime"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "shop.compare_price",
+          "note": "same pricing-intel family, differs by entity granularity (ProductCategory scan vs one Product comparison)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "shop.find_deals",
+          "note": "same category pricing-intel family, differs by purpose (competitive scan vs deal surfacing); repoints dangling related marketing.brand_tracker"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/inflation"
+          "path": "/v1/analyst/inflation",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/retailer-index"
+          "path": "/v1/analyst/retailer-index",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/brand-tracker"
+          "path": "/v1/marketing/competitive-landscape",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/competitive-landscape"
+          "path": "/v1/shopper/deal-finder",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/promo-intelligence"
+          "path": "/v1/analyst/category-summary",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/shopper/best-price"
+          "path": "/v1/analyst/price-dispersion",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/shopper/deal-finder"
+          "path": "/v1/marketing/price-positioning",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/shopper/price-drop-alert"
+          "path": "/v1/marketing/promo-intelligence",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/shopper/price-history"
+          "path": "/v1/marketing/brand-tracker",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/category-summary"
+          "path": "/v1/shopper/best-price",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/price-dispersion"
+          "path": "/v1/shopper/price-drop-alert",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/price-positioning"
+          "path": "/v1/shopper/price-history",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "shop"
-      }
+      ]
     },
     {
       "id": "media.social_data",
@@ -2684,71 +3576,98 @@
         "creator content lookup",
         "sentiment from social posts"
       ],
+      "consumes": [
+        {
+          "entity": "Query",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload",
+          "format": "json",
+          "cardinality": "many"
+        }
+      ],
+      "facets": {
+        "domain": "media",
+        "action": "lookup"
+      },
       "satisfies": [
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/org-search"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/apollo/people-enrich"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/apollo/people-search"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/clado/contacts-enrich"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/exa/contents"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/exa/find-similar"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/serper/shopping"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/whitepages/person-search"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/whitepages/property-search"
+          "path": "/api/serper/shopping",
+          "source": "match_hint"
         },
         {
           "origin": "https://stablesocial.dev",
           "method": "POST",
-          "path": "/api/facebook/post-comments"
+          "path": "/api/tiktok/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://glim.sh",
+          "method": "POST",
+          "path": "/api/v1/reddit/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableenrich.dev",
+          "method": "POST",
+          "path": "/api/exa/answer",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableenrich.dev",
+          "method": "POST",
+          "path": "/api/google-maps/nearby-search/full",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableenrich.dev",
+          "method": "POST",
+          "path": "/api/google-maps/nearby-search/partial",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableenrich.dev",
+          "method": "POST",
+          "path": "/api/google-maps/text-search/full",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableenrich.dev",
+          "method": "POST",
+          "path": "/api/google-maps/text-search/partial",
+          "source": "match_hint"
         },
         {
           "origin": "https://stablesocial.dev",
           "method": "POST",
-          "path": "/api/facebook/posts"
+          "path": "/api/facebook/search",
+          "source": "match_hint"
         },
         {
           "origin": "https://stablesocial.dev",
           "method": "POST",
-          "path": "/api/instagram/comment-replies"
+          "path": "/api/instagram/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablesocial.dev",
+          "method": "POST",
+          "path": "/api/reddit/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablesocial.dev",
+          "method": "POST",
+          "path": "/api/reddit/search-profiles",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "data"
-      }
+      ]
     },
     {
       "id": "comms.send_sms",
@@ -2765,71 +3684,112 @@
         "programmatic text message",
         "send text without Twilio"
       ],
+      "consumes": [
+        {
+          "entity": "Contact",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Message",
+          "role": "payload",
+          "format": "sms"
+        }
+      ],
+      "facets": {
+        "domain": "comms",
+        "action": "send",
+        "modality": [
+          "text"
+        ]
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "comms.voice_call",
+          "note": "same outbound-send family, differs by channel (SMS vs voice call)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "comms.agent_inbox",
+          "note": "same comms family; agent_inbox provisions a mailbox rather than sending"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://ai.verifik.co",
           "method": "POST",
-          "path": "/api/communication/sms"
+          "path": "/api/communication/sms",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/telegram.send_message/call"
+          "path": "/api/v1/tools/telnyx.send_sms_premium/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/telnyx.send_sms_na/call"
+          "path": "/api/v1/tools/telnyx.send_sms_world/call",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://mpp.orthogonal.com/agentphone",
+          "method": "POST",
+          "path": "/v1/messages",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/telnyx.send_sms_premium/call"
+          "path": "/api/v1/tools/twilio.send_sms/call",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://mpp.orthogonal.com/agentphone",
+          "method": "POST",
+          "path": "/v1/calls",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.paysponge.com/x402/purchase/svc_d6kszbre4qwg5n4n4",
+          "method": "POST",
+          "path": "/text",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/telnyx.send_sms_world/call"
+          "path": "/api/v1/tools/telnyx.send_sms_na/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.orthogonal.com/agentphone",
           "method": "POST",
-          "path": "/v1/agents"
+          "path": "/v1/numbers",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.orthogonal.com/agentphone",
           "method": "POST",
-          "path": "/v1/calls"
+          "path": "/v0/agent/verify",
+          "source": "match_hint"
         },
         {
           "origin": "https://mpp.orthogonal.com/agentphone",
-          "method": "POST",
-          "path": "/v1/messages"
-        },
-        {
-          "origin": "https://mpp.orthogonal.com/agentphone",
-          "method": "POST",
-          "path": "/v1/numbers"
+          "method": "DELETE",
+          "path": "/v1/numbers/:numberId",
+          "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/twilio.send_sms/call"
-        },
-        {
-          "origin": "https://mpp.orthogonal.com/agentphone",
-          "method": "POST",
-          "path": "/v0/agent/sign-up"
-        },
-        {
-          "origin": "https://mpp.orthogonal.com/agentphone",
-          "method": "POST",
-          "path": "/v0/agent/verify"
+          "path": "/api/v1/tools/telegram.send_message/call",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "social"
-      }
+      ]
     },
     {
       "id": "realestate.property_lookup",
@@ -2854,67 +3814,76 @@
         {
           "origin": "https://trace.sociologic.ai",
           "method": "POST",
-          "path": "/trace"
+          "path": "/trace",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/gov/disaster-assistance"
+          "path": "/api/gov/disaster-assistance",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/gov/nfip-claims"
+          "path": "/api/gov/nfip-claims",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/property/nyc-permits"
+          "path": "/api/property/nyc-permits",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/property/nyc-violations"
+          "path": "/api/property/nyc-violations",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/org-search"
+          "path": "/api/apollo/org-search",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/people-enrich"
+          "path": "/api/apollo/people-enrich",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/people-search"
+          "path": "/api/apollo/people-search",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/clado/contacts-enrich"
+          "path": "/api/clado/contacts-enrich",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/exa/contents"
+          "path": "/api/exa/contents",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/exa/find-similar"
+          "path": "/api/exa/find-similar",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/influencer/enrich-by-social"
+          "path": "/api/influencer/enrich-by-social",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "data"
-      }
+      ]
     },
     {
       "id": "search.web",
@@ -2934,71 +3903,108 @@
         "recent product announcements search",
         "organic SERP results"
       ],
-      "satisfies": [
+      "consumes": [
         {
-          "origin": "https://agentndx-production.up.railway.app",
-          "method": "GET",
-          "path": "/api/search"
-        },
+          "entity": "Query",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
         {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/book/search"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/factcheck/search"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/github/search-repos"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/nonprofit/search"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/patents/search"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/recreation/search"
-        },
-        {
-          "origin": "https://api.clusterprotocol.ai",
-          "method": "POST",
-          "path": "/v1/chat/completions"
-        },
-        {
-          "origin": "https://api.clusterprotocol.ai",
-          "method": "POST",
-          "path": "/v1/rerank"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/apollo/org-search"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/apollo/people-enrich"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/apollo/people-search"
+          "entity": "SearchResults",
+          "role": "payload",
+          "cardinality": "many"
         }
       ],
       "facets": {
-        "domain": "data"
-      }
+        "domain": "search",
+        "action": "search",
+        "modality": [
+          "json"
+        ],
+        "freshness": "realtime"
+      },
+      "links": [
+        {
+          "type": "broader_of",
+          "to": "ai.web_research",
+          "note": "search.web returns raw SERP links; web_research is the narrower cited-answer variant over the same query"
+        }
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.clusterprotocol.ai",
+          "method": "POST",
+          "path": "/v1/agents/execute",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://agentndx-production.up.railway.app",
+          "method": "GET",
+          "path": "/api/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://ged-x402.jvalamis.workers.dev",
+          "method": "POST",
+          "path": "/v1/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://glim.sh",
+          "method": "POST",
+          "path": "/api/v1/web/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://sol.blockrun.ai",
+          "method": "POST",
+          "path": "/api/v1/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://surf.cascade.fyi",
+          "method": "POST",
+          "path": "/api/v1/web/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://twitter.surf.cascade.fyi",
+          "method": "POST",
+          "path": "/api/v1/web/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/book/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/factcheck/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/github/search-repos",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/nonprofit/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/patents/search",
+          "source": "match_hint"
+        }
+      ]
     },
     {
       "id": "shop.compare_price",
@@ -3026,71 +4032,110 @@
         "who sells it cheapest today",
         "multi-retailer price lookup"
       ],
+      "consumes": [
+        {
+          "entity": "Product",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "PriceSignal",
+          "role": "payload",
+          "cardinality": "many"
+        }
+      ],
+      "facets": {
+        "domain": "shop",
+        "action": "compare",
+        "freshness": "realtime"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "shop.find_deals",
+          "note": "same pricing-intel family, differs by entity granularity (one Product vs a ProductCategory)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "shop.track_price_history",
+          "note": "same pricing-intel family, differs by time axis (current lowest vs historical trend)"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/inflation"
+          "path": "/v1/marketing/brand-tracker",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/retailer-index"
+          "path": "/v1/marketing/competitive-landscape",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/brand-tracker"
+          "path": "/v1/shopper/best-price",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/competitive-landscape"
+          "path": "/v1/shopper/price-drop-alert",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/promo-intelligence"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/shopper/best-price"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/shopper/deal-finder"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/shopper/price-drop-alert"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/shopper/price-history"
+          "path": "/v1/shopper/price-history",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "GET",
-          "path": "/v1/tools/x402-buyer-shortlist"
+          "path": "/v1/tools/x402-opportunity-finder",
+          "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "POST",
-          "path": "/v1/tools/x402-buyer-shortlist"
+          "path": "/v1/tools/x402-opportunity-finder",
+          "source": "match_hint"
         },
         {
-          "origin": "https://gpt55.558686.xyz",
+          "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/tools/x402-discovery-price-compare"
+          "path": "/v1/analyst/category-summary",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://tiresapi.com",
+          "method": "POST",
+          "path": "/api/v1/answers/best_price_near",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/analyst/inflation",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/analyst/retailer-index",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/shopper/deal-finder",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "shop"
-      }
+      ]
     },
     {
       "id": "shop.find_deals",
@@ -3112,71 +4157,109 @@
         "sale items under price limit",
         "current markdowns in retail"
       ],
+      "consumes": [
+        {
+          "entity": "ProductCategory",
+          "role": "identifier"
+        },
+        {
+          "entity": "Money",
+          "role": "constraint"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "PriceSignal",
+          "role": "payload",
+          "cardinality": "many"
+        }
+      ],
+      "facets": {
+        "domain": "shop",
+        "action": "search",
+        "freshness": "realtime"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "shop.price_drop_alert",
+          "note": "same pricing-intel family, differs by purpose (surface category deals vs monitor one SKU for drops)"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/inflation"
+          "path": "/v1/analyst/inflation",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/retailer-index"
+          "path": "/v1/analyst/retailer-index",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/brand-tracker"
+          "path": "/v1/marketing/competitive-landscape",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/competitive-landscape"
+          "path": "/v1/shopper/deal-finder",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/marketing/promo-intelligence"
+          "path": "/v1/analyst/category-summary",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/shopper/best-price"
+          "path": "/v1/analyst/price-dispersion",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/shopper/deal-finder"
+          "path": "/v1/marketing/price-positioning",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/shopper/price-drop-alert"
+          "path": "/v1/marketing/brand-tracker",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/shopper/price-history"
-        },
-        {
-          "origin": "https://x402.payperbyte.io",
-          "method": "POST",
-          "path": "/feeds/evidence-pack"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/medical/device-510k"
+          "path": "/v1/shopper/best-price",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/category-summary"
+          "path": "/v1/shopper/price-drop-alert",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/shopper/price-history",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/marketing/promo-intelligence",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "shop"
-      }
+      ]
     },
     {
       "id": "shop.price_drop_alert",
@@ -3195,71 +4278,110 @@
         "notify if price dropped",
         "check for recent price cuts"
       ],
-      "satisfies": [
+      "consumes": [
         {
-          "origin": "https://api.solenrich.com",
-          "method": "POST",
-          "path": "/entrypoints/check-alerts/invoke"
-        },
+          "entity": "Product",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
         {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/analyst/inflation"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/analyst/retailer-index"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/marketing/brand-tracker"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/marketing/competitive-landscape"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/marketing/promo-intelligence"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/shopper/best-price"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/shopper/deal-finder"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/shopper/price-drop-alert"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/shopper/price-history"
-        },
-        {
-          "origin": "https://www.solenrich.com",
-          "method": "POST",
-          "path": "/entrypoints/check-alerts/invoke"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/analyst/category-summary"
+          "entity": "PriceSignal",
+          "role": "payload",
+          "cardinality": "many"
         }
       ],
       "facets": {
-        "domain": "shop"
-      }
+        "domain": "shop",
+        "action": "monitor",
+        "freshness": "recent"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "shop.compare_price",
+          "note": "same pricing-intel family, differs by action (monitor for drops vs compare current prices)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "shop.track_price_history",
+          "note": "same pricing-intel family, differs by time axis (recent drop vs full history)"
+        }
+      ],
+      "satisfies": [
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/marketing/brand-tracker",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/marketing/competitive-landscape",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/shopper/best-price",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/shopper/price-drop-alert",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/shopper/price-history",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/analyst/category-summary",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/analyst/inflation",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/analyst/retailer-index",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/shopper/deal-finder",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/analyst/price-dispersion",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.solenrich.com",
+          "method": "POST",
+          "path": "/entrypoints/check-alerts/invoke",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.syntalic.com",
+          "method": "GET",
+          "path": "/v1/marketing/price-positioning",
+          "source": "match_hint"
+        }
+      ]
     },
     {
       "id": "shop.track_price_history",
@@ -3278,71 +4400,105 @@
         "was it cheaper before",
         "pricing history lookup"
       ],
+      "consumes": [
+        {
+          "entity": "Product",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "PriceSignal",
+          "role": "payload",
+          "cardinality": "many"
+        }
+      ],
+      "facets": {
+        "domain": "shop",
+        "action": "lookup",
+        "freshness": "historical"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "analyst.inflation_tracker",
+          "note": "same pricing-intel family, differs by entity granularity (one Product vs a ProductCategory), both historical"
+        }
+      ],
       "satisfies": [
         {
-          "origin": "https://api.predictionmarketdata.io",
+          "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/exchanges"
-        },
-        {
-          "origin": "https://api.predictionmarketdata.io",
-          "method": "GET",
-          "path": "/prediction-markets"
-        },
-        {
-          "origin": "https://api.predictionmarketdata.io",
-          "method": "GET",
-          "path": "/price-history"
-        },
-        {
-          "origin": "https://kg.dyor.network",
-          "method": "GET",
-          "path": "/api/changes"
+          "path": "/v1/shopper/price-history",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/predict/markets"
+          "path": "/api/predict/markets",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.predictionmarketdata.io",
+          "method": "GET",
+          "path": "/price-history",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.syntalic.com",
           "method": "GET",
-          "path": "/v1/analyst/inflation"
-        },
-        {
-          "origin": "https://api.syntalic.com",
-          "method": "GET",
-          "path": "/v1/shopper/price-history"
+          "path": "/v1/analyst/inflation",
+          "source": "match_hint"
         },
         {
           "origin": "https://crypto.apitoll.cloud",
           "method": "GET",
-          "path": "/v1/crypto/yields"
+          "path": "/v1/crypto/perps",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://crypto.apitoll.cloud",
+          "method": "GET",
+          "path": "/v1/crypto/stablecoins",
+          "source": "match_hint"
         },
         {
           "origin": "https://x402.fuchss.app",
           "method": "POST",
-          "path": "/v1/x402-payment-trace"
+          "path": "/v1/x402-history",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.predictionmarketdata.io",
           "method": "GET",
-          "path": "/market-news"
+          "path": "/exchanges",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.predictionmarketdata.io",
           "method": "GET",
-          "path": "/prediction-markets/similar"
+          "path": "/prediction-markets",
+          "source": "match_hint"
         },
         {
           "origin": "https://kg.dyor.network",
-          "method": "POST",
-          "path": "/api/explore"
+          "method": "GET",
+          "path": "/api/insights/signals/smart-money-divergence",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://kg.dyor.network",
+          "method": "GET",
+          "path": "/api/insights/signals/treasury-health",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://kg.dyor.network",
+          "method": "GET",
+          "path": "/api/insights/signals/usage-price-mismatch",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "crypto"
-      }
+      ]
     },
     {
       "id": "social.influencer_search",
@@ -3363,71 +4519,109 @@
         "marketing influencers by location",
         "niche creator profiles instagram"
       ],
+      "consumes": [
+        {
+          "entity": "Query",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "SocialProfile",
+          "role": "payload",
+          "cardinality": "many"
+        }
+      ],
+      "facets": {
+        "domain": "social",
+        "action": "search"
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "data.company_enrich",
+          "note": "same identity-lookup family, differs by entity (SocialProfile vs Company)"
+        },
+        {
+          "type": "sibling_of",
+          "to": "media.social_data",
+          "note": "same social family, differs by purpose (discover creators vs fetch their posts)"
+        }
+      ],
       "satisfies": [
         {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/influencer/enrich-by-social"
-        },
-        {
           "origin": "https://api.socialintel.dev",
           "method": "GET",
-          "path": "/v1/search"
-        },
-        {
-          "origin": "https://api.socialintel.dev",
-          "method": "POST",
-          "path": "/v1/search"
+          "path": "/v1/search",
+          "source": "match_hint"
         },
         {
           "origin": "https://socialintel.dev",
           "method": "GET",
-          "path": "/v1/search"
+          "path": "/v1/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.socialintel.dev",
+          "method": "POST",
+          "path": "/v1/search",
+          "source": "match_hint"
         },
         {
           "origin": "https://socialintel.dev",
           "method": "POST",
-          "path": "/v1/search"
+          "path": "/v1/search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://solsigs.com",
+          "method": "POST",
+          "path": "/social",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/influencer/enrich-by-email"
+          "path": "/api/influencer/enrich-by-social",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.influship.com",
           "method": "GET",
-          "path": "/v1/posts"
-        },
-        {
-          "origin": "https://api.influship.com",
-          "method": "GET",
-          "path": "/v1/creators/autocomplete"
+          "path": "/v1/posts",
+          "source": "match_hint"
         },
         {
           "origin": "https://socialx402.com",
           "method": "POST",
-          "path": "/api/lightreel/creator-search"
+          "path": "/api/lightreel/creator-search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableenrich.dev",
+          "method": "POST",
+          "path": "/api/influencer/enrich-by-email",
+          "source": "match_hint"
         },
         {
           "origin": "https://stablesocial.dev",
           "method": "POST",
-          "path": "/api/lightreel/creator-search"
-        },
-        {
-          "origin": "https://agentfax.val.run",
-          "method": "POST",
-          "path": "/v1/fax"
+          "path": "/api/lightreel/creator-search",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.influship.com",
           "method": "GET",
-          "path": "/v1/raw/youtube/channel-transcripts/{handle}"
+          "path": "/v1/creators/autocomplete",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.influship.com",
+          "method": "GET",
+          "path": "/v1/raw/youtube/search",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "data"
-      }
+      ]
     },
     {
       "id": "storage.hosting",
@@ -3453,67 +4647,76 @@
         {
           "origin": "https://stablestudio.dev",
           "method": "POST",
-          "path": "/api/upload"
+          "path": "/api/upload",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableupload.dev",
           "method": "POST",
-          "path": "/api/upload"
+          "path": "/api/upload",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.strale.io",
           "method": "GET",
-          "path": "/x402/url-to-markdown"
+          "path": "/x402/url-to-markdown",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableflare.dev",
           "method": "POST",
-          "path": "/api/images/transform"
+          "path": "/api/images/transform",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableupload.dev",
           "method": "POST",
-          "path": "/api/site"
+          "path": "/api/site",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.xona-agent.com",
           "method": "POST",
-          "path": "/token/news"
+          "path": "/token/news",
+          "source": "match_hint"
         },
         {
           "origin": "https://files.wdh.sh",
           "method": "POST",
-          "path": "/init"
+          "path": "/init",
+          "source": "match_hint"
         },
         {
           "origin": "https://stablestudio.io",
           "method": "POST",
-          "path": "/api/upload"
+          "path": "/api/upload",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableupload.dev",
           "method": "GET",
-          "path": "/api/uploads"
+          "path": "/api/uploads",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.mnemospark.ai",
           "method": "POST",
-          "path": "/api/mnemospark-lite/upload"
+          "path": "/api/mnemospark-lite/upload",
+          "source": "match_hint"
         },
         {
           "origin": "https://run402.com",
           "method": "POST",
-          "path": "/generate-image/v1"
+          "path": "/generate-image/v1",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableflare.dev",
           "method": "POST",
-          "path": "/api/images/upload"
+          "path": "/api/images/upload",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "ai"
-      }
+      ]
     },
     {
       "id": "travel.place_reviews",
@@ -3530,71 +4733,97 @@
         "travel place enrichment",
         "find restaurants with reviews"
       ],
+      "consumes": [
+        {
+          "entity": "Query",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Place",
+          "role": "payload",
+          "cardinality": "many"
+        }
+      ],
+      "facets": {
+        "domain": "travel",
+        "action": "lookup"
+      },
       "satisfies": [
         {
           "origin": "https://stabletravel.dev",
           "method": "GET",
-          "path": "/api/reference/locations"
+          "path": "/api/reference/locations",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "POST",
-          "path": "/api/agent/marketplace/register"
+          "path": "/api/agent/marketplace/register",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "POST",
-          "path": "/api/agent/marketplace/review"
+          "path": "/api/agent/marketplace/review",
+          "source": "match_hint"
         },
         {
           "origin": "https://stableapify.dev",
           "method": "POST",
-          "path": "/api/actors/maxcopell/tripadvisor-reviews/call"
-        },
-        {
-          "origin": "https://api.gocreativeai.com",
-          "method": "GET",
-          "path": "/v1/scrape/tripadvisor/{arg}"
-        },
-        {
-          "origin": "https://api.gocreativeai.com",
-          "method": "GET",
-          "path": "/v1/scrape/tripadvisor/"
+          "path": "/api/actors/maxcopell/tripadvisor-reviews/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.tugba.uk",
           "method": "GET",
-          "path": "/api/dynamic/tripadvisor"
+          "path": "/api/dynamic/tripadvisor-reviews",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.tugba.uk",
           "method": "GET",
-          "path": "/api/dynamic/tripadvisor-reviews"
-        },
-        {
-          "origin": "https://api.tugba.uk",
-          "method": "GET",
-          "path": "/api/dynamic/tripadvisor-reviews-scraper"
-        },
-        {
-          "origin": "https://tripadvisor.x402.paysponge.com",
-          "method": "GET",
-          "path": "/api/v1/location/"
+          "path": "/api/dynamic/tripadvisor-reviews-scraper",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/agent/marketplace/review"
+          "path": "/api/agent/marketplace/review",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.gocreativeai.com",
+          "method": "GET",
+          "path": "/v1/scrape/tripadvisor/{arg}",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableapify.dev",
+          "method": "GET",
+          "path": "/api/actors/maxcopell/tripadvisor-reviews/call",
+          "source": "match_hint"
         },
         {
           "origin": "https://tripadvisor.x402.paysponge.com",
           "method": "GET",
-          "path": "/api/v1/location/nearby_search"
+          "path": "/api/v1/location/:locationId/reviews",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://tripadvisor.x402.paysponge.com",
+          "method": "GET",
+          "path": "/api/v1/location/nearby_search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://tripadvisor.x402.paysponge.com",
+          "method": "GET",
+          "path": "/api/v1/location/search",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "travel"
-      }
+      ]
     },
     {
       "id": "web.markdown_extract",
@@ -3611,71 +4840,101 @@
         "scrape page as markdown",
         "JS rendered page to text"
       ],
-      "satisfies": [
+      "consumes": [
         {
-          "origin": "https://ccc-tools-phi.vercel.app",
-          "method": "GET",
-          "path": "/api/qr"
-        },
+          "entity": "Webpage",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "WebContent",
+          "role": "payload",
+          "format": "markdown"
+        }
+      ],
+      "facets": {
+        "domain": "web",
+        "action": "extract",
+        "modality": [
+          "markdown",
+          "text"
+        ]
+      },
+      "satisfies": [
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/url/render"
-        },
-        {
-          "origin": "https://gpt55.558686.xyz",
-          "method": "POST",
-          "path": "/v1/tools/summarize"
-        },
-        {
-          "origin": "https://x402.miroshark.xyz",
-          "method": "POST",
-          "path": "/run"
+          "path": "/api/url/render",
+          "source": "match_hint"
         },
         {
           "origin": "https://x402.nichospt.net",
           "method": "POST",
-          "path": "/url-to-markdown"
+          "path": "/url-to-markdown",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.scrvo.com",
           "method": "POST",
-          "path": "/api/crawl"
+          "path": "/api/crawl",
+          "source": "match_hint"
         },
         {
-          "origin": "https://api.syraa.fun",
-          "method": "GET",
-          "path": "/brain"
-        },
-        {
-          "origin": "https://ccc-tools-phi.vercel.app",
-          "method": "GET",
-          "path": "/api/base64"
-        },
-        {
-          "origin": "https://ccc-tools-phi.vercel.app",
-          "method": "GET",
-          "path": "/api/hash"
-        },
-        {
-          "origin": "https://ccc-tools-phi.vercel.app",
-          "method": "GET",
-          "path": "/api/json-format"
-        },
-        {
-          "origin": "https://md.wdh.sh",
+          "origin": "https://x402.nichospt.net",
           "method": "POST",
-          "path": "/"
+          "path": "/markdown-to-html",
+          "source": "match_hint"
         },
         {
-          "origin": "https://mpp.orthogonal.com/serper-scrape",
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/url/clean",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://agentkit0.com",
           "method": "POST",
-          "path": "/"
+          "path": "/api/web/markdown",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://agentkit0.com",
+          "method": "POST",
+          "path": "/api/web/scrape",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.strale.io",
+          "method": "GET",
+          "path": "/x402/url-to-markdown",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://ccc-tools-phi.vercel.app",
+          "method": "GET",
+          "path": "/api/qr",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://drmadmeow.up.railway.app",
+          "method": "POST",
+          "path": "/v1/agent/scrape",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://glim.sh",
+          "method": "POST",
+          "path": "/api/v1/web/fetch",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableflare.dev",
+          "method": "POST",
+          "path": "/api/browser/crawl",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "web"
-      }
+      ]
     },
     {
       "id": "web.screenshot",
@@ -3696,71 +4955,112 @@
         "webpage image preview",
         "render site as screenshot"
       ],
+      "consumes": [
+        {
+          "entity": "Webpage",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Image",
+          "role": "payload",
+          "format": "png"
+        }
+      ],
+      "facets": {
+        "domain": "web",
+        "action": "extract",
+        "modality": [
+          "image"
+        ]
+      },
+      "links": [
+        {
+          "type": "sibling_of",
+          "to": "web.markdown_extract",
+          "note": "same fetch-a-URL family, different output modality (PNG vs markdown), not substitutable"
+        },
+        {
+          "type": "sibling_of",
+          "to": "data.web_scrape",
+          "note": "same fetch-a-URL family, different output modality (PNG vs HTML), not substitutable"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://x402.nichospt.net",
           "method": "POST",
-          "path": "/screenshot"
+          "path": "/screenshot",
+          "source": "match_hint"
         },
         {
           "origin": "https://screenshotx402.com",
           "method": "POST",
-          "path": "/tool/analyze_screenshot"
+          "path": "/tool/analyze_screenshot",
+          "source": "match_hint"
         },
         {
           "origin": "https://screenshotx402.com",
           "method": "POST",
-          "path": "/tool/take_screenshot"
+          "path": "/tool/take_screenshot",
+          "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "POST",
-          "path": "/api/ai/screenshot"
-        },
-        {
-          "origin": "https://drmadmeow.up.railway.app",
-          "method": "POST",
-          "path": "/v1/agent/animate"
-        },
-        {
-          "origin": "https://drmadmeow.up.railway.app",
-          "method": "POST",
-          "path": "/v1/agent/diff"
-        },
-        {
-          "origin": "https://drmadmeow.up.railway.app",
-          "method": "POST",
-          "path": "/v1/agent/screenshot"
-        },
-        {
-          "origin": "https://web-unlocker.200ok.xyz",
-          "method": "POST",
-          "path": "/unlock"
+          "path": "/api/ai/screenshot",
+          "source": "match_hint"
         },
         {
           "origin": "https://api.strale.io",
           "method": "GET",
-          "path": "/x402/screenshot-url"
+          "path": "/x402/screenshot-url",
+          "source": "match_hint"
         },
         {
           "origin": "https://drmadmeow.up.railway.app",
           "method": "POST",
-          "path": "/v1/agent/annotate"
-        },
-        {
-          "origin": "https://drmadmeow.up.railway.app",
-          "method": "POST",
-          "path": "/v1/agent/webshot"
+          "path": "/v1/agent/webshot",
+          "source": "match_hint"
         },
         {
           "origin": "https://x402.nichospt.net",
           "method": "POST",
-          "path": "/render-url"
+          "path": "/render-url",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://drmadmeow.up.railway.app",
+          "method": "POST",
+          "path": "/v1/agent/animate",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://drmadmeow.up.railway.app",
+          "method": "POST",
+          "path": "/v1/agent/diff",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://drmadmeow.up.railway.app",
+          "method": "POST",
+          "path": "/v1/agent/screenshot",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://web-unlocker.200ok.xyz",
+          "method": "POST",
+          "path": "/unlock",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://apibase.pro",
+          "method": "POST",
+          "path": "/api/v1/tools/screenshot.capture/call",
+          "source": "match_hint"
         }
-      ],
-      "facets": {
-        "domain": "web"
-      }
+      ]
     },
     {
       "id": "finance.tipping",
