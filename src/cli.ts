@@ -13,6 +13,7 @@ import {
   searchHybridWithFallback,
 } from "./search-hybrid.js";
 import { searchIndex } from "./search.js";
+import { relatedOptions, type RelatedOption } from "./related.js";
 import type { CapabilityIntent, EndpointRecord, IndexBundle } from "./types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -47,6 +48,7 @@ function resolveIntent(
 ): {
   intent: CapabilityIntent;
   endpoints: EndpointRecord[];
+  related: RelatedOption[];
 } | null {
   const intent = curatedCapabilitiesForSearch(bundle).find((c) => c.id === intentId);
   if (!intent) return null;
@@ -57,7 +59,7 @@ function resolveIntent(
     const ep = bundle.endpoints.find((e) => e.id === id);
     if (ep) endpoints.push(ep);
   }
-  return { intent, endpoints };
+  return { intent, endpoints, related: relatedOptions(intent, bundle) };
 }
 
 const program = new Command();
@@ -188,6 +190,7 @@ program
       const payload = {
         intent: resolved.intent,
         endpoints: resolved.endpoints,
+        related: resolved.related,
       };
       console.log(opts.json ? JSON.stringify(payload, null, 2) : formatResolve(payload));
       return;
@@ -494,6 +497,7 @@ function formatEndpoint(ep: EndpointRecord): string {
 function formatResolve(payload: {
   intent: CapabilityIntent;
   endpoints: EndpointRecord[];
+  related: RelatedOption[];
 }): string {
   const lines = [
     `Intent: ${payload.intent.id} — ${payload.intent.label}`,
@@ -506,6 +510,15 @@ function formatResolve(payload: {
   }
   if (payload.endpoints.length === 0) {
     lines.push("  (no indexed endpoints matched — check ontology satisfies refs)");
+  }
+  if (payload.related.length) {
+    lines.push("", "Alternatives & related options:");
+    for (const r of payload.related) {
+      const ep = r.top_endpoint
+        ? `  → ${r.top_endpoint.method} ${r.top_endpoint.origin}${r.top_endpoint.path}`
+        : "";
+      lines.push(`  • [${r.relation_label}] ${r.intent_id} — ${r.label}${ep}`);
+    }
   }
   return lines.filter(Boolean).join("\n");
 }

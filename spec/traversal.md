@@ -48,6 +48,11 @@ Resolution returns:
 - `payment` — `{ price_usd, rails: [{ protocol: "x402"|"mpp", networks }] }`
 - `openapi_url` — where to fetch schemas (usually `{origin}/openapi.json`)
 - `guidance_available` — whether origin publishes agent guidance
+- `related[]` — the intent's typed-link neighborhood (each: `relation`,
+  `intent_id`, `label`, `top_endpoint`). For an agent that is unsure or wants
+  options, this is the pivot set: `alternative` (a substitute for the same
+  task), `more specific` / `more general` (narrow or broaden the task),
+  `related` (same family), `next step` (pipes to a follow-on task).
 
 ## Step 3 — Schema
 
@@ -85,7 +90,9 @@ should filter for `mpp`; wallet-native agents prefer `x402`.
 1. Search globally first — do not guess provider names.
 2. Resolve one endpoint before calling — confirm price and rails.
 3. Fetch schema only for the chosen endpoint — not the whole catalog.
-4. If an intent has no matching endpoint, try `related` intents from the ontology.
+4. If unsure, or an intent has no affordable/matching endpoint, pivot via the
+   resolved `related[]` options — prefer `alternative` for a substitute,
+   `more general`/`more specific` to re-scope, `next step` to chain.
 5. If the origin returns no match, switch origin — do not retry random paths.
 
 ## Index artifacts
