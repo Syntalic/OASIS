@@ -11,3 +11,25 @@ aliases:
   - send pages to fax line
   - programmatic fax delivery
   - fax without a phone line
+consumes:
+  - entity: Contact
+    role: identifier
+produces:
+  - entity: Message
+    role: payload
+    format: fax
+facets:
+  domain: comms
+  action: send
+  modality:
+    - image
+links:
+  - type: sibling_of
+    to: comms.send_sms
+    note: same outbound-send family, differs by channel (fax vs SMS)
+  - type: sibling_of
+    to: comms.voice_call
+    note: same outbound-send family, differs by channel (fax vs voice call)
+  - type: sibling_of
+    to: comms.agent_inbox
+    note: same comms family; agent_inbox provisions a mailbox rather than sending

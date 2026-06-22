@@ -48,17 +48,14 @@ export const CURATED_INTENT_IDS = [
     "web.markdown_extract",
     "web.screenshot",
 ];
-
 function corpus(ep) {
     return [ep.path, ep.summary, ep.description, ep.search_text, ep.category]
         .filter(Boolean)
         .join(" ");
 }
-
 function pathSummary(ep) {
     return `${ep.path} ${ep.summary}`;
 }
-
 export const INTENT_MATCHERS = {
     "ai.image_generate": (ep) => {
         const text = pathSummary(ep);
@@ -98,8 +95,7 @@ export const INTENT_MATCHERS = {
     },
     "compute.blockchain_rpc": (ep) => {
         const text = corpus(ep);
-        return (/mainnet|json.?rpc|blockchain.?rpc|solana.?rpc|ethereum.?rpc|node.?rpc/i.test(text) &&
-            (/-mainnet\/?$/i.test(ep.path) || /rpc|json-rpc/i.test(text)));
+        return (/mainnet|json.?rpc|blockchain.?rpc|solana.?rpc|ethereum.?rpc|node.?rpc/i.test(text) && (/-mainnet\/?$/i.test(ep.path) || /rpc|json-rpc/i.test(text)));
     },
     "data.company_enrich": (ep) => /company.?(enrich|enrichment)|firmographic|enrich.?company|company.?from.?domain/i.test(corpus(ep)),
     "data.compute_answer": (ep) => /wolfram|computational.?knowledge|\/v2\/query|math.?problem|unit.?conversion/i.test(corpus(ep)),
@@ -113,13 +109,11 @@ export const INTENT_MATCHERS = {
     },
     "data.person_search": (ep) => {
         const text = corpus(ep);
-        return (/person\/search|people.?search|person.?lookup|public.?profile|contact.?discovery/i.test(text) &&
-            !/influencer|creator.?search/i.test(text));
+        return (/person\/search|people.?search|person.?lookup|public.?profile|contact.?discovery/i.test(text) && !/influencer|creator.?search/i.test(text));
     },
     "data.ocr": (ep) => {
         const text = corpus(ep);
-        return (/ocr|optical.?character|image.?to.?text|image-to-text|read.?text.?from.?image/i.test(text) &&
-            !/document.?extract|pdf.?pars|table.?extract/i.test(text));
+        return (/ocr|optical.?character|image.?to.?text|image-to-text|read.?text.?from.?image/i.test(text) && !/document.?extract|pdf.?pars|table.?extract/i.test(text));
     },
     "data.phone_validate": (ep) => /phone.?(intelligence|validat|verif)|validate.?phone|carrier.?lookup|line.?type/i.test(corpus(ep)),
     "data.translate_text": (ep) => {
@@ -146,8 +140,7 @@ export const INTENT_MATCHERS = {
     "devtools.captcha_solve": (ep) => /captcha|recaptcha|hcaptcha|turnstile|createTask/i.test(corpus(ep)),
     "finance.crypto_spot_price": (ep) => {
         const text = corpus(ep);
-        return (/crypto.?price|coin.?price|token.?price|spot.?price|coingecko|bitcoin.?price/i.test(text) &&
-            !/smart.?money|on.?chain.?analyt|wallet.?analyt/i.test(text));
+        return (/crypto.?price|coin.?price|token.?price|spot.?price|coingecko|bitcoin.?price/i.test(text) && !/smart.?money|on.?chain.?analyt|wallet.?analyt/i.test(text));
     },
     "finance.onchain_analytics": (ep) => /smart.?money|on.?chain.?analyt|wallet.?analyt|token.?holder|fund.?flow|netflow/i.test(corpus(ep)),
     "finance.stock_quote": (ep) => {
@@ -172,8 +165,7 @@ export const INTENT_MATCHERS = {
     "marketing.competitive_landscape": (ep) => /\/marketing\/competitive|competitive.?landscape|category.?landscape|market.?landscape/i.test(corpus(ep)) || /\/v1\/marketing\/competitive-landscape/i.test(ep.path),
     "media.social_data": (ep) => {
         const text = corpus(ep);
-        return (/post.?comment|social.?media|\/facebook\/|\/instagram\/|\/tiktok\/|\/reddit\//i.test(text) &&
-            !/influencer/i.test(text));
+        return (/post.?comment|social.?media|\/facebook\/|\/instagram\/|\/tiktok\/|\/reddit\//i.test(text) && !/influencer/i.test(text));
     },
     "comms.send_sms": (ep) => {
         const text = corpus(ep);
@@ -203,8 +195,7 @@ export const INTENT_MATCHERS = {
     "social.influencer_search": (ep) => /influencer|creator.?search|creator.?discovery/i.test(corpus(ep)),
     "storage.hosting": (ep) => {
         const text = corpus(ep);
-        return (/\/upload|static.?site|static.?website|file.?upload|\/api\/site|cdn.?url/i.test(text) &&
-            !/document.?extract|ocr/i.test(text));
+        return (/\/upload|static.?site|static.?website|file.?upload|\/api\/site|cdn.?url/i.test(text) && !/document.?extract|ocr/i.test(text));
     },
     "travel.place_reviews": (ep) => {
         const text = corpus(ep);
@@ -224,14 +215,13 @@ export const INTENT_MATCHERS = {
     },
     "web.screenshot": (ep) => /screenshot|page.?capture|website.?snapshot|full.?page.?png/i.test(corpus(ep)),
 };
-
 export function intentIdsFromMatchers() {
     return Object.keys(INTENT_MATCHERS);
 }
-
 export function matchEndpointsForIntent(intentId, endpoints) {
     const matcher = INTENT_MATCHERS[intentId];
     if (!matcher)
         return [];
     return endpoints.filter(matcher);
 }
+//# sourceMappingURL=intent-match.js.map

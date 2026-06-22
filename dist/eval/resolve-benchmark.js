@@ -3,27 +3,21 @@ import { fileURLToPath } from "node:url";
 import { curatedCapabilitiesForSearch } from "../curated-search.js";
 import { endpointId } from "../id.js";
 import { loadOntologySources } from "../ontology.js";
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");
-
 function formatRef(origin, method, p) {
     return `${method} ${origin}${p}`;
 }
-
 export async function loadCuratedSources() {
     const intentsDir = path.join(PACKAGE_ROOT, "ontology", "intents");
     return loadOntologySources(intentsDir);
 }
-
 export function evaluateResolveAccuracy(bundle) {
     const endpointIds = new Set(bundle.endpoints.map((e) => e.id));
     const curated = curatedCapabilitiesForSearch(bundle);
-
     const results = [];
     let totalRefs = 0;
     let resolvedRefs = 0;
-
     for (const intent of curated) {
         let resolvedCount = 0;
         for (const ref of intent.satisfies) {
@@ -34,7 +28,6 @@ export function evaluateResolveAccuracy(bundle) {
                 resolvedRefs += 1;
             }
         }
-
         const sample = intent.satisfies[0];
         results.push({
             intent_id: intent.id,
@@ -47,9 +40,7 @@ export function evaluateResolveAccuracy(bundle) {
                 : null,
         });
     }
-
     const resolved = results.filter((r) => r.resolved).length;
-
     return {
         total: results.length,
         resolved,
@@ -59,11 +50,9 @@ export function evaluateResolveAccuracy(bundle) {
         results,
     };
 }
-
 export async function runResolveBenchmark(bundle) {
     return evaluateResolveAccuracy(bundle);
 }
-
 export function formatResolveReport(report) {
     const lines = [
         "Resolve accuracy (materialized curated intents)",
@@ -72,16 +61,13 @@ export function formatResolveReport(report) {
         `endpoint_refs: ${report.resolved_endpoint_refs}/${report.total_endpoint_refs} resolve to index`,
         "",
     ];
-
     const header = [
         "ok".padEnd(4),
         "intent".padEnd(32),
         "candidates".padEnd(12),
         "sample endpoint",
     ].join(" ");
-
     lines.push(header, "-".repeat(header.length));
-
     for (const r of report.results) {
         lines.push([
             (r.resolved ? "yes" : "no").padEnd(4),
@@ -90,6 +76,6 @@ export function formatResolveReport(report) {
             r.sample_ref ?? "—",
         ].join(" "));
     }
-
     return lines.join("\n");
 }
+//# sourceMappingURL=resolve-benchmark.js.map

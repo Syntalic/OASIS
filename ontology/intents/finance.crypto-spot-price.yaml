@@ -17,5 +17,29 @@ aliases:
   - real-time crypto spot quote
   - usd price for ethereum
   - what's the price of BTC right now
-related:
-  - finance.crypto_market_data
+consumes:
+  - entity: CryptoAsset
+    role: identifier
+produces:
+  - entity: MarketQuote
+    role: payload
+facets:
+  domain: finance
+  action: lookup
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: finance.stock_quote
+    note: same lookup-a-live-quote family, differs only by entity (CryptoAsset vs Ticker)
+  - type: sibling_of
+    to: data.exchange_rates
+    note: same lookup-a-live-quote family, differs only by entity (CryptoAsset vs Currency)
+  - type: sibling_of
+    to: finance.token_balance
+    note: same crypto asset family, differs by action (price lookup vs wallet holdings)
+  - type: sibling_of
+    to: finance.onchain_analytics
+    note: same crypto family, differs by action (price lookup vs analyze flows); was dangling related finance.crypto_market_data
+  - type: sibling_of
+    to: compute.blockchain_rpc
+    note: same crypto family, differs by action (price lookup vs execute JSON-RPC)

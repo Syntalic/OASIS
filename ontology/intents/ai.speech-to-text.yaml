@@ -11,3 +11,19 @@ aliases:
   - convert recording to text
   - transcribe voice memo
   - speech recognition API
+consumes:
+  - entity: AudioClip
+    role: identifier
+produces:
+  - entity: Text
+    role: payload
+    format: text
+facets:
+  domain: ai
+  action: transform
+  modality:
+    - text
+links:
+  - type: sibling_of
+    to: ai.text_to_speech
+    note: same audio family, inverse direction (audio to text vs text to audio), not substitutable

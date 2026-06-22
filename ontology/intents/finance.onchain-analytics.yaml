@@ -11,3 +11,18 @@ aliases:
   - what wallets are accumulating
   - on-chain signal discovery
   - crypto wallet intelligence
+consumes:
+  - entity: WalletAddress
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+    format: json
+facets:
+  domain: finance
+  action: analyze
+  freshness: recent
+links:
+  - type: sibling_of
+    to: compute.blockchain_rpc
+    note: same on-chain family, differs by action (analyze flows vs execute JSON-RPC)

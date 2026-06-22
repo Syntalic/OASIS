@@ -15,6 +15,18 @@ aliases:
   - inflation trend in groceries
   - yoy price increase by category
   - are household goods getting more expensive
-related:
-  - analyst.price_dispersion
-  - shop.track_price_history
+consumes:
+  - entity: ProductCategory
+    role: identifier
+produces:
+  - entity: PriceSignal
+    role: payload
+    cardinality: many
+facets:
+  domain: analyst
+  action: analyze
+  freshness: historical
+links:
+  - type: sibling_of
+    to: marketing.competitive_landscape
+    note: same category pricing-intel family, differs by purpose (inflation trend vs competitive scan); repoints dangling related analyst.price_dispersion

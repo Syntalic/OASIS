@@ -13,6 +13,18 @@ aliases:
   - track product price timeline
   - was it cheaper before
   - pricing history lookup
-related:
-  - shop.compare_price
-  - analyst.inflation_tracker
+consumes:
+  - entity: Product
+    role: identifier
+produces:
+  - entity: PriceSignal
+    role: payload
+    cardinality: many
+facets:
+  domain: shop
+  action: lookup
+  freshness: historical
+links:
+  - type: sibling_of
+    to: analyst.inflation_tracker
+    note: same pricing-intel family, differs by entity granularity (one Product vs a ProductCategory), both historical

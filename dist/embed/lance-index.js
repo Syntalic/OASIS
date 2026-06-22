@@ -14,6 +14,11 @@ export function capabilityEmbedText(cap) {
         cap.description,
         ...(cap.aliases ?? []),
         ...(cap.schema_org ?? []),
+        // Append output-type signal (produces[] entities + modality) so a re-embed
+        // keys on what the capability returns, not just its phrasing. Additive: an
+        // intent without ports/facets contributes nothing here.
+        ...(cap.produces ?? []).map((p) => p.entity),
+        ...(cap.facets?.modality ?? []),
     ]
         .filter(Boolean)
         .join(" ");

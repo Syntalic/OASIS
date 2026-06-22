@@ -16,6 +16,20 @@ aliases:
   - bargain hunt by category
   - sale items under price limit
   - current markdowns in retail
-related:
-  - shop.compare_price
-  - shop.price_drop_alert
+consumes:
+  - entity: ProductCategory
+    role: identifier
+  - entity: Money
+    role: constraint
+produces:
+  - entity: PriceSignal
+    role: payload
+    cardinality: many
+facets:
+  domain: shop
+  action: search
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: shop.price_drop_alert
+    note: same pricing-intel family, differs by purpose (surface category deals vs monitor one SKU for drops)

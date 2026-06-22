@@ -15,3 +15,22 @@ aliases:
   - business info from URL
   - company profile from domain
   - what company owns this domain
+consumes:
+  - entity: Domain
+    role: identifier
+produces:
+  - entity: Company
+    role: payload
+facets:
+  domain: data
+  action: lookup
+links:
+  - type: sibling_of
+    to: media.social_data
+    note: same identity family, differs by entity x purpose (Company firmographics vs social posts)
+  - type: sibling_of
+    to: data.whois_lookup
+    note: same domain family, differs by purpose (enrich the owning company vs read DNS/WHOIS)
+  - type: sibling_of
+    to: cloud.domains
+    note: same domain family, differs by action (enrich vs register/provision)

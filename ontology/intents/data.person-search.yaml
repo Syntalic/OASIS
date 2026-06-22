@@ -11,3 +11,23 @@ aliases:
   - people search API
   - profile lookup by name
   - B2B contact discovery
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: Person
+    role: payload
+    cardinality: many
+facets:
+  domain: data
+  action: search
+links:
+  - type: sibling_of
+    to: social.influencer_search
+    note: same identity-lookup family, differs by entity (Person vs SocialProfile)
+  - type: sibling_of
+    to: data.company_enrich
+    note: same identity-lookup family, differs by entity x purpose (Person vs Company from domain)
+  - type: sibling_of
+    to: media.social_data
+    note: same identity family, differs by purpose (resolve a person vs fetch social posts)

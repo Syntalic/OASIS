@@ -15,3 +15,22 @@ aliases:
   - full page PNG capture
   - webpage image preview
   - render site as screenshot
+consumes:
+  - entity: Webpage
+    role: identifier
+produces:
+  - entity: Image
+    role: payload
+    format: png
+facets:
+  domain: web
+  action: extract
+  modality:
+    - image
+links:
+  - type: sibling_of
+    to: web.markdown_extract
+    note: same fetch-a-URL family, different output modality (PNG vs markdown), not substitutable
+  - type: sibling_of
+    to: data.web_scrape
+    note: same fetch-a-URL family, different output modality (PNG vs HTML), not substitutable

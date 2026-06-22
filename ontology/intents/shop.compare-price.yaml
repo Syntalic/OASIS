@@ -22,6 +22,21 @@ aliases:
   - compare same product different shops
   - who sells it cheapest today
   - multi-retailer price lookup
-related:
-  - shop.find_deals
-  - shop.track_price_history
+consumes:
+  - entity: Product
+    role: identifier
+produces:
+  - entity: PriceSignal
+    role: payload
+    cardinality: many
+facets:
+  domain: shop
+  action: compare
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: shop.find_deals
+    note: same pricing-intel family, differs by entity granularity (one Product vs a ProductCategory)
+  - type: sibling_of
+    to: shop.track_price_history
+    note: same pricing-intel family, differs by time axis (current lowest vs historical trend)

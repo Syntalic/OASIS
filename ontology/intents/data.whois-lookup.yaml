@@ -11,3 +11,18 @@ aliases:
   - who owns this domain
   - domain registration info
   - lookup nameserver records
+consumes:
+  - entity: Domain
+    role: identifier
+    cardinality: many
+produces:
+  - entity: DnsRecord
+    role: payload
+    cardinality: many
+facets:
+  domain: data
+  action: lookup
+links:
+  - type: sibling_of
+    to: cloud.domains
+    note: same domain family, differs by action (read DNS/WHOIS vs register/provision)

@@ -11,3 +11,19 @@ aliases:
   - fetch live page data
   - get webpage HTML
   - scrape public site
+consumes:
+  - entity: Webpage
+    role: identifier
+produces:
+  - entity: WebContent
+    role: payload
+    format: html
+facets:
+  domain: web
+  action: extract
+  modality:
+    - html
+links:
+  - type: broader_of
+    to: web.markdown_extract
+    note: web_scrape returns raw HTML; markdown_extract is the narrower clean-markdown variant

@@ -11,6 +11,11 @@
     "description": { "type": "string" },
     "aliases": { "type": "array", "items": { "type": "string" } },
     "schema_org": { "type": "array", "items": { "type": "string" } },
+    "consumes": { "type": "array", "items": { "$ref": "#/$defs/Port" } },
+    "produces": { "type": "array", "items": { "$ref": "#/$defs/Port" } },
+    "facets": { "$ref": "#/$defs/Facets" },
+    "negative_terms": { "type": "array", "items": { "type": "string" } },
+    "links": { "type": "array", "items": { "$ref": "#/$defs/CapabilityLink" } },
     "related": {
       "type": "array",
       "items": { "type": "string", "pattern": "^[a-z][a-z0-9._-]*$" }
@@ -33,7 +38,104 @@
           "type": "string",
           "enum": ["primary", "secondary", "fallback"]
         },
+        "source": {
+          "type": "string",
+          "enum": ["facet-gate", "match_hint", "curated"]
+        },
         "notes": { "type": "string" }
+      }
+    },
+    "Port": {
+      "type": "object",
+      "required": ["entity"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": { "type": "string" },
+        "role": { "enum": ["identifier", "payload", "constraint"] },
+        "format": { "type": "string" },
+        "cardinality": { "enum": ["one", "many"], "default": "one" }
+      }
+    },
+    "Facets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "enum": [
+            "shop",
+            "ai",
+            "data",
+            "web",
+            "comms",
+            "finance",
+            "maps",
+            "travel",
+            "realestate",
+            "social",
+            "media",
+            "marketing",
+            "analyst",
+            "cloud",
+            "compute",
+            "devtools",
+            "storage",
+            "search",
+            "crypto"
+          ]
+        },
+        "action": {
+          "enum": [
+            "search",
+            "lookup",
+            "compare",
+            "extract",
+            "generate",
+            "transform",
+            "validate",
+            "send",
+            "provision",
+            "analyze",
+            "execute",
+            "monitor"
+          ]
+        },
+        "modality": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "text",
+              "html",
+              "markdown",
+              "json",
+              "image",
+              "audio",
+              "vector",
+              "citations",
+              "timeseries"
+            ]
+          }
+        },
+        "freshness": {
+          "enum": ["realtime", "recent", "historical", "forecast", "static"]
+        }
+      }
+    },
+    "CapabilityLink": {
+      "type": "object",
+      "required": ["type", "to"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "alternative_of",
+            "sibling_of",
+            "pipes_to",
+            "narrower_of",
+            "broader_of"
+          ]
+        },
+        "to": { "type": "string", "pattern": "^[a-z][a-z0-9._-]*$" },
+        "note": { "type": "string" }
       }
     }
   }

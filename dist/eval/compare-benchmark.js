@@ -36,6 +36,7 @@ function buildExternalReport(method, queries, results, discoverRanks) {
         task: [],
         literal: discoverRanks,
         discover: discoverRanks,
+        select: [],
     });
 }
 async function evaluateCdpBazaar(queries, delayMs = 0) {
@@ -56,6 +57,8 @@ async function evaluateCdpBazaar(queries, delayMs = 0) {
             literal_rank: discover,
             discover_hit: discover === 1,
             discover_rank: discover,
+            select_hit: false,
+            select_rank: null,
             top_label: hits[0]?.description ?? hits[0]?.resource ?? null,
         });
         if (delayMs > 0) {
@@ -86,6 +89,8 @@ async function evaluateMppCatalogLive(queries) {
             literal_rank: rank,
             discover_hit: rank === 1,
             discover_rank: rank,
+            select_hit: false,
+            select_rank: null,
             top_label: hits[0]?.label ?? null,
         });
     }
@@ -147,7 +152,7 @@ export function formatCompareTable(reports) {
         "disc MRR".padEnd(9),
     ].join(" ");
     const lines = [
-        "Discovery method comparison (43 messy NL queries)",
+        "Discovery method comparison (messy NL queries)",
         "",
         header,
         "-".repeat(header.length),

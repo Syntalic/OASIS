@@ -24,6 +24,9 @@ export interface QueryResult {
     /** Correct API via search → resolve at rank 1. */
     discover_hit: boolean;
     discover_rank: number | null;
+    /** Neutral selection policy ranks expected endpoint at rank 1. */
+    select_hit: boolean;
+    select_rank: number | null;
     top_label: string | null;
 }
 export interface BenchmarkReport {
@@ -31,6 +34,7 @@ export interface BenchmarkReport {
     queries: number;
     task_queries: number;
     api_queries: number;
+    select_queries: number;
     task_hit_at_1: number;
     task_hit_at_3: number;
     task_hit_at_5: number;
@@ -39,15 +43,22 @@ export interface BenchmarkReport {
     literal_hit_at_5: number;
     discover_hit_at_1: number;
     discover_hit_at_3: number;
+    select_hit_at_1: number;
+    select_hit_at_3: number;
     task_mrr: number;
     literal_mrr: number;
     discover_mrr: number;
+    select_mrr: number;
     results: QueryResult[];
 }
 export declare function expectedEndpointId(expect: EvalQuery["expect_endpoint"]): string | null;
 export declare function rankIntent(hits: SearchHit[], intentId: string): number | null;
 export declare function rankEndpoint(hits: SearchHit[], endpointIdExpected: string): number | null;
 export declare function resolveIntentToEndpointIds(intent: CapabilityIntent, endpoints: EndpointRecord[]): string[];
+/**
+ * Discover rank: agent finds the right task and at least one viable paid API.
+ * Does not require a specific vendor endpoint — that is measured by select@k.
+ */
 export declare function discoverRank(hits: SearchHit[], expectedIntent: string | undefined, expectedEndpointId: string | null, capabilities: CapabilityIntent[], endpoints: EndpointRecord[]): number | null;
 export declare function mrr(ranks: Array<number | null>): number;
 export declare function hitAt(ranks: Array<number | null>, k: number): number;
@@ -55,6 +66,7 @@ export interface ReportRanks {
     task: Array<number | null>;
     literal: Array<number | null>;
     discover: Array<number | null>;
+    select: Array<number | null>;
 }
 /** Single source of truth for the BenchmarkReport metric block. */
 export declare function buildReport(mode: BenchmarkMode, queries: EvalQuery[], results: QueryResult[], ranks: ReportRanks): BenchmarkReport;

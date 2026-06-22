@@ -11,3 +11,15 @@ aliases:
   - OCR API
   - recognize text in image
   - photo text extraction
+consumes:
+  - entity: Image
+    role: identifier
+produces:
+  - entity: Text
+    role: payload
+    format: text
+facets:
+  domain: data
+  action: extract
+  modality:
+    - text

@@ -26,8 +26,8 @@ function endpointExists(endpoints, ref) {
     const id = endpointId(ref.origin, ref.method, ref.path);
     return endpoints.some((e) => e.id === id);
 }
-function primaryRef(cap) {
-    return (cap.satisfies.find((s) => s.confidence === "primary") ?? cap.satisfies[0]);
+function sampleRef(cap) {
+    return cap.satisfies[0];
 }
 function slug(id) {
     return id.replace(/[._]/g, "-");
@@ -45,7 +45,7 @@ function uniqueQueries(items) {
     return out;
 }
 function queriesFromCapability(cap, endpoints, maxPerCap = 4) {
-    const ref = primaryRef(cap);
+    const ref = sampleRef(cap);
     if (!ref || !endpointExists(endpoints, ref))
         return [];
     const phrases = new Set();

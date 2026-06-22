@@ -11,3 +11,17 @@ aliases:
   - store locator API
   - address autocomplete
   - search coffee shops in Austin
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: Place
+    role: payload
+    cardinality: many
+facets:
+  domain: maps
+  action: lookup
+links:
+  - type: alternative_of
+    to: travel.place_reviews
+    note: near-twin place lookup competing for the same query; maps resolves local POIs, place_reviews returns traveler reviews

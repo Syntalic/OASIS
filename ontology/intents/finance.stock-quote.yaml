@@ -11,3 +11,17 @@ aliases:
   - market quote by symbol
   - real time stock price
   - get quote for ticker
+consumes:
+  - entity: Ticker
+    role: identifier
+produces:
+  - entity: MarketQuote
+    role: payload
+facets:
+  domain: finance
+  action: lookup
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: data.exchange_rates
+    note: same lookup-a-live-quote family, differs only by entity (Ticker vs Currency)

@@ -1,9 +1,9 @@
 {
   "index_version": "0.1.0",
   "spec_version": "0.1.0",
-  "built_at": "2026-06-21T16:28:37.145Z",
+  "built_at": "2026-06-22T10:54:40.467Z",
   "stats": {
-    "providers": 1104
+    "providers": 1101
   },
   "providers": [
     {
@@ -4236,7 +4236,7 @@
       "origins": [
         "https://apibase.pro"
       ],
-      "endpoint_count": 625,
+      "endpoint_count": 708,
       "payment_rails": [
         "x402"
       ],
@@ -6305,7 +6305,7 @@
       "origins": [
         "https://2s.io"
       ],
-      "endpoint_count": 385,
+      "endpoint_count": 448,
       "payment_rails": [
         "x402"
       ],
@@ -6649,7 +6649,7 @@
         "x402scan/api.cryptoetfsentinel.com",
         "x402scan/x402.miroshark.xyz",
         "x402scan/api.clusterprotocol.ai",
-        "x402scan/probe.onchainintel.net"
+        "x402scan/ged-x402.jvalamis.workers.dev"
       ]
     },
     {
@@ -7234,14 +7234,14 @@
     {
       "fqn": "x402scan/agoragentic.com",
       "title": "x402scan/agoragentic.com",
-      "description": "Operator-only read-only snapshot for hosted runtime monitor state, Parallel Work\nGraph counts, recent graphs, throughput metrics, and per-deployment graph drilldowns, Market Intelligence runs/proposals,\nmarketplace history quality/conflict reporting, owner reactivation evidence,\nrequest-log retention diagnostics, self-serve run timeline coverage,\nunified Agent OS drift score,\nAgent OS Control Room state, ECF governance ledger status, proof-readiness\ncommands, and open operator actions. The Control Room\nnormalizes current work, completed work, approvals, blockers, stale evidence\nwarnings, owner timeline, autonomy level, authority boundary, and next\nrecommended action. The ECF governance block reports action state, evidence\nstate, approval lifecycle, controlled policy blocks, blocked authority, stale\naction reconciliation, and evidence conflicts. This endpoint does not\nscan hosted deployments, provision resources, run billing, execute graph branches,\nrun jobs, mutate trust states, or trigger funded canaries.\n",
+      "description": "Gate 1 owner-gated federation identity-resolution accept. Disabled unless\nAGENT_FEDERATION_IDENTITY_WIRING_ENABLED=true. Approves an existing\ntrap-scanned evidence row, pins only the full SPKI key already stored on that\nevidence row, and issues a durable challenge whose signed payload includes\nremote_origin. This proves no independent partner identity and does not by\nitself promote verified_federation; a later challenge response must verify key\ncontrol. The route does not accept request-body key material, send A2A\nmessages, execute providers, spend, settle, or mutate marketplace/listing trust.\n",
       "use_case": "Paid API for admin, advocacy, agent os ag-ui, agent os owner control, agent os work packs, consequences, agent os, agent os governed memory via https://agoragentic.com",
       "categories": [],
       "service_url": "https://agoragentic.com",
       "origins": [
         "https://agoragentic.com"
       ],
-      "endpoint_count": 659,
+      "endpoint_count": 663,
       "payment_rails": [
         "x402"
       ],
@@ -7249,13 +7249,13 @@
       "sources": [
         "x402scan"
       ],
-      "search_text": "x402scan/agoragentic.com operator-only read-only snapshot for hosted runtime monitor state, parallel work\ngraph counts, recent graphs, throughput metrics, and per-deployment graph drilldowns, market intelligence runs/proposals,\nmarketplace history quality/conflict reporting, owner reactivation evidence,\nrequest-log retention diagnostics, self-serve run timeline coverage,\nunified agent os drift score,\nagent os control room state, ecf governance ledger status, proof-readiness\ncommands, and open operator actions. the control room\nnormalizes current work, completed work, approvals, blockers, stale evidence\nwarnings, owner timeline, autonomy level, authority boundary, and next\nrecommended action. the ecf governance block reports action state, evidence\nstate, approval lifecycle, controlled policy blocks, blocked authority, stale\naction reconciliation, and evidence conflicts. this endpoint does not\nscan hosted deployments, provision resources, run billing, execute graph branches,\nrun jobs, mutate trust states, or trigger funded canaries.\n paid api for admin, advocacy, agent os ag-ui, agent os owner control, agent os work packs, consequences, agent os, agent os governed memory via https://agoragentic.com admin advocacy agent os ag-ui agent os owner control agent os work packs consequences agent os agent os governed memory https://agoragentic.com",
+      "search_text": "x402scan/agoragentic.com gate 1 owner-gated federation identity-resolution accept. disabled unless\nagent_federation_identity_wiring_enabled=true. approves an existing\ntrap-scanned evidence row, pins only the full spki key already stored on that\nevidence row, and issues a durable challenge whose signed payload includes\nremote_origin. this proves no independent partner identity and does not by\nitself promote verified_federation; a later challenge response must verify key\ncontrol. the route does not accept request-body key material, send a2a\nmessages, execute providers, spend, settle, or mutate marketplace/listing trust.\n paid api for admin, advocacy, agent os ag-ui, agent os owner control, agent os work packs, consequences, agent os, agent os governed memory via https://agoragentic.com admin advocacy agent os ag-ui agent os owner control agent os work packs consequences agent os agent os governed memory https://agoragentic.com",
       "alternatives": [
-        "x402scan/x402-market-intel-mcp.mtree.workers.dev",
-        "x402scan/kg.dyor.network",
+        "x402scan/curl-http-request.underscoredone.com",
         "x402scan/nectarpay.crypto-dreamr.com",
-        "x402scan/governance.taskhawktech.com",
-        "x402scan/relayer.atriumhermes.tech"
+        "x402scan/agent-memory-api-bix5.onrender.com",
+        "x402scan/stablebase.dev",
+        "x402scan/travel.brij.fi"
       ]
     },
     {
@@ -7512,11 +7512,11 @@
       ],
       "search_text": "x402scan/amalgix.io general crucible™ evidence analysis. returns source-grounded findings with evidence snippets, source references, confidence scores, and verification status. paid api for ai, contracts, financial filings via https://amalgix.io ai contracts financial filings https://amalgix.io",
       "alternatives": [
-        "x402scan/the-stall.intuitek.ai",
         "x402scan/api.node4all.com",
         "x402scan/relaynetwork.ai",
         "x402scan/centry.cybercentry.co.uk",
-        "x402scan/x402-cybercentry.up.railway.app"
+        "x402scan/x402-cybercentry.up.railway.app",
+        "x402scan/fov.brij.fi"
       ]
     },
     {
@@ -7953,13 +7953,13 @@
       "fqn": "x402scan/api.aitrailblazer.net",
       "title": "x402scan/api.aitrailblazer.net",
       "description": "Call DeltaSignal MCP tools through the public Base x402 route. Public initialize, ping, tools/list, resources/list, resources/templates/list, and prompts/list are free for MCP discovery. tools/call without an internal key or free-tier grant returns HTTP 402 Payment Required; retry the same tools/call with the x402 payment. First-party internal Codex and Claude clients may use x-api-key or mcp-api-key as a bypass on the same endpoint.",
-      "use_case": "Paid API for mcp, alpha signals, deltasignal atlas history, fundamentals, covenant stress, natural language, readiness, deltasignal spectra via https://api.aitrailblazer.net",
+      "use_case": "Paid API for mcp, alpha signals, deltasignal atlas history, fundamentals, covenant stress, natural language, readiness, market atlas via https://api.aitrailblazer.net",
       "categories": [],
       "service_url": "https://api.aitrailblazer.net",
       "origins": [
         "https://api.aitrailblazer.net"
       ],
-      "endpoint_count": 54,
+      "endpoint_count": 65,
       "payment_rails": [
         "mpp",
         "x402"
@@ -7969,13 +7969,13 @@
       "sources": [
         "x402scan"
       ],
-      "search_text": "x402scan/api.aitrailblazer.net call deltasignal mcp tools through the public base x402 route. public initialize, ping, tools/list, resources/list, resources/templates/list, and prompts/list are free for mcp discovery. tools/call without an internal key or free-tier grant returns http 402 payment required; retry the same tools/call with the x402 payment. first-party internal codex and claude clients may use x-api-key or mcp-api-key as a bypass on the same endpoint. paid api for mcp, alpha signals, deltasignal atlas history, fundamentals, covenant stress, natural language, readiness, deltasignal spectra via https://api.aitrailblazer.net mcp alpha signals deltasignal atlas history fundamentals covenant stress natural language readiness deltasignal spectra https://api.aitrailblazer.net",
+      "search_text": "x402scan/api.aitrailblazer.net call deltasignal mcp tools through the public base x402 route. public initialize, ping, tools/list, resources/list, resources/templates/list, and prompts/list are free for mcp discovery. tools/call without an internal key or free-tier grant returns http 402 payment required; retry the same tools/call with the x402 payment. first-party internal codex and claude clients may use x-api-key or mcp-api-key as a bypass on the same endpoint. paid api for mcp, alpha signals, deltasignal atlas history, fundamentals, covenant stress, natural language, readiness, market atlas via https://api.aitrailblazer.net mcp alpha signals deltasignal atlas history fundamentals covenant stress natural language readiness market atlas https://api.aitrailblazer.net",
       "alternatives": [
         "x402scan/cheaptokens.ai",
         "x402scan/travel.brij.fi",
         "x402scan/geonimo.com",
         "x402scan/www.geonimo.com",
-        "x402scan/api.icme.io"
+        "x402scan/autoscrape-api-seven.vercel.app"
       ]
     },
     {
@@ -8165,7 +8165,7 @@
       "payment_rails": [
         "x402"
       ],
-      "min_price_usd": 0.019254,
+      "min_price_usd": 0.019146,
       "guidance_available": true,
       "sources": [
         "x402scan"
@@ -8309,11 +8309,11 @@
       ],
       "search_text": "x402scan/api.cardhedger.com get 90-day average prices for cards at a specific grade.\n\nthis endpoint returns paginated cards with their average price over the last 90 days\nfor a specified grade. optionally filter by search query or category.\n\nto search by relevance instead of browsing page by page, see\n`90day-prices-by-grade-search`.\n\n**parameters:**\n- `page`: page number for pagination (default: 1)\n- `page_size`: number of results per page (1-500, default: 100)\n- `grade`: required. card grade (e.g., 'psa 10', 'sgc 10', 'bgs 9.5')\n- `search`: optional search query for card name\n- `category`: optional category filter (e.g., 'pokemon', 'baseball')\n\n**example curl:**\n```bash\n# get psa 10 cards\ncurl -x post -h \"x-api-key: your-api-key-here\" \\\n     -h \"content-type: application/json\" \\\n     -d '{\n       \"page\": 1,\n       \"page_size\": 100,\n       \"grade\": \"psa 10\"\n     }' \\\n     \"https://api.cardhedger.com/v1/cards/90day-prices-by-grade\"\n\n# search with filters\ncurl -x post -h \"x-api-key: your-api-key-here\" \\\n     -h \"content-type: application/json\" \\\n     -d '{\n       \"page\": 1,\n       \"page_size\": 50,\n       \"grade\": \"sgc 10\",\n       \"search\": \"pikachu\",\n       \"category\": \"pokemon\"\n     }' \\\n     \"https://api.cardhedger.com/v1/cards/90day-prices-by-grade\"\n```\n\nreturns paginated cards with 90-day average price and sales count. paid api for market data, pricing & valuations, card details, card search, image search, card issues, downloads & exports via https://api.cardhedger.com market data pricing & valuations card details card search image search card issues downloads & exports https://api.cardhedger.com",
       "alternatives": [
-        "x402scan/restcountries.com",
         "x402scan/agent-ready.dev",
         "x402scan/aisecurityguard.io",
         "x402scan/relaynetwork.ai",
-        "x402scan/transit402.dev"
+        "x402scan/transit402.dev",
+        "x402scan/agentforge-taupe.vercel.app"
       ]
     },
     {
@@ -8370,24 +8370,6 @@
         "x402scan/stableface.dev",
         "x402scan/agent-budget-guard.onrender.com"
       ]
-    },
-    {
-      "fqn": "x402scan/api.congress.gov",
-      "title": "https://api.congress.gov",
-      "categories": [],
-      "service_url": "https://api.congress.gov",
-      "origins": [
-        "https://api.congress.gov"
-      ],
-      "endpoint_count": 5,
-      "payment_rails": [
-        "x402"
-      ],
-      "guidance_available": false,
-      "sources": [
-        "x402scan"
-      ],
-      "search_text": "x402scan/api.congress.gov https://api.congress.gov"
     },
     {
       "fqn": "x402scan/api.craigmbrown.com",
@@ -8637,7 +8619,7 @@
       "origins": [
         "https://api.foxcite.com"
       ],
-      "endpoint_count": 73,
+      "endpoint_count": 75,
       "payment_rails": [
         "x402"
       ],
@@ -8714,15 +8696,15 @@
     },
     {
       "fqn": "x402scan/api.gocreativeai.com",
-      "title": "https://api.gocreativeai.com",
-      "description": "AI completion — send any prompt, get a frontier-quality answer (DeepSeek V3.1 default; ?model=gpt-5-mini|gemini-flash). ",
-      "use_case": "Use for ai completion — send any prompt, get a frontier-quality answer (deepseek v3.1 default; ?model=gpt-5-mini|gemini-flash). ",
+      "title": "x402scan/api.gocreativeai.com",
+      "description": "Aegis Dossier — vendor/counterparty due-diligence dossier (registry, risk, legal, firmographics) for any company name. K",
+      "use_case": "Use for aegis dossier — vendor/counterparty due-diligence dossier (registry, risk, legal, firmographics) for any company name. k",
       "categories": [],
       "service_url": "https://api.gocreativeai.com",
       "origins": [
         "https://api.gocreativeai.com"
       ],
-      "endpoint_count": 688,
+      "endpoint_count": 700,
       "payment_rails": [
         "x402"
       ],
@@ -8731,13 +8713,13 @@
       "sources": [
         "x402scan"
       ],
-      "search_text": "x402scan/api.gocreativeai.com ai completion — send any prompt, get a frontier-quality answer (deepseek v3.1 default; ?model=gpt-5-mini|gemini-flash).  use for ai completion — send any prompt, get a frontier-quality answer (deepseek v3.1 default; ?model=gpt-5-mini|gemini-flash).  https://api.gocreativeai.com",
+      "search_text": "x402scan/api.gocreativeai.com aegis dossier — vendor/counterparty due-diligence dossier (registry, risk, legal, firmographics) for any company name. k use for aegis dossier — vendor/counterparty due-diligence dossier (registry, risk, legal, firmographics) for any company name. k https://api.gocreativeai.com",
       "alternatives": [
-        "x402scan/leaderboard.0000402.xyz",
-        "x402scan/orni-models-api.onrender.com",
-        "x402scan/www.cloudflare.com",
-        "x402scan/agent-all-the-smoke.vercel.app",
-        "x402scan/orbis-text-stats-fast-3fhh5j6gj-akveroths-projects.vercel.app"
+        "x402scan/enrich.x4api.com",
+        "x402scan/legal.x4api.com",
+        "x402scan/token-intel-api.tatsu77.workers.dev",
+        "x402scan/api.thetrustlayer.xyz",
+        "x402scan/dns.x402tools.xyz"
       ]
     },
     {
@@ -8789,8 +8771,8 @@
         "x402scan/econ.memoryapi.org",
         "x402scan/graphadvocate.com",
         "x402scan/leaderboard.0000402.xyz",
-        "x402scan/api.gocreativeai.com",
-        "x402scan/www.cloudflare.com"
+        "x402scan/www.cloudflare.com",
+        "x402scan/agent-all-the-smoke.vercel.app"
       ]
     },
     {
@@ -8842,9 +8824,9 @@
       "alternatives": [
         "x402scan/hmo.payapi.market",
         "x402scan/api.node4all.com",
-        "x402scan/clawy.uk",
         "x402scan/x402.quickintel.io",
-        "x402scan/api.regressionincoming.fyi"
+        "x402scan/api.regressionincoming.fyi",
+        "x402scan/govfiles.dev"
       ]
     },
     {
@@ -9015,7 +8997,7 @@
       "origins": [
         "https://api.jarvisclaw.ai"
       ],
-      "endpoint_count": 77,
+      "endpoint_count": 76,
       "payment_rails": [
         "x402"
       ],
@@ -9083,29 +9065,20 @@
     {
       "fqn": "x402scan/api.karma.domains",
       "title": "https://api.karma.domains",
-      "description": "Check if a domain name appears free for registration (live WHOIS/DNS check).\n\n``available: true`` — domain likely free; ``false`` — registered or reserved.\nDoes not update any report. Use percent-encoding for non-ASCII domains.",
-      "use_case": "Paid API for domains, reports, user via https://api.karma.domains",
       "categories": [],
       "service_url": "https://api.karma.domains",
       "origins": [
         "https://api.karma.domains"
       ],
-      "endpoint_count": 11,
+      "endpoint_count": 8,
       "payment_rails": [
         "x402"
       ],
-      "guidance_available": true,
+      "guidance_available": false,
       "sources": [
         "x402scan"
       ],
-      "search_text": "x402scan/api.karma.domains check if a domain name appears free for registration (live whois/dns check).\n\n``available: true`` — domain likely free; ``false`` — registered or reserved.\ndoes not update any report. use percent-encoding for non-ascii domains. paid api for domains, reports, user via https://api.karma.domains domains reports user https://api.karma.domains",
-      "alternatives": [
-        "x402scan/stablefeedback.dev",
-        "x402scan/domain-age-checker.underscoredone.com",
-        "x402scan/api.octodamus.com",
-        "x402scan/edgar.apitoll.cloud",
-        "x402scan/oracle.the-undesirables.com"
-      ]
+      "search_text": "x402scan/api.karma.domains https://api.karma.domains"
     },
     {
       "fqn": "x402scan/api.kasanegi.com",
@@ -9414,8 +9387,8 @@
         "x402scan/api.solreplay.io",
         "x402scan/api.liquidagent.ai",
         "x402scan/agentforge-taupe.vercel.app",
-        "x402scan/clawy.uk",
-        "x402scan/www.hekaswap.com"
+        "x402scan/www.hekaswap.com",
+        "x402scan/api.algovoi.co.uk"
       ]
     },
     {
@@ -9603,9 +9576,9 @@
       "alternatives": [
         "x402scan/api.influship.com",
         "x402scan/x402-market-intel-mcp.mtree.workers.dev",
-        "x402scan/the-stall.intuitek.ai",
         "x402scan/evm-gas.apitoll.cloud",
-        "x402scan/api.liquidagent.ai"
+        "x402scan/api.liquidagent.ai",
+        "x402scan/www.stable-govfiles.dev"
       ]
     },
     {
@@ -10584,7 +10557,7 @@
       "origins": [
         "https://api.syraa.fun"
       ],
-      "endpoint_count": 34,
+      "endpoint_count": 36,
       "payment_rails": [
         "mpp",
         "x402"
@@ -10597,10 +10570,10 @@
       "search_text": "x402scan/api.syraa.fun bundles coinmarketcap-style top tradable assets (stablecoins skipped) with live cross-venue usdt spot snapshots and ranked buy/sell routes by gross spread. use when an agent scouts arbitrage ideas before fees/slippage. input: limit (default 10, max 25). returns cmctop, snapshots[], ranked[], best, runnerup — not financial advice. paid api for market data (x402), assets board (x402), asset detail (x402), bitcoin intelligence hub (x402), ai (x402), coingecko scout (x402), equity (x402), gateway (x402) via https://api.syraa.fun market data (x402) assets board (x402) asset detail (x402) bitcoin intelligence hub (x402) ai (x402) coingecko scout (x402) equity (x402) gateway (x402) https://api.syraa.fun",
       "alternatives": [
         "x402scan/emc2ai.io",
-        "x402scan/the-stall.intuitek.ai",
         "x402scan/1xu.app",
         "x402scan/x402.1xu.app",
-        "x402scan/agent-budget-guard.onrender.com"
+        "x402scan/agent-budget-guard.onrender.com",
+        "x402scan/api.moltalyzer.xyz"
       ]
     },
     {
@@ -11170,7 +11143,7 @@
         "x402scan/api.algovoi.co.uk",
         "x402scan/rektwatch.dev",
         "x402scan/chess402.vercel.app",
-        "x402scan/the-stall.intuitek.ai"
+        "x402scan/hub.atxp.ai"
       ]
     },
     {
@@ -11322,11 +11295,11 @@
       ],
       "search_text": "x402scan/app.suedeai.xyz generate a complete, full-length song from a text prompt. returns a multi-minute track with vocals, melody, and full arrangement, not a short clip or preview. suede's programmable-ip stack builds every track rights-aware and ready to license. paid api for programmableip, creativerwa, provenance, licensing, creatorownership, agentcommerce, suedelabs, suedeai via https://app.suedeai.xyz programmableip creativerwa provenance licensing creatorownership agentcommerce suedelabs suedeai https://app.suedeai.xyz",
       "alternatives": [
-        "x402scan/the-stall.intuitek.ai",
         "x402scan/gleaming-cassata-d41682.netlify.app",
         "x402scan/www.stable-govfiles.dev",
         "x402scan/stablestudio.dev",
-        "x402scan/api.node4all.com"
+        "x402scan/api.node4all.com",
+        "x402scan/ged-x402.jvalamis.workers.dev"
       ]
     },
     {
@@ -12264,10 +12237,10 @@
       "search_text": "x402scan/channel3-x402.onrender.com retrieve detailed product information for any supported product url. returns comprehensive product data including title, description, images, pricing across retailers, availability, and affiliate links. paid api for products via https://channel3-x402.onrender.com products https://channel3-x402.onrender.com",
       "alternatives": [
         "x402scan/api.syntalic.com",
-        "x402scan/clawy.uk",
         "x402scan/hmo.payapi.market",
         "x402scan/semagram.io",
-        "x402scan/api.node4all.com"
+        "x402scan/api.node4all.com",
+        "x402scan/rektwatch.dev"
       ]
     },
     {
@@ -12484,31 +12457,21 @@
     },
     {
       "fqn": "x402scan/clawy.uk",
-      "title": "x402scan/clawy.uk",
-      "description": "Returns server status, configured providers, pricing, and any config warnings. Useful for monitoring and registration checks.",
-      "use_case": "Paid API for health, inference, image-generation via https://clawy.uk",
+      "title": "https://clawy.uk",
       "categories": [],
       "service_url": "https://clawy.uk",
       "origins": [
         "https://clawy.uk"
       ],
-      "endpoint_count": 8,
+      "endpoint_count": 3,
       "payment_rails": [
         "x402"
       ],
-      "min_price_usd": 0.01,
-      "guidance_available": true,
+      "guidance_available": false,
       "sources": [
         "x402scan"
       ],
-      "search_text": "x402scan/clawy.uk returns server status, configured providers, pricing, and any config warnings. useful for monitoring and registration checks. paid api for health, inference, image-generation via https://clawy.uk health inference image-generation https://clawy.uk",
-      "alternatives": [
-        "x402scan/api.ibanforge.com",
-        "x402scan/api.node4all.com",
-        "x402scan/x402.quickintel.io",
-        "x402scan/hmo.payapi.market",
-        "x402scan/channel3-x402.onrender.com"
-      ]
+      "search_text": "x402scan/clawy.uk https://clawy.uk"
     },
     {
       "fqn": "x402scan/cleared.ink",
@@ -13800,11 +13763,11 @@
       ],
       "search_text": "x402scan/docs.apify.com gets a list of all builds for a user. the response is a json array of\nobjects, where each object contains basic information about a single build.\n\nthe endpoint supports pagination using the `limit` and `offset` parameters\nand it will not return more than 1000 records.\n\nby default, the records are sorted by the `startedat` field in ascending\norder. therefore, you can use pagination to incrementally fetch all builds while\nnew ones are still being started. to sort the records in descending order, use\nthe `desc=1` parameter.\n paid api for actor builds, actor runs, default dataset, default key-value store, default request queue, actor tasks, last actor task run's abort, last actor task run's default dataset via https://docs.apify.com actor builds actor runs default dataset default key-value store default request queue actor tasks last actor task run's abort last actor task run's default dataset https://docs.apify.com",
       "alternatives": [
-        "x402scan/restcountries.com",
         "x402scan/curl-http-request.underscoredone.com",
         "x402scan/v.botpay.network",
         "x402scan/relaynetwork.ai",
-        "x402scan/aisecurityguard.io"
+        "x402scan/aisecurityguard.io",
+        "x402scan/pickr.market"
       ]
     },
     {
@@ -14127,10 +14090,10 @@
       "search_text": "x402scan/edgar.apitoll.cloud free precheck for any us-listed company by stock ticker or cik: resolves the cik and reports which sec data is available — 10-k, 10-q, 8-k filings, form 4 insider trades, and 13f-hr institutional holdings — each with the latest filing date and the exact paid endpoint to call. use it before a paid call to avoid spending on data that does not exist. paid api for sec, finance, filings, 13f, insider-trades, smart-money via https://edgar.apitoll.cloud sec finance filings 13f insider-trades smart-money https://edgar.apitoll.cloud",
       "alternatives": [
         "x402scan/stablefinance.dev",
-        "x402scan/api.karma.domains",
         "x402scan/agent-budget-guard.onrender.com",
         "x402scan/hmo.payapi.market",
-        "x402scan/x402stock.vercel.app"
+        "x402scan/x402stock.vercel.app",
+        "x402scan/x402stock.xyz"
       ]
     },
     {
@@ -14493,24 +14456,6 @@
       "search_text": "x402scan/entropy.rip https://entropy.rip"
     },
     {
-      "fqn": "x402scan/eonet.gsfc.nasa.gov",
-      "title": "https://eonet.gsfc.nasa.gov",
-      "categories": [],
-      "service_url": "https://eonet.gsfc.nasa.gov",
-      "origins": [
-        "https://eonet.gsfc.nasa.gov"
-      ],
-      "endpoint_count": 1,
-      "payment_rails": [
-        "x402"
-      ],
-      "guidance_available": false,
-      "sources": [
-        "x402scan"
-      ],
-      "search_text": "x402scan/eonet.gsfc.nasa.gov https://eonet.gsfc.nasa.gov"
-    },
-    {
       "fqn": "x402scan/ethglobalskills-x402.vercel.app",
       "title": "https://ethglobalskills-x402.vercel.app",
       "description": "Returns all ETHGlobal events sorted by most recent first.",
@@ -14833,6 +14778,34 @@
         "x402scan/www.geonimo.com",
         "x402scan/api.minebean.com",
         "x402scan/try.madhousewallet.com"
+      ]
+    },
+    {
+      "fqn": "x402scan/fifa2026.madnodes.xyz",
+      "title": "x402scan/fifa2026.madnodes.xyz",
+      "description": "Legacy GET route for compatibility. Agents should prefer POST because it exposes an explicit JSON input schema.",
+      "use_case": "Use for legacy get route for compatibility. agents should prefer post because it exposes an explicit json input schema.",
+      "categories": [],
+      "service_url": "https://fifa2026.madnodes.xyz",
+      "origins": [
+        "https://fifa2026.madnodes.xyz"
+      ],
+      "endpoint_count": 4,
+      "payment_rails": [
+        "x402"
+      ],
+      "min_price_usd": 10000,
+      "guidance_available": true,
+      "sources": [
+        "x402scan"
+      ],
+      "search_text": "x402scan/fifa2026.madnodes.xyz legacy get route for compatibility. agents should prefer post because it exposes an explicit json input schema. use for legacy get route for compatibility. agents should prefer post because it exposes an explicit json input schema. https://fifa2026.madnodes.xyz",
+      "alternatives": [
+        "x402scan/leaderboard.0000402.xyz",
+        "x402scan/www.cloudflare.com",
+        "x402scan/text-to-json.x4api.com",
+        "x402scan/agent-all-the-smoke.vercel.app",
+        "x402scan/orbis-text-stats-fast-3fhh5j6gj-akveroths-projects.vercel.app"
       ]
     },
     {
@@ -15473,14 +15446,14 @@
     {
       "fqn": "x402scan/ged-x402.jvalamis.workers.dev",
       "title": "https://ged-x402.jvalamis.workers.dev",
-      "description": "Scrape Lite — Firecrawl-parity clean Markdown from any URL. Single-hop outcome: POST { url } or GET ?url= on browser.gedx402.com. x402 settlement $0.02. Alias: POST /v1/browser/markdown. Discover: GET /v1/models?bundle=browser.",
-      "use_case": "Paid API for browser, chat, catalog, search, text via https://ged-x402.jvalamis.workers.dev",
+      "description": "Multi-model chat completions. POST messages[] and set model to any LLM id from GET /v1/models; dynamic USDC pricing scales with model and token usage. Hero: GET /heroes/chat-completions.",
+      "use_case": "Paid API for chat, firecrawl, catalog, search, text via https://ged-x402.jvalamis.workers.dev",
       "categories": [],
       "service_url": "https://ged-x402.jvalamis.workers.dev",
       "origins": [
         "https://ged-x402.jvalamis.workers.dev"
       ],
-      "endpoint_count": 33,
+      "endpoint_count": 32,
       "payment_rails": [
         "x402"
       ],
@@ -15488,13 +15461,13 @@
       "sources": [
         "x402scan"
       ],
-      "search_text": "x402scan/ged-x402.jvalamis.workers.dev scrape lite — firecrawl-parity clean markdown from any url. single-hop outcome: post { url } or get ?url= on browser.gedx402.com. x402 settlement $0.02. alias: post /v1/browser/markdown. discover: get /v1/models?bundle=browser. paid api for browser, chat, catalog, search, text via https://ged-x402.jvalamis.workers.dev browser chat catalog search text https://ged-x402.jvalamis.workers.dev",
+      "search_text": "x402scan/ged-x402.jvalamis.workers.dev multi-model chat completions. post messages[] and set model to any llm id from get /v1/models; dynamic usdc pricing scales with model and token usage. hero: get /heroes/chat-completions. paid api for chat, firecrawl, catalog, search, text via https://ged-x402.jvalamis.workers.dev chat firecrawl catalog search text https://ged-x402.jvalamis.workers.dev",
       "alternatives": [
-        "x402scan/scrape-agent.vercel.app",
-        "x402scan/scrapeagent.xyz",
         "x402scan/kat.imgnai.com",
-        "x402scan/stableflare.dev",
-        "x402scan/api.agentshops.xyz"
+        "x402scan/merx.exchange",
+        "x402scan/dripstack.com",
+        "x402scan/dripstack.xyz",
+        "x402scan/semagram.io"
       ]
     },
     {
@@ -15837,21 +15810,22 @@
       "fqn": "x402scan/governance.taskhawktech.com",
       "title": "x402scan/governance.taskhawktech.com",
       "description": "Create a hash-chained provenance attestation for an agent action.\n\nEach attestation extends the append-only evidence chain.\nIndependently verifiable by any third party.",
-      "use_case": "Paid API for governance, billing, shield, signup via https://governance.taskhawktech.com",
+      "use_case": "Paid API for governance, media, billing, shield, signup via https://governance.taskhawktech.com",
       "categories": [],
       "service_url": "https://governance.taskhawktech.com",
       "origins": [
         "https://governance.taskhawktech.com"
       ],
-      "endpoint_count": 18,
+      "endpoint_count": 26,
       "payment_rails": [
-        "mpp"
+        "mpp",
+        "x402"
       ],
       "guidance_available": false,
       "sources": [
         "x402scan"
       ],
-      "search_text": "x402scan/governance.taskhawktech.com create a hash-chained provenance attestation for an agent action.\n\neach attestation extends the append-only evidence chain.\nindependently verifiable by any third party. paid api for governance, billing, shield, signup via https://governance.taskhawktech.com governance billing shield signup https://governance.taskhawktech.com",
+      "search_text": "x402scan/governance.taskhawktech.com create a hash-chained provenance attestation for an agent action.\n\neach attestation extends the append-only evidence chain.\nindependently verifiable by any third party. paid api for governance, media, billing, shield, signup via https://governance.taskhawktech.com governance media billing shield signup https://governance.taskhawktech.com",
       "alternatives": [
         "x402scan/govfiles.dev",
         "x402scan/fov.brij.fi",
@@ -15894,7 +15868,7 @@
       "origins": [
         "https://gpt55.558686.xyz"
       ],
-      "endpoint_count": 175,
+      "endpoint_count": 179,
       "payment_rails": [
         "x402"
       ],
@@ -16013,31 +15987,6 @@
         "x402scan"
       ],
       "search_text": "x402scan/hash-generator-production.up.railway.app https://hash-generator-production.up.railway.app"
-    },
-    {
-      "fqn": "x402scan/haveibeenpwned.com",
-      "title": "x402scan/haveibeenpwned.com",
-      "description": "Returns the full breach model for a single breach identified by its stable Name value. This endpoint is unauthenticated, but it still requires a user-agent header.",
-      "use_case": "Use for returns the full breach model for a single breach identified by its stable name value. this endpoint is unauthenticated, but it still requires a user-agent head",
-      "categories": [],
-      "service_url": "https://haveibeenpwned.com",
-      "origins": [
-        "https://haveibeenpwned.com"
-      ],
-      "endpoint_count": 17,
-      "payment_rails": [],
-      "guidance_available": false,
-      "sources": [
-        "x402scan"
-      ],
-      "search_text": "x402scan/haveibeenpwned.com returns the full breach model for a single breach identified by its stable name value. this endpoint is unauthenticated, but it still requires a user-agent header. use for returns the full breach model for a single breach identified by its stable name value. this endpoint is unauthenticated, but it still requires a user-agent head https://haveibeenpwned.com",
-      "alternatives": [
-        "x402scan/x402helper.xyz",
-        "x402scan/property-risk-passport-api.lifebite-app.workers.dev",
-        "mppscan/apibase.pro",
-        "x402scan/api.060504.shop",
-        "x402scan/api.greenwood.financial"
-      ]
     },
     {
       "fqn": "x402scan/health.memoryapi.org",
@@ -17438,7 +17387,7 @@
       "origins": [
         "https://lion-x402.lionmaster-operations.workers.dev"
       ],
-      "endpoint_count": 20,
+      "endpoint_count": 21,
       "payment_rails": [
         "x402"
       ],
@@ -17458,7 +17407,7 @@
     },
     {
       "fqn": "x402scan/lionx402.com",
-      "title": "https://lionx402.com",
+      "title": "x402scan/lionx402.com",
       "description": "One endpoint, multiple live sources (chosen by \"source\" param): base_dex (price/liquidity/volume), token_risk (security/honeypot), defi_yields, wallet_profile, token_holders, base_rpc_read. Payment always $0.005 USDC on Base (even for Ethereum data). Perfect for pre-swap checks, counterparty profiling, market context. Keyless x402. Use with credits for high volume. No API key.",
       "use_case": "Use for one endpoint, multiple live sources (chosen by \"source\" param): base_dex (price/liquidity/volume), token_risk (security/honeypot), defi_yields, wallet_profile, ",
       "categories": [],
@@ -17466,7 +17415,7 @@
       "origins": [
         "https://lionx402.com"
       ],
-      "endpoint_count": 20,
+      "endpoint_count": 21,
       "payment_rails": [
         "x402"
       ],
@@ -18458,10 +18407,10 @@
       "search_text": "x402scan/news.apitoll.cloud latest crypto news and breaking headlines, real-time from cointelegraph. search any topic (bitcoin, ethereum, defi, regulation, market sentiment) or pull the live feed, with full article text across 14 languages. built for agents tracking crypto markets, tokens, and web3. paid api for news, crypto, market-intelligence, cointelegraph, real-time via https://news.apitoll.cloud news crypto market-intelligence cointelegraph real-time https://news.apitoll.cloud",
       "alternatives": [
         "x402scan/x402.ottoai.services",
+        "x402scan/ged-x402.jvalamis.workers.dev",
         "x402scan/relayer.atriumhermes.tech",
         "x402scan/semagram.io",
-        "x402scan/api.shoal.xyz",
-        "x402scan/agentforge-taupe.vercel.app"
+        "x402scan/api.shoal.xyz"
       ]
     },
     {
@@ -18833,14 +18782,14 @@
     {
       "fqn": "x402scan/orbisapi.com",
       "title": "x402scan/orbisapi.com",
-      "description": "Weighted survey scoring from multi-question responses: normalized score 0-100, A-F grade, strongest dimensions, areas for improvement. eNPS calculation from promoter/detractor counts. Bulk team compar\n\nRequires x402 payment of 0.01 USDC per call. No API key needed — pay with Base or Solana USDC.",
+      "description": "Build A/B test hypotheses with sample size calculation, success criteria, and test hygiene checklist. Accepts problem statement, proposed change, baseline rate, and MDE and returns a structured hypoth\n\nRequires x402 payment of 0.002 USDC per call. No API key needed — pay with Base or Solana USDC.",
       "use_case": "Paid API for x402-apis via https://orbisapi.com",
       "categories": [],
       "service_url": "https://orbisapi.com",
       "origins": [
         "https://orbisapi.com"
       ],
-      "endpoint_count": 2042,
+      "endpoint_count": 1993,
       "payment_rails": [
         "x402"
       ],
@@ -18848,13 +18797,13 @@
       "sources": [
         "x402scan"
       ],
-      "search_text": "x402scan/orbisapi.com weighted survey scoring from multi-question responses: normalized score 0-100, a-f grade, strongest dimensions, areas for improvement. enps calculation from promoter/detractor counts. bulk team compar\n\nrequires x402 payment of 0.01 usdc per call. no api key needed — pay with base or solana usdc. paid api for x402-apis via https://orbisapi.com x402-apis https://orbisapi.com",
+      "search_text": "x402scan/orbisapi.com build a/b test hypotheses with sample size calculation, success criteria, and test hygiene checklist. accepts problem statement, proposed change, baseline rate, and mde and returns a structured hypoth\n\nrequires x402 payment of 0.002 usdc per call. no api key needed — pay with base or solana usdc. paid api for x402-apis via https://orbisapi.com x402-apis https://orbisapi.com",
       "alternatives": [
-        "x402scan/api.getaiscan.app",
-        "x402scan/getaiscan.app",
+        "x402scan/testing.cn2.ai",
         "x402scan/anthropic.cn2.ai",
         "x402scan/openai.cn2.ai",
-        "x402scan/testing.cn2.ai"
+        "x402scan/api.getaiscan.app",
+        "x402scan/getaiscan.app"
       ]
     },
     {
@@ -19696,10 +19645,10 @@
       "search_text": "x402scan/pqs.onchainintel.net detect prompt injection (instruction override, role hijack, data exfiltration, delimiter attacks) and return a sanitized prompt paid api for fix_injection, paid, evm, grade, preflight, solana, venice_proxy, score via https://pqs.onchainintel.net fix_injection paid evm grade preflight solana venice_proxy score https://pqs.onchainintel.net",
       "alternatives": [
         "x402scan/promptqualityscore.com",
+        "x402scan/x402.charliemorrison.dev",
         "x402scan/hmo.payapi.market",
         "x402scan/valoria.net",
-        "x402scan/api.deepnets.ai",
-        "x402scan/formo.x402.paysponge.com"
+        "x402scan/api.deepnets.ai"
       ]
     },
     {
@@ -19883,10 +19832,10 @@
       "search_text": "x402scan/promptqualityscore.com detect prompt injection (instruction override, role hijack, data exfiltration, delimiter attacks) and return a sanitized prompt paid api for fix_injection, paid, evm, grade, preflight, solana, venice_proxy, score via https://promptqualityscore.com fix_injection paid evm grade preflight solana venice_proxy score https://promptqualityscore.com",
       "alternatives": [
         "x402scan/pqs.onchainintel.net",
+        "x402scan/x402.charliemorrison.dev",
         "x402scan/hmo.payapi.market",
         "x402scan/valoria.net",
-        "x402scan/api.deepnets.ai",
-        "x402scan/formo.x402.paysponge.com"
+        "x402scan/api.deepnets.ai"
       ]
     },
     {
@@ -20434,10 +20383,10 @@
       "search_text": "x402scan/relaynetwork.ai paid endpoint (0.005 usdc via x402). returns open contract offers with seller metadata. supports price/deliverable/sort filters and offset pagination. paid api for contracts, x402, feed, analytics via https://relaynetwork.ai contracts x402 feed analytics https://relaynetwork.ai",
       "alternatives": [
         "x402scan/api.node4all.com",
-        "x402scan/the-stall.intuitek.ai",
         "x402scan/clawhunter.fun",
         "x402scan/probe.onchainintel.net",
-        "x402scan/amalgix.io"
+        "x402scan/amalgix.io",
+        "x402scan/v.botpay.network"
       ]
     },
     {
@@ -20621,31 +20570,6 @@
       ]
     },
     {
-      "fqn": "x402scan/restcountries.com",
-      "title": "x402scan/restcountries.com",
-      "description": "Returns a paginated list of countries. Supports full-text search via q, per-property filter chains (e.g. ?region=Europe&landlocked=1), pagination via limit/offset, and response shaping via response_fields / response_fields_omit. Per-property filters use any searchable field name as a query parameter; see https://restcountries.com/docs#fields for the full list.",
-      "use_case": "Paid API for countries, aggregates via https://restcountries.com",
-      "categories": [],
-      "service_url": "https://restcountries.com",
-      "origins": [
-        "https://restcountries.com"
-      ],
-      "endpoint_count": 5,
-      "payment_rails": [],
-      "guidance_available": false,
-      "sources": [
-        "x402scan"
-      ],
-      "search_text": "x402scan/restcountries.com returns a paginated list of countries. supports full-text search via q, per-property filter chains (e.g. ?region=europe&landlocked=1), pagination via limit/offset, and response shaping via response_fields / response_fields_omit. per-property filters use any searchable field name as a query parameter; see https://restcountries.com/docs#fields for the full list. paid api for countries, aggregates via https://restcountries.com countries aggregates https://restcountries.com",
-      "alternatives": [
-        "x402scan/hmo.payapi.market",
-        "x402scan/relaynetwork.ai",
-        "x402scan/api.regressionincoming.fyi",
-        "x402scan/hub.atxp.ai",
-        "x402scan/api.shoal.xyz"
-      ]
-    },
-    {
       "fqn": "x402scan/rng.sociologic.ai",
       "title": "x402scan/rng.sociologic.ai",
       "description": "Cryptographically fair coin flip returning heads or tails. Use count for multiple flips in one call  - price scales linearly ($0.02 per flip).",
@@ -20684,7 +20608,7 @@
       "origins": [
         "https://rugguard.redfleet.fr"
       ],
-      "endpoint_count": 15,
+      "endpoint_count": 20,
       "payment_rails": [
         "x402"
       ],
@@ -20739,11 +20663,11 @@
       ],
       "search_text": "x402scan/run402.com lists all x402-gated resources and their prices for automated discovery. paid api for health, operator console, agent, controlplane, org, project transfers, ai, apply via https://run402.com health operator console agent controlplane org project transfers ai apply https://run402.com",
       "alternatives": [
-        "x402scan/the-stall.intuitek.ai",
         "x402scan/agent-memory-api-bix5.onrender.com",
         "x402scan/valoria.net",
         "x402scan/api.strale.io",
-        "x402scan/trust402.aztecbeacon.uk"
+        "x402scan/trust402.aztecbeacon.uk",
+        "x402scan/probe.onchainintel.net"
       ]
     },
     {
@@ -21187,9 +21111,9 @@
       "alternatives": [
         "x402scan/crypto.apitoll.cloud",
         "x402scan/news.apitoll.cloud",
+        "x402scan/api.aitrailblazer.net",
         "x402scan/orionkr.xyz",
-        "x402scan/relayer.atriumhermes.tech",
-        "x402scan/api.aitrailblazer.net"
+        "x402scan/relayer.atriumhermes.tech"
       ]
     },
     {
@@ -21216,8 +21140,8 @@
         "x402scan/skim402.com",
         "x402scan/amalgix.io",
         "x402scan/api.netbrainis.co.za",
-        "x402scan/the-stall.intuitek.ai",
-        "x402scan/x402.quickintel.io"
+        "x402scan/x402.quickintel.io",
+        "x402scan/agent-security-gateway.onrender.com"
       ]
     },
     {
@@ -21984,8 +21908,8 @@
         "x402scan/www.stablebrowser.dev",
         "x402scan/rektwatch.dev",
         "x402scan/stableschedule.dev",
-        "x402scan/the-stall.intuitek.ai",
-        "x402scan/fov.brij.fi"
+        "x402scan/fov.brij.fi",
+        "x402scan/pricing-matrix-api.lewis-6d8.workers.dev"
       ]
     },
     {
@@ -22100,7 +22024,7 @@
       "origins": [
         "https://stableenrich.dev"
       ],
-      "endpoint_count": 35,
+      "endpoint_count": 34,
       "payment_rails": [
         "mpp",
         "x402"
@@ -22623,9 +22547,9 @@
       "alternatives": [
         "x402scan/agentcash.minerva.io",
         "x402scan/stableschedule.dev",
-        "x402scan/the-stall.intuitek.ai",
         "x402scan/stable-deepline.dev",
-        "x402scan/stablefinance.dev"
+        "x402scan/stablefinance.dev",
+        "x402scan/formo.x402.paysponge.com"
       ]
     },
     {
@@ -23100,7 +23024,7 @@
       "origins": [
         "https://stockwaves.net"
       ],
-      "endpoint_count": 15,
+      "endpoint_count": 16,
       "payment_rails": [
         "x402"
       ],
@@ -23626,34 +23550,6 @@
         "x402scan"
       ],
       "search_text": "x402scan/text-translator-production.up.railway.app https://text-translator-production.up.railway.app"
-    },
-    {
-      "fqn": "x402scan/the-stall.intuitek.ai",
-      "title": "x402scan/the-stall.intuitek.ai",
-      "description": "Returns all capabilities with names, paths, prices, descriptions, and input/output schemas.",
-      "use_case": "Paid API for capabilities via https://the-stall.intuitek.ai",
-      "categories": [],
-      "service_url": "https://the-stall.intuitek.ai",
-      "origins": [
-        "https://the-stall.intuitek.ai"
-      ],
-      "endpoint_count": 215,
-      "payment_rails": [
-        "x402"
-      ],
-      "min_price_usd": 0.001,
-      "guidance_available": false,
-      "sources": [
-        "x402scan"
-      ],
-      "search_text": "x402scan/the-stall.intuitek.ai returns all capabilities with names, paths, prices, descriptions, and input/output schemas. paid api for capabilities via https://the-stall.intuitek.ai capabilities https://the-stall.intuitek.ai",
-      "alternatives": [
-        "x402scan/valoria.net",
-        "x402scan/api.node4all.com",
-        "x402scan/formo.x402.paysponge.com",
-        "x402scan/fov.brij.fi",
-        "x402scan/rektwatch.dev"
-      ]
     },
     {
       "fqn": "x402scan/theagentbillboard.com",
@@ -24707,9 +24603,9 @@
       "alternatives": [
         "x402scan/oracle.the-undesirables.com",
         "x402scan/api.regressionincoming.fyi",
-        "x402scan/the-stall.intuitek.ai",
         "x402scan/true402.dev",
-        "x402scan/api.myceliasignal.com"
+        "x402scan/api.myceliasignal.com",
+        "x402scan/agentforge-taupe.vercel.app"
       ]
     },
     {
@@ -25314,10 +25210,10 @@
       "search_text": "x402scan/web-production-18a32.up.railway.app looks up the local authority for a uk postcode and calculates estimated council tax for all bands a-h using statutory multipliers. uses known band d rates for ~60 major authorities with a national average fallback. paid api for weather, company data, property data, vehicle data, finance, system via https://web-production-18a32.up.railway.app weather company data property data vehicle data finance system https://web-production-18a32.up.railway.app",
       "alternatives": [
         "x402scan/hmo.payapi.market",
-        "x402scan/the-stall.intuitek.ai",
         "x402scan/valoria.net",
         "x402scan/agentforge-taupe.vercel.app",
-        "x402scan/remit-compare.up.railway.app"
+        "x402scan/remit-compare.up.railway.app",
+        "x402scan/x402scout.com"
       ]
     },
     {
@@ -26196,8 +26092,8 @@
         "x402scan/stablebrowser.dev",
         "x402scan/rektwatch.dev",
         "x402scan/stableschedule.dev",
-        "x402scan/the-stall.intuitek.ai",
-        "x402scan/fov.brij.fi"
+        "x402scan/fov.brij.fi",
+        "x402scan/pricing-matrix-api.lewis-6d8.workers.dev"
       ]
     },
     {
@@ -26415,9 +26311,9 @@
       "alternatives": [
         "x402scan/api.predictionmarketdata.io",
         "x402scan/api.deepnets.ai",
-        "x402scan/the-stall.intuitek.ai",
         "x402scan/dripstack.com",
-        "x402scan/dripstack.xyz"
+        "x402scan/dripstack.xyz",
+        "x402scan/x402.quickintel.io"
       ]
     },
     {
@@ -26496,11 +26392,11 @@
       ],
       "search_text": "x402scan/x402-earner.vercel.app blends live prediction-market consensus (polymarket championship odds — the wisdom of the crowds) with a poisson goals model (data science) to output win/draw/loss probabilities, expected goals and the most likely scoreline. pass home & away to predict a matchup, or no params to predict all upcoming fixtures. paid api for worldcup, prediction via https://x402-earner.vercel.app worldcup prediction https://x402-earner.vercel.app",
       "alternatives": [
-        "x402scan/the-stall.intuitek.ai",
         "x402scan/hmo.payapi.market",
         "x402scan/valoria.net",
         "x402scan/stableapify.dev",
-        "x402scan/web-production-18a32.up.railway.app"
+        "x402scan/web-production-18a32.up.railway.app",
+        "x402scan/x402scout.com"
       ]
     },
     {
@@ -27023,6 +26919,34 @@
       ]
     },
     {
+      "fqn": "x402scan/x402.charliemorrison.dev",
+      "title": "x402scan/x402.charliemorrison.dev",
+      "description": "Score a GitHub repo's README, description, topics, homepage and metadata and return a 0-100 score, a grade, and concrete fixes. Input: owner, repo.",
+      "use_case": "Paid API for github, seo, audit, developer-tools, reader, scraping, rag, web via https://x402.charliemorrison.dev",
+      "categories": [],
+      "service_url": "https://x402.charliemorrison.dev",
+      "origins": [
+        "https://x402.charliemorrison.dev"
+      ],
+      "endpoint_count": 3,
+      "payment_rails": [
+        "x402"
+      ],
+      "min_price_usd": 0.002,
+      "guidance_available": false,
+      "sources": [
+        "x402scan"
+      ],
+      "search_text": "x402scan/x402.charliemorrison.dev score a github repo's readme, description, topics, homepage and metadata and return a 0-100 score, a grade, and concrete fixes. input: owner, repo. paid api for github, seo, audit, developer-tools, reader, scraping, rag, web via https://x402.charliemorrison.dev github seo audit developer-tools reader scraping rag web https://x402.charliemorrison.dev",
+      "alternatives": [
+        "x402scan/x402audit.dev",
+        "x402scan/store.agentexchange.work",
+        "x402scan/pqs.onchainintel.net",
+        "x402scan/promptqualityscore.com",
+        "x402scan/stablecoin-policy.vercel.app"
+      ]
+    },
+    {
       "fqn": "x402scan/x402.clashofcoins.com",
       "title": "x402scan/x402.clashofcoins.com",
       "description": "Pays the dedicated onchain agent wallet via the canonical x402 funding route. Create the order first, then submit paid funding for that orderId. Unpaid discovery probes may send an empty JSON body to receive a canonical payment challenge, but real funding and paid retries must include orderId. By default, the service auto-executes treasury sweep and purchase finalization after successful funding.",
@@ -27285,7 +27209,7 @@
       "origins": [
         "https://x402.onchainexpat.com"
       ],
-      "endpoint_count": 106,
+      "endpoint_count": 107,
       "payment_rails": [
         "x402"
       ],
@@ -27340,11 +27264,11 @@
       "origins": [
         "https://x402.payperbyte.io"
       ],
-      "endpoint_count": 22,
+      "endpoint_count": 25,
       "payment_rails": [
         "x402"
       ],
-      "min_price_usd": 0.002,
+      "min_price_usd": 0.003,
       "guidance_available": true,
       "sources": [
         "x402scan"
@@ -27566,8 +27490,8 @@
         "x402scan/fov.brij.fi",
         "x402scan/store.agentexchange.work",
         "x402scan/x402geo.com",
-        "x402scan/api.regressionincoming.fyi",
-        "x402scan/gleaming-cassata-d41682.netlify.app"
+        "x402scan/x402.charliemorrison.dev",
+        "x402scan/api.regressionincoming.fyi"
       ]
     },
     {

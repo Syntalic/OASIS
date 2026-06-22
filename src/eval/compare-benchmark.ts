@@ -128,6 +128,8 @@ async function evaluateMppCatalogLive(queries: EvalQuery[]): Promise<BenchmarkRe
       literal_rank: rank,
       discover_hit: rank === 1,
       discover_rank: rank,
+      select_hit: false,
+      select_rank: null,
       top_label: hits[0]?.label ?? null,
     });
   }

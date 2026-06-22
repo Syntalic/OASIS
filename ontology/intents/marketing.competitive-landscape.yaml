@@ -13,6 +13,21 @@ aliases:
   - competitive shelf pricing
   - category market scan
   - who competes in this product space
-related:
-  - marketing.brand_tracker
-  - shop.compare_price
+consumes:
+  - entity: ProductCategory
+    role: identifier
+produces:
+  - entity: PriceSignal
+    role: payload
+    cardinality: many
+facets:
+  domain: marketing
+  action: analyze
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: shop.compare_price
+    note: same pricing-intel family, differs by entity granularity (ProductCategory scan vs one Product comparison)
+  - type: sibling_of
+    to: shop.find_deals
+    note: same category pricing-intel family, differs by purpose (competitive scan vs deal surfacing); repoints dangling related marketing.brand_tracker

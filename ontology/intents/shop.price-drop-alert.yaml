@@ -13,6 +13,21 @@ aliases:
   - product price fell lately
   - notify if price dropped
   - check for recent price cuts
-related:
-  - shop.compare_price
-  - shop.track_price_history
+consumes:
+  - entity: Product
+    role: identifier
+produces:
+  - entity: PriceSignal
+    role: payload
+    cardinality: many
+facets:
+  domain: shop
+  action: monitor
+  freshness: recent
+links:
+  - type: sibling_of
+    to: shop.compare_price
+    note: same pricing-intel family, differs by action (monitor for drops vs compare current prices)
+  - type: sibling_of
+    to: shop.track_price_history
+    note: same pricing-intel family, differs by time axis (recent drop vs full history)

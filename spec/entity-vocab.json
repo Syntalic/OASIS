@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://syntalic.com/oasis/spec/entity-vocab.json",
+  "title": "EntityVocab",
+  "description": "Closed controlled vocabulary of typed nouns referenced by intent consumes/produces ports. role ∈ identifier|payload|constraint powers chaining (a payload of A flows into an identifier input of B) and the constraint guard. schema_org is an optional crosswalk. absorbs lists narrower nouns collapsed into this entity.",
+  "spec_version": "0.2.0",
+  "entities": {
+    "Product": { "role": "identifier", "schema_org": ["Product"] },
+    "ProductCategory": { "role": "identifier" },
+    "PriceSignal": {
+      "role": "payload",
+      "schema_org": ["PriceSpecification"],
+      "absorbs": ["PriceQuote", "PriceHistory", "InflationTrend"]
+    },
+    "Money": { "role": "constraint", "schema_org": ["MonetaryAmount"] },
+    "Currency": { "role": "identifier" },
+    "Query": { "role": "identifier" },
+    "Answer": {
+      "role": "payload",
+      "absorbs": ["SearchResults", "CitedAnswer", "ComputedAnswer"]
+    },
+    "SearchResults": { "role": "payload" },
+    "CitedAnswer": { "role": "payload" },
+    "Webpage": { "role": "identifier", "schema_org": ["WebPage"] },
+    "WebContent": { "role": "payload", "schema_org": ["CreativeWork"] },
+    "Document": { "role": "identifier", "schema_org": ["DigitalDocument"] },
+    "StructuredRecord": { "role": "payload" },
+    "Image": { "role": "payload", "schema_org": ["ImageObject"] },
+    "AudioClip": { "role": "payload", "schema_org": ["AudioObject"] },
+    "Text": { "role": "payload", "schema_org": ["Text"] },
+    "Embedding": { "role": "payload" },
+    "Contact": { "role": "identifier", "absorbs": ["EmailAddress", "PhoneNumber"] },
+    "Message": {
+      "role": "payload",
+      "absorbs": ["EmailMessage", "SmsMessage", "Fax", "PhoneCall"]
+    },
+    "Mailbox": { "role": "identifier" },
+    "Location": { "role": "identifier", "schema_org": ["Place"] },
+    "Place": { "role": "payload", "schema_org": ["LocalBusiness"] },
+    "Company": { "role": "payload", "schema_org": ["Organization"] },
+    "Person": { "role": "payload", "schema_org": ["Person"] },
+    "SocialProfile": { "role": "payload" },
+    "MarketQuote": {
+      "role": "payload",
+      "absorbs": ["StockQuote", "CryptoPrice"]
+    },
+    "CryptoAsset": { "role": "identifier" },
+    "WalletAddress": { "role": "identifier" },
+    "BlockchainNetwork": { "role": "identifier" },
+    "Ticker": { "role": "identifier" },
+    "Domain": { "role": "identifier" },
+    "DnsRecord": { "role": "payload" },
+    "IpAddress": { "role": "identifier" }
+  }
+}

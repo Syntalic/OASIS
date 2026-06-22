@@ -14,7 +14,6 @@ export async function loadOntologySources(intentsDir) {
     }
     return intents;
 }
-
 /** @deprecated Use loadOntologySources — bundle capabilities come from materialize step. */
 export async function loadOntology(intentsDir) {
     const sources = await loadOntologySources(intentsDir);

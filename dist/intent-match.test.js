@@ -1,7 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { CURATED_INTENT_IDS, INTENT_MATCHERS, matchEndpointsForIntent } from "./intent-match.js";
-
+import { CURATED_INTENT_IDS, INTENT_MATCHERS, matchEndpointsForIntent, } from "./intent-match.js";
 function ep(partial) {
     return {
         id: "x".repeat(64),
@@ -13,7 +12,6 @@ function ep(partial) {
         ...partial,
     };
 }
-
 describe("intent-match", () => {
     it("defines matchers for all curated intent ids", () => {
         assert.equal(CURATED_INTENT_IDS.length, 47);
@@ -21,7 +19,6 @@ describe("intent-match", () => {
             assert.ok(INTENT_MATCHERS[id], `${id} matcher exists`);
         }
     });
-
     it("matches shop.compare_price by path pattern", () => {
         const hits = matchEndpointsForIntent("shop.compare_price", [
             ep({
@@ -33,7 +30,6 @@ describe("intent-match", () => {
         ]);
         assert.equal(hits.length, 1);
     });
-
     it("matches web.screenshot without vendor origin", () => {
         const hits = matchEndpointsForIntent("web.screenshot", [
             ep({
@@ -45,3 +41,4 @@ describe("intent-match", () => {
         assert.equal(hits.length, 1);
     });
 });
+//# sourceMappingURL=intent-match.test.js.map

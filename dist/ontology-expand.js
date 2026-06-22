@@ -1,4 +1,6 @@
-import { pickPrimaryEndpoints } from "./endpoint-pick.js";
+import { CURATED_INTENT_IDS } from "./intent-match.js";
+import { rankEndpointsNeutral } from "./score-endpoint.js";
+const CURATED_ID_SET = new Set(CURATED_INTENT_IDS);
 function slugify(value) {
     return value
         .toLowerCase()
@@ -44,12 +46,12 @@ export function expandOntologyFromProviders(curated, paySkillsProviders, endpoin
     const curatedOrigins = new Set(curated.flatMap((c) => c.satisfies.map((s) => s.origin.replace(/\/$/, ""))));
     for (const provider of paySkillsProviders) {
         const id = intentIdForProvider(provider);
-        if (existingIds.has(id))
+        if (existingIds.has(id) || CURATED_ID_SET.has(id))
             continue;
         if (curatedOrigins.has(provider.service_url.replace(/\/$/, "")))
             continue;
         const eps = byFqn.get(provider.fqn) ?? [];
-        const primary = pickPrimaryEndpoints(eps, { provider, max: 3 });
+        const primary = rankEndpointsNeutral(eps, 3);
         if (!primary.length)
             continue;
         const aliases = [
@@ -61,11 +63,10 @@ export function expandOntologyFromProviders(curated, paySkillsProviders, endpoin
             label: provider.title,
             description: provider.description ?? provider.use_case,
             aliases,
-            satisfies: primary.map((ep, i) => ({
+            satisfies: primary.map((ep) => ({
                 origin: ep.origin,
                 method: ep.method,
                 path: ep.path,
-                confidence: i === 0 ? "primary" : "secondary",
             })),
         });
         existingIds.add(id);
@@ -81,9 +82,9 @@ export function expandOntologyFromProviders(curated, paySkillsProviders, endpoin
     }
     for (const [serviceId, eps] of mppByService) {
         const id = intentIdForMpp(serviceId, eps[0]?.category);
-        if (existingIds.has(id))
+        if (existingIds.has(id) || CURATED_ID_SET.has(id))
             continue;
-        const primary = pickPrimaryEndpoints(eps, { serviceId, max: 3 });
+        const primary = rankEndpointsNeutral(eps, 3);
         if (!primary.length)
             continue;
         const title = eps[0]?.provider_title ?? serviceId;
@@ -93,17 +94,17 @@ export function expandOntologyFromProviders(curated, paySkillsProviders, endpoin
             label: title,
             description: desc,
             aliases: aliasesFromText(desc, title, serviceId.replace(/-/g, " "), eps[0]?.category),
-            satisfies: primary.map((ep, i) => ({
+            satisfies: primary.map((ep) => ({
                 origin: ep.origin,
                 method: ep.method,
                 path: ep.path,
-                confidence: i === 0 ? "primary" : "secondary",
             })),
         });
         existingIds.add(id);
     }
     return [...curated, ...generated];
 }
+/** @deprecated Curated intents use intent-match.ts at build time. */
 const KEYWORD_INTENTS = [
     {
         id: "comms.agent_inbox",
@@ -192,7 +193,8 @@ const KEYWORD_INTENTS = [
         id: "travel.place_reviews",
         label: "Look up travel reviews and places",
         aliases: ["tripadvisor", "travel reviews", "place reviews"],
-        match: (ep) => /tripadvisor|travel|review/i.test(`${ep.summary} ${ep.provider_fqn ?? ""}`),
+        match: (ep) => /tripadvisor/i.test(`${ep.origin} ${ep.provider_fqn ?? ""}`) ||
+            /\/api\/v1\/location/i.test(ep.path),
     },
     {
         id: "realestate.property_lookup",
@@ -201,53 +203,117 @@ const KEYWORD_INTENTS = [
         match: (ep) => /rentcast|property|rental/i.test(`${ep.summary} ${ep.provider_fqn ?? ""}`),
     },
 ];
-export function expandOntologyFromKeywords(intents, endpoints) {
-    const existingIds = new Set(intents.map((i) => i.id));
-    const generated = [];
-    for (const template of KEYWORD_INTENTS) {
-        if (existingIds.has(template.id))
-            continue;
-        const matches = endpoints.filter(template.match);
-        const primary = pickPrimaryEndpoints(matches, { max: 3 });
-        if (!primary.length)
-            continue;
-        generated.push({
-            id: template.id,
-            label: template.label,
-            aliases: template.aliases,
-            satisfies: primary.map((ep, i) => ({
-                origin: ep.origin,
-                method: ep.method,
-                path: ep.path,
-                confidence: i === 0 ? "primary" : "secondary",
-            })),
-        });
-        existingIds.add(template.id);
-    }
-    return [...intents, ...generated];
+/** @deprecated Replaced by materializeCuratedIntents + intent-match.ts */
+export function expandOntologyFromKeywords(intents, _endpoints) {
+    return intents;
 }
+/** Alias/label terms an intent contributes to the substring binder. */
+function intentBindingTerms(intent) {
+    return [intent.label, intent.description, ...(intent.aliases ?? [])]
+        .filter(Boolean)
+        .map((t) => t.toLowerCase())
+        .filter((t) => t.length >= 5);
+}
+function endpointBindingCorpus(ep) {
+    return `${ep.search_text ?? ""} ${ep.summary ?? ""} ${ep.path ?? ""}`.toLowerCase();
+}
+/**
+ * Tag previously-unbound endpoints with their best-matching curated/generated
+ * intent via the alias/label substring signal.
+ *
+ * Determinism: the legacy implementation was *first-match-wins by intent array
+ * order* — whichever intent happened to iterate first claimed a contested
+ * endpoint. This version scores every candidate intent for each unbound endpoint
+ * and assigns the single best one, so the result no longer depends on iteration
+ * order. The eligibility rule is unchanged (an endpoint is bound iff ≥1 intent
+ * term substring-hits its corpus), so the *set* of bound endpoints is identical
+ * to the legacy binder — only the winner among contested matches becomes a
+ * deterministic best-score pick instead of an arbitrary order-dependent one.
+ *
+ * Score = number of distinct matching terms; ties break toward the more specific
+ * (longer total matched-term length), then curated intents over generated ones
+ * (curated aliases are vetted, so this reduces mis-binds), then the
+ * lexicographically smallest intent id for a fully stable, reproducible result.
+ */
 export function inferCapabilityLinks(intents, endpointIndex) {
+    const candidates = intents.map((intent) => ({
+        id: intent.id,
+        curated: CURATED_ID_SET.has(intent.id),
+        terms: intentBindingTerms(intent),
+    }));
     let linked = 0;
-    for (const intent of intents) {
-        const terms = [
-            intent.label,
-            intent.description,
-            ...(intent.aliases ?? []),
-        ]
-            .filter(Boolean)
-            .map((t) => t.toLowerCase())
-            .filter((t) => t.length >= 5);
-        for (const [, ep] of endpointIndex) {
-            if (ep.capabilities?.length)
+    for (const [, ep] of endpointIndex) {
+        if (ep.capabilities?.length)
+            continue;
+        const corpus = endpointBindingCorpus(ep);
+        let best;
+        for (const cand of candidates) {
+            let matches = 0;
+            let coverage = 0;
+            for (const term of cand.terms) {
+                if (corpus.includes(term)) {
+                    matches += 1;
+                    coverage += term.length;
+                }
+            }
+            if (matches === 0)
                 continue;
-            const corpus = `${ep.search_text ?? ""} ${ep.summary ?? ""} ${ep.path ?? ""}`.toLowerCase();
-            const hit = terms.some((term) => corpus.includes(term));
-            if (!hit)
-                continue;
-            ep.capabilities = [intent.id];
-            linked += 1;
+            if (!best ||
+                matches > best.matches ||
+                (matches === best.matches && coverage > best.coverage) ||
+                (matches === best.matches &&
+                    coverage === best.coverage &&
+                    cand.curated &&
+                    !best.curated) ||
+                (matches === best.matches &&
+                    coverage === best.coverage &&
+                    cand.curated === best.curated &&
+                    cand.id < best.id)) {
+                best = { id: cand.id, matches, coverage, curated: cand.curated };
+            }
         }
+        if (!best)
+            continue;
+        ep.capabilities = [best.id];
+        linked += 1;
     }
     return linked;
+}
+/**
+ * Endpoints that bound to no intent (after curated satisfies + inferred links).
+ * Returned for visibility / coverage reporting; does not mutate anything.
+ */
+export function unboundEndpoints(endpoints) {
+    return [...endpoints].filter((ep) => !ep.capabilities?.length);
+}
+/** Count of endpoints that bound to no intent. */
+export function countUnboundEndpoints(endpoints) {
+    let n = 0;
+    for (const ep of endpoints)
+        if (!ep.capabilities?.length)
+            n += 1;
+    return n;
+}
+/**
+ * OPTIONAL precision signal: does an endpoint's derived facets agree with an
+ * intent's authored facets? Returns `true` when nothing contradicts (absent
+ * facets never contradict, so this is permissive by design). Intended as an
+ * *additional* gate on top of the existing binder — NOT a replacement — so it
+ * must never widen or change the default binding set on its own.
+ */
+export function facetGateAgrees(intentFacets, endpointFacets) {
+    if (!intentFacets || !endpointFacets)
+        return true;
+    if (intentFacets.domain &&
+        endpointFacets.domain &&
+        intentFacets.domain !== endpointFacets.domain) {
+        return false;
+    }
+    if (intentFacets.modality?.length && endpointFacets.modality?.length) {
+        const epModality = new Set(endpointFacets.modality);
+        if (!intentFacets.modality.some((m) => epModality.has(m)))
+            return false;
+    }
+    return true;
 }
 //# sourceMappingURL=ontology-expand.js.map

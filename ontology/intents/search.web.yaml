@@ -14,3 +14,20 @@ aliases:
   - google-style web results
   - recent product announcements search
   - organic SERP results
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: SearchResults
+    role: payload
+    cardinality: many
+facets:
+  domain: search
+  action: search
+  modality:
+    - json
+  freshness: realtime
+links:
+  - type: broader_of
+    to: ai.web_research
+    note: search.web returns raw SERP links; web_research is the narrower cited-answer variant over the same query

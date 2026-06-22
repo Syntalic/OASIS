@@ -15,6 +15,179 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..");
 const SPEC_VERSION = "0.1.0";
 const INDEX_VERSION = "0.1.0";
+/**
+ * Map an endpoint `category` (provider-supplied) onto a facet domain. Categories
+ * use a slightly different vocabulary than the facet enum, so a few are aliased.
+ */
+const CATEGORY_DOMAIN = {
+    shop: "shop",
+    shopping: "shop",
+    ai: "ai",
+    ai_ml: "ai",
+    data: "data",
+    web: "web",
+    comms: "comms",
+    messaging: "comms",
+    finance: "finance",
+    maps: "maps",
+    travel: "travel",
+    realestate: "realestate",
+    social: "social",
+    media: "media",
+    marketing: "marketing",
+    analyst: "analyst",
+    cloud: "cloud",
+    compute: "compute",
+    devtools: "devtools",
+    storage: "storage",
+    search: "search",
+    crypto: "crypto",
+    blockchain: "crypto",
+    translation: "data",
+    security: "devtools",
+};
+/**
+ * Domain inference by keyword over the endpoint corpus. Ordered most-specific
+ * first; the first axis whose pattern matches wins. Vocabulary is grounded in
+ * the facet `domain` enum.
+ */
+const DOMAIN_KEYWORDS = [
+    ["crypto", /\b(crypto|blockchain|onchain|on-chain|wallet|token|erc20|evm|solana|ethereum|rpc|web3)\b/],
+    ["finance", /\b(stock|ticker|equity|forex|exchange[- ]?rate|quote|market|fmv|sec filing)\b/],
+    ["shop", /\b(price|retail|product|sku|deal|cart|checkout|store|merchant|coupon)\b/],
+    ["comms", /\b(email|sms|fax|inbox|mailbox|voice call|messaging|send a message)\b/],
+    ["maps", /\b(map|geocode|geocoding|places?|route|directions|latitude|longitude|address lookup)\b/],
+    ["travel", /\b(travel|hotel|flight|reviews?|itinerary|booking)\b/],
+    ["realestate", /\b(real estate|property|listing|mls|rent|mortgage|zillow)\b/],
+    ["social", /\b(influencer|follower|social profile|instagram|tiktok|twitter|x\.com)\b/],
+    ["media", /\b(media|video|podcast|broadcast|streaming)\b/],
+    ["marketing", /\b(marketing|campaign|brand|competitive|seo|advertis)\b/],
+    ["search", /\b(serp|search engine|google search|web search|results page)\b/],
+    ["web", /\b(scrape|crawl|markdown|screenshot|webpage|render page|html|web page)\b/],
+    ["ai", /\b(llm|completion|prompt|embedding|generate|ocr|transcribe|speech|text-to|image generat|chat model)\b/],
+    ["cloud", /\b(domain register|dns|provision|hosting|deploy|nameserver)\b/],
+    ["compute", /\b(compute|sandbox|execute code|serverless|function run)\b/],
+    ["devtools", /\b(captcha|proxy|webhook|developer tool|api key)\b/],
+    ["storage", /\b(storage|bucket|file upload|object store|cdn)\b/],
+    ["analyst", /\b(inflation|index|trend|analytics|forecast|aggregate)\b/],
+    ["data", /\b(lookup|enrich|validate|whois|ip|weather|translate|person|company|job)\b/],
+];
+/**
+ * Output entity inference by keyword. Result is an entity name from
+ * spec/entity-vocab.json (closed vocabulary).
+ */
+const OUTPUT_ENTITY_KEYWORDS = [
+    ["PriceSignal", /\b(price|deal|cheapest|lowest price|inflation|price history)\b/],
+    ["MarketQuote", /\b(stock quote|spot price|exchange rate|ticker|market quote)\b/],
+    ["CitedAnswer", /\b(cited|citation|with sources|research answer)\b/],
+    ["SearchResults", /\b(serp|search results|results page|web search)\b/],
+    ["WebContent", /\b(scrape|markdown|html|page content|article text)\b/],
+    ["Image", /\b(screenshot|image|render|png|jpeg|photo generat)\b/],
+    ["AudioClip", /\b(speech|tts|text-to-speech|audio|voice synth)\b/],
+    ["Text", /\b(transcribe|speech-to-text|ocr|translate|extract text)\b/],
+    ["StructuredRecord", /\b(document extract|structured|fields|parse|json output)\b/],
+    ["Embedding", /\b(embedding|vector|embed text)\b/],
+    ["Message", /\b(send (an )?(email|sms|fax)|deliver message|outbound)\b/],
+    ["Place", /\b(places?|local business|reviews?|venue)\b/],
+    ["Company", /\b(company|organization|firm|business enrich)\b/],
+    ["Person", /\b(person|people search|contact enrich)\b/],
+    ["SocialProfile", /\b(influencer|social profile|follower)\b/],
+    ["DnsRecord", /\b(whois|dns|nameserver|domain record)\b/],
+    ["Answer", /\b(answer|compute answer|llm|completion|chat)\b/],
+];
+/**
+ * Primary (input) entity inference by keyword over path + inputs. Result is an
+ * entity name from the closed vocabulary.
+ */
+const PRIMARY_ENTITY_KEYWORDS = [
+    ["Webpage", /\b(url|webpage|web page|website|scrape|crawl|render)\b/],
+    ["Document", /\b(document|pdf|file extract|invoice)\b/],
+    ["Image", /\b(image|photo|ocr|screenshot input)\b/],
+    ["AudioClip", /\b(audio|speech|recording|transcribe)\b/],
+    ["Product", /\b(product|sku|item|airpods|asin)\b/],
+    ["Ticker", /\b(ticker|symbol|stock)\b/],
+    ["CryptoAsset", /\b(coin|crypto|token symbol)\b/],
+    ["WalletAddress", /\b(wallet|address balance|0x)\b/],
+    ["Currency", /\b(currency|exchange rate|fx)\b/],
+    ["Contact", /\b(email address|phone number|recipient)\b/],
+    ["Location", /\b(location|address|geocode|lat|lng|coordinates)\b/],
+    ["Domain", /\b(domain|whois|dns)\b/],
+    ["IpAddress", /\bip\b|\bip address\b/],
+    ["Company", /\b(company|organization|firm)\b/],
+    ["Person", /\b(person|people|name lookup)\b/],
+    ["Query", /\b(query|search|q=|keyword|prompt)\b/],
+];
+const MODALITY_KEYWORDS = [
+    ["markdown", /\bmarkdown\b/],
+    ["html", /\bhtml\b/],
+    ["image", /\b(image|screenshot|png|jpeg|photo)\b/],
+    ["audio", /\b(audio|speech|voice|tts)\b/],
+    ["citations", /\b(citation|cited|sources)\b/],
+    ["vector", /\b(embedding|vector)\b/],
+    ["timeseries", /\b(history|time series|timeseries|historical|trend)\b/],
+    ["json", /\b(json|structured|fields)\b/],
+    ["text", /\b(text|markdown|transcribe|translate)\b/],
+];
+function firstMatch(corpus, table) {
+    for (const [value, pattern] of table) {
+        if (pattern.test(corpus))
+            return value;
+    }
+    return undefined;
+}
+/**
+ * Derive cached facets for an endpoint from its path + summary + description +
+ * inputs + category. Honest framing: this caches the existing path/summary
+ * signal as structured facets — it is not new information. Domain/entity/modality
+ * vocabulary is the same closed set used by curated intents.
+ */
+export function deriveEndpointFacets(ep) {
+    const corpus = [
+        ep.path,
+        ep.summary,
+        ep.description ?? "",
+        (ep.inputs ?? []).join(" "),
+        ep.category ?? "",
+    ]
+        .join(" ")
+        .toLowerCase();
+    const domain = (ep.category ? CATEGORY_DOMAIN[ep.category.toLowerCase()] : undefined) ??
+        firstMatch(corpus, DOMAIN_KEYWORDS);
+    const primary_entity = firstMatch(corpus, PRIMARY_ENTITY_KEYWORDS);
+    const output_entity = firstMatch(corpus, OUTPUT_ENTITY_KEYWORDS);
+    const modality = MODALITY_KEYWORDS.filter(([, re]) => re.test(corpus)).map(([m]) => m);
+    const facets = {};
+    if (domain)
+        facets.domain = domain;
+    if (primary_entity)
+        facets.primary_entity = primary_entity;
+    if (output_entity)
+        facets.output_entity = output_entity;
+    if (modality.length)
+        facets.modality = modality;
+    if (Object.keys(facets).length === 0)
+        return ep;
+    return { ...ep, facets };
+}
+/**
+ * Coerce a legacy `related[]` list into `links[]` of type `sibling_of`, merging
+ * with any authored links and dropping duplicate targets (authored links win).
+ * Used during materialization to give the deprecated `related[]` a typed home.
+ */
+export function coerceRelatedToLinks(source) {
+    const authored = source.links ?? [];
+    const seen = new Set(authored.map((l) => `${l.type}:${l.to}`));
+    const coerced = [...authored];
+    for (const to of source.related ?? []) {
+        const key = `sibling_of:${to}`;
+        // Skip if an authored link of any type already targets `to`.
+        if (seen.has(key) || authored.some((l) => l.to === to))
+            continue;
+        seen.add(key);
+        coerced.push({ type: "sibling_of", to });
+    }
+    return coerced.length ? coerced : undefined;
+}
 function mergeEndpointPair(existing, ep) {
     const prefer = isStubEndpoint(existing) && !isStubEndpoint(ep)
         ? ep
@@ -175,7 +348,9 @@ export async function buildIndex(options = {}) {
     }
     linkCapabilitiesToEndpoints(capabilities, endpointIndex);
     const capabilityLinks = inferCapabilityLinks(capabilities, endpointIndex);
-    endpoints = [...endpointIndex.values()].sort((a, b) => `${a.origin}${a.path}`.localeCompare(`${b.origin}${b.path}`));
+    endpoints = [...endpointIndex.values()]
+        .map(deriveEndpointFacets)
+        .sort((a, b) => `${a.origin}${a.path}`.localeCompare(`${b.origin}${b.path}`));
     const origins = new Set(endpoints.map((e) => e.origin));
     const stubEndpoints = endpoints.filter(isStubEndpoint).length;
     const linkedEndpoints = endpoints.filter((e) => e.capabilities?.length).length;

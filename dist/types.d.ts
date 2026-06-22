@@ -9,6 +9,38 @@ export interface PaymentInfo {
     paid: boolean;
     rails: PaymentRail[];
 }
+/** Facet enum axes (mirror spec/ontology-source.schema.json). */
+export type FacetDomain = "shop" | "ai" | "data" | "web" | "comms" | "finance" | "maps" | "travel" | "realestate" | "social" | "media" | "marketing" | "analyst" | "cloud" | "compute" | "devtools" | "storage" | "search" | "crypto";
+export type FacetAction = "search" | "lookup" | "compare" | "extract" | "generate" | "transform" | "validate" | "send" | "provision" | "analyze" | "execute" | "monitor";
+export type FacetModality = "text" | "html" | "markdown" | "json" | "image" | "audio" | "vector" | "citations" | "timeseries";
+export type FacetFreshness = "realtime" | "recent" | "historical" | "forecast" | "static";
+/** Query-side facets on an intent. */
+export interface Facets {
+    domain?: FacetDomain;
+    action?: FacetAction;
+    modality?: FacetModality[];
+    freshness?: FacetFreshness;
+}
+/** Typed input/output noun (entity from spec/entity-vocab.json). */
+export interface Port {
+    entity: string;
+    role?: "identifier" | "payload" | "constraint";
+    format?: string;
+    cardinality?: "one" | "many";
+}
+/** Typed intent↔intent edge. */
+export interface CapabilityLink {
+    type: "alternative_of" | "sibling_of" | "pipes_to" | "narrower_of" | "broader_of";
+    to: string;
+    note?: string;
+}
+/** Derived per-endpoint facets caching the path/summary/inputs signal. */
+export interface EndpointFacets {
+    domain?: FacetDomain;
+    primary_entity?: string;
+    output_entity?: string;
+    modality?: FacetModality[];
+}
 export interface EndpointRecord {
     id: string;
     origin: string;
@@ -23,6 +55,7 @@ export interface EndpointRecord {
     category?: string;
     capabilities?: string[];
     inputs?: string[];
+    facets?: EndpointFacets;
     payment: PaymentInfo;
     guidance_available?: boolean;
     openapi_url?: string;
@@ -34,15 +67,24 @@ export interface SatisfiesRef {
     method: string;
     path: string;
     confidence?: "primary" | "secondary" | "fallback";
+    source?: "facet-gate" | "match_hint" | "curated";
     notes?: string;
 }
-export interface CapabilityIntent {
+/** Task-only ontology source (ontology/intents/*.yaml). No vendor endpoints required. */
+export interface CuratedIntentSource {
     id: string;
     label: string;
     description?: string;
     aliases?: string[];
     schema_org?: string[];
+    consumes?: Port[];
+    produces?: Port[];
+    facets?: Facets;
+    negative_terms?: string[];
+    links?: CapabilityLink[];
     related?: string[];
+}
+export interface CapabilityIntent extends CuratedIntentSource {
     satisfies: SatisfiesRef[];
 }
 export interface PaySkillsProvider {

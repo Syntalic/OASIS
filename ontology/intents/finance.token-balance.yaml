@@ -11,3 +11,21 @@ aliases:
   - ERC1155 token count
   - what tokens does this wallet hold
   - on-chain balance lookup
+consumes:
+  - entity: WalletAddress
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+    format: json
+facets:
+  domain: finance
+  action: lookup
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: finance.onchain_analytics
+    note: same crypto wallet family, differs by action (read holdings vs analyze flows)
+  - type: sibling_of
+    to: compute.blockchain_rpc
+    note: same on-chain family, differs by action (read balance vs execute JSON-RPC)

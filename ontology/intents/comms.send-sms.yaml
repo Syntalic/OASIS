@@ -11,3 +11,22 @@ aliases:
   - SMS to mobile number
   - programmatic text message
   - send text without Twilio
+consumes:
+  - entity: Contact
+    role: identifier
+produces:
+  - entity: Message
+    role: payload
+    format: sms
+facets:
+  domain: comms
+  action: send
+  modality:
+    - text
+links:
+  - type: sibling_of
+    to: comms.voice_call
+    note: same outbound-send family, differs by channel (SMS vs voice call)
+  - type: sibling_of
+    to: comms.agent_inbox
+    note: same comms family; agent_inbox provisions a mailbox rather than sending

@@ -3,7 +3,7 @@ import type { CapabilityIntent, IndexBundle } from "../types.js";
 export declare const LANCE_TABLE = "search";
 export interface LanceRecord {
     id: string;
-    kind: "capability";
+    kind: "capability" | "endpoint";
     text: string;
     vector: number[];
 }

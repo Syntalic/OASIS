@@ -1,6 +1,12 @@
 import { CURATED_INTENT_IDS } from "./intent-match.js";
 import { rankEndpointsNeutral } from "./score-endpoint.js";
-import type { CapabilityIntent, EndpointRecord, PaySkillsProvider } from "./types.js";
+import type {
+  CapabilityIntent,
+  EndpointFacets,
+  EndpointRecord,
+  Facets,
+  PaySkillsProvider,
+} from "./types.js";
 
 const CURATED_ID_SET = new Set<string>(CURATED_INTENT_IDS);
 
@@ -244,29 +250,141 @@ export function expandOntologyFromKeywords(
   return intents;
 }
 
+type LinkableEndpoint = {
+  capabilities?: string[];
+  search_text?: string;
+  summary?: string;
+  path?: string;
+};
+
+/** Alias/label terms an intent contributes to the substring binder. */
+function intentBindingTerms(intent: CapabilityIntent): string[] {
+  return [intent.label, intent.description, ...(intent.aliases ?? [])]
+    .filter(Boolean)
+    .map((t) => t!.toLowerCase())
+    .filter((t) => t.length >= 5);
+}
+
+function endpointBindingCorpus(ep: LinkableEndpoint): string {
+  return `${ep.search_text ?? ""} ${ep.summary ?? ""} ${ep.path ?? ""}`.toLowerCase();
+}
+
+/**
+ * Tag previously-unbound endpoints with their best-matching curated/generated
+ * intent via the alias/label substring signal.
+ *
+ * Determinism: the legacy implementation was *first-match-wins by intent array
+ * order* — whichever intent happened to iterate first claimed a contested
+ * endpoint. This version scores every candidate intent for each unbound endpoint
+ * and assigns the single best one, so the result no longer depends on iteration
+ * order. The eligibility rule is unchanged (an endpoint is bound iff ≥1 intent
+ * term substring-hits its corpus), so the *set* of bound endpoints is identical
+ * to the legacy binder — only the winner among contested matches becomes a
+ * deterministic best-score pick instead of an arbitrary order-dependent one.
+ *
+ * Score = number of distinct matching terms; ties break toward the more specific
+ * (longer total matched-term length), then curated intents over generated ones
+ * (curated aliases are vetted, so this reduces mis-binds), then the
+ * lexicographically smallest intent id for a fully stable, reproducible result.
+ */
 export function inferCapabilityLinks(
   intents: CapabilityIntent[],
-  endpointIndex: Map<string, { capabilities?: string[]; search_text?: string; summary?: string; path?: string }>,
+  endpointIndex: Map<string, LinkableEndpoint>,
 ): number {
-  let linked = 0;
-  for (const intent of intents) {
-    const terms = [
-      intent.label,
-      intent.description,
-      ...(intent.aliases ?? []),
-    ]
-      .filter(Boolean)
-      .map((t) => t!.toLowerCase())
-      .filter((t) => t.length >= 5);
+  const candidates = intents.map((intent) => ({
+    id: intent.id,
+    curated: CURATED_ID_SET.has(intent.id),
+    terms: intentBindingTerms(intent),
+  }));
 
-    for (const [, ep] of endpointIndex) {
-      if (ep.capabilities?.length) continue;
-      const corpus = `${ep.search_text ?? ""} ${ep.summary ?? ""} ${ep.path ?? ""}`.toLowerCase();
-      const hit = terms.some((term) => corpus.includes(term));
-      if (!hit) continue;
-      ep.capabilities = [intent.id];
-      linked += 1;
+  let linked = 0;
+  for (const [, ep] of endpointIndex) {
+    if (ep.capabilities?.length) continue;
+    const corpus = endpointBindingCorpus(ep);
+
+    let best:
+      | { id: string; matches: number; coverage: number; curated: boolean }
+      | undefined;
+
+    for (const cand of candidates) {
+      let matches = 0;
+      let coverage = 0;
+      for (const term of cand.terms) {
+        if (corpus.includes(term)) {
+          matches += 1;
+          coverage += term.length;
+        }
+      }
+      if (matches === 0) continue;
+
+      if (
+        !best ||
+        matches > best.matches ||
+        (matches === best.matches && coverage > best.coverage) ||
+        (matches === best.matches &&
+          coverage === best.coverage &&
+          cand.curated &&
+          !best.curated) ||
+        (matches === best.matches &&
+          coverage === best.coverage &&
+          cand.curated === best.curated &&
+          cand.id < best.id)
+      ) {
+        best = { id: cand.id, matches, coverage, curated: cand.curated };
+      }
     }
+
+    if (!best) continue;
+    ep.capabilities = [best.id];
+    linked += 1;
   }
   return linked;
+}
+
+/**
+ * Endpoints that bound to no intent (after curated satisfies + inferred links).
+ * Returned for visibility / coverage reporting; does not mutate anything.
+ */
+export function unboundEndpoints<T extends { capabilities?: string[] }>(
+  endpoints: Iterable<T>,
+): T[] {
+  return [...endpoints].filter((ep) => !ep.capabilities?.length);
+}
+
+/** Count of endpoints that bound to no intent. */
+export function countUnboundEndpoints(
+  endpoints: Iterable<{ capabilities?: string[] }>,
+): number {
+  let n = 0;
+  for (const ep of endpoints) if (!ep.capabilities?.length) n += 1;
+  return n;
+}
+
+/**
+ * OPTIONAL precision signal: does an endpoint's derived facets agree with an
+ * intent's authored facets? Returns `true` when nothing contradicts (absent
+ * facets never contradict, so this is permissive by design). Intended as an
+ * *additional* gate on top of the existing binder — NOT a replacement — so it
+ * must never widen or change the default binding set on its own.
+ */
+export function facetGateAgrees(
+  intentFacets: Facets | undefined,
+  endpointFacets: EndpointFacets | undefined,
+): boolean {
+  if (!intentFacets || !endpointFacets) return true;
+
+  if (
+    intentFacets.domain &&
+    endpointFacets.domain &&
+    intentFacets.domain !== endpointFacets.domain
+  ) {
+    return false;
+  }
+
+  if (intentFacets.modality?.length && endpointFacets.modality?.length) {
+    const epModality = new Set(endpointFacets.modality);
+    if (!intentFacets.modality.some((m) => epModality.has(m))) return false;
+  }
+
+  return true;
 }

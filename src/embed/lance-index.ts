@@ -13,7 +13,10 @@ export const LANCE_TABLE = "search";
 
 export interface LanceRecord {
   id: string;
-  kind: "capability";
+  // The index is capability-only this round, but the row carries its kind so the
+  // hybrid merger can resolve each vector to the right key namespace (cap:/ep:)
+  // without assuming every row is a capability. Endpoints may be embedded later.
+  kind: "capability" | "endpoint";
   text: string;
   vector: number[];
 }
@@ -25,6 +28,11 @@ export function capabilityEmbedText(cap: CapabilityIntent): string {
     cap.description,
     ...(cap.aliases ?? []),
     ...(cap.schema_org ?? []),
+    // Append output-type signal (produces[] entities + modality) so a re-embed
+    // keys on what the capability returns, not just its phrasing. Additive: an
+    // intent without ports/facets contributes nothing here.
+    ...(cap.produces ?? []).map((p) => p.entity),
+    ...(cap.facets?.modality ?? []),
   ]
     .filter(Boolean)
     .join(" ");

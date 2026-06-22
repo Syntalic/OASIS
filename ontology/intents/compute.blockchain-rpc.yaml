@@ -18,5 +18,14 @@ aliases:
   - query wallet balance on chain
   - pay per request node access
   - remote blockchain node call
-related:
-  - finance.crypto_spot_price
+consumes:
+  - entity: BlockchainNetwork
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+    format: json
+facets:
+  domain: compute
+  action: execute
+  freshness: realtime

@@ -15,5 +15,9 @@ aliases:
   - create mailbox for autonomous bot
   - agent email account setup
   - polling inbox for AI workflows
-related:
-  - comms.send_email
+produces:
+  - entity: Mailbox
+    role: identifier
+facets:
+  domain: comms
+  action: provision

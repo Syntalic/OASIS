@@ -7,15 +7,12 @@ import { curatedCapabilitiesForSearch } from "../curated-search.js";
 import { buildReport, discoverRank, evaluateMode, expectedEndpointId, formatReportTable, rankEndpoint, rankIntent, } from "./discovery-benchmark.js";
 import { selectRank } from "../select-policy.js";
 import { endpointId } from "../id.js";
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");
-
 export async function loadMessyQueries() {
     const raw = await readFile(path.join(PACKAGE_ROOT, "eval", "messy-queries.json"), "utf8");
     return JSON.parse(raw);
 }
-
 export async function evaluateHybridMode(queries, bundle, lanceDir, fusion = {}, reportMode = "full") {
     const mode = reportMode;
     const results = [];
@@ -23,25 +20,21 @@ export async function evaluateHybridMode(queries, bundle, lanceDir, fusion = {},
     const literalRanks = [];
     const discoverRanks = [];
     const selectRanks = [];
-
     for (const q of queries) {
         const hits = await searchHybridWithFallback(q.query, bundle, lanceDir, 10, fusion);
         const expectedId = expectedEndpointId(q.expect_endpoint);
-
         const intentRank = q.expect_intent
             ? rankIntent(hits, q.expect_intent)
             : null;
         const endpointRank = expectedId ? rankEndpoint(hits, expectedId) : null;
         const curated = curatedCapabilitiesForSearch(bundle);
         const discover = discoverRank(hits, q.expect_intent, expectedId, curated, bundle.endpoints);
-
         let select = null;
         if (expectedId && q.expect_intent) {
             const intent = curated.find((c) => c.id === q.expect_intent);
             if (intent)
                 select = selectRank(intent, expectedId, bundle.endpoints);
         }
-
         if (q.expect_intent)
             taskRanks.push(intentRank);
         if (expectedId) {
@@ -49,7 +42,6 @@ export async function evaluateHybridMode(queries, bundle, lanceDir, fusion = {},
             discoverRanks.push(discover);
             selectRanks.push(select);
         }
-
         results.push({
             id: q.id,
             query: q.query,
@@ -65,7 +57,6 @@ export async function evaluateHybridMode(queries, bundle, lanceDir, fusion = {},
             top_label: hits[0]?.label ?? null,
         });
     }
-
     return buildReport(reportMode, queries, results, {
         task: taskRanks,
         literal: literalRanks,
@@ -73,32 +64,25 @@ export async function evaluateHybridMode(queries, bundle, lanceDir, fusion = {},
         select: selectRanks,
     });
 }
-
 export function evaluateKeywordOnly(queries, bundle) {
     return evaluateMode(queries, bundle, "full");
 }
-
 export function compareReports(baseline, hybrid) {
     const improved = [];
     const regressed = [];
-
     for (const b of baseline.results) {
         const h = hybrid.results.find((r) => r.id === b.id);
         if (!h)
             continue;
-
         const bRank = b.discover_rank ?? 999;
         const hRank = h.discover_rank ?? 999;
-
         if (hRank < bRank)
             improved.push(h);
         else if (hRank > bRank)
             regressed.push(h);
     }
-
     return { baseline, hybrid, improved, regressed };
 }
-
 export function formatHybridComparison(cmp, fusion = {}) {
     const kw = fusion.keywordWeight ?? DEFAULT_KEYWORD_WEIGHT;
     const vec = fusion.vectorWeight ?? DEFAULT_VECTOR_WEIGHT;
@@ -114,7 +98,6 @@ export function formatHybridComparison(cmp, fusion = {}) {
         `Improved: ${cmp.improved.length} queries`,
         `Regressed: ${cmp.regressed.length} queries`,
     ];
-
     if (cmp.improved.length) {
         lines.push("", "Gains (discover rank improved):");
         for (const r of cmp.improved) {
@@ -122,7 +105,6 @@ export function formatHybridComparison(cmp, fusion = {}) {
             lines.push(`  + ${r.id}: rank ${b?.discover_rank ?? "miss"} → ${r.discover_rank} | "${r.query}"`);
         }
     }
-
     if (cmp.regressed.length) {
         lines.push("", "Regressions:");
         for (const r of cmp.regressed) {
@@ -130,7 +112,6 @@ export function formatHybridComparison(cmp, fusion = {}) {
             lines.push(`  - ${r.id}: rank ${b?.discover_rank ?? "miss"} → ${r.discover_rank ?? "miss"} | "${r.query}"`);
         }
     }
-
     const misses = cmp.hybrid.results.filter((r) => r.discover_rank == null || r.discover_rank > 3);
     if (misses.length) {
         lines.push("", `Still missing discover@3 (${misses.length}):`);
@@ -138,24 +119,18 @@ export function formatHybridComparison(cmp, fusion = {}) {
             lines.push(`  • ${m.id}: "${m.query}" → top: ${m.top_label}`);
         }
     }
-
     return lines.join("\n");
 }
-
 export async function runHybridMvp(bundle, distDir, fusion = {}) {
     const queries = await loadMessyQueries();
     const lanceDir = defaultLanceDir(distDir);
-
     const baseline = evaluateKeywordOnly(queries, bundle);
     const hybrid = await evaluateHybridMode(queries, bundle, lanceDir, fusion);
-
     return compareReports(baseline, hybrid);
 }
-
 export async function verifyMessyQueries(bundle) {
     const queries = await loadMessyQueries();
     const issues = [];
-
     for (const q of queries) {
         if (q.expect_intent) {
             const cap = curatedCapabilitiesForSearch(bundle).find((c) => c.id === q.expect_intent);
@@ -173,6 +148,6 @@ export async function verifyMessyQueries(bundle) {
             }
         }
     }
-
     return issues;
 }
+//# sourceMappingURL=hybrid-mvp.js.map

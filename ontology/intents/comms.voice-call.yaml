@@ -16,5 +16,25 @@ aliases:
   - AI phone outreach
   - place call with instructions
   - telephony task via AI
-related:
-  - comms.send_email
+consumes:
+  - entity: Contact
+    role: identifier
+produces:
+  - entity: Message
+    role: payload
+    format: voice
+facets:
+  domain: comms
+  action: send
+  modality:
+    - audio
+links:
+  - type: sibling_of
+    to: comms.agent_inbox
+    note: same comms family; agent_inbox provisions a mailbox rather than placing a call
+  - type: sibling_of
+    to: ai.speech_to_text
+    note: same audio family, differs by direction (place a call vs audio to text)
+  - type: sibling_of
+    to: ai.text_to_speech
+    note: same audio family, differs by direction (place a call vs text to audio)

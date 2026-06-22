@@ -11,3 +11,16 @@ aliases:
   - markdown extract
   - scrape page as markdown
   - JS rendered page to text
+consumes:
+  - entity: Webpage
+    role: identifier
+produces:
+  - entity: WebContent
+    role: payload
+    format: markdown
+facets:
+  domain: web
+  action: extract
+  modality:
+    - markdown
+    - text

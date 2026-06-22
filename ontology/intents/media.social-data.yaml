@@ -11,3 +11,14 @@ aliases:
   - social listening API
   - creator content lookup
   - sentiment from social posts
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+    format: json
+    cardinality: many
+facets:
+  domain: media
+  action: lookup

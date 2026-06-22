@@ -1,16 +1,44 @@
 import { CURATED_INTENT_IDS } from "./intent-match.js";
-import type { CapabilityIntent, EndpointRecord, SearchHit } from "./types.js";
+import type {
+  CapabilityIntent,
+  EndpointRecord,
+  Facets,
+  FacetDomain,
+  FacetModality,
+  Port,
+  SearchHit,
+} from "./types.js";
 
 const CURATED_CAPABILITY_IDS = new Set<string>(CURATED_INTENT_IDS);
-const CAPABILITY_SCORE_MULTIPLIER = 2.2;
 
 const GENERIC_SUMMARY =
   /^(authenticate|prove action|delete a memory|get mcp|api info|free health|purchase |buy )/i;
 
+// Smaller, justified stopword list: only true English glue words that never
+// carry discriminating intent. We deliberately KEEP paid/api/keys/agent —
+// they are the exact words of the "paid API without keys" framing and were
+// silently dropping signal before.
 const STOPWORDS = new Set([
   "the", "and", "for", "with", "from", "that", "this", "your", "need", "want",
-  "paid", "api", "via", "micropayment", "agent", "without", "keys",
+  "via",
 ]);
+
+/**
+ * Light, deterministic stemmer: strips a single common plural/verb suffix so
+ * that 'prices'/'pricing'/'priced' collapse to a shared stem while keeping
+ * unrelated words apart ('call' stays 'call', 'recall' stays 'recall').
+ * Intentionally conservative — no aggressive Porter-style rewriting.
+ */
+function stem(token: string): string {
+  if (token.length <= 4) return token;
+  if (token.endsWith("ies") && token.length > 4) return token.slice(0, -3) + "y";
+  if (token.endsWith("sses")) return token.slice(0, -2); // addresses -> address
+  if (token.endsWith("ing") && token.length > 5) return token.slice(0, -3);
+  if (token.endsWith("ed") && token.length > 4) return token.slice(0, -2);
+  if (token.endsWith("es") && token.length > 4) return token.slice(0, -2);
+  if (token.endsWith("s") && !token.endsWith("ss")) return token.slice(0, -1);
+  return token;
+}
 
 function tokenize(text: string): string[] {
   return text
@@ -20,19 +48,38 @@ function tokenize(text: string): string[] {
     .filter((t) => t.length > 1 && !STOPWORDS.has(t));
 }
 
+/**
+ * Token-BOUNDARY scoring with light stemming. Each query token earns:
+ *   1.0  for an exact corpus-token match,
+ *   0.6  for a stem match (plural/verb-suffix variance only),
+ *   0.5  for a closed-compound match where the query token ENDS WITH a whole
+ *        corpus token (robocall -> call, megapixel -> pixel),
+ * and nothing for incidental substring overlap. This removes the old 0.5
+ * blanket substring credit that let 'call' match 'recall': the compound rule
+ * is asymmetric (only query.endsWith(corpusToken)) and requires the query to be
+ * a genuine prefix-compound (>= 3 chars longer), so the query token 'call'
+ * never matches the corpus token 'recall'.
+ */
+function compoundMatch(q: string, corpusTokens: string[]): boolean {
+  for (const c of corpusTokens) {
+    if (c.length >= 4 && q.length >= c.length + 3 && q.endsWith(c)) return true;
+  }
+  return false;
+}
+
 function scoreTokens(queryTokens: string[], corpus: string): number {
   if (queryTokens.length === 0) return 0;
-  const corpusTokens = new Set(tokenize(corpus));
+  const corpusTokens = tokenize(corpus);
+  const corpusSet = new Set(corpusTokens);
+  const corpusStems = new Set(corpusTokens.map(stem));
   let hits = 0;
   for (const q of queryTokens) {
-    if (corpusTokens.has(q)) hits += 1;
-    else {
-      for (const c of corpusTokens) {
-        if (c.includes(q) || q.includes(c)) {
-          hits += 0.5;
-          break;
-        }
-      }
+    if (corpusSet.has(q)) {
+      hits += 1;
+    } else if (corpusStems.has(stem(q))) {
+      hits += 0.6;
+    } else if (compoundMatch(q, corpusTokens)) {
+      hits += 0.5;
     }
   }
   return hits / queryTokens.length;
@@ -59,6 +106,159 @@ function intentIdBoost(query: string, intentId: string): number {
   return matched / parts.length * 0.4;
 }
 
+/** Inferred query-side facets, mapping surface cues to facet VALUES. */
+export interface InferredQueryFacets {
+  domain?: FacetDomain;
+  primary_entity?: string;
+  output_entity?: string;
+  modality?: FacetModality[];
+}
+
+// Cue tables: ordered so the first match wins per axis. Patterns are
+// word-ish so they do not fire on incidental substrings.
+const DOMAIN_CUES: Array<[FacetDomain, RegExp]> = [
+  ["maps", /\b(near\s?by|nearby|near me|near downtown|points? of interest|\bpoi\b|coffee shop|restaurant|cafe|open now|street address|geocod|lat(itude)?\b|directions?)\b/i],
+  ["crypto", /\b(crypto|on.?chain|onchain|wallet address|token balance|erc-?20|blockchain|defi)\b/i],
+  ["shop", /\b(cheapest|best price|on sale|discount|coupon|deal|clearance|retailer)\b/i],
+  ["comms", /\b(send (an )?(email|sms|text|fax)|outbound (email|sms|call)|voice call|cold email)\b/i],
+];
+
+const ENTITY_CUES: Array<[string, RegExp]> = [
+  ["Ticker", /\b(stock|equity|equities|shares?|ticker|nasdaq|nyse|\bnvda\b|\baapl\b|\btsla\b|\bspy\b|s&p)\b/i],
+  ["CryptoAsset", /\b(bitcoin|\bbtc\b|ethereum|\beth\b|solana|\bsol\b|crypto(currency)?|coin|altcoin|token price|spot price for)\b/i],
+  ["Domain", /\b(domain( name)?|corporate domain|\.com\b|registrar|whois|nameserver)\b/i],
+  ["Document", /\b(pdf|document|invoice|receipt|contract|spreadsheet)\b/i],
+  ["Image", /\b(photo|picture|image|\bjpe?g\b|\bpng\b|screenshot|scanned)\b/i],
+  ["Webpage", /\b(url|web ?page|website|web site)\b/i],
+];
+
+const OUTPUT_CUES: Array<[string, RegExp]> = [
+  ["StructuredRecord", /\b(structured (data|json|output|record)|extracted fields?|json output|key.?value|line items|extract .*fields)\b/i],
+  ["CitedAnswer", /\b(citation|sources?|cited|grounded|with references)\b/i],
+  ["SearchResults", /\b(serp|organic results|search results|google results|ranked links)\b/i],
+  ["PriceSignal", /\b(price history|price drop|price trend|cheapest)\b/i],
+];
+
+const MODALITY_CUES: Array<[FacetModality, RegExp]> = [
+  ["markdown", /\b(markdown|clean text|readable text|md format)\b/i],
+  ["citations", /\b(citation|sources?|cited|grounded|with references)\b/i],
+  ["json", /\b(serp|organic results|json output|structured json)\b/i],
+  ["image", /\b(screenshot|png|render the page|visual snapshot|capture the page)\b/i],
+  ["html", /\b(raw html|full html|page html)\b/i],
+  ["audio", /\b(audio|mp3|spoken|text.?to.?speech|narration)\b/i],
+  ["timeseries", /\b(time series|historical (data|prices)|over time|trend over)\b/i],
+];
+
+/**
+ * Map free-text query cues onto facet VALUES. Pure/deterministic, returns only
+ * the axes it is confident about (absent axis == no signal). Exported so the
+ * hybrid pre-filter (M1) can reuse the exact same inference.
+ */
+export function inferQueryFacets(query: string): InferredQueryFacets {
+  const q = query.toLowerCase();
+  const out: InferredQueryFacets = {};
+
+  for (const [domain, re] of DOMAIN_CUES) {
+    if (re.test(q)) { out.domain = domain; break; }
+  }
+  for (const [entity, re] of ENTITY_CUES) {
+    if (re.test(q)) { out.primary_entity = entity; break; }
+  }
+  for (const [entity, re] of OUTPUT_CUES) {
+    if (re.test(q)) { out.output_entity = entity; break; }
+  }
+  const modality: FacetModality[] = [];
+  for (const [m, re] of MODALITY_CUES) {
+    if (re.test(q)) modality.push(m);
+  }
+  if (modality.length) out.modality = modality;
+
+  return out;
+}
+
+function consumesEntities(ports: Port[] | undefined): Set<string> {
+  return new Set((ports ?? []).map((p) => p.entity));
+}
+
+function producesEntities(ports: Port[] | undefined): Set<string> {
+  return new Set((ports ?? []).map((p) => p.entity));
+}
+
+/**
+ * Multiplicative facet-agreement factor in roughly [0.55, 1.25].
+ *   - mild boost when a capability's facets AGREE with the inferred query facets;
+ *   - DEMOTION (factor < 1) when they DISAGREE on a discriminating axis.
+ * The mismatch-demotion is the key new precision signal: a naive additive boost
+ * is inert, but pushing a wrong-domain / wrong-entity twin DOWN separates the
+ * near-collisions (stock vs crypto, maps vs shop, ...). Never a hard gate.
+ *
+ * Returns 1 (no-op) whenever the capability carries no facet metadata or the
+ * query yields no inferred facets, so the keyword baseline is preserved until
+ * intents actually expose facets at search time.
+ */
+function facetMatchBoost(
+  cap: CapabilityIntent,
+  inferred: InferredQueryFacets,
+): number {
+  const facets: Facets | undefined = cap.facets;
+  const consume = consumesEntities(cap.consumes);
+  const produce = producesEntities(cap.produces);
+  const hasFacetMeta =
+    !!facets || consume.size > 0 || produce.size > 0;
+  if (!hasFacetMeta) return 1;
+
+  let factor = 1;
+
+  // Domain axis: agreement nudges up, a concrete disagreement nudges down.
+  if (inferred.domain && facets?.domain) {
+    if (facets.domain === inferred.domain) factor *= 1.12;
+    else factor *= 0.75;
+  }
+
+  // Primary-entity (input noun) axis — the discriminator for the
+  // stock/crypto/fx and OCR/document families.
+  if (inferred.primary_entity && consume.size > 0) {
+    if (consume.has(inferred.primary_entity)) factor *= 1.18;
+    else factor *= 0.6;
+  }
+
+  // Output-entity / modality axis — the discriminator for the Webpage trio
+  // (html/markdown/png) and search.web vs ai.web_research.
+  if (inferred.output_entity && produce.size > 0) {
+    if (produce.has(inferred.output_entity)) factor *= 1.18;
+    else factor *= 0.7;
+  }
+  if (inferred.modality?.length && facets?.modality?.length) {
+    const capMods = new Set(facets.modality);
+    if (inferred.modality.some((m) => capMods.has(m))) factor *= 1.1;
+    else factor *= 0.8;
+  }
+
+  // Clamp so a single signal can never dominate keyword evidence.
+  return Math.max(0.55, Math.min(1.25, factor));
+}
+
+/**
+ * Multiplicative demotion when a capability's authored negative_terms[] appear
+ * in the query — soft (<1), never a hard gate. Replaces scattered regex
+ * negative look-aheads with declarative, author-owned terms.
+ */
+function negativeTermsDemotion(
+  cap: CapabilityIntent,
+  query: string,
+): number {
+  const terms = cap.negative_terms;
+  if (!terms?.length) return 1;
+  const q = query.toLowerCase();
+  let factor = 1;
+  for (const term of terms) {
+    const t = term.toLowerCase().trim();
+    if (t.length < 2) continue;
+    if (q.includes(t)) factor *= 0.6;
+  }
+  return Math.max(0.3, factor);
+}
+
 export function searchIndex(
   query: string,
   endpoints: EndpointRecord[],
@@ -66,6 +266,7 @@ export function searchIndex(
   limit = 10,
 ): SearchHit[] {
   const queryTokens = tokenize(query);
+  const inferred = inferQueryFacets(query);
   const hits: SearchHit[] = [];
 
   for (const cap of capabilities) {
@@ -85,16 +286,21 @@ export function searchIndex(
     let score = tokenScore + boost;
     if (score <= 0) continue;
 
-    if (cap.id === "ai.web_research" && /google|organic|serp|web results/i.test(query)) {
-      score *= 0.25;
-    }
-    if (cap.id === "search.web" && /google|organic|serp|web results|announcements/i.test(query)) {
-      score *= 1.35;
-    }
+    // Confidence-scaled capability weight (replaces the flat 2.2). A strong
+    // capability match (tokenScore >= 0.5) keeps the full ~2.2 multiplier; a
+    // weak one-token match earns proportionally less, so it can no longer
+    // outrank a strongly-overlapping endpoint.
+    const confidence = Math.min(1, tokenScore / 0.5);
+    const capMultiplier = 1 + 1.2 * confidence;
+    score *= capMultiplier;
+
+    // Facet agreement / mismatch-demotion + soft negative-terms demotion.
+    score *= facetMatchBoost(cap, inferred);
+    score *= negativeTermsDemotion(cap, query);
 
     hits.push({
       kind: "capability",
-      score: score * CAPABILITY_SCORE_MULTIPLIER,
+      score,
       capability_id: cap.id,
       label: cap.label,
       summary: cap.description ?? cap.label,
@@ -106,9 +312,6 @@ export function searchIndex(
     if (score <= 0) continue;
 
     if (GENERIC_SUMMARY.test(ep.summary)) score *= 0.35;
-    if (/gas|fmv|trademark|proxy pattern/i.test(ep.summary) && /price|call|enrich|screenshot|homes/i.test(query)) {
-      score *= 0.15;
-    }
     if (ep.guidance_available) score *= 1.15;
     if (ep.payment.price_usd != null) score *= 1.05;
 

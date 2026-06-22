@@ -11,3 +11,16 @@ aliases:
   - research with citations
   - current events lookup with sources
   - cited web research API
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: CitedAnswer
+    role: payload
+facets:
+  domain: ai
+  action: search
+  modality:
+    - citations
+    - text
+  freshness: realtime

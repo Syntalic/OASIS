@@ -11,3 +11,13 @@ aliases:
   - nearby hotels search
   - travel place enrichment
   - find restaurants with reviews
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: Place
+    role: payload
+    cardinality: many
+facets:
+  domain: travel
+  action: lookup

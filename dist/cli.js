@@ -4,10 +4,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { buildIndex } from "./build.js";
+import { curatedCapabilitiesForSearch } from "./curated-search.js";
 import { endpointId } from "./id.js";
 import { defaultLanceDir, buildLanceIndex } from "./embed/lance-index.js";
 import { DEFAULT_KEYWORD_WEIGHT, DEFAULT_VECTOR_WEIGHT, searchHybridWithFallback, } from "./search-hybrid.js";
-import { curatedCapabilitiesForSearch } from "./curated-search.js";
 import { searchIndex } from "./search.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..");
@@ -237,7 +237,7 @@ program
 });
 program
     .command("eval:resolve")
-    .description("Check curated ontology satisfies refs resolve to indexed endpoints")
+    .description("Check materialized curated intents link to indexed endpoints")
     .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
     .option("--json", "Output JSON report")
     .option("--misses", "Show unresolved intents only")
@@ -254,10 +254,9 @@ program
     if (opts.misses) {
         const misses = report.results.filter((r) => !r.resolved);
         if (misses.length) {
-            console.log("\nUnresolved (primary satisfies ref):");
+            console.log("\nUnresolved (no materialized candidates):");
             for (const m of misses) {
-                const ref = m.primary_ref;
-                console.log(`  - ${m.intent_id}: ${ref.method} ${ref.origin}${ref.path}`);
+                console.log(`  - ${m.intent_id}: ${m.label}`);
             }
         }
         else {

@@ -34,6 +34,7 @@
       "items": { "type": "string", "pattern": "^[a-z][a-z0-9._-]*$" }
     },
     "inputs": { "type": "array", "items": { "type": "string" } },
+    "facets": { "$ref": "#/$defs/EndpointFacets" },
     "payment": { "$ref": "#/$defs/Payment" },
     "guidance_available": { "type": "boolean" },
     "openapi_url": { "type": "string", "format": "uri" },
@@ -41,6 +42,54 @@
     "built_at": { "type": "string", "format": "date-time" }
   },
   "$defs": {
+    "EndpointFacets": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Derived facets caching the path/summary/inputs signal. Not new information.",
+      "properties": {
+        "domain": {
+          "enum": [
+            "shop",
+            "ai",
+            "data",
+            "web",
+            "comms",
+            "finance",
+            "maps",
+            "travel",
+            "realestate",
+            "social",
+            "media",
+            "marketing",
+            "analyst",
+            "cloud",
+            "compute",
+            "devtools",
+            "storage",
+            "search",
+            "crypto"
+          ]
+        },
+        "primary_entity": { "type": "string" },
+        "output_entity": { "type": "string" },
+        "modality": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "text",
+              "html",
+              "markdown",
+              "json",
+              "image",
+              "audio",
+              "vector",
+              "citations",
+              "timeseries"
+            ]
+          }
+        }
+      }
+    },
     "PaymentRail": {
       "type": "object",
       "required": ["protocol"],

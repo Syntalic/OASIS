@@ -11,3 +11,15 @@ aliases:
   - audio narration API
   - convert text to voice
   - text to audio file
+consumes:
+  - entity: Text
+    role: identifier
+produces:
+  - entity: AudioClip
+    role: payload
+    format: audio
+facets:
+  domain: ai
+  action: transform
+  modality:
+    - audio

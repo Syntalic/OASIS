@@ -11,3 +11,19 @@ aliases:
   - document OCR and table extraction
   - parse uploaded PDF
   - extract data from scanned document
+consumes:
+  - entity: Document
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+    format: json
+facets:
+  domain: ai
+  action: extract
+  modality:
+    - json
+links:
+  - type: broader_of
+    to: data.ocr
+    note: document_extract parses full documents into structured fields; OCR is the narrower pixels-to-text variant

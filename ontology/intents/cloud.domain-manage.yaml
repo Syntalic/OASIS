@@ -11,3 +11,12 @@ aliases:
   - manage DNS records API
   - domain renew without registrar UI
   - programmatic domain renewal
+consumes:
+  - entity: Domain
+    role: identifier
+produces:
+  - entity: Domain
+    role: identifier
+facets:
+  domain: cloud
+  action: provision

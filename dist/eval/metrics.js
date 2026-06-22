@@ -15,3 +15,4 @@ export const METRICS_LEGEND = [
     "literal@k  = correct endpoint row directly in top-k",
     "discover MRR = mean reciprocal rank for discover@k (higher is better)",
 ].join("\n");
+//# sourceMappingURL=metrics.js.map

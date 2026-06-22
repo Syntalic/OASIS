@@ -13,5 +13,28 @@ aliases:
   - shoot an email to user
   - programmatic single email delivery
   - micropay to send email
-related:
-  - comms.buy_inbox
+consumes:
+  - entity: Contact
+    role: identifier
+produces:
+  - entity: Message
+    role: payload
+    format: email
+facets:
+  domain: comms
+  action: send
+  modality:
+    - text
+links:
+  - type: sibling_of
+    to: comms.send_fax
+    note: same outbound-send family, differs by channel (email vs fax)
+  - type: sibling_of
+    to: comms.send_sms
+    note: same outbound-send family, differs by channel (email vs SMS)
+  - type: sibling_of
+    to: comms.voice_call
+    note: same outbound-send family, differs by channel (email vs voice call)
+  - type: sibling_of
+    to: comms.agent_inbox
+    note: same comms family; agent_inbox provisions the mailbox these senders deliver from; was dangling related comms.buy_inbox

@@ -15,3 +15,20 @@ aliases:
   - find creators by engagement rate
   - marketing influencers by location
   - niche creator profiles instagram
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: SocialProfile
+    role: payload
+    cardinality: many
+facets:
+  domain: social
+  action: search
+links:
+  - type: sibling_of
+    to: data.company_enrich
+    note: same identity-lookup family, differs by entity (SocialProfile vs Company)
+  - type: sibling_of
+    to: media.social_data
+    note: same social family, differs by purpose (discover creators vs fetch their posts)
