@@ -195,19 +195,23 @@ Implications (consistent with treating the **endpoint as the atomic unit**):
 
 `oasis_find` collapses search→resolve SERVER-side (capability vectors for recall + the
 fixed resolve ranking) and exposes the agent ONE tool returning a flat, ranked endpoint
-list with payment metadata inline. Same harness, common set, Sonnet
-(`COMPARE_BACKENDS="1-hop,2-hop,all"`):
+list with payment metadata inline. Full 6-method run, common set, Sonnet 4.6
+(`node compare.mjs`), tokens = full cost to find + pick:
 
-| discovery tool | judged-correct | avg tokens/task | avg tool-calls |
-|---|---|---|---|
-| **OASIS 1-hop (`oasis_find`)** | **18/18 (100%)** | **2462** | 1.1 |
-| OASIS 2-hop (search→resolve) | 18/18 (100%) | 5110 | 2.1 |
-| keyword — all endpoints | 17/18 (94%) | 2872 | 1.9 |
+| discovery method | judged-correct | avg tokens/task (in+out) | tool-calls | vs `oasis_find` |
+|---|---|---|---|---|
+| **OASIS 1-hop (`oasis_find`)** | 17/18 (94%) | **2562** (2247 + 315) | 1.2 | — |
+| keyword — all endpoints | 17/18 (94%) | 2723 (2462 + 261) | 1.9 | +6% |
+| keyword — mpp slice | 17/18 (94%) | 3116 (2821 + 295) | 2.2 | +22% |
+| keyword — x402scan slice | 18/18 (100%) | 3166 (2892 + 274) | 2.1 | +24% |
+| keyword — pay-skills slice | 14/18 (78%) | 5005 (4651 + 354) | 3.3 | +95% |
+| OASIS 2-hop (search→resolve) | 18/18 (100%) | 5031 (4672 + 359) | 2.1 | +96% |
 
-The one-hop is the **cheapest AND most accurate** of the three: **52% fewer tokens than
-the two-hop** (the agent never reads a capability list, a resolve round, or a related[]
-payload) and **~14% fewer than raw keyword** while edging it on accuracy — the agent
-answers in ~1 call because the server returns a tight, pre-ranked list.
+The one-hop is the **cheapest of all six methods** at top accuracy — every alternative
+costs **6–96% more tokens**. The **two-hop** pays ~2× (the agent reads a capability list +
+a resolve round + a related[] payload); the **low-coverage pay-skills slice** pays ~2×
+because the agent searches 3.3× on average, flailing for a match it often never finds
+(14/18) — the cost a unified index + one call avoids. (One run; ±~5% run-to-run.)
 
 This is the synthesis: the agent sees ENDPOINTS (atomic, one hop); the capability
 ontology runs SERVER-side as a recall+ranking aid (paid in compute, not agent tokens).

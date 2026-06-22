@@ -13,11 +13,10 @@ high-quality, vendor-neutral discovery mechanism — so we built OASIS and open-
 below). Not a hosted product, no fees.
 
 > **Integrate it as one agent tool — and pay fewer tokens.** `oasis_find` returns the
-> right paid endpoint for a task in a **single call**. Measured per tool-selection:
-> **~2,460 tokens with `oasis_find` vs ~5,110 for a naïve two-hop design and ~2,870 for
-> raw keyword search** over the same index — at equal-or-better accuracy. Roughly **half
-> the token cost** of the obvious design, **fewer than keyword**, one round-trip.
-> ([benchmarks](docs/eval_results.md))
+> right paid endpoint for a task in a **single call**, and is the **cheapest of every
+> discovery method we benchmarked** (~2,560 tokens/task) — from **6% under raw keyword
+> search to ~half the cost of a naïve two-hop design**, at equal-or-better accuracy.
+> Full per-method table below. ([benchmarks](docs/eval_results.md))
 
 A reference MCP server (`oasis_find` + the `search`/`resolve` primitives + LLM-assisted
 contribution tools), an automated agent probe, and an A/B harness live in [`mcp/`](mcp/)
@@ -97,25 +96,30 @@ discover@1 from **43% → ~66–72%** with no index rebuild.
 scores the typed-link features the single-label set can't (`pnpm run eval:multi`):
 hard-negative **6/6**, related@links **15/15**, task recall@3 **28/28**.
 
-### Token cost — one call, fewer tokens
+### Token cost — `oasis_find` vs every benchmark method
 
 End-to-end test: a live LLM (Sonnet 4.6) picks a paid endpoint for 18 real tasks using
-each discovery tool; a **method-neutral judge** scores whether the chosen endpoint
-actually does the task. `oasis_find` collapses search→resolve server-side, so the agent
-answers in one call:
+each discovery method; a **method-neutral judge** scores whether the chosen endpoint
+actually does the task. Tokens are the full cost to *find and pick* (the agent re-reads
+its growing context on each round-trip). `oasis_find` answers in one call and is the
+**cheapest of all six methods, at top accuracy**:
 
-| discovery tool the agent uses | judged-correct | avg tokens/task (in+out) | avg tool-calls |
-|---|---|---|---|
-| **`oasis_find` (one call)** | **18/18 (100%)** | **2,462** (2,161 + 301) | 1.1 |
-| two-hop `search`→`resolve` | 18/18 (100%) | 5,110 (4,740 + 370) | 2.1 |
-| raw keyword over the same index | 17/18 (94%) | 2,872 (2,607 + 265) | 1.9 |
+| discovery method the agent uses | judged-correct | avg tokens/task (in+out) | tool-calls | vs `oasis_find` |
+|---|---|---|---|---|
+| **`oasis_find` — OASIS, one call** | 17/18 (94%) | **2,562** (2,247 + 315) | 1.2 | — |
+| keyword — all endpoints | 17/18 (94%) | 2,723 (2,462 + 261) | 1.9 | **+6%** |
+| keyword — mpp slice | 17/18 (94%) | 3,116 (2,821 + 295) | 2.2 | **+22%** |
+| keyword — x402scan slice | 18/18 (100%) | 3,166 (2,892 + 274) | 2.1 | **+24%** |
+| keyword — pay-skills slice | 14/18 (78%) | 5,005 (4,651 + 354) | 3.3 | **+95%** |
+| two-hop `search`→`resolve` — OASIS | 18/18 (100%) | 5,031 (4,672 + 359) | 2.1 | **+96%** |
 
-`oasis_find` is the cheapest **and** most accurate: **−52% tokens vs the two-hop** (the
-agent never reads a capability list, a resolve round, or a related-options payload) and
-**−14% vs raw keyword**, while edging it on accuracy — one round-trip because the server
-returns a tight, pre-ranked list. Reproduce: `cd mcp && node --env-file=../.env compare.mjs`
-(any provider). Harder-task / weak-model sweeps and the full write-up:
-[`docs/eval_results.md`](docs/eval_results.md).
+Every alternative costs **6–96% more tokens** than `oasis_find` for the same job. Two
+patterns: the **two-hop** design pays ~2× because the agent reads a capability list + a
+resolve round + a related-options payload; the **low-coverage pay-skills slice** pays ~2×
+because the agent searches 3.3× on average, flailing for a match it often never finds
+(14/18) — exactly the cost a unified index + one call avoids. (One run, Sonnet 4.6; ±~5%
+run-to-run. Reproduce: `cd mcp && node --env-file=../.env compare.mjs`, any provider.
+Harder-task / weak-model sweeps: [`docs/eval_results.md`](docs/eval_results.md).)
 
 ### Resolve wiring (ontology → endpoint)
 
