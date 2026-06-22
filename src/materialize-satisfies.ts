@@ -99,5 +99,37 @@ export function materializeCuratedIntents(
     ordered.push(materializeCuratedIntent(source, endpoints));
   }
 
+  addInverseLinks(ordered);
   return ordered;
+}
+
+/** Inverse of each directed/symmetric link type (pipes_to has no inverse yet). */
+const LINK_INVERSE: Record<string, CapabilityLink["type"]> = {
+  alternative_of: "alternative_of",
+  sibling_of: "sibling_of",
+  broader_of: "narrower_of",
+  narrower_of: "broader_of",
+};
+
+/**
+ * Make the typed-link graph bidirectional: an authored `data.web_scrape
+ * broader_of web.markdown_extract` yields `web.markdown_extract narrower_of
+ * data.web_scrape`, so resolving EITHER side surfaces the other as an
+ * alternative/option (the core "find related tools" use case). Authored links
+ * always win — a generated inverse is only added when the target has no link
+ * to the source yet.
+ */
+function addInverseLinks(caps: CapabilityIntent[]): void {
+  const byId = new Map(caps.map((c) => [c.id, c]));
+  for (const cap of caps) {
+    for (const link of cap.links ?? []) {
+      const inverse = LINK_INVERSE[link.type];
+      if (!inverse) continue;
+      const target = byId.get(link.to);
+      if (!target || target.id === cap.id) continue;
+      target.links = target.links ?? [];
+      if (target.links.some((l) => l.to === cap.id)) continue; // authored wins
+      target.links.push({ type: inverse, to: cap.id, note: "auto-generated inverse" });
+    }
+  }
 }

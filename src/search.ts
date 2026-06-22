@@ -21,6 +21,11 @@ const GENERIC_SUMMARY =
 const STOPWORDS = new Set([
   "the", "and", "for", "with", "from", "that", "this", "your", "need", "want",
   "via",
+  // Generic interrogative / copula filler — no API-intent signal. (Without these,
+  // "what is the forecast..." matches crypto/stock aliases like "what is ETH
+  // trading at" and drowns out the real intent.) Kept minimal: broader filler
+  // (prepositions) regressed a curated query for no multi-label gain.
+  "what", "whats", "is", "are", "be", "am", "was", "were",
 ]);
 
 /**
