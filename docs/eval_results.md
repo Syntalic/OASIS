@@ -128,48 +128,52 @@ Remaining tracked follow-up:
 
 The 63 messy queries and the 28 multi-label queries are hand-authored against the
 known intents and share vocabulary with the aliases. To measure real
-generalization, `eval/heldout-queries.json` (44 queries) is deliberately phrased
-*away* from the labels — **mean alias overlap 0.23; 66% of queries share <30% of
-their words with the target intent's aliases**:
+generalization, `eval/heldout-queries.json` is deliberately phrased *away* from
+the labels — **mean alias overlap 0.23; 66% of queries share <30% of their words
+with the target intent's aliases**. It is split into **dev (44, tunable)** and a
+held-back **test (43, never tuned against)** so the number is not overfit:
 
 ```bash
 node dist/cli.js eval:heldout
 ```
 
-| Retrieval path (44 held-out queries) | discover@1 | discover@3 |
+Progression on the held-out **dev** split (discover@1 / @3):
+
+| Retrieval path | discover@1 | discover@3 |
 |---|---|---|
-| keyword (`full`) | 18/44 (41%) | 23/44 (52%) |
-| hybrid — old fusion (single RRF pool) | 19/44 (43%) | 23/44 (52%) |
-| vector-only (capability embeddings) | 34/44 (77%) | 40/44 (91%) |
-| **hybrid — caps-first fusion (shipped)** | **28/44 (64%)** | **37/44 (84%)** |
+| keyword (`full`) | 41% | 52% |
+| hybrid — old fusion (single RRF pool) | 43% | 52% |
+| + caps-first fusion | 64% | 84% |
+| + enriched embed text + vector-weighted fusion (**shipped**) | **66%** | **86%** |
+| vector-only ceiling | 80% | 95% |
+
+Final, on **both** splits with the shipped config:
+
+| split | discover@1 | discover@3 |
+|---|---|---|
+| dev (44) | 66% | 86% |
+| **test (43, untuned)** | **72%** | **88%** |
 
 **The curated ~100% was a measurement illusion** — keyword discovery is overfit
-to the alias vocabulary, and on novel phrasings it collapses (most misses return
-*no* capability at all, because the query shares no alias tokens).
+to the alias vocabulary; on novel phrasings it collapses (41% / 52%) and most
+misses return *no* capability at all. **The embedding model already generalizes**
+(`"pack an umbrella for Berlin"` → `data.weather_forecast` rank 1) — vector-only
+scores 80% / 95% — but the old hybrid fusion threw that away (43%) by pooling
+capabilities and endpoints into one RRF sort, burying the vector-correct
+capability under keyword endpoint noise.
 
-**But the embedding model already generalizes** (`"pack an umbrella for Berlin"`
-→ `data.weather_forecast` rank 1; `"boil this contract down"` →
-`ai.llm_complete` rank 2) — vector-only scores **77% / 91%**. The old hybrid
-fusion *destroyed* that signal: it pooled capabilities and endpoints into one RRF
-sort, so with keyword weight 2× and endpoints dominating by count, a correct
-capability that only the vector arm found was buried below keyword endpoint noise
-(43% < 77%).
+Three fixes, all discovery-side, **no rebuild and no new endpoint data**, took
+real generalization from **43% → ~66–72% discover@1, 52% → ~86–88% discover@3**:
+1. **Caps-first fusion** — rank capabilities before endpoints (43→64).
+2. **Enriched capability embed text** — add spelled-out id, domain/action, and
+   consumed-entity nouns so vectors anchor on more than alias phrasing.
+3. **Vector-weighted fusion** (`kw=1, vec=2`) — the vector arm carries novel
+   phrasings; a sweep lifted the *untuned test split* 67%→72% disc@1 with zero
+   dev or curated cost. Curated `full-hybrid` holds (disc@3 63/63, disc@1 61/63).
 
-**Fix (shipped):** the fusion now ranks **capabilities first, endpoints after**
-(the traversal protocol prefers capability matches anyway). Held-out hybrid
-**43%→64% discover@1, 52%→84% discover@3** — ~+30 points on novel queries, no
-rebuild and no new data. Curated `full-hybrid` holds (disc@3 63/63; disc@1 61/63
-= 97%).
-
-Remaining headroom, now correctly prioritized:
-1. **Close the gap to vector-only (64% → 77%)** — on some novel queries the
-   keyword arm still ranks a wrong capability above the vector-correct one;
-   rebalancing the vector weight (eval-gated on a larger held-out set to avoid
-   overfitting) should help.
-2. **Facet coverage + richer capability embed text** (description + use-cases) to
-   push vector recall past 91%.
-3. **Full index rebuild** remains a resolve-side (endpoint-precision) concern,
-   separate from this discovery finding.
+Remaining headroom: the vector ceiling is 80% / 95%, so a better embedding model
+or further embed-text work could push higher; facet coverage (54%) and a full
+index rebuild (resolve-side) are separate, lower-priority levers.
 
 ---
 

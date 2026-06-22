@@ -18,15 +18,24 @@ export interface HeldoutQuery {
   id: string;
   query: string;
   expect_intents: string[];
+  /** "dev" (default) is tunable; "test" is held back for honest final reporting. */
+  split?: string;
 }
 
 export interface HeldoutRow {
   id: string;
+  split: string;
   alias_overlap: number;
   discover_at_1: boolean;
   discover_at_3: boolean;
   top1: string | null;
   expected: string[];
+}
+
+export interface SplitScore {
+  total: number;
+  discover_at_1: number;
+  discover_at_3: number;
 }
 
 export interface HeldoutReport {
@@ -35,6 +44,7 @@ export interface HeldoutReport {
   discover_at_3: number;
   mean_alias_overlap: number;
   low_overlap_count: number; // queries with <30% alias overlap (genuinely novel)
+  splits: Record<string, SplitScore>;
   rows: HeldoutRow[];
 }
 
@@ -97,6 +107,7 @@ export function runHeldoutBenchmark(
 
     rows.push({
       id: q.id,
+      split: q.split ?? "dev",
       alias_overlap: Number(overlap.toFixed(2)),
       discover_at_1: hit1,
       discover_at_3: hit3,
@@ -105,12 +116,21 @@ export function runHeldoutBenchmark(
     });
   }
 
+  const splits: Record<string, SplitScore> = {};
+  for (const r of rows) {
+    const s = (splits[r.split] ??= { total: 0, discover_at_1: 0, discover_at_3: 0 });
+    s.total += 1;
+    if (r.discover_at_1) s.discover_at_1 += 1;
+    if (r.discover_at_3) s.discover_at_3 += 1;
+  }
+
   return {
     total: queries.length,
     discover_at_1: d1,
     discover_at_3: d3,
     mean_alias_overlap: Number((overlapSum / (queries.length || 1)).toFixed(3)),
     low_overlap_count: lowOverlap,
+    splits,
     rows,
   };
 }
@@ -128,6 +148,12 @@ export function formatHeldoutReport(report: HeldoutReport): string {
     `discover@1:        ${pct(report.discover_at_1)}`,
     `discover@3:        ${pct(report.discover_at_3)}`,
   ];
+  for (const [name, s] of Object.entries(report.splits).sort()) {
+    const sp = (x: number) => `${x}/${s.total} (${Math.round((x / s.total) * 100)}%)`;
+    lines.push(
+      `  [${name}] discover@1 ${sp(s.discover_at_1)}  discover@3 ${sp(s.discover_at_3)}`,
+    );
+  }
   if (misses.length) {
     lines.push("", "Top-3 misses:");
     for (const m of misses) {

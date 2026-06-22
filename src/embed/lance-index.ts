@@ -23,14 +23,21 @@ export interface LanceRecord {
 
 export function capabilityEmbedText(cap: CapabilityIntent): string {
   return [
-    cap.id,
+    // Spell out the id ("data.weather_forecast" -> "data weather forecast") so
+    // it reads as words, not one opaque token.
+    cap.id.replace(/[._]/g, " "),
     cap.label,
     cap.description,
     ...(cap.aliases ?? []),
     ...(cap.schema_org ?? []),
-    // Append output-type signal (produces[] entities + modality) so a re-embed
-    // keys on what the capability returns, not just its phrasing. Additive: an
-    // intent without ports/facets contributes nothing here.
+    // Domain + action verb add natural-language surface ("search", "extract",
+    // "lookup", "send") that oblique queries hit even without an alias match.
+    cap.facets?.domain,
+    cap.facets?.action,
+    // Input + output entity nouns: what the capability operates on and returns
+    // ("Webpage", "AudioClip", "PriceSignal") — extra semantic anchors for the
+    // vector arm. Additive: an intent without ports/facets contributes nothing.
+    ...(cap.consumes ?? []).map((p) => p.entity),
     ...(cap.produces ?? []).map((p) => p.entity),
     ...(cap.facets?.modality ?? []),
   ]
