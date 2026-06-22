@@ -97,6 +97,26 @@ discover@1 from **43% → ~66–72%** with no index rebuild.
 scores the typed-link features the single-label set can't (`pnpm run eval:multi`):
 hard-negative **6/6**, related@links **15/15**, task recall@3 **28/28**.
 
+### Token cost — one call, fewer tokens
+
+End-to-end test: a live LLM (Sonnet 4.6) picks a paid endpoint for 18 real tasks using
+each discovery tool; a **method-neutral judge** scores whether the chosen endpoint
+actually does the task. `oasis_find` collapses search→resolve server-side, so the agent
+answers in one call:
+
+| discovery tool the agent uses | judged-correct | avg tokens/task (in+out) | avg tool-calls |
+|---|---|---|---|
+| **`oasis_find` (one call)** | **18/18 (100%)** | **2,462** (2,161 + 301) | 1.1 |
+| two-hop `search`→`resolve` | 18/18 (100%) | 5,110 (4,740 + 370) | 2.1 |
+| raw keyword over the same index | 17/18 (94%) | 2,872 (2,607 + 265) | 1.9 |
+
+`oasis_find` is the cheapest **and** most accurate: **−52% tokens vs the two-hop** (the
+agent never reads a capability list, a resolve round, or a related-options payload) and
+**−14% vs raw keyword**, while edging it on accuracy — one round-trip because the server
+returns a tight, pre-ranked list. Reproduce: `cd mcp && node --env-file=../.env compare.mjs`
+(any provider). Harder-task / weak-model sweeps and the full write-up:
+[`docs/eval_results.md`](docs/eval_results.md).
+
 ### Resolve wiring (ontology → endpoint)
 
 Search is only half the protocol. **Resolve accuracy** checks that each curated
