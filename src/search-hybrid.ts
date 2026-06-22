@@ -215,7 +215,17 @@ function mergeKeywordAndVector(
     scores.set(key, existing);
   }
 
-  const ranked = [...scores.values()].sort((a, b) => b.rrf - a.rrf);
+  // Capabilities lead, endpoints follow — each ranked by fused RRF. Pooling them
+  // into one sort lets keyword endpoint hits (weight 2x, dominant by count) bury
+  // a capability that only the vector arm found, so on novel phrasings the right
+  // intent fell past the limit (hybrid 43% vs vector-only 77% on the held-out
+  // set). The traversal protocol prefers capability matches anyway; this makes
+  // the fusion honor it and lets vector recall actually reach the agent.
+  const pool = [...scores.values()];
+  const ranked = [
+    ...pool.filter((x) => x.key.startsWith("cap:")).sort((a, b) => b.rrf - a.rrf),
+    ...pool.filter((x) => !x.key.startsWith("cap:")).sort((a, b) => b.rrf - a.rrf),
+  ];
 
   const hits: SearchHit[] = [];
   const seen = new Set<string>();
