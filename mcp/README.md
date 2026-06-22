@@ -11,9 +11,17 @@ cd mcp && npm install          # @modelcontextprotocol/sdk, @anthropic-ai/sdk, o
 
 ## MCP server (local, stdio)
 
-Exposes two tools backed by the OASIS index:
-- `oasis_search(query)` — hybrid discovery → ranked capability intents (+ a few endpoints)
-- `oasis_resolve(intent_id, query)` — query-aware endpoints for that intent + typed related options
+Exposes, backed by the OASIS index:
+
+*Discovery (use a tool):*
+- **`oasis_find(query)`** — one call → flat, ranked endpoints with price/rails inline. The
+  primary tool: cheapest + most accurate (see the A/B below). Use this first.
+- `oasis_search(query)` — lower-level hybrid discovery → ranked capability intents
+- `oasis_resolve(intent_id, query)` — query-aware endpoints for an intent + typed related options
+
+*Contribution (add a service):*
+- `oasis_taxonomy()` — the controlled vocab to bind INTO (capabilities + facet/entity enums)
+- `oasis_validate(intent)` — validate a proposed task-intent (same check CI runs on the PR)
 
 The server is plain [MCP](https://modelcontextprotocol.io) over stdio — **any** MCP
 client can use it (Claude Desktop, Claude Code, Cursor, or your own). No model

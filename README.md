@@ -10,8 +10,19 @@ way to map a natural-language task to the right micropayment API. We could not f
 high-quality, vendor-neutral discovery mechanism — so we built OASIS and open-sourced it.
 
 **search → resolve → schema → execute** — with measured retrieval quality (see benchmarks
-below). Not a hosted product, no fees. A local MCP server + automated agent probe live in
-[`mcp/`](mcp/) — out-of-tree tooling (works with any LLM provider), not part of the standard.
+below). Not a hosted product, no fees.
+
+> **Integrate it as one agent tool — and pay fewer tokens.** `oasis_find` returns the
+> right paid endpoint for a task in a **single call**. Measured per tool-selection:
+> **~2,460 tokens with `oasis_find` vs ~5,110 for a naïve two-hop design and ~2,870 for
+> raw keyword search** over the same index — at equal-or-better accuracy. Roughly **half
+> the token cost** of the obvious design, **fewer than keyword**, one round-trip.
+> ([benchmarks](docs/eval_results.md))
+
+A reference MCP server (`oasis_find` + the `search`/`resolve` primitives + LLM-assisted
+contribution tools), an automated agent probe, and an A/B harness live in [`mcp/`](mcp/)
+— works with any LLM provider. The validation + taxonomy they use are part of the standard
+(`capindex validate-source` / `taxonomy`, run in CI).
 
 See [GOVERNANCE.md](GOVERNANCE.md).
 
@@ -177,6 +188,11 @@ pnpm exec capindex resolve --endpoint <sha256-id>
 # Validate dist/index.json
 pnpm exec capindex validate
 
+# Contribute a service: dump the controlled vocab + validate a task-intent before a PR
+# (validate-source is the SAME check CI runs on the PR)
+pnpm exec capindex taxonomy --json
+pnpm exec capindex validate-source ontology/intents/ai.web_research.yaml
+
 # Show stats
 pnpm exec capindex stats
 ```
@@ -194,22 +210,33 @@ search → resolve → schema (from origin OpenAPI) → execute (x402 or MPP)
 3. **Schema** from `{origin}/openapi.json` (not duplicated in the index)
 4. **Execute** via x402 (`X-Payment`) or MPP (`X-MPP-Session`)
 
-## Adding capabilities
+## Adding capabilities / contributing a service
 
-Add a YAML file under `ontology/intents/`:
+OASIS scales by **LLM-assisted, contributor-funded curation**: the service owner curates
+their own endpoints into the taxonomy (their LLM, their cost) and opens a PR; OASIS keeps
+a cheap, objective validation gate. Full guide:
+[docs/contributing-capabilities.md](docs/contributing-capabilities.md).
+
+A task intent is a YAML under `ontology/intents/` — **task-only**; endpoint membership is
+materialized at build time, so you don't hand-write `satisfies`:
 
 ```yaml
-id: shop.compare_price
-label: Compare retail price across stores
-aliases: [cheapest price, best deal]
-satisfies:
-  - origin: https://api.example.com
-    method: GET
-    path: /v1/shopper/best-price
-    confidence: primary
+id: ai.moderate_content                            # domain.snake_case; domain ∈ facet enum
+label: Moderate content for safety and policy violations
+aliases: [content moderation, toxicity detection, flag harmful content]
+consumes: [{ entity: Text, role: payload }]        # entity ∈ closed vocab (spec/entity-vocab.json)
+produces: [{ entity: StructuredRecord, role: payload, format: json }]
+facets: { domain: ai, action: analyze, modality: [json] }
+links: [{ type: sibling_of, to: ai.web_research }] # to an existing capability id
 ```
 
-Rebuild the index. Intent IDs use `domain.snake_case` — provider-agnostic.
+The flow (assisted by the MCP `oasis_taxonomy` + `oasis_validate` tools, or the CLI):
+1. `capindex taxonomy --json` → the controlled vocab to bind INTO (existing capabilities,
+   facet/entity enums).
+2. Bind your endpoints into an **existing** capability where one fits; **propose a new**
+   one only when nothing does (flag it in the PR for human review — keeps the taxonomy
+   from fragmenting).
+3. `capindex validate-source <file>` → the **same check CI runs**. Then open the PR.
 
 ## Ingestion sources
 
