@@ -1,6 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -18,13 +19,19 @@ async function loadBundle(): Promise<IndexBundle> {
   return JSON.parse(raw) as IndexBundle;
 }
 
+// dist/index.json is a build artifact (gitignored, not committed). These
+// benchmarks run locally after `pnpm run build`; they skip when it is absent
+// (e.g. CI that only compiles) rather than fail.
+const SKIP_MSG = "dist/index.json missing — run pnpm run build first";
+
 describe("discovery benchmark", () => {
   it("loads golden queries", async () => {
     const queries = await loadEvalQueries();
     assert.ok(queries.length >= 50, `expected >= 50 queries, got ${queries.length}`);
   });
 
-  it("full index beats endpoints-only on discover@3", async () => {
+  it("full index beats endpoints-only on discover@3", async (t) => {
+    if (!existsSync(distIndex)) return t.skip(SKIP_MSG);
     const bundle = await loadBundle();
     const queries = await loadEvalQueries();
     const full = evaluateMode(queries, bundle, "full");
@@ -44,7 +51,8 @@ describe("discovery benchmark", () => {
     );
   });
 
-  it("full index beats provider-only catalog search on literal@3", async () => {
+  it("full index beats provider-only catalog search on literal@3", async (t) => {
+    if (!existsSync(distIndex)) return t.skip(SKIP_MSG);
     const bundle = await loadBundle();
     const queries = await loadEvalQueries();
     const full = evaluateMode(queries, bundle, "full");
@@ -56,7 +64,8 @@ describe("discovery benchmark", () => {
     );
   });
 
-  it("unified index covers more endpoints than pay-skills slice", async () => {
+  it("unified index covers more endpoints than pay-skills slice", async (t) => {
+    if (!existsSync(distIndex)) return t.skip(SKIP_MSG);
     const bundle = await loadBundle();
     const paySkillsEps = bundle.endpoints.filter(
       (e) =>
@@ -68,7 +77,8 @@ describe("discovery benchmark", () => {
     assert.ok(bundle.endpoints.length > paySkillsEps.length * 5);
   });
 
-  it("meets minimum discovery quality bar on golden set", async () => {
+  it("meets minimum discovery quality bar on golden set", async (t) => {
+    if (!existsSync(distIndex)) return t.skip(SKIP_MSG);
     const bundle = await loadBundle();
     const queries = await loadEvalQueries();
     const full = (await runDiscoveryBenchmark(bundle, ["full"]))[0];
