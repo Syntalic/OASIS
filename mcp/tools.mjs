@@ -88,6 +88,9 @@ export async function handleTool(name, args) {
   return { error: `unknown tool: ${name}` };
 }
 
+/** The loaded index bundle + curated-capability lookup, for harnesses (compare.mjs). */
+export { bundle, capById };
+
 /** Anthropic Messages API tool shape ({ input_schema }). */
 export const ANTHROPIC_TOOLS = TOOLS.map((t) => ({
   name: t.name,

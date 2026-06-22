@@ -6,7 +6,8 @@
   "description": "Local MCP server + agent probe for the OASIS index (out-of-tree; not part of the standard).",
   "scripts": {
     "server": "node server.mjs",
-    "probe": "node --env-file=../.env probe.mjs"
+    "probe": "node --env-file=../.env probe.mjs",
+    "compare": "node --env-file=../.env compare.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.105.0",

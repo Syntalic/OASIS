@@ -69,20 +69,81 @@ reproduced what the hacks were faking.
 
 ---
 
-## Resolve quality (`select@k`)
+## Resolve quality — a binding bug, found end-to-end and fixed
 
-Once the right intent is found, does the *best* endpoint sort to the top of its
-`satisfies[]`?
+Offline `select@1`-vs-a-single-golden read ~19% — but the agent probe showed that
+metric is the wrong proxy (the LLM picks fine from a candidate list). The
+**end-to-end** A/B (below) surfaced the *real* resolve problem: OASIS was handing
+agents **wrong endpoints**. `data.weather_forecast` resolved to a geocoding
+endpoint; `finance.stock_quote` to a chart-pattern endpoint — both judged "does not
+do the task," and both *worse* than what raw keyword found.
 
-- Intents with ≥1 candidate: **47/47**; endpoint refs that resolve to the index: **536/536**.
-- **`select@1`: 12/63 (19%)**, **`select@3`: 19/63 (30%)**.
+Root cause: `satisfies[]` was materialized from the legacy regex `INTENT_MATCHERS`,
+which for many intents bound a pile of one-provider endpoints (e.g. 2s.io college /
+OSHA / nutrition for weather) while missing every real weather endpoint — and then
+ranked them by a query-blind quality prior that floated a "fake-data generator" to
+the top. Two fixes:
 
-This is the **weakest area and an honest open problem.** Resolve ranking now blends
-the neutral quality prior with a per-intent input-identifier/output-entity overlap
-term, which lifted `select@1` from 8 → 12, but the ceiling is **data-limited**:
-~9 of the expected endpoints have **no `inputs[]`** in the index (an OpenAPI-parse
-gap), so the input-overlap signal cannot rank them. Raising `select@k` further
-needs richer endpoint input extraction, not more ontology tuning.
+1. **Rebuild `satisfies` from `endpoint.capabilities`** (the higher-precision
+   facet/link binding) instead of the regex matchers — done offline via
+   `enrich-facets`, no re-ingest. The real weather/stock endpoints are now in the
+   candidate set.
+2. **Rank resolve by task fit, not quality** (`resolveEndpointsForQuery`): the
+   intent-id tokens (`weather_forecast` → weather/forecast) are the dominant signal,
+   matched against the endpoint's own summary/path (not `search_text`, which folded
+   in noisy origins like `openweather`), with the neutral quality prior demoted to a
+   tiebreaker.
+
+After the fix, **16–17 of 18** tasks resolve to a clearly-correct endpoint at rank 1
+(was ~3), and the end-to-end agent score rose **16/18 → 18/18** (below). The one
+residual is a coverage gap, not a ranking bug: `realestate.property_lookup` has no
+for-sale-listings endpoint bound, so resolve can only offer the nearest neighbor
+(skip-trace lookup).
+
+---
+
+## End-to-end: does OASIS beat raw keyword for an agent? (same agent, swapped tool)
+
+`mcp/compare.mjs` runs the SAME agent over the SAME 18 tasks, changing only the
+discovery tool: OASIS (`oasis_search → oasis_resolve`) vs a single `search_endpoints`
+keyword tool over the raw index (what an agent does *without* OASIS), sliced like the
+offline eval. The headline metric is a **method-neutral LLM judge** ("does the
+chosen endpoint actually do the task?"), independent of OASIS's curation — so it
+credits any working endpoint a baseline finds, not just OASIS-curated ones. (A
+second `curated-match` column is shown but is biased toward OASIS and is *not* the
+headline.)
+
+```bash
+cd mcp && node --env-file=../.env compare.mjs
+```
+
+| discovery tool the agent had | judged-correct (neutral) | curated-match |
+|---|---|---|
+| **OASIS (search→resolve)** | **18/18 (100%)** | 18/18 |
+| keyword — all endpoints | 18/18 (100%) | 11/18 |
+| keyword — mpp slice | 17/18 (94%) | 4/18 |
+| keyword — x402scan slice | 16/18 (89%) | 12/18 |
+| keyword — pay-skills slice | 13/18 (72%) | 5/18 |
+
+**Honest reading:**
+- On these **common, high-coverage tasks with a strong model (Sonnet 4.6), OASIS and
+  raw keyword over the full index are at parity (both 100%)** — the index is dense
+  with working endpoints for everyday tasks and a capable LLM sifts keyword hits
+  fine. The offline "OASIS 100% vs baselines 20–40%" advantage measures *rank the
+  golden intent #1*, a stricter thing that does **not** translate into "the agent
+  finds a working tool."
+- The structural win that *does* show is **coverage**: keyword over any single
+  registry slice drops to 72–94% (no one registry is complete); OASIS's unified
+  index + correct resolve covers all 18.
+- The fix mattered: **before it, OASIS scored 16/18 and actively mis-picked**
+  (weather→geocoding, stock→chart-patterns). It now never hands the agent a wrong
+  endpoint.
+
+**Not yet shown:** OASIS *beating* keyword end-to-end. That needs the conditions
+where the ontology earns its keep and this test doesn't exercise — **weaker /
+open-source models** that can't sift raw keyword noise (the provider-agnostic harness
+makes this a one-flag run), **ambiguous or trap tasks** (offline hard-negatives are
+6/6), and **rare / low-coverage tasks**. That is the next instrument to build.
 
 ---
 

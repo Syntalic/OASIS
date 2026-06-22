@@ -74,3 +74,22 @@ parse reads lower (12–14/18) because it needs one exact line and several "miss
 valid alternatives reached via the typed links. The one discovery miss moves between
 runs (LLM first-search phrasing), so it is not a fixed index gap. Full write-up:
 [`../docs/eval_results.md`](../docs/eval_results.md).
+
+## Head-to-head: OASIS vs raw keyword (`compare.mjs`)
+
+Runs the SAME agent over the SAME tasks, swapping ONLY the discovery tool: OASIS
+(`oasis_search → oasis_resolve`) vs a single keyword `search_endpoints` tool over the
+raw index (what an agent does *without* OASIS), sliced like the offline eval. Scored
+by a **method-neutral LLM judge** ("does the chosen endpoint actually do the task?"),
+so baselines get credit for any working endpoint they find — not just OASIS-curated
+ones.
+
+```bash
+npm run compare                 # node --env-file=../.env compare.mjs  (any provider)
+```
+
+Latest (Sonnet 4.6, 18 tasks): **OASIS 18/18, keyword-all 18/18** — parity on common
+high-coverage tasks; OASIS beats single-registry keyword (72–94%) on coverage. This
+test surfaced and the resolve-precision fix corrected a real bug (OASIS was 16/18,
+mis-picking weather→geocoding / stock→chart-patterns). Honest analysis +
+where-OASIS-should-win in [`../docs/eval_results.md`](../docs/eval_results.md).

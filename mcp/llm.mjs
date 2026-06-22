@@ -39,17 +39,17 @@ export function providerLabel() {
 
 // Shared bookkeeping so both paths report identical { resolved, searchTop3, calls }.
 const tracker = () => ({ resolved: [], searchTop3: [], calls: 0 });
-async function callTool(t, name, args) {
+async function callTool(t, name, args, handle) {
   t.calls += 1;
   if (name === "oasis_resolve" && args?.intent_id) t.resolved.push(args.intent_id);
-  const out = await handleTool(name, args ?? {});
+  const out = await handle(name, args ?? {});
   if (name === "oasis_search" && t.searchTop3.length === 0) {
     t.searchTop3 = (out.capabilities ?? []).slice(0, 3).map((c) => c.intent_id);
   }
   return out;
 }
 
-async function runAnthropic({ system, query }) {
+async function runAnthropic({ system, query, tools, handle }) {
   const { default: Anthropic } = await import("@anthropic-ai/sdk");
   const client = new Anthropic();
   const model = anthropicModel();
@@ -57,7 +57,7 @@ async function runAnthropic({ system, query }) {
   const t = tracker();
   for (let round = 0; round < MAX_ROUNDS; round++) {
     const resp = await client.messages.create({
-      model, max_tokens: MAX_TOKENS, system, tools: ANTHROPIC_TOOLS, messages,
+      model, max_tokens: MAX_TOKENS, system, tools, messages,
     });
     messages.push({ role: "assistant", content: resp.content });
     const toolUses = resp.content.filter((c) => c.type === "tool_use");
@@ -67,7 +67,7 @@ async function runAnthropic({ system, query }) {
     }
     const results = [];
     for (const tu of toolUses) {
-      const out = await callTool(t, tu.name, tu.input);
+      const out = await callTool(t, tu.name, tu.input, handle);
       results.push({ type: "tool_result", tool_use_id: tu.id, content: JSON.stringify(out) });
     }
     messages.push({ role: "user", content: results });
@@ -75,7 +75,7 @@ async function runAnthropic({ system, query }) {
   return { ...t, final: "(max rounds)" };
 }
 
-async function runOpenAI({ system, query }) {
+async function runOpenAI({ system, query, tools, handle }) {
   const { default: OpenAI } = await import("openai");
   const client = new OpenAI({ apiKey: openaiKey(), baseURL: openaiBaseURL() });
   const model = openaiModel();
@@ -86,7 +86,7 @@ async function runOpenAI({ system, query }) {
   const t = tracker();
   for (let round = 0; round < MAX_ROUNDS; round++) {
     const resp = await client.chat.completions.create({
-      model, max_tokens: MAX_TOKENS, messages, tools: OPENAI_TOOLS, tool_choice: "auto",
+      model, max_tokens: MAX_TOKENS, messages, tools, tool_choice: "auto",
     });
     const msg = resp.choices[0].message;
     messages.push(msg);
@@ -95,17 +95,48 @@ async function runOpenAI({ system, query }) {
     for (const tc of toolCalls) {
       let args = {};
       try { args = JSON.parse(tc.function.arguments || "{}"); } catch { /* leave empty */ }
-      const out = await callTool(t, tc.function.name, args);
+      const out = await callTool(t, tc.function.name, args, handle);
       messages.push({ role: "tool", tool_call_id: tc.id, content: JSON.stringify(out) });
     }
   }
   return { ...t, final: "(max rounds)" };
 }
 
-/** Run one task through the configured provider's agent loop.
- *  Returns { resolved: string[], searchTop3: string[], calls: number, final: string }. */
-export async function runAgent({ system, query }) {
+/** Run one task through the configured provider's agent loop. Toolset + handler are
+ *  pluggable (default: OASIS) so the same loop drives baseline backends too.
+ *  Returns { resolved, searchTop3, calls, final }. */
+export async function runAgent({
+  system,
+  query,
+  anthropicTools = ANTHROPIC_TOOLS,
+  openaiTools = OPENAI_TOOLS,
+  handle = handleTool,
+}) {
   return resolveProvider() === "openai"
-    ? runOpenAI({ system, query })
-    : runAnthropic({ system, query });
+    ? runOpenAI({ system, query, tools: openaiTools, handle })
+    : runAnthropic({ system, query, tools: anthropicTools, handle });
+}
+
+/** One-shot completion (no tools), provider-agnostic. Used by the compare harness'
+ *  method-neutral judge. Returns the reply text. */
+export async function simpleComplete({ system, user, maxTokens = 8 }) {
+  if (resolveProvider() === "openai") {
+    const { default: OpenAI } = await import("openai");
+    const client = new OpenAI({ apiKey: openaiKey(), baseURL: openaiBaseURL() });
+    const resp = await client.chat.completions.create({
+      model: openaiModel(),
+      max_tokens: maxTokens,
+      messages: [{ role: "system", content: system }, { role: "user", content: user }],
+    });
+    return resp.choices[0]?.message?.content ?? "";
+  }
+  const { default: Anthropic } = await import("@anthropic-ai/sdk");
+  const client = new Anthropic();
+  const resp = await client.messages.create({
+    model: anthropicModel(),
+    max_tokens: maxTokens,
+    system,
+    messages: [{ role: "user", content: user }],
+  });
+  return resp.content.filter((c) => c.type === "text").map((c) => c.text).join("");
 }
