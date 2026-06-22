@@ -35,7 +35,7 @@ Tokens/task is **input (prompt) + output (completion)**, summed across the agent
 round-trips — the full cost to find and pick (you pay for the re-sent prompt on every call,
 so more tool-calls → more input tokens):
 
-| discovery method | tokens/task (in + out) | tool-calls | vs `oasis_find` |
+| discovery method | tokens/task (in + out) | avg tool-calls/task | vs `oasis_find` |
 |---|---|---|---|
 | **`oasis_find` (OASIS, one call)** | **2,562** (2,247 + 315) | 1.2 | — |
 | keyword — all endpoints | 2,723 (2,462 + 261) | 1.9 | +6% |
