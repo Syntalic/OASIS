@@ -31,17 +31,32 @@ End-to-end (a live LLM picks a paid endpoint for 18 real tasks; a method-neutral
 scores the pick), `oasis_find` finds *and* picks in one call at the lowest token cost of any
 discovery method — every keyword baseline costs **6–95% more**:
 
-| discovery method | tokens/task | tool-calls | vs `oasis_find` |
-|---|---|---|---|
-| **`oasis_find` (OASIS, one call)** | **2,562** | 1.2 | — |
-| keyword — all endpoints | 2,723 | 1.9 | +6% |
-| keyword — mpp slice | 3,116 | 2.2 | +22% |
-| keyword — x402scan slice | 3,166 | 2.1 | +24% |
-| keyword — pay-skills slice | 5,005 | 3.3 | +95% |
+Tokens/task is **input (prompt) + output (completion)**, summed across the agent's
+round-trips — the full cost to find and pick (you pay for the re-sent prompt on every call,
+so more tool-calls → more input tokens):
 
-A low-coverage registry (pay-skills) pays ~2× because the agent searches repeatedly (3.3
-calls) for a match it often never finds. Full analysis + reproduction:
-**[docs/eval_results.md](docs/eval_results.md)**.
+| discovery method | tokens/task (in + out) | tool-calls | vs `oasis_find` |
+|---|---|---|---|
+| **`oasis_find` (OASIS, one call)** | **2,562** (2,247 + 315) | 1.2 | — |
+| keyword — all endpoints | 2,723 (2,462 + 261) | 1.9 | +6% |
+| keyword — mpp slice | 3,116 (2,821 + 295) | 2.2 | +22% |
+| keyword — x402scan slice | 3,166 (2,892 + 274) | 2.1 | +24% |
+| keyword — pay-skills slice | 5,005 (4,651 + 354) | 3.3 | +95% |
+
+**What each method is** — every "keyword" row is the *same* lexical search over raw endpoint
+summaries (no ontology, no vectors), differing only in how much of the index it covers:
+
+- **`oasis_find` (OASIS)** — the shipped method: **one** MCP call; server-side hybrid retrieval
+  (capability vectors for recall + task-fit ranking) returns a tight, pre-ranked endpoint list
+  with price/rails inline. Covers the whole index.
+- **keyword — all endpoints** — the key baseline: plain keyword search over the **full
+  ~30k-endpoint index**; the agent reads the raw hits and picks. Same corpus as `oasis_find`, so
+  the gap is purely the ontology + ranking — *"OASIS's corpus minus its smarts."*
+- **keyword — x402scan / mpp / pay-skills slice** — the same keyword search restricted to **one
+  registry's** endpoints (x402scan; mppscan + mpp.dev; or the pay-skills providers). Lower
+  coverage, so the agent searches more (pay-skills: 3.3 calls) and sometimes finds nothing (14/18).
+
+Full analysis + reproduction: **[docs/eval_results.md](docs/eval_results.md)**.
 
 ### 🎯 Accuracy — the honest, generalizing number
 
