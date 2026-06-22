@@ -8,7 +8,11 @@ import type {
   SatisfiesRef,
 } from "./types.js";
 
-const MAX_SATISFIES = 12;
+// Retain a generous candidate pool per intent. The old cap of 12 evicted the
+// correct endpoint in 54% of resolve cases (it was matched but ranked past 12 by
+// the query-BLIND neutral score). Resolve precision is recovered at runtime by
+// ranking this pool against the actual query (see resolveEndpointsForQuery).
+const MAX_SATISFIES = 50;
 
 /**
  * Materialized `satisfies[]` are derived from the regex INTENT_MATCHERS (the
