@@ -139,11 +139,62 @@ cd mcp && node --env-file=../.env compare.mjs
   (weather→geocoding, stock→chart-patterns). It now never hands the agent a wrong
   endpoint.
 
-**Not yet shown:** OASIS *beating* keyword end-to-end. That needs the conditions
-where the ontology earns its keep and this test doesn't exercise — **weaker /
-open-source models** that can't sift raw keyword noise (the provider-agnostic harness
-makes this a one-flag run), **ambiguous or trap tasks** (offline hard-negatives are
-6/6), and **rare / low-coverage tasks**. That is the next instrument to build.
+### Did harder tasks, a weaker model, or token cost flip it? No.
+
+We then ran the conditions where the ontology *should* help most:
+
+- **Trap / sibling-ambiguous tasks** (`mcp/tasks-hard.mjs` — transcribe-vs-TTS,
+  scrape-vs-screenshot, validate-vs-send, OCR-vs-extract; `COMPARE_TASKS=hard`):
+
+  | agent model | OASIS | keyword-all |
+  |---|---|---|
+  | Sonnet 4.6 (strong) | 13/16 (81%) | **14/16 (88%)** |
+  | Haiku 4.5 (weak) | 11/16 (69%) | 11/16 (69%) |
+
+  Even on traps, and even with a weak model, OASIS does **not** pull ahead. A capable
+  LLM disambiguates by reading endpoint summaries itself, so the ontology's
+  disambiguation is largely redundant with the model's own reading.
+
+- **Token cost** (`avg tokens/task` to find + pick, common set, Sonnet):
+
+  | discovery tool | judged-correct | avg tokens/task (in+out) | avg tool-calls |
+  |---|---|---|---|
+  | OASIS (search→resolve) | 18/18 | **5021** (4669 + 352) | 2.1 |
+  | keyword — all endpoints | 18/18 | **3247** (2947 + 300) | 2.2 |
+
+  OASIS costs **~55% more tokens** for the same result — not from extra round-trips
+  (tool-calls are equal) but because the `search` capability list + `resolve`
+  endpoints + typed `related` options are ~1,700 more input tokens to read than a
+  flat keyword endpoint list.
+
+### What this means (honest)
+
+Across three independent measurements — common tasks, trap/weak-model tasks, and
+token cost — the **capability-routing layer does not beat flat keyword search over
+the same unified index, and costs more tokens.** Crucially, the keyword baseline
+searches *the same OASIS index* — so this isolates the value of the **ontology layer**
+(≈ nil on these metrics), not the value of the **index** (real: a unified,
+payment-aware, paid-API-specific corpus with coverage no single registry has — keyword
+over one registry slice drops to 72–94%).
+
+Implications (consistent with treating the **endpoint as the atomic unit**):
+- **Make flat endpoint retrieval the default** path (vector + keyword over each
+  endpoint's own summary) — same accuracy as search→resolve, ~40% cheaper, and it
+  dissolves the resolve-precision problem entirely (there is no capability→endpoint
+  hop to mis-bind; the bug fixed above only exists because of that hop).
+- **Demote the capability ontology to an opt-in overlay** — the one thing flat
+  keyword structurally cannot do is *typed-link discovery* ("show me alternatives /
+  the next step"; offline `related@links` 15/15). Expose that as a separate tool the
+  agent calls only when it wants alternatives, so the token premium is paid only when
+  the feature is used.
+- **Keep service as a facet** (auth, price, rails, reputation, coverage), not a
+  routing unit — the `satisfies` pollution that caused the resolve bug was a
+  service-coarse binding artifact.
+
+**Still unmeasured (where OASIS may yet win):** value beyond find-one-endpoint —
+typed-link *alternatives/chaining* as an agent capability, payment metadata for
+budget-aware selection, and comparison against *worse* baselines (no index at all /
+hallucinated URLs / fragmented registries) rather than keyword over OASIS's own index.
 
 ---
 

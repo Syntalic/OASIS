@@ -38,7 +38,7 @@ export function providerLabel() {
 }
 
 // Shared bookkeeping so both paths report identical { resolved, searchTop3, calls }.
-const tracker = () => ({ resolved: [], searchTop3: [], calls: 0 });
+const tracker = () => ({ resolved: [], searchTop3: [], calls: 0, tokensIn: 0, tokensOut: 0 });
 async function callTool(t, name, args, handle) {
   t.calls += 1;
   if (name === "oasis_resolve" && args?.intent_id) t.resolved.push(args.intent_id);
@@ -59,6 +59,8 @@ async function runAnthropic({ system, query, tools, handle }) {
     const resp = await client.messages.create({
       model, max_tokens: MAX_TOKENS, system, tools, messages,
     });
+    t.tokensIn += resp.usage?.input_tokens ?? 0;
+    t.tokensOut += resp.usage?.output_tokens ?? 0;
     messages.push({ role: "assistant", content: resp.content });
     const toolUses = resp.content.filter((c) => c.type === "tool_use");
     if (toolUses.length === 0) {
@@ -88,6 +90,8 @@ async function runOpenAI({ system, query, tools, handle }) {
     const resp = await client.chat.completions.create({
       model, max_tokens: MAX_TOKENS, messages, tools, tool_choice: "auto",
     });
+    t.tokensIn += resp.usage?.prompt_tokens ?? 0;
+    t.tokensOut += resp.usage?.completion_tokens ?? 0;
     const msg = resp.choices[0].message;
     messages.push(msg);
     const toolCalls = msg.tool_calls ?? [];
@@ -119,12 +123,12 @@ export async function runAgent({
 
 /** One-shot completion (no tools), provider-agnostic. Used by the compare harness'
  *  method-neutral judge. Returns the reply text. */
-export async function simpleComplete({ system, user, maxTokens = 8 }) {
+export async function simpleComplete({ system, user, maxTokens = 8, model }) {
   if (resolveProvider() === "openai") {
     const { default: OpenAI } = await import("openai");
     const client = new OpenAI({ apiKey: openaiKey(), baseURL: openaiBaseURL() });
     const resp = await client.chat.completions.create({
-      model: openaiModel(),
+      model: model || openaiModel(),
       max_tokens: maxTokens,
       messages: [{ role: "system", content: system }, { role: "user", content: user }],
     });
@@ -133,7 +137,7 @@ export async function simpleComplete({ system, user, maxTokens = 8 }) {
   const { default: Anthropic } = await import("@anthropic-ai/sdk");
   const client = new Anthropic();
   const resp = await client.messages.create({
-    model: anthropicModel(),
+    model: model || anthropicModel(),
     max_tokens: maxTokens,
     system,
     messages: [{ role: "user", content: user }],

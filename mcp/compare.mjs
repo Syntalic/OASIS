@@ -20,7 +20,11 @@ import { searchIndex } from "../dist/search.js";
 import { resolveEndpointsForQuery } from "../dist/select-policy.js";
 import { runAgent, providerLabel, simpleComplete } from "./llm.mjs";
 import { ANTHROPIC_TOOLS, OPENAI_TOOLS, handleTool, bundle, capById } from "./tools.mjs";
-import { TASKS } from "./tasks.mjs";
+import { TASKS as COMMON_TASKS } from "./tasks.mjs";
+import { TASKS as HARD_TASKS } from "./tasks-hard.mjs";
+
+// COMPARE_TASKS=hard runs the trap/ambiguous set; default is the common set.
+const TASKS = process.env.COMPARE_TASKS === "hard" ? HARD_TASKS : COMMON_TASKS;
 
 const ENDPOINTS = bundle.endpoints;
 
@@ -136,6 +140,9 @@ const JUDGE_SYS =
   "You evaluate whether a chosen paid API endpoint can accomplish a user's task. " +
   "Judge only whether the endpoint's purpose matches what the task needs. " +
   "Reply with exactly one word: YES or NO.";
+// Fixed judge model (default Sonnet) so the metric is identical no matter which
+// model drove the agent — a weak agent run must not be scored by a weak judge.
+const JUDGE_MODEL = process.env.JUDGE_MODEL || undefined;
 const judgeCache = new Map();
 function judge(q, ep) {
   const key = q + "||" + norm(`${ep.origin}${ep.path}`);
@@ -144,6 +151,7 @@ function judge(q, ep) {
       key,
       simpleComplete({
         maxTokens: 4,
+        model: JUDGE_MODEL,
         system: JUDGE_SYS,
         user: `Task: "${q}"\nChosen endpoint: ${ep.method} ${ep.origin}${ep.path}\nWhat it is: ${ep.summary || ""} — ${(ep.description || "").slice(0, 160)}\nCan this endpoint accomplish the task? YES or NO.`,
       })
@@ -168,8 +176,13 @@ async function pool(items, n, fn) {
   return out;
 }
 
-const pairs = BACKENDS.flatMap((b) => TASKS.map((task) => ({ b, task })));
-console.error(`running ${pairs.length} agent runs (${BACKENDS.length} backends × ${TASKS.length} tasks) on ${providerLabel()} ...`);
+// COMPARE_BACKENDS=oasis,all restricts to a subset (substring match on the name) to
+// keep cost down on the weak-model / hard-task sweeps; default runs all backends.
+const want = process.env.COMPARE_BACKENDS?.toLowerCase().split(",").map((s) => s.trim());
+const RUN_BACKENDS = want ? BACKENDS.filter((b) => want.some((w) => b.name.toLowerCase().includes(w))) : BACKENDS;
+
+const pairs = RUN_BACKENDS.flatMap((b) => TASKS.map((task) => ({ b, task })));
+console.error(`running ${pairs.length} agent runs (${RUN_BACKENDS.length} backends × ${TASKS.length} tasks) on ${providerLabel()} ...`);
 const results = await pool(pairs, 5, async ({ b, task }) => {
   try {
     const r = await runAgent({ system: b.system, query: task.q, anthropicTools: b.anthropicTools, openaiTools: b.openaiTools, handle: b.handle });
@@ -177,16 +190,16 @@ const results = await pool(pairs, 5, async ({ b, task }) => {
     const ep = lookupEndpoint(url);
     const curatedHit = !!(url && answerKey.get(task.expect)?.has(url));
     const hit = ep ? await judge(task.q, ep) : false; // headline: neutral judge
-    return { backend: b.name, expect: task.expect, url, known: !!ep, curatedHit, hit, finalTail: (r.final || "").slice(-160) };
+    return { backend: b.name, expect: task.expect, url, known: !!ep, curatedHit, hit, calls: r.calls, tokensIn: r.tokensIn, tokensOut: r.tokensOut, finalTail: (r.final || "").slice(-160) };
   } catch (e) {
-    return { backend: b.name, expect: task.expect, url: null, known: false, curatedHit: false, hit: false, error: String(e).slice(0, 80) };
+    return { backend: b.name, expect: task.expect, url: null, known: false, curatedHit: false, hit: false, calls: 0, tokensIn: 0, tokensOut: 0, error: String(e).slice(0, 80) };
   }
 });
 const detailPath = nodePath.join(os.tmpdir(), "oasis-compare-runs.json");
 writeFileSync(detailPath, JSON.stringify(results));
 console.error("per-run detail written to", detailPath);
 
-const byBackend = new Map(BACKENDS.map((b) => [b.name, []]));
+const byBackend = new Map(RUN_BACKENDS.map((b) => [b.name, []]));
 for (const r of results) byBackend.get(r.backend).push(r);
 
 const pct = (h, n) => `${h}/${n} (${Math.round((h / n) * 100)}%)`;
@@ -194,18 +207,27 @@ const pad = (s, n) => String(s).padEnd(n);
 console.log(`\n=== OASIS vs baseline discovery — end-to-end agent A/B (${providerLabel()}, ${TASKS.length} tasks) ===`);
 console.log("HEADLINE = method-neutral LLM judge: did the agent's CHOSEN endpoint actually do the task?");
 console.log("(curated = chosen endpoint is in OASIS's own satisfies/capabilities sets — biased toward OASIS, shown for reference)\n");
-console.log(pad("discovery tool the agent had", 30) + pad("judged-correct", 18) + "curated-match");
-for (const b of BACKENDS) {
+const avg = (rs, f) => rs.reduce((s, r) => s + (f(r) || 0), 0) / rs.length;
+console.log(
+  pad("discovery tool the agent had", 30) + pad("judged-correct", 15) +
+    pad("avg tokens/task (in+out)", 26) + "avg tool-calls",
+);
+for (const b of RUN_BACKENDS) {
   const rs = byBackend.get(b.name);
   const hit = rs.filter((r) => r.hit).length;
-  const cur = rs.filter((r) => r.curatedHit).length;
-  console.log(pad(b.name, 30) + pad(pct(hit, rs.length), 18) + pct(cur, rs.length));
+  const tin = Math.round(avg(rs, (r) => r.tokensIn));
+  const tout = Math.round(avg(rs, (r) => r.tokensOut));
+  console.log(
+    pad(b.name, 30) + pad(pct(hit, rs.length), 15) +
+      pad(`${tin + tout}  (${tin} + ${tout})`, 26) + avg(rs, (r) => r.calls).toFixed(1),
+  );
 }
+console.log("(curated-match column moved to the per-run detail json; tokens are uncached prompt+completion)");
 
-const short = BACKENDS.map((b) => b.name.replace("OASIS (search→resolve)", "OASIS").replace("keyword: ", "kw:").replace(" slice", "").replace(" endpoints", ""));
+const short = RUN_BACKENDS.map((b) => b.name.replace("OASIS (search→resolve)", "OASIS").replace("keyword: ", "kw:").replace(" slice", "").replace(" endpoints", ""));
 console.log("\nper-task (✓ = judge says the agent's chosen endpoint accomplishes the task):");
 console.log(pad("task", 26) + short.map((s) => pad(s, 12)).join(""));
 for (const task of TASKS) {
-  const cells = BACKENDS.map((b) => byBackend.get(b.name).find((r) => r.expect === task.expect));
+  const cells = RUN_BACKENDS.map((b) => byBackend.get(b.name).find((r) => r.expect === task.expect));
   console.log(pad(task.expect, 26) + cells.map((c) => pad(c?.hit ? "✓" : "✗", 12)).join(""));
 }
