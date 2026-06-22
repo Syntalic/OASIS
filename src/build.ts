@@ -423,6 +423,20 @@ export async function buildIndex(options: BuildOptions = {}): Promise<IndexBundl
     .map(deriveEndpointFacets)
     .sort((a, b) => `${a.origin}${a.path}`.localeCompare(`${b.origin}${b.path}`));
 
+  // Re-materialize curated satisfies[] now that endpoint.capabilities is populated
+  // (linkCapabilitiesToEndpoints, above). The first pass at materialize time ran
+  // BEFORE linking, so it fell back to the low-precision regex matchers — which
+  // bound e.g. college/OSHA/geocoding endpoints to data.weather_forecast. The
+  // capabilities binding is far cleaner; swap in only the improved satisfies (this
+  // is the in-build equivalent of the offline enrich-facets re-pass).
+  const rematerializedSatisfies = new Map(
+    materializeCuratedIntents(curatedSources, endpoints).map((c) => [c.id, c.satisfies]),
+  );
+  for (const cap of capabilities) {
+    const better = rematerializedSatisfies.get(cap.id);
+    if (better && better.length) cap.satisfies = better;
+  }
+
   const origins = new Set(endpoints.map((e) => e.origin));
   const stubEndpoints = endpoints.filter(isStubEndpoint).length;
   const linkedEndpoints = endpoints.filter((e) => e.capabilities?.length).length;

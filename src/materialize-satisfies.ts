@@ -60,7 +60,16 @@ export function materializeCuratedIntent(
   source: CuratedIntentSource,
   endpoints: EndpointRecord[],
 ): CapabilityIntent {
-  const matches = matchEndpointsForIntent(source.id, endpoints);
+  // Prefer the facet/link binding (endpoint.capabilities, set by
+  // linkCapabilitiesToEndpoints) when it is populated — it is far higher-precision
+  // than the legacy regex INTENT_MATCHERS, which bound e.g. college-scorecard,
+  // OSHA and geocoding endpoints to data.weather_forecast while missing every real
+  // weather endpoint. When capabilities aren't populated yet (the first materialize
+  // pass of a full build, before linkCapabilitiesToEndpoints runs) fall back to the
+  // regex matcher so the build is unaffected; the offline `enrich-facets` re-pass
+  // then rebuilds satisfies from the now-present capabilities binding.
+  const byCapability = endpoints.filter((e) => e.capabilities?.includes(source.id));
+  const matches = byCapability.length > 0 ? byCapability : matchEndpointsForIntent(source.id, endpoints);
   // Pass the source's typed ports so satisfies[] is ordered by per-intent
   // relevance (input-identifier / output-entity overlap), not just the neutral
   // quality prior — this is what lands the best-fit endpoint at satisfies[0].

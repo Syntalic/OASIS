@@ -45,6 +45,10 @@ const QUERY_STOP = new Set([
   "are", "how", "get", "give", "need", "want", "find", "into", "out", "now",
   "can", "should", "would", "could", "please", "tell", "show", "make", "have",
   "use", "let", "know", "any", "some", "one", "all", "than", "then", "they",
+  // generic API/web filler that pollutes intent label/alias vocab (e.g. weather
+  // aliases "get current weather", "air quality index" leak get/current/api/today)
+  "api", "current", "today", "new", "app", "via", "using", "per", "data", "info",
+  "service", "request", "response", "returns", "return", "will", "live", "real",
 ]);
 
 function queryTokens(query: string): string[] {
@@ -59,32 +63,72 @@ function queryTokens(query: string): string[] {
   ];
 }
 
+// Match against the endpoint's OWN description, not search_text — the latter folds
+// in the origin/provider title, so a reverse-geocode endpoint at host "openweather"
+// or a market-cap endpoint at "crypto.*" spuriously matched the id tokens
+// weather/crypto. Summary + path + inputs is the clean task signal.
 function endpointText(ep: EndpointRecord): string {
-  const base =
-    ep.search_text && ep.search_text.length
-      ? ep.search_text
-      : `${ep.summary} ${ep.description ?? ""} ${ep.path} ${(ep.inputs ?? []).join(" ")}`;
-  return base.toLowerCase();
+  return `${ep.summary ?? ""} ${ep.description ?? ""} ${ep.path} ${(ep.inputs ?? []).join(" ")}`.toLowerCase();
 }
 
-/** Fraction of the query's content tokens present in the endpoint's text. */
-function lexicalQueryScore(ep: EndpointRecord, qTokens: string[]): number {
-  if (qTokens.length === 0) return 0;
+/** Fraction of the given content tokens present in the endpoint's text. */
+function lexicalScore(ep: EndpointRecord, tokens: string[]): number {
+  if (tokens.length === 0) return 0;
   const text = endpointText(ep);
   let hits = 0;
-  for (const t of qTokens) if (text.includes(t)) hits += 1;
-  return hits / qTokens.length;
+  for (const t of tokens) if (text.includes(t)) hits += 1;
+  return hits / tokens.length;
 }
 
-/** Weight on the lexical query↔endpoint term, relative to the neutral prior. */
-export const DEFAULT_QUERY_WEIGHT = 10;
+/** Absolute count of the given tokens present in the endpoint's text. Used for the
+ *  id term so a long id (`crypto_spot_price`) isn't diluted: matching the head noun
+ *  ("price") counts fully rather than as 1/3. */
+function matchCount(ep: EndpointRecord, tokens: string[]): number {
+  const text = endpointText(ep);
+  let hits = 0;
+  for (const t of tokens) if (text.includes(t)) hits += 1;
+  return hits;
+}
 
 /**
- * Query-AWARE resolve: rank an intent's candidate endpoints against the actual
- * user query, blending the neutral quality prior + the intent's typed-port
- * relevance + a lexical query↔endpoint-text term. The selection scorer was
- * previously query-blind (every query that hit an intent got the same endpoint
- * order); this is the missing signal that makes resolve depend on what was asked.
+ * The intent id's own tokens (minus the domain prefix) — the cleanest, lowest-noise
+ * task discriminator: `data.weather_forecast` → [weather, forecast],
+ * `finance.stock_quote` → [stock, quote]. Unlike the alias list, it carries no
+ * generic filler, so an endpoint that mentions these words is almost certainly
+ * on-task. This is the PRIMARY resolve-ranking signal.
+ */
+function intentIdTokens(intent: CapabilityIntent): string[] {
+  const local = intent.id.split(".").slice(1).join(" ");
+  return queryTokens(local.replace(/[_-]+/g, " "));
+}
+
+/** Broader task vocabulary (label + aliases, generic filler stopped out) — recall
+ *  for cases where the id tokens don't literally appear in a good endpoint's text
+ *  (e.g. speech_to_text vs a "transcribe audio" endpoint). */
+function intentVocabTokens(intent: CapabilityIntent): string[] {
+  return queryTokens([intent.label, ...(intent.aliases ?? [])].join(" "));
+}
+
+/** Weight on the lexical query↔endpoint term (per-request disambiguation). */
+export const DEFAULT_QUERY_WEIGHT = 10;
+/** Weight on the intent label/alias vocabulary fraction (recall). */
+export const DEFAULT_VOCAB_WEIGHT = 12;
+/** Per-token weight on intent-id matches (the primary, dominant relevance signal). */
+export const DEFAULT_ID_WEIGHT = 25;
+/**
+ * The neutral quality prior is a TIEBREAKER, not a ranker — scaled well below the
+ * lexical task-fit terms. At full weight it ranked a "fake-data generator" (quality
+ * score 26) above the real weather endpoint; task fit must win, quality only breaks
+ * ties among comparably on-task endpoints.
+ */
+export const DEFAULT_NEUTRAL_SCALE = 0.15;
+
+/**
+ * Query-AWARE resolve: rank an intent's candidate endpoints by task fit — relevance
+ * to the intent id (primary, per-token) + label/alias vocabulary (recall) + the
+ * actual user query (disambiguation) — with the neutral quality prior as a scaled
+ * tiebreaker. The id term is the workhorse: it surfaces endpoints that actually do
+ * the task regardless of how oblique the query is.
  */
 export function resolveEndpointsForQuery(
   intent: CapabilityIntent,
@@ -92,17 +136,23 @@ export function resolveEndpointsForQuery(
   query: string,
   max = 10,
   queryWeight = DEFAULT_QUERY_WEIGHT,
+  vocabWeight = DEFAULT_VOCAB_WEIGHT,
+  idWeight = DEFAULT_ID_WEIGHT,
+  neutralScale = DEFAULT_NEUTRAL_SCALE,
 ): EndpointRecord[] {
   const candidates = satisfiesRefsToEndpoints(intent.satisfies, endpoints);
   const qTokens = queryTokens(query);
-  if (qTokens.length === 0) return rankEndpointsNeutral(candidates, max, intent);
+  const idTokens = intentIdTokens(intent);
+  const vocabTokens = intentVocabTokens(intent);
 
   return [...candidates]
     .map((ep) => ({
       ep,
       score:
-        scoreEndpointNeutral(ep, intent) +
-        queryWeight * lexicalQueryScore(ep, qTokens),
+        neutralScale * scoreEndpointNeutral(ep, intent) +
+        idWeight * matchCount(ep, idTokens) +
+        vocabWeight * lexicalScore(ep, vocabTokens) +
+        queryWeight * lexicalScore(ep, qTokens),
     }))
     .sort((a, b) => b.score - a.score)
     .slice(0, max)
