@@ -90,8 +90,8 @@ needs richer endpoint input extraction, not more ontology tuning.
 
 The 63-query set is single-label (one `expect_intent` each) and cannot measure
 the discovery/chaining features (typed links) or robustness to traps. Tranche B
-adds `eval/multi-label-queries.json` (24 queries across four kinds) +
-`eval:multi`:
+adds `eval/multi-label-queries.json` (28 queries across multi-label /
+hard-negative / paraphrase / related / chain kinds) + `eval:multi`:
 
 ```bash
 node dist/cli.js eval:multi
@@ -99,23 +99,22 @@ node dist/cli.js eval:multi
 
 | Metric | Result | Meaning |
 |---|---|---|
-| task recall@1 | 23/24 (96%) | ≥1 acceptable intent at rank 1 (multi-label) |
-| task recall@3 | 23/24 (96%) | ≥1 acceptable intent in top-3 |
+| task recall@1 | 28/28 (100%) | ≥1 acceptable intent at rank 1 (multi-label) |
+| task recall@3 | 28/28 (100%) | ≥1 acceptable intent in top-3 |
 | **hard-negative pass** | **6/6 (100%)** | the right intent beats the trap-token intent at rank 1 |
-| **related@links** | **11/11 (100%)** | expected related intents present in the anchor intent's typed `links[]` |
-| facet coverage | 13/24 (54%) | queries that yield ≥1 inferred query facet |
+| **related@links** | **15/15 (100%)** | expected related/next-step intents present in the anchor intent's typed `links[]` |
+| facet coverage | 15/28 (54%) | queries that yield ≥1 inferred query facet |
 
 **hard-negative 6/6** confirms the facet machinery (not the deleted hacks)
 resolves the traps — `serp/google` → `search.web`, `citations` →
 `ai.web_research`, `invoice fields` → `ai.document_extract` over `data.ocr`, etc.
-**related@links 11/11** confirms the typed-link graph surfaces the right
-neighbors for the authored clusters (shop pricing, comms channels, crypto, audio,
-places, web-search).
+**related@links 15/15** confirms the typed-link graph surfaces the right
+neighbors — both *alternatives* (shop pricing, comms channels, crypto, audio,
+places, web-search) and *next steps* via `pipes_to` (transcribe→translate,
+search→scrape, ocr→translate, translate→speak). `resolve --intent` returns this
+neighborhood as the agent's pivot set (see `traversal.md`).
 
-The instrument immediately surfaced two real follow-ups it now lets us track:
-- **1 recall miss:** *"forecast for Tokyo this weekend"* routes to
-  `finance.crypto_spot_price`, not `data.weather_forecast` — a genuine
-  mis-route to fix.
+Remaining tracked follow-up:
 - **facet coverage 54%:** `inferQueryFacets` has cue gaps (embeddings, voice
   call, email-validate, transcription, weather, real-estate get no facet) — the
   cold-start limitation; the precision levers are inert on those queries until

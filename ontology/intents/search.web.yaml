@@ -21,6 +21,9 @@ produces:
   - entity: SearchResults
     role: payload
     cardinality: many
+  - entity: Webpage
+    role: payload
+    cardinality: many
 facets:
   domain: search
   action: search
@@ -31,3 +34,6 @@ links:
   - type: broader_of
     to: ai.web_research
     note: search.web returns raw SERP links; web_research is the narrower cited-answer variant over the same query
+  - type: pipes_to
+    to: data.web_scrape
+    note: search the web, then fetch/scrape the result URLs

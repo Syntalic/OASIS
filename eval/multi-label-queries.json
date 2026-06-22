@@ -25,5 +25,10 @@
   { "id": "rel-crypto", "kind": "related", "query": "what is ethereum trading at right now", "expect_intents": ["finance.crypto_spot_price"], "expect_related": ["finance.token_balance", "finance.onchain_analytics", "finance.stock_quote"] },
   { "id": "rel-stt", "kind": "related", "query": "transcribe this audio recording to text", "expect_intents": ["ai.speech_to_text"], "expect_related": ["ai.text_to_speech"] },
   { "id": "rel-places", "kind": "related", "query": "find a place to eat near downtown Seattle", "expect_intents": ["maps.places"], "expect_related": ["travel.place_reviews"] },
-  { "id": "rel-websearch", "kind": "related", "query": "search the web for organic result links", "expect_intents": ["search.web"], "expect_related": ["ai.web_research"] }
+  { "id": "rel-websearch", "kind": "related", "query": "search the web for organic result links", "expect_intents": ["search.web"], "expect_related": ["ai.web_research"] },
+
+  { "id": "chain-stt-translate", "kind": "chain", "query": "transcribe this call recording then translate the transcript", "expect_intents": ["ai.speech_to_text"], "expect_related": ["data.translate_text"] },
+  { "id": "chain-search-scrape", "kind": "chain", "query": "search the web and then fetch the content of the result pages", "expect_intents": ["search.web"], "expect_related": ["data.web_scrape"] },
+  { "id": "chain-ocr-translate", "kind": "chain", "query": "read the text off this scanned page then translate it", "expect_intents": ["data.ocr", "ai.document_extract", "data.translate_text"], "expect_related": ["data.translate_text"] },
+  { "id": "chain-translate-tts", "kind": "chain", "query": "translate this text and then read it aloud as audio", "expect_intents": ["data.translate_text"], "expect_related": ["ai.text_to_speech"] }
 ]

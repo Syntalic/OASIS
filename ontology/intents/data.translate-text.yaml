@@ -15,3 +15,10 @@ consumes:
   - { entity: Text, role: identifier }
 produces:
   - { entity: Text, role: payload }
+links:
+  - type: pipes_to
+    to: ai.text_to_speech
+    note: translate text, then synthesize speech in the target language
+  - type: pipes_to
+    to: ai.embeddings
+    note: translate text, then embed the translation for retrieval

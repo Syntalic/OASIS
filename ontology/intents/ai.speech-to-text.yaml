@@ -27,3 +27,9 @@ links:
   - type: sibling_of
     to: ai.text_to_speech
     note: same audio family, inverse direction (audio to text vs text to audio), not substitutable
+  - type: pipes_to
+    to: data.translate_text
+    note: transcribe audio, then translate the transcript
+  - type: pipes_to
+    to: ai.embeddings
+    note: transcribe audio, then embed the transcript for retrieval
