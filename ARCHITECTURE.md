@@ -1,6 +1,9 @@
 # OASIS Architecture
 
 High-level design of how OASIS discovers paid HTTP APIs (x402 and MPP) for agentic commerce.
+This describes the **current** index-build + traversal implementation; for the direction the
+project is heading (endpoint-atomic retrieval, the one-hop `oasis_find`, LLM-assisted
+distributed curation), see [docs/scaling.md](docs/scaling.md).
 
 ## Agent traversal protocol
 
@@ -77,15 +80,14 @@ flowchart TB
 
   subgraph ontology["Ontology layer"]
     YAML["ontology/intents/*.yaml<br/>curated task definitions"]
-    MM["intent-match.ts<br/>per-intent endpoint matchers"]
-    MAT["materialize-satisfies.ts<br/>rank → satisfies[] refs"]
+    LINK["linkCapabilitiesToEndpoints()<br/>bind endpoints → capabilities (primary)"]
+    MAT["materialize-satisfies.ts<br/>satisfies[] from endpoint.capabilities<br/>(intent-match.ts regex = fallback)"]
     EXP["ontology-expand.ts<br/>provider-derived links"]
-    LINK["linkCapabilitiesToEndpoints()<br/>reverse index on endpoints"]
   end
 
-  subgraph score["Neutral selection policy"]
-    SE["score-endpoint.ts<br/>description, inputs, price, guidance"]
-    SP["select-policy.ts<br/>rank candidates per intent"]
+  subgraph score["Selection policy (select-policy.ts)"]
+    SE["score-endpoint.ts<br/>neutral quality prior"]
+    SP["task-fit ranking<br/>intent-id + vocab + query"]
   end
 
   subgraph out["dist/ artifacts"]
@@ -102,13 +104,13 @@ flowchart TB
   OA --> OP
   OP --> AL --> ID --> DD
 
-  YAML --> MM
-  DD --> MM
-  MM --> MAT --> SE --> SP
-  SP --> EXP --> LINK
+  YAML --> LINK
+  DD --> LINK
+  LINK --> MAT --> EXP
+  SE --> SP --> MAT
 
   DD --> EJ
-  LINK --> CJ
+  EXP --> CJ
   DD --> PJ
   EJ --> IJ
   CJ --> IJ
@@ -168,49 +170,54 @@ flowchart TB
 | `capability` | Curated task intent — preferred entry point for resolve |
 | `endpoint` | Direct endpoint row — fallback when no intent matches |
 
-Capability hits carry a `capability_id`; resolve expands `satisfies[]` into concrete endpoints ranked by neutral quality signals.
+Capability hits carry a `capability_id`; resolve expands `satisfies[]` into concrete endpoints ranked by **task fit** (intent-id + label/alias vocabulary + the query), with the neutral quality prior as a tiebreaker.
 
 ---
 
 ## Ontology → endpoint wiring
 
-Curated intents are provider-agnostic task definitions. At build time, matchers find candidate endpoints; neutral scoring picks the best `satisfies` refs.
+Curated intents are provider-agnostic task definitions. Endpoints are bound to capabilities
+primarily by `linkCapabilitiesToEndpoints()` (a facet/semantic binding over the whole index,
+written onto each endpoint as `endpoint.capabilities[]`). `materialize-satisfies.ts` derives
+each intent's `satisfies[]` from that binding — the legacy per-intent regex matchers in
+`intent-match.ts` are a **fallback**, used only on the first build pass before the binding is
+populated. A full build re-materializes `satisfies[]` after the binding is set; the offline
+`enrich-facets` pass does the same without re-ingesting.
 
 ```mermaid
 flowchart LR
   subgraph intent["Curated intent (YAML)"]
-    ID2["id: shop.compare_price"]
-    LB["label + aliases"]
-    REL["related intents"]
+    ID2["id: data.weather_forecast"]
+    LB["label + aliases + facets"]
   end
 
-  subgraph match["intent-match.ts"]
-    M["Per-intent matcher<br/>path/summary/corpus rules"]
-    C["Candidate endpoints<br/>from full index"]
+  subgraph bind["linkCapabilitiesToEndpoints()"]
+    M["Bind endpoints → capabilities<br/>(facet/semantic; regex = fallback)"]
+    C["endpoint.capabilities[]"]
   end
 
-  subgraph rank["score-endpoint.ts"]
-    N["Neutral quality score<br/>no vendor bias"]
-    TOP["Top N satisfies refs"]
+  subgraph rank["select-policy.ts"]
+    N["Task-fit ranking<br/>intent-id + vocab + query;<br/>neutral prior = tiebreaker"]
+    TOP["satisfies[] (ranked)"]
   end
 
   subgraph wire["Index wiring"]
-    SAT["satisfies[]<br/>origin + method + path"]
+    SAT["capabilities.json<br/>satisfies[] = origin+method+path"]
     REV["endpoint.capabilities[]<br/>reverse link"]
   end
 
   ID2 --> M
   LB --> M
-  C --> M
-  M --> N --> TOP --> SAT
-  SAT --> REV
-  REL -.->|"fallback if primary fails"| M
+  M --> C --> N --> TOP --> SAT
+  C --> REV
 ```
 
-**Resolve path** (`capindex resolve --intent <id>`):
+**Resolve path** (`capindex resolve --intent <id>`, and the `oasis_find` server tool):
 
-1. Load intent from `capabilities.json`.
-2. Map each `satisfies` ref to an endpoint via `sha256(origin|method|path)`.
+1. Load the intent and map its `satisfies[]` to concrete endpoints via `sha256(origin|method|path)`.
+2. Rank by **task fit** (`resolveEndpointsForQuery`): intent-id tokens (`weather_forecast`
+   → weather/forecast) dominate, matched against each endpoint's own summary/path, plus the
+   label/alias vocabulary and the user query; the neutral quality prior only breaks ties.
 3. Return origin, path, `payment.rails`, `price_usd`, `openapi_url`.
 
 ---
@@ -256,9 +263,14 @@ flowchart LR
 ```
 spec/                  JSON schemas + traversal protocol
 ontology/intents/      Curated capability definitions (YAML)
-src/                   Indexer, CLI, search, embed, eval (TypeScript)
+src/                   Indexer, CLI, search, embed, eval, validate (TypeScript)
 dist/                  Built artifacts (endpoints, capabilities, index)
 eval/                  Benchmark query sets
+mcp/                   Reference MCP server (oasis_find + contribution tools), agent probe, A/B harness
+docs/                  Benchmarks, scaling thesis, contribution guide
 ```
 
-See [spec/traversal.md](spec/traversal.md) for the agent protocol and [README.md](README.md) for CLI usage and benchmark results.
+The full benchmark suite (curated, held-out generalization, multi-label, and the end-to-end
+agent probe / token-cost A/B) is documented in [docs/eval_results.md](docs/eval_results.md).
+See [spec/traversal.md](spec/traversal.md) for the agent protocol, [README.md](README.md) for
+CLI usage, and [docs/scaling.md](docs/scaling.md) for the architecture direction.
