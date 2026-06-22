@@ -146,7 +146,7 @@ flowchart TB
   end
 
   subgraph fusion["Hybrid fusion (search-hybrid.ts)"]
-    RRF["Reciprocal Rank Fusion<br/>keyword×2 + vector×1"]
+    RRF["Caps-first RRF<br/>keyword×1 + vector×2"]
     OUT["Merged SearchHit[]"]
   end
 

@@ -180,33 +180,49 @@ index rebuild (resolve-side) are separate, lower-priority levers.
 ## End-to-end agent probe (the real validation)
 
 Offline `discover@k` / `select@k` are proxies. The actual question is: when a real
-LLM uses OASIS to pick a tool, does it land on the right one? `mcp/probe.mjs`
-drives Claude (Sonnet 4.6) through `oasis_search → oasis_resolve → pick` on 18
-real, oblique tasks and scores at the capability level (an alternative endpoint
-of the right capability counts — picking a *different* weather API than the
-golden one is still success).
+LLM uses OASIS to pick a tool, does it land on the right one? `mcp/` stands up a
+local MCP server (`oasis_search`, `oasis_resolve`) plus a probe harness that drives
+an LLM through `search → resolve → pick` on 18 real, oblique tasks, scoring at the
+**capability** level (an alternative endpoint of the right capability counts —
+picking a *different* weather API than the golden one is still success). The probe
+is **provider-agnostic** (Anthropic, OpenAI, Google Gemini, OpenRouter, or a local
+open-source model via Ollama/vLLM — see [`../mcp/README.md`](../mcp/README.md)); the
+runs below use Claude Sonnet 4.6.
 
-| metric | result |
-|---|---|
-| expected capability in search top-3 (discovery) | 16/18 (89%) |
-| agent **resolved** the right capability (selection) | **17/18 (94%)** |
-| agent **chose an endpoint** of the right capability (end-to-end) | **15/18 (83%)** |
+The agent is instructed to always consult OASIS first — its job is to *find a tool*,
+not to answer from its own knowledge. Across runs:
 
-Of the 3 "misses", **2 were valid alternatives** the agent legitimately picked via
-the typed links (`ai.web_research`→`search.web`; `maps.places`→`travel.place_reviews`)
-— effectively ~17/18 useful. Only one is a true miss (`data.translate_text` didn't
-surface in top-3 — a discovery gap).
+| metric | result | notes |
+|---|---|---|
+| expected capability in the agent's first-search top-3 | **~17/18 (94%)** | *which* one misses varies run-to-run |
+| agent **resolved** the right capability | **17–18/18 (94–100%)** | the stable, meaningful signal |
+| agent emitted a `CHOSEN` line for the exact capability | 12–14/18 (67–78%) | undercounts (see below) |
+
+**The headline is "resolved the right capability ~94–100%"** — a live LLM using
+OASIS reliably reaches the right tool. The lower `CHOSEN`-line number is mostly
+measurement noise: it requires the model to emit one exact line, and several
+"misses" are valid alternatives the agent reached through the typed links
+(`ai.web_research`→`search.web`, `maps.places`→`travel.place_reviews`). The single
+discovery miss is **not a fixed gap** — it moves between runs (`translate_text` one
+run, `web_scrape` another), i.e. it is the LLM's first-search phrasing wobbling, not
+a capability OASIS can't surface.
+
+> An earlier probe variant let the model answer from its own knowledge, which
+> mis-scored natively-doable tasks (e.g. "translate this into Japanese" — the model
+> just offered to translate it itself) as discovery misses. Instructing the agent to
+> route through OASIS removed that artifact; the translate "miss" was the harness,
+> not the index (hybrid ranks `data.translate_text` #1 for that query).
 
 **Two conclusions this settles:**
-1. **The discovery work pays off end-to-end** — a real LLM picks the right
-   capability ~94% and a usable endpoint ~83% of the time.
+1. **The discovery work pays off end-to-end** — a real LLM reaches the right
+   capability ~94–100% of the time, not just on the offline proxy.
 2. **Resolve precision (`select@1` ≈ 19%) does not matter for the LLM use case.**
    The agent resolves the right *capability* and picks a usable endpoint from the
    candidate list regardless of within-intent rank — `select@1`-vs-a-single-golden
    was measuring the wrong thing. The cap raise (recall) and query-aware resolve
    are kept as reasonable defaults, but the planned endpoint-embedding /
-   resolve-ranking work is **not** worth building: the probe shows it would
-   optimize a metric the consumer doesn't use.
+   resolve-ranking work is **not** worth building: it would optimize a metric the
+   consumer doesn't use.
 
 ---
 

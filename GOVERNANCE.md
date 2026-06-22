@@ -57,7 +57,7 @@ other provider. Maintainers must not:
 | High | Additional `satisfies` refs for endpoints that already do the task |
 | Medium | New ingestion sources (registries, catalogs) |
 | Medium | Selection policies (price, doc quality, reputation) as **documented, pluggable** logic |
-| Low | Agent runtime integrations (MCP out of scope for this repo) |
+| Low | Agent runtime integrations — a local MCP server + probe live in `mcp/` (out-of-tree tooling, not part of the standard) |
 
 ## Decision process
 

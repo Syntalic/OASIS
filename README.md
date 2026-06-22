@@ -10,7 +10,8 @@ way to map a natural-language task to the right micropayment API. We could not f
 high-quality, vendor-neutral discovery mechanism — so we built OASIS and open-sourced it.
 
 **search → resolve → schema → execute** — with measured retrieval quality (see benchmarks
-below). Not a hosted product, no fees. MCP is out of scope for this repo.
+below). Not a hosted product, no fees. A local MCP server + automated agent probe live in
+[`mcp/`](mcp/) — out-of-tree tooling (works with any LLM provider), not part of the standard.
 
 See [GOVERNANCE.md](GOVERNANCE.md).
 
@@ -42,61 +43,48 @@ How do agents find paid x402/MPP APIs today? Usually one of these:
 (47 curated task intents in `ontology/intents/`), and follows the agent protocol
 [`search → resolve → schema → execute`](spec/traversal.md).
 
-### Measured on natural-language queries (honest eval)
+### Measured accuracy (honest eval)
 
-**64 messy queries** — hand-written agent phrasing, *not* copied from capability
-labels ([`eval/messy-queries.json`](eval/messy-queries.json)). This is the
-realistic signal.
+Full numbers, reproduction, and caveats: **[`docs/eval_results.md`](docs/eval_results.md)**.
+Summary below.
 
-| Discovery method | discover@3 | discover@1 | discover MRR |
-|------------------|------------|------------|--------------|
-| Endpoint keyword only | 13/43 (30%) | 9/43 | 0.265 |
-| Provider catalog only | 0/43 (0%) | 0/43 | 0.000 |
-| pay-skills slice only | 21/43 (49%) | 14/43 | 0.432 |
-| **OASIS (ontology + index)** | **43/43 (100%)** | **38/43** | **0.934** |
-| **OASIS + hybrid retrieval** | **43/43 (100%)** | **42/43** | **0.988** |
+**Curated messy queries** — 63 hand-written agent phrasings
+([`eval/messy-queries.json`](eval/messy-queries.json)), each scored for discovery. They
+share vocabulary with the capability aliases, so they measure *in-distribution* routing
+(`pnpm run eval:compare` — includes live external APIs):
 
-Run `pnpm run eval:compare` for a side-by-side table that also includes registry
-slices and live external discovery APIs:
+| Discovery method | discover@1 | discover@3 | discover MRR |
+|---|---|---|---|
+| endpoint keyword only | 12/63 (19%) | 17/63 (27%) | 0.260 |
+| pay-skills slice only | 20/63 (32%) | 27/63 (43%) | 0.380 |
+| x402scan slice only | 8/63 (13%) | 12/63 (19%) | 0.188 |
+| mpp slice only (mppscan + catalog) | 6/63 (10%) | 11/63 (17%) | 0.165 |
+| CDP x402 Bazaar (live API) | 0/63 | 1/63 | 0.012 |
+| **OASIS — ontology + index** | **63/63 (100%)** | **63/63 (100%)** | **1.000** |
+| **OASIS — hybrid retrieval** | **62/63 (98%)** | **63/63 (100%)** | **0.992** |
 
-| Method | What it simulates |
-|--------|-------------------|
-| `x402scan-only` | Keyword search over x402scan-ingested endpoints only |
-| `mpp-only` | Keyword search over mppscan + mpp.dev catalog endpoints |
-| `mpp-catalog-live` | Live keyword search on [mpp.dev/api/services](https://mpp.dev/api/services) |
-| `cdp-bazaar` | Live semantic search on [CDP x402 Bazaar](https://api.cdp.coinbase.com/platform/v2/x402/discovery/search) |
+~3× the discover@1 of the best non-ontology baseline (pay-skills) and 5–10× the raw
+registry slices: keyword/registry search matches *provider/endpoint strings*; the
+ontology matches *the task*.
 
-External APIs score **URL/literal match** only (no ontology resolve step).
+**Held-out generalization (the honest number)** — the curated ~100% is partly a
+measurement illusion: keyword discovery is overfit to the alias vocabulary.
+[`eval/heldout-queries.json`](eval/heldout-queries.json) is phrased *away* from the labels
+(mean alias overlap 0.23) and split dev/test so it is never tuned against
+(`pnpm run eval:heldout`):
 
-Measured **discover@3** on the same 64 messy queries:
+| split | discover@1 | discover@3 |
+|---|---|---|
+| dev (44) | 66% | 86% |
+| **test (43, untuned)** | **72%** | **88%** |
 
-| Method | discover@3 | discover@1 | discover MRR |
-|--------|------------|------------|--------------|
-| Endpoint keyword only | 13/43 | 9/43 | 0.264 |
-| pay-skills slice only | 21/43 | 14/43 | 0.432 |
-| x402scan slice only | 10/43 | 6/43 | 0.184 |
-| mpp slice only (mppscan + catalog) | 5/43 | 2/43 | 0.096 |
-| mpp.dev catalog (live API) | 0/43 | 0/43 | 0.009 |
-| CDP x402 Bazaar (live API) | 1/43 | 0/43 | 0.012 |
-| **OASIS (ontology + index)** | **43/43** | **38/43** | **0.934** |
-| **OASIS + hybrid retrieval** | **43/43** | **42/43** | **0.988** |
+Keyword alone collapses to **41%** on novel phrasings — the vector arm carries
+generalization. Caps-first hybrid fusion + enriched capability embed text took real
+discover@1 from **43% → ~66–72%** with no index rebuild.
 
-**vs best baseline (pay-skills-only):** **+22 more tasks** found in top 3 (**2.0×**
-hit rate). **vs endpoint grep:** **+30** (**3.3×**).
-
-Hybrid = curated vector recall (47 intents, LanceDB) fused with keyword search
-(keyword×2, vector×1 RRF). Same top-3 coverage; better rank-1 accuracy (+4 queries).
-
-### Regression set (644 golden queries)
-
-Auto-generated from capability labels ([`eval/queries.json`](eval/queries.json)) —
-useful for CI, optimistic for real-world NL.
-
-| Method | discover@3 |
-|--------|------------|
-| Endpoint keyword only | 466/644 (72%) |
-| pay-skills slice only | 173/644 (27%) |
-| **OASIS (full index)** | **638/644 (99%)** |
+**Multi-label & chaining** — [`eval/multi-label-queries.json`](eval/multi-label-queries.json)
+scores the typed-link features the single-label set can't (`pnpm run eval:multi`):
+hard-negative **6/6**, related@links **15/15**, task recall@3 **28/28**.
 
 ### Resolve wiring (ontology → endpoint)
 
@@ -107,22 +95,26 @@ intent’s primary `satisfies` ref points at a real indexed endpoint:
 pnpm run eval:resolve   # 47/47 curated intents resolve
 ```
 
-### What we are *not* claiming yet
+### What we are *not* claiming
 
-- No live LLM agent or MCP server in the loop (retrieval benchmark only)
-- Golden 644/644 is not real-world accuracy — prefer messy eval
-- Schema fetch and paid execute are documented, not automated here
+- Real-world discovery is **~72% discover@1 / ~88% discover@3** (held-out test split),
+  not the curated 100% — see [`docs/eval_results.md`](docs/eval_results.md).
+- An end-to-end agent probe (a live LLM picking tools via [`mcp/`](mcp/)) reaches the
+  right capability **~17/18** of the time — validating the flow, but it is only 18 tasks.
+- Schema fetch and paid execute are documented in
+  [`spec/traversal.md`](spec/traversal.md), not automated here.
 
 ### Reproduce
 
 ```bash
 pnpm run build          # full index (~30k endpoints)
-pnpm run embed          # 47 curated vectors
-pnpm run eval:hybrid    # messy NL: baseline vs hybrid
-pnpm run eval:compare   # messy NL: all discovery methods (+ external APIs)
-pnpm run eval           # golden 644: all index modes
-pnpm run eval:resolve   # ontology wiring
+pnpm run embed          # 47 curated capability vectors
+pnpm run eval:compare   # messy NL: all discovery methods (+ live external APIs)
+pnpm run eval:heldout   # held-out generalization (dev + untuned test split)
+pnpm run eval:multi     # multi-label / hard-negative / typed-link chaining
+pnpm run eval:resolve   # ontology → endpoint wiring
 pnpm test
+cd mcp && npm install && npm run probe   # end-to-end agent probe (any LLM provider)
 ```
 
 ### Benchmark metrics
@@ -151,7 +143,7 @@ git clone https://github.com/Syntalic/OASIS.git
 cd OASIS
 pnpm install
 pnpm run build          # full ingest (~30k endpoints; needs network)
-pnpm run embed          # optional: hybrid vector index (25 curated intents)
+pnpm run embed          # optional: hybrid vector index (47 curated intents)
 ```
 
 Build ingests from multiple public catalogs:
