@@ -101,3 +101,11 @@ export const MCP_TOOLS = TOOLS.map((t) => ({
   description: t.description,
   inputSchema: t.schema,
 }));
+
+/** OpenAI Chat Completions tool shape ({ type:"function", function:{ parameters } }).
+ *  Works with any OpenAI-compatible provider (OpenAI, OpenRouter, Together, Groq,
+ *  Ollama, LM Studio, vLLM, ...). */
+export const OPENAI_TOOLS = TOOLS.map((t) => ({
+  type: "function",
+  function: { name: t.name, description: t.description, parameters: t.schema },
+}));

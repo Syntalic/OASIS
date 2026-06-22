@@ -1,11 +1,9 @@
 #!/usr/bin/env node
 // Automated agent probe: drive an LLM through OASIS (search -> resolve -> pick)
 // on real tasks and measure whether OASIS leads it to the right capability.
-// Run: node --env-file=../.env probe.mjs   (needs ANTHROPIC_API_KEY)
-import Anthropic from "@anthropic-ai/sdk";
-import { ANTHROPIC_TOOLS, handleTool } from "./tools.mjs";
-
-const MODEL = process.env.PROBE_MODEL ?? "claude-sonnet-4-6";
+// Provider-agnostic — see llm.mjs for config (LLM_PROVIDER=anthropic|openai).
+// Run: node --env-file=../.env probe.mjs
+import { runAgent, providerLabel } from "./llm.mjs";
 
 // Real, oblique tasks (phrased away from intent labels) + the capability an
 // agent SHOULD land on. Success is judged at the capability level (forgiving of
@@ -32,45 +30,14 @@ const TASKS = [
 ];
 
 const SYSTEM =
-  "You are an agent that must find a PAID HTTP API to accomplish the user's task. " +
-  "Use oasis_search to discover candidate capabilities, then oasis_resolve (with the best capability id AND the original task) to get concrete endpoints. " +
+  "You are a tool-routing agent. Your ONLY job is to find which external PAID HTTP " +
+  "API the user should call — assume the task MUST be done via an external paid API, " +
+  "never by you directly, and never ask for the input payload. " +
+  "ALWAYS begin by calling oasis_search with the task, then oasis_resolve (best " +
+  "capability id AND the original task) for concrete endpoints. " +
   "Pick exactly ONE endpoint. End your final reply with a line: CHOSEN <intent_id> <METHOD> <url>";
 
-const client = new Anthropic();
-
-async function runTask(task) {
-  const messages = [{ role: "user", content: task.q }];
-  const resolved = [];
-  let searchTop3 = [];
-  let calls = 0;
-  for (let round = 0; round < 6; round++) {
-    const resp = await client.messages.create({
-      model: MODEL,
-      max_tokens: 1024,
-      system: SYSTEM,
-      tools: ANTHROPIC_TOOLS,
-      messages,
-    });
-    messages.push({ role: "assistant", content: resp.content });
-    const toolUses = resp.content.filter((c) => c.type === "tool_use");
-    if (toolUses.length === 0) {
-      const text = resp.content.filter((c) => c.type === "text").map((c) => c.text).join("\n");
-      return { resolved, searchTop3, calls, final: text };
-    }
-    const results = [];
-    for (const tu of toolUses) {
-      calls += 1;
-      if (tu.name === "oasis_resolve" && tu.input?.intent_id) resolved.push(tu.input.intent_id);
-      const out = await handleTool(tu.name, tu.input);
-      if (tu.name === "oasis_search" && searchTop3.length === 0) {
-        searchTop3 = (out.capabilities ?? []).slice(0, 3).map((c) => c.intent_id);
-      }
-      results.push({ type: "tool_result", tool_use_id: tu.id, content: JSON.stringify(out) });
-    }
-    messages.push({ role: "user", content: results });
-  }
-  return { resolved, searchTop3, calls, final: "(max rounds)" };
-}
+const runTask = (task) => runAgent({ system: SYSTEM, query: task.q });
 
 const rows = [];
 let discoveredTop3 = 0, resolvedRight = 0, chosenRight = 0;
@@ -92,7 +59,7 @@ for (const task of TASKS) {
 }
 
 const n = TASKS.length, p = (x) => `${x}/${n} (${Math.round((x / n) * 100)}%)`;
-console.log("\n=== OASIS agent probe (" + MODEL + ", " + n + " tasks) ===");
+console.log("\n=== OASIS agent probe (" + providerLabel() + ", " + n + " tasks) ===");
 console.log("expected capability in search top-3:   " + p(discoveredTop3));
 console.log("agent RESOLVED the expected capability: " + p(resolvedRight));
 console.log("agent CHOSE an endpoint of expected cap: " + p(chosenRight));
