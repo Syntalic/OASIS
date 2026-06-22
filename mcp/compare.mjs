@@ -59,6 +59,21 @@ const RULES =
   "with exactly one line: CHOSEN <METHOD> <URL>";
 const OASIS_SYSTEM = RULES + " Begin with oasis_search, then oasis_resolve (best capability id AND the original task) for concrete endpoints.";
 const KW_SYSTEM = RULES + " Use search_endpoints to find candidates (try a few phrasings if the first is weak).";
+const FIND_SYSTEM = RULES + " Call oasis_find with the task to get ranked paid endpoints (with price/rails), then pick one.";
+
+// One-hop OASIS tool (oasis_find), handled by tools.mjs handleTool.
+const FIND_SCHEMA = {
+  type: "object",
+  properties: {
+    query: { type: "string", description: "the task in natural language" },
+    limit: { type: "number", description: "max endpoints (default 8)" },
+  },
+  required: ["query"],
+};
+const FIND_DESC =
+  "Find the best paid HTTP API endpoints for a task in ONE call. Returns a ranked, flat list of endpoints (method, url, summary, price, payment rails). Use this first.";
+const FIND_ANTHROPIC = [{ name: "oasis_find", description: FIND_DESC, input_schema: FIND_SCHEMA }];
+const FIND_OPENAI = [{ type: "function", function: { name: "oasis_find", description: FIND_DESC, parameters: FIND_SCHEMA } }];
 
 // Endpoint slices — same provider_fqn prefixes the offline eval uses.
 const isScan = (e) => {
@@ -76,7 +91,8 @@ const SLICES = {
 };
 
 const BACKENDS = [
-  { name: "OASIS (search→resolve)", system: OASIS_SYSTEM, anthropicTools: ANTHROPIC_TOOLS, openaiTools: OPENAI_TOOLS, handle: handleTool },
+  { name: "OASIS 1-hop (find)", system: FIND_SYSTEM, anthropicTools: FIND_ANTHROPIC, openaiTools: FIND_OPENAI, handle: handleTool },
+  { name: "OASIS 2-hop (search→resolve)", system: OASIS_SYSTEM, anthropicTools: ANTHROPIC_TOOLS, openaiTools: OPENAI_TOOLS, handle: handleTool },
   ...Object.entries(SLICES).map(([name, corpus]) => ({
     name, system: KW_SYSTEM, anthropicTools: KW_ANTHROPIC, openaiTools: KW_OPENAI, handle: kwHandle(corpus),
   })),

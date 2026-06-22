@@ -191,6 +191,30 @@ Implications (consistent with treating the **endpoint as the atomic unit**):
   routing unit — the `satisfies` pollution that caused the resolve bug was a
   service-coarse binding artifact.
 
+### Prototype: the one-hop `oasis_find` validates the direction
+
+`oasis_find` collapses search→resolve SERVER-side (capability vectors for recall + the
+fixed resolve ranking) and exposes the agent ONE tool returning a flat, ranked endpoint
+list with payment metadata inline. Same harness, common set, Sonnet
+(`COMPARE_BACKENDS="1-hop,2-hop,all"`):
+
+| discovery tool | judged-correct | avg tokens/task | avg tool-calls |
+|---|---|---|---|
+| **OASIS 1-hop (`oasis_find`)** | **18/18 (100%)** | **2462** | 1.1 |
+| OASIS 2-hop (search→resolve) | 18/18 (100%) | 5110 | 2.1 |
+| keyword — all endpoints | 17/18 (94%) | 2872 | 1.9 |
+
+The one-hop is the **cheapest AND most accurate** of the three: **52% fewer tokens than
+the two-hop** (the agent never reads a capability list, a resolve round, or a related[]
+payload) and **~14% fewer than raw keyword** while edging it on accuracy — the agent
+answers in ~1 call because the server returns a tight, pre-ranked list.
+
+This is the synthesis: the agent sees ENDPOINTS (atomic, one hop); the capability
+ontology runs SERVER-side as a recall+ranking aid (paid in compute, not agent tokens).
+It is also the design expected to *widen* its lead as the corpus scales — server-side
+vector recall + ranking hold where an agent doing raw keyword search degrades. The
+agent-facing two-hop capability traversal is the part to retire.
+
 **Still unmeasured (where OASIS may yet win):** value beyond find-one-endpoint —
 typed-link *alternatives/chaining* as an agent capability, payment metadata for
 budget-aware selection, and comparison against *worse* baselines (no index at all /

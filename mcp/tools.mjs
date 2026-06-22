@@ -82,9 +82,38 @@ function oasisResolve({ intent_id, query, limit = 8 }) {
   return { intent: { id: intent.id, label: intent.label }, endpoints, related };
 }
 
+// One-hop prototype: collapse search→resolve SERVER-side. Hybrid discovery (capability
+// vectors give recall on oblique queries) is expanded into a single FLAT, ranked
+// endpoint list with payment metadata inline — the agent makes ONE call and reads one
+// compact list, no capability/resolve round-trip and no separate related[] payload.
+async function oasisFind({ query, limit = 8 }) {
+  const hits = await searchHybridWithFallback(query, bundle, lanceDir, 12);
+  const out = [];
+  const seen = new Set();
+  const add = (method, origin, path, summary, price_usd, rails, via) => {
+    const k = `${method} ${origin}${path}`;
+    if (seen.has(k)) return;
+    seen.add(k);
+    out.push({ method, url: `${origin}${path}`, summary, price_usd, rails, via });
+  };
+  for (const h of hits) {
+    if (h.kind === "endpoint") add(h.method, h.origin, h.path, h.label, h.price_usd, undefined, "match");
+  }
+  for (const h of hits) {
+    if (h.kind !== "capability" || out.length >= limit + 4) continue;
+    const intent = capById.get(h.capability_id);
+    if (!intent) continue;
+    for (const e of resolveEndpointsForQuery(intent, bundle.endpoints, query, 3)) {
+      add(e.method, e.origin, e.path, e.summary, e.payment?.price_usd, (e.payment?.rails ?? []).map((r) => r.protocol), h.capability_id);
+    }
+  }
+  return { endpoints: out.slice(0, limit) };
+}
+
 export async function handleTool(name, args) {
   if (name === "oasis_search") return oasisSearch(args ?? {});
   if (name === "oasis_resolve") return oasisResolve(args ?? {});
+  if (name === "oasis_find") return oasisFind(args ?? {});
   return { error: `unknown tool: ${name}` };
 }
 
