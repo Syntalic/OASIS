@@ -11,3 +11,7 @@ aliases:
   - multilingual translation
   - text localization
   - translate English to Spanish
+consumes:
+  - { entity: Text, role: identifier }
+produces:
+  - { entity: Text, role: payload }

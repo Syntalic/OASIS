@@ -15,3 +15,7 @@ aliases:
   - rental listings by city
   - property search by zip code
   - list houses in a neighborhood
+consumes:
+  - { entity: Location, role: identifier }
+produces:
+  - { entity: StructuredRecord, role: payload }

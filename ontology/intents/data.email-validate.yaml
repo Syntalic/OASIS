@@ -11,3 +11,7 @@ aliases:
   - validate inbox exists
   - email hygiene API
   - check email before send
+consumes:
+  - { entity: Contact, role: identifier, format: email }
+produces:
+  - { entity: StructuredRecord, role: payload }

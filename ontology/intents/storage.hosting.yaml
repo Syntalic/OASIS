@@ -16,3 +16,7 @@ aliases:
   - static page hosting for agent
   - share file via hosted URL
   - micropay file storage
+consumes:
+  - { entity: Document, role: identifier }
+produces:
+  - { entity: StructuredRecord, role: payload }

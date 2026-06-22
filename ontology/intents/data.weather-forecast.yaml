@@ -11,3 +11,7 @@ aliases:
   - will it rain tomorrow
   - local weather conditions
   - forecast for a city
+consumes:
+  - { entity: Location, role: identifier }
+produces:
+  - { entity: StructuredRecord, role: payload }

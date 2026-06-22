@@ -15,3 +15,7 @@ aliases:
   - make an illustration from prompt
   - draw an image from words
   - AI render from text prompt
+consumes:
+  - { entity: Text, role: identifier }
+produces:
+  - { entity: Image, role: payload, format: png }

@@ -15,3 +15,7 @@ aliases:
   - paid Claude without API key
   - Anthropic chat without my own key
   - run Claude completion via micropayment
+consumes:
+  - { entity: Text, role: identifier }
+produces:
+  - { entity: Text, role: payload }

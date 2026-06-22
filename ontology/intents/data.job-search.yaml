@@ -16,3 +16,7 @@ aliases:
   - jobs posted in the last day
   - engineering job listings
   - fresh ATS job feed
+consumes:
+  - { entity: Query, role: identifier }
+produces:
+  - { entity: StructuredRecord, role: payload }

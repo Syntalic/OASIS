@@ -203,7 +203,10 @@ function facetMatchBoost(cap, inferred) {
     if (inferred.primary_entity && consume.size > 0) {
         if (consume.has(inferred.primary_entity))
             factor *= 1.18;
-        else
+        // Only demote on a genuine mismatch — not when the query's salient entity is
+        // what this capability PRODUCES (e.g. "text-to-image" infers Image, which is
+        // image_generate's output, not its input). Penalizing that is a false mismatch.
+        else if (!produce.has(inferred.primary_entity))
             factor *= 0.6;
     }
     // Output-entity / modality axis — the discriminator for the Webpage trio

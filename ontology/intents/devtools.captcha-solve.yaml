@@ -11,3 +11,7 @@ aliases:
   - automated captcha solving
   - bypass human verification form
   - solve challenge before scraping
+consumes:
+  - { entity: Webpage, role: identifier }
+produces:
+  - { entity: StructuredRecord, role: payload }

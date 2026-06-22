@@ -11,3 +11,7 @@ aliases:
   - text embeddings for retrieval
   - embedding API for semantic search
   - vectorize text batch
+consumes:
+  - { entity: Text, role: identifier }
+produces:
+  - { entity: Embedding, role: payload }

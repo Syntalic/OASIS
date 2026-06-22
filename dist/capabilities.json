@@ -22,6 +22,19 @@
         "draw an image from words",
         "AI render from text prompt"
       ],
+      "consumes": [
+        {
+          "entity": "Text",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Image",
+          "role": "payload",
+          "format": "png"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://api.glianalabs.com",
@@ -39,6 +52,36 @@
           "origin": "https://api.glianalabs.com",
           "method": "POST",
           "path": "/x402/flux-2-pro-preview",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.glianalabs.com",
+          "method": "POST",
+          "path": "/x402/nano-banana",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.glianalabs.com",
+          "method": "POST",
+          "path": "/x402/nano-banana-2",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.glianalabs.com",
+          "method": "POST",
+          "path": "/x402/nano-banana-pro",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.glianalabs.com",
+          "method": "POST",
+          "path": "/x402/seedream-4.5",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.glianalabs.com",
+          "method": "POST",
+          "path": "/x402/seedream-5-lite",
           "source": "match_hint"
         },
         {
@@ -64,36 +107,6 @@
           "method": "POST",
           "path": "/x402/grok-imagine-image-quality",
           "source": "match_hint"
-        },
-        {
-          "origin": "https://api.glianalabs.com",
-          "method": "POST",
-          "path": "/x402/grok-imagine-video-1.5-preview",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.glianalabs.com",
-          "method": "POST",
-          "path": "/x402/hailuo-2.3-fast",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.glianalabs.com",
-          "method": "POST",
-          "path": "/x402/hh1-i2v",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.glianalabs.com",
-          "method": "POST",
-          "path": "/x402/krea-2-large",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.glianalabs.com",
-          "method": "POST",
-          "path": "/x402/krea-2-medium",
-          "source": "match_hint"
         }
       ]
     },
@@ -116,11 +129,23 @@
         "Anthropic chat without my own key",
         "run Claude completion via micropayment"
       ],
+      "consumes": [
+        {
+          "entity": "Text",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Text",
+          "role": "payload"
+        }
+      ],
       "satisfies": [
         {
-          "origin": "https://gpt55.558686.xyz",
+          "origin": "https://ged-x402.jvalamis.workers.dev",
           "method": "POST",
-          "path": "/v1/tools/code-review",
+          "path": "/v1/translate",
           "source": "match_hint"
         },
         {
@@ -133,18 +158,6 @@
           "origin": "https://gpt55.558686.xyz",
           "method": "POST",
           "path": "/v1/tools/eip712-signature-risk-decoder",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://gpt55.558686.xyz",
-          "method": "GET",
-          "path": "/v1/tools/evm-transaction-risk-decoder",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://gpt55.558686.xyz",
-          "method": "POST",
-          "path": "/v1/tools/evm-transaction-risk-decoder",
           "source": "match_hint"
         },
         {
@@ -174,19 +187,31 @@
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "GET",
-          "path": "/v1/tools/url-links",
+          "path": "/v1/tools/wallet-signing-safety-pack",
           "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "POST",
-          "path": "/v1/tools/url-links",
+          "path": "/v1/tools/wallet-signing-safety-pack",
           "source": "match_hint"
         },
         {
           "origin": "https://gpt55.558686.xyz",
           "method": "GET",
-          "path": "/v1/tools/url-text",
+          "path": "/v1/tools/x402-batch-quote-inspector",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "POST",
+          "path": "/v1/tools/x402-batch-quote-inspector",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "GET",
+          "path": "/v1/tools/x402-buyer-prepay-risk-score",
           "source": "match_hint"
         }
       ]
@@ -433,13 +458,19 @@
         "embedding API for semantic search",
         "vectorize text batch"
       ],
-      "satisfies": [
+      "consumes": [
         {
-          "origin": "https://testing.cn2.ai",
-          "method": "POST",
-          "path": "/chat/completions",
-          "source": "match_hint"
-        },
+          "entity": "Text",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Embedding",
+          "role": "payload"
+        }
+      ],
+      "satisfies": [
         {
           "origin": "https://api.clusterprotocol.ai",
           "method": "POST",
@@ -453,21 +484,9 @@
           "source": "match_hint"
         },
         {
-          "origin": "https://openai.cn2.ai",
+          "origin": "https://api.jarvisclaw.ai",
           "method": "POST",
-          "path": "/v1/chat/completions",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://openai.cn2.ai",
-          "method": "POST",
-          "path": "/v1/images/edits",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://openai.cn2.ai",
-          "method": "POST",
-          "path": "/v1/images/generations",
+          "path": "/v1/embeddings",
           "source": "match_hint"
         },
         {
@@ -504,6 +523,24 @@
           "origin": "https://testing.cn2.ai",
           "method": "POST",
           "path": "/error",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://testing.cn2.ai",
+          "method": "POST",
+          "path": "/slow",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://openai.cn2.ai",
+          "method": "POST",
+          "path": "/v1/moderations",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://openai.cn2.ai",
+          "method": "POST",
+          "path": "/v1/responses",
           "source": "match_hint"
         }
       ]
@@ -1277,15 +1314,15 @@
           "source": "match_hint"
         },
         {
-          "origin": "https://mpp.orthogonal.com/agentphone",
-          "method": "POST",
-          "path": "/v1/messages",
-          "source": "match_hint"
-        },
-        {
           "origin": "https://bill-negotiation-api.lewis-6d8.workers.dev",
           "method": "POST",
           "path": "/negotiate",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://mpp.orthogonal.com/agentphone",
+          "method": "POST",
+          "path": "/v1/messages",
           "source": "match_hint"
         },
         {
@@ -1368,6 +1405,12 @@
           "source": "match_hint"
         },
         {
+          "origin": "https://api.justaname.id",
+          "method": "GET",
+          "path": "/ens/v2/reverse",
+          "source": "match_hint"
+        },
+        {
           "origin": "https://api.onesource.io",
           "method": "POST",
           "path": "/api/chain/call",
@@ -1418,19 +1461,13 @@
         {
           "origin": "https://api.justaname.id",
           "method": "GET",
-          "path": "/ens/v2/reverse",
+          "path": "/ens/v2/resolve",
           "source": "match_hint"
         },
         {
           "origin": "https://api.onesource.io",
           "method": "GET",
           "path": "/api/chain/erc20-balance",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.onesource.io",
-          "method": "GET",
-          "path": "/api/chain/live-balance",
           "source": "match_hint"
         }
       ]
@@ -1582,7 +1619,43 @@
         "solve calculus problem",
         "compute integral from 0 to 3"
       ],
+      "consumes": [
+        {
+          "entity": "Query",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Answer",
+          "role": "payload"
+        }
+      ],
       "satisfies": [
+        {
+          "origin": "https://wolframalpha.x402.paysponge.com",
+          "method": "GET",
+          "path": "/v1/result",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://wolframalpha.mpp.paywithlocus.com",
+          "method": "POST",
+          "path": "/wolframalpha/short-answer",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://wolframalpha.x402.paysponge.com",
+          "method": "GET",
+          "path": "/v1/simple",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://wolframalpha.x402.paysponge.com",
+          "method": "GET",
+          "path": "/v2/query",
+          "source": "match_hint"
+        },
         {
           "origin": "https://wolframalpha.mpp.paywithlocus.com",
           "method": "POST",
@@ -1599,30 +1672,6 @@
           "origin": "https://wolframalpha.mpp.paywithlocus.com",
           "method": "POST",
           "path": "/wolframalpha/full-results",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://wolframalpha.mpp.paywithlocus.com",
-          "method": "POST",
-          "path": "/wolframalpha/short-answer",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://wolframalpha.x402.paysponge.com",
-          "method": "GET",
-          "path": "/v1/result",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://wolframalpha.x402.paysponge.com",
-          "method": "GET",
-          "path": "/v1/simple",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://wolframalpha.x402.paysponge.com",
-          "method": "GET",
-          "path": "/v2/query",
           "source": "match_hint"
         }
       ]
@@ -1642,11 +1691,24 @@
         "email hygiene API",
         "check email before send"
       ],
+      "consumes": [
+        {
+          "entity": "Contact",
+          "role": "identifier",
+          "format": "email"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload"
+        }
+      ],
       "satisfies": [
         {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/apollo/org-search",
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/email/validate",
           "source": "match_hint"
         },
         {
@@ -1658,25 +1720,7 @@
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/people-search",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
           "path": "/api/clado/contacts-enrich",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/exa/contents",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/exa/find-similar",
           "source": "match_hint"
         },
         {
@@ -1688,31 +1732,49 @@
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/serper/shopping",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
           "path": "/api/whitepages/person-search",
           "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/whitepages/property-search",
+          "path": "/api/influencer/enrich-by-email",
           "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/exa/answer",
+          "path": "/api/exa/find-similar",
           "source": "match_hint"
         },
         {
-          "origin": "https://stableenrich.dev",
+          "origin": "https://x402.nichospt.net",
           "method": "POST",
-          "path": "/api/google-maps/nearby-search/full",
+          "path": "/email-validate",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://fov.brij.fi",
+          "method": "GET",
+          "path": "/email-verifier",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stable-deepline.dev",
+          "method": "POST",
+          "path": "/api/linkedin/find",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stable-deepline.dev",
+          "method": "POST",
+          "path": "/api/phone/find",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "GET",
+          "path": "/v1/tools/email-normalize",
           "source": "match_hint"
         }
       ]
@@ -1794,6 +1856,12 @@
           "source": "match_hint"
         },
         {
+          "origin": "https://api.strale.io",
+          "method": "POST",
+          "path": "/x402/solutions/sepa-readiness",
+          "source": "match_hint"
+        },
+        {
           "origin": "https://x402.agoragentic.com",
           "method": "POST",
           "path": "/v1/fx-rate-historical",
@@ -1816,12 +1884,6 @@
           "method": "POST",
           "path": "/get_patterns_raw",
           "source": "match_hint"
-        },
-        {
-          "origin": "https://market2000.xyz",
-          "method": "POST",
-          "path": "/pattern_alert",
-          "source": "match_hint"
         }
       ]
     },
@@ -1840,23 +1902,23 @@
         "IP enrichment",
         "threat intel for IP"
       ],
-      "satisfies": [
+      "consumes": [
         {
-          "origin": "https://ip.coggler.com",
-          "method": "POST",
-          "path": "/ip",
-          "source": "match_hint"
-        },
+          "entity": "IpAddress",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload"
+        }
+      ],
+      "satisfies": [
         {
           "origin": "https://ai.verifik.co",
           "method": "GET",
           "path": "/api/ip-lookup",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.strale.io",
-          "method": "POST",
-          "path": "/x402/beneficial-ownership-lookup",
           "source": "match_hint"
         },
         {
@@ -1869,6 +1931,18 @@
           "origin": "https://2s.io",
           "method": "GET",
           "path": "/api/geo/ip",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://ip.coggler.com",
+          "method": "POST",
+          "path": "/ip",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.strale.io",
+          "method": "POST",
+          "path": "/x402/beneficial-ownership-lookup",
           "source": "match_hint"
         },
         {
@@ -1902,15 +1976,15 @@
           "source": "match_hint"
         },
         {
-          "origin": "https://x402-apis-eta.vercel.app",
-          "method": "GET",
-          "path": "/api/domain-infra",
-          "source": "match_hint"
-        },
-        {
           "origin": "https://abstract-ip-intelligence.mpp.paywithlocus.com",
           "method": "POST",
           "path": "/abstract-ip-intelligence/lookup",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://ipinfo.mpp.paywithlocus.com",
+          "method": "POST",
+          "path": "/ipinfo/ip-lite",
           "source": "match_hint"
         }
       ]
@@ -1935,6 +2009,18 @@
         "engineering job listings",
         "fresh ATS job feed"
       ],
+      "consumes": [
+        {
+          "entity": "Query",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://api.swedata.org",
@@ -1955,21 +2041,33 @@
           "source": "match_hint"
         },
         {
-          "origin": "https://hirescrape.com",
-          "method": "POST",
-          "path": "/api/tools/jobs",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://www.hirescrape.com",
-          "method": "POST",
-          "path": "/api/tools/jobs",
-          "source": "match_hint"
-        },
-        {
           "origin": "https://api.strale.io",
           "method": "GET",
           "path": "/x402/job-board-search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablejobs.dev",
+          "method": "POST",
+          "path": "/api/coresignal/job-search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://apibase.pro",
+          "method": "POST",
+          "path": "/api/v1/tools/jooble.search/call",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://apibase.pro",
+          "method": "POST",
+          "path": "/api/v1/tools/usajobs.search/call",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://apibase.pro",
+          "method": "POST",
+          "path": "/api/v1/tools/remotive.search/call",
           "source": "match_hint"
         },
         {
@@ -1979,9 +2077,9 @@
           "source": "match_hint"
         },
         {
-          "origin": "https://stablejobs.dev",
-          "method": "POST",
-          "path": "/api/coresignal/job-search",
+          "origin": "https://mpp.orthogonal.com/fantastic-jobs",
+          "method": "GET",
+          "path": "/v1/modified-ats",
           "source": "match_hint"
         },
         {
@@ -1994,18 +2092,6 @@
           "origin": "https://apibase.pro",
           "method": "POST",
           "path": "/api/v1/tools/adzuna.search/call",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://apibase.pro",
-          "method": "POST",
-          "path": "/api/v1/tools/jobs.job_search/call",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://apibase.pro",
-          "method": "POST",
-          "path": "/api/v1/tools/jooble.search/call",
           "source": "match_hint"
         }
       ]
@@ -2061,6 +2147,12 @@
       ],
       "satisfies": [
         {
+          "origin": "https://stableenrich.dev",
+          "method": "POST",
+          "path": "/api/apollo/people-search",
+          "source": "match_hint"
+        },
+        {
           "origin": "https://api.iris-ai.dev",
           "method": "POST",
           "path": "/campaigns",
@@ -2079,9 +2171,9 @@
           "source": "match_hint"
         },
         {
-          "origin": "https://stableenrich.dev",
+          "origin": "https://apollo.mpp.paywithlocus.com",
           "method": "POST",
-          "path": "/api/apollo/people-search",
+          "path": "/apollo/people-search",
           "source": "match_hint"
         },
         {
@@ -2093,13 +2185,13 @@
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/serper/shopping",
+          "path": "/api/apollo/org-search",
           "source": "match_hint"
         },
         {
-          "origin": "https://apollo.mpp.paywithlocus.com",
+          "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/apollo/people-search",
+          "path": "/api/serper/shopping",
           "source": "match_hint"
         },
         {
@@ -2124,12 +2216,6 @@
           "origin": "https://stableenrich.dev",
           "method": "POST",
           "path": "/api/google-maps/nearby-search/partial",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/google-maps/text-search/full",
           "source": "match_hint"
         }
       ]
@@ -2259,6 +2345,19 @@
         "verify SMS number",
         "carrier info for phone"
       ],
+      "consumes": [
+        {
+          "entity": "Contact",
+          "role": "identifier",
+          "format": "phone"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://api.invoket.com",
@@ -2349,77 +2448,89 @@
         "text localization",
         "translate English to Spanish"
       ],
+      "consumes": [
+        {
+          "entity": "Text",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "Text",
+          "role": "payload"
+        }
+      ],
       "satisfies": [
         {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "POST",
-          "path": "/mcp",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/covenant-stress",
-          "source": "match_hint"
-        },
-        {
           "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/calendar/holidays",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/mpp/v1/covenant-stress",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/alpha-opportunities",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/atlas-history/{ticker}",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/atlas7/calculation-history",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.aitrailblazer.net",
           "method": "POST",
-          "path": "/v1/bundles/company-report",
+          "path": "/api/ai/translate",
           "source": "match_hint"
         },
         {
-          "origin": "https://api.aitrailblazer.net",
+          "origin": "https://api.strale.io",
           "method": "GET",
-          "path": "/v1/company-fundamentals/{ticker}",
+          "path": "/x402/translate",
           "source": "match_hint"
         },
         {
-          "origin": "https://api.aitrailblazer.net",
-          "method": "GET",
-          "path": "/v1/company-report/{ticker}",
+          "origin": "https://ged-x402.jvalamis.workers.dev",
+          "method": "POST",
+          "path": "/v1/translate",
           "source": "match_hint"
         },
         {
-          "origin": "https://api.aitrailblazer.net",
+          "origin": "https://gpt55.558686.xyz",
           "method": "GET",
-          "path": "/v1/covenant/stress",
+          "path": "/v1/tools/eip712-signature-risk-decoder",
           "source": "match_hint"
         },
         {
-          "origin": "https://api.aitrailblazer.net",
+          "origin": "https://gpt55.558686.xyz",
+          "method": "POST",
+          "path": "/v1/tools/eip712-signature-risk-decoder",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "POST",
+          "path": "/v1/tools/extract-json",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
           "method": "GET",
-          "path": "/v1/daily-changes/evidence",
+          "path": "/v1/tools/json-validate",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "POST",
+          "path": "/v1/tools/json-validate",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "POST",
+          "path": "/v1/tools/rewrite",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "GET",
+          "path": "/v1/tools/wallet-signing-safety-pack",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "POST",
+          "path": "/v1/tools/wallet-signing-safety-pack",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://gpt55.558686.xyz",
+          "method": "GET",
+          "path": "/v1/tools/x402-batch-quote-inspector",
           "source": "match_hint"
         }
       ]
@@ -2439,31 +2550,19 @@
         "local weather conditions",
         "forecast for a city"
       ],
+      "consumes": [
+        {
+          "entity": "Location",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload"
+        }
+      ],
       "satisfies": [
-        {
-          "origin": "https://x402.nichospt.net",
-          "method": "POST",
-          "path": "/screenshot",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://x402.nichospt.net",
-          "method": "POST",
-          "path": "/timezone-math",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://aviationapis.com",
-          "method": "POST",
-          "path": "/density-altitude",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://x402.nichospt.net",
-          "method": "POST",
-          "path": "/color-palette",
-          "source": "match_hint"
-        },
         {
           "origin": "https://x402.nichospt.net",
           "method": "POST",
@@ -2471,33 +2570,51 @@
           "source": "match_hint"
         },
         {
-          "origin": "https://x402.nichospt.net",
-          "method": "POST",
-          "path": "/hash",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://x402.nichospt.net",
-          "method": "POST",
-          "path": "/qr-code",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://x402.nichospt.net",
-          "method": "POST",
-          "path": "/slugify",
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/edu/college-scorecard",
           "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/agriculture/stats",
+          "path": "/api/gov/osha-inspections",
           "source": "match_hint"
         },
         {
           "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/geocode/address",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/gov/osha-accidents",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/medical/drug-label",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/sunrise/compute",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://aviationapis.com",
           "method": "POST",
-          "path": "/api/ai/screenshot",
+          "path": "/decode-acars",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://x402.nichospt.net",
+          "method": "POST",
+          "path": "/timezone-math",
           "source": "match_hint"
         },
         {
@@ -2510,6 +2627,12 @@
           "origin": "https://2s.io",
           "method": "GET",
           "path": "/api/aviation/accidents",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/bank/lookup",
           "source": "match_hint"
         }
       ]
@@ -2735,13 +2858,13 @@
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/cloudflare.dns_list/call",
+          "path": "/api/v1/tools/aipush.setup_website/call",
           "source": "match_hint"
         },
         {
           "origin": "https://apibase.pro",
           "method": "POST",
-          "path": "/api/v1/tools/whois.availability/call",
+          "path": "/api/v1/tools/cloudflare.dns_list/call",
           "source": "match_hint"
         }
       ]
@@ -2761,6 +2884,18 @@
         "bypass human verification form",
         "solve challenge before scraping"
       ],
+      "consumes": [
+        {
+          "entity": "Webpage",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://api.safebrowz.com",
@@ -2772,6 +2907,42 @@
           "origin": "https://web-unlocker.200ok.xyz",
           "method": "POST",
           "path": "/unlock",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://mpp.orthogonal.com/notte",
+          "method": "POST",
+          "path": "/scrape",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://firecrawl.mpp.tempo.xyz",
+          "method": "POST",
+          "path": "/v1/extract",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2captcha.x402.paysponge.com",
+          "method": "POST",
+          "path": "/reportCorrect",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2captcha.x402.paysponge.com",
+          "method": "POST",
+          "path": "/reportIncorrect",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://firecrawl.mpp.tempo.xyz",
+          "method": "POST",
+          "path": "/v1/crawl",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://firecrawl.mpp.tempo.xyz",
+          "method": "POST",
+          "path": "/v1/map",
           "source": "match_hint"
         },
         {
@@ -2789,12 +2960,6 @@
         {
           "origin": "https://mpp.orthogonal.com/notte",
           "method": "POST",
-          "path": "/scrape",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://mpp.orthogonal.com/notte",
-          "method": "POST",
           "path": "/scrape_from_html",
           "source": "match_hint"
         },
@@ -2802,36 +2967,6 @@
           "origin": "https://twocaptcha.mpp.tempo.xyz",
           "method": "POST",
           "path": "/createTask",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://climate.stripe.dev",
-          "method": "POST",
-          "path": "/api/contribute",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://firecrawl.mpp.tempo.xyz",
-          "method": "POST",
-          "path": "/v1/extract",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://agents.sayerandstone.com",
-          "method": "GET",
-          "path": "/catalog",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://agents.sayerandstone.com",
-          "method": "POST",
-          "path": "/purchase",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://mpp.orthogonal.com/notte",
-          "method": "POST",
-          "path": "/sessions/:session_id/cookies",
           "source": "match_hint"
         }
       ]
@@ -3132,6 +3267,12 @@
       ],
       "satisfies": [
         {
+          "origin": "https://api.predictionmarketdata.io",
+          "method": "GET",
+          "path": "/prediction-markets",
+          "source": "match_hint"
+        },
+        {
           "origin": "https://api.syraa.fun",
           "method": "GET",
           "path": "/indicator",
@@ -3195,12 +3336,6 @@
           "origin": "https://api.syraa.fun",
           "method": "GET",
           "path": "/event",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://api.syraa.fun",
-          "method": "GET",
-          "path": "/news",
           "source": "match_hint"
         }
       ]
@@ -3270,6 +3405,12 @@
           "source": "match_hint"
         },
         {
+          "origin": "https://merx.exchange",
+          "method": "POST",
+          "path": "/x402/tron/invoice",
+          "source": "match_hint"
+        },
+        {
           "origin": "https://api.solenrich.com",
           "method": "POST",
           "path": "/entrypoints/wallet-history/invoke",
@@ -3315,12 +3456,6 @@
           "origin": "https://defi-api.agenticfi.wtf",
           "method": "GET",
           "path": "/api/token/info/{address}",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://defi-api.agenticfi.wtf",
-          "method": "GET",
-          "path": "/api/wallet/balances/{address}",
           "source": "match_hint"
         }
       ]
@@ -3598,6 +3733,18 @@
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
+          "path": "/api/apollo/org-search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableenrich.dev",
+          "method": "POST",
+          "path": "/api/apollo/people-search",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableenrich.dev",
+          "method": "POST",
           "path": "/api/serper/shopping",
           "source": "match_hint"
         },
@@ -3653,18 +3800,6 @@
           "origin": "https://stablesocial.dev",
           "method": "POST",
           "path": "/api/instagram/search",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://stablesocial.dev",
-          "method": "POST",
-          "path": "/api/reddit/search",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://stablesocial.dev",
-          "method": "POST",
-          "path": "/api/reddit/search-profiles",
           "source": "match_hint"
         }
       ]
@@ -3810,17 +3945,23 @@
         "property search by zip code",
         "list houses in a neighborhood"
       ],
+      "consumes": [
+        {
+          "entity": "Location",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload"
+        }
+      ],
       "satisfies": [
         {
           "origin": "https://trace.sociologic.ai",
           "method": "POST",
           "path": "/trace",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
-          "path": "/api/gov/disaster-assistance",
           "source": "match_hint"
         },
         {
@@ -3832,55 +3973,61 @@
         {
           "origin": "https://2s.io",
           "method": "GET",
-          "path": "/api/property/nyc-permits",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://2s.io",
-          "method": "GET",
           "path": "/api/property/nyc-violations",
           "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/org-search",
+          "path": "/api/serper/shopping",
           "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/people-enrich",
+          "path": "/api/whitepages/person-search",
           "source": "match_hint"
         },
         {
           "origin": "https://stableenrich.dev",
           "method": "POST",
-          "path": "/api/apollo/people-search",
+          "path": "/api/whitepages/property-search",
           "source": "match_hint"
         },
         {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/clado/contacts-enrich",
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/gov/uk-crime",
           "source": "match_hint"
         },
         {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/exa/contents",
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/gov/disaster-assistance",
           "source": "match_hint"
         },
         {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/exa/find-similar",
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/property/nyc-parcel-lookup",
           "source": "match_hint"
         },
         {
-          "origin": "https://stableenrich.dev",
-          "method": "POST",
-          "path": "/api/influencer/enrich-by-social",
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/property/nyc-permits",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://2s.io",
+          "method": "GET",
+          "path": "/api/wikidata/entity",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://rentcast.x402.paysponge.com",
+          "method": "GET",
+          "path": "/properties",
           "source": "match_hint"
         }
       ]
@@ -4643,13 +4790,19 @@
         "share file via hosted URL",
         "micropay file storage"
       ],
-      "satisfies": [
+      "consumes": [
         {
-          "origin": "https://stablestudio.dev",
-          "method": "POST",
-          "path": "/api/upload",
-          "source": "match_hint"
-        },
+          "entity": "Document",
+          "role": "identifier"
+        }
+      ],
+      "produces": [
+        {
+          "entity": "StructuredRecord",
+          "role": "payload"
+        }
+      ],
+      "satisfies": [
         {
           "origin": "https://stableupload.dev",
           "method": "POST",
@@ -4663,9 +4816,9 @@
           "source": "match_hint"
         },
         {
-          "origin": "https://stableflare.dev",
+          "origin": "https://stablestudio.dev",
           "method": "POST",
-          "path": "/api/images/transform",
+          "path": "/api/upload",
           "source": "match_hint"
         },
         {
@@ -4675,15 +4828,27 @@
           "source": "match_hint"
         },
         {
-          "origin": "https://api.xona-agent.com",
-          "method": "POST",
-          "path": "/token/news",
-          "source": "match_hint"
-        },
-        {
           "origin": "https://files.wdh.sh",
           "method": "POST",
           "path": "/init",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stableflare.dev",
+          "method": "POST",
+          "path": "/api/images/transform",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://stablestudio.dev",
+          "method": "POST",
+          "path": "/api/upload/confirm",
+          "source": "match_hint"
+        },
+        {
+          "origin": "https://api.xona-agent.com",
+          "method": "POST",
+          "path": "/token/news",
           "source": "match_hint"
         },
         {
@@ -4699,21 +4864,15 @@
           "source": "match_hint"
         },
         {
+          "origin": "https://api.influship.com",
+          "method": "GET",
+          "path": "/v1/raw/instagram/post/{shortcode}",
+          "source": "match_hint"
+        },
+        {
           "origin": "https://api.mnemospark.ai",
           "method": "POST",
           "path": "/api/mnemospark-lite/upload",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://run402.com",
-          "method": "POST",
-          "path": "/generate-image/v1",
-          "source": "match_hint"
-        },
-        {
-          "origin": "https://stableflare.dev",
-          "method": "POST",
-          "path": "/api/images/upload",
           "source": "match_hint"
         }
       ]
@@ -5055,9 +5214,9 @@
           "source": "match_hint"
         },
         {
-          "origin": "https://apibase.pro",
-          "method": "POST",
-          "path": "/api/v1/tools/screenshot.capture/call",
+          "origin": "https://api.strale.io",
+          "method": "GET",
+          "path": "/x402/image-to-text",
           "source": "match_hint"
         }
       ]

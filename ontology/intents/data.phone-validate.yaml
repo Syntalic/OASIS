@@ -11,3 +11,7 @@ aliases:
   - phone number intelligence
   - verify SMS number
   - carrier info for phone
+consumes:
+  - { entity: Contact, role: identifier, format: phone }
+produces:
+  - { entity: StructuredRecord, role: payload }

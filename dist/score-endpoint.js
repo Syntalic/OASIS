@@ -50,13 +50,23 @@ export function intentRelevanceBonus(ep, intent) {
     const consumes = intent.consumes ?? [];
     if (consumes.length) {
         const inputs = (ep.inputs ?? []).map((i) => i.toLowerCase());
-        const inputSet = new Set(inputs);
+        // Normalized parameter parts: split snake/kebab/space names so e.g.
+        // "phone_number" corroborates Contact ("phone"/"number"), "product_uid"
+        // corroborates Product, "vs_currencies" corroborates Currency.
+        const inputParts = new Set();
+        for (const inp of inputs) {
+            inputParts.add(inp);
+            for (const part of inp.split(/[_\-\s]+/))
+                if (part)
+                    inputParts.add(part);
+        }
+        const inputMatches = (t) => inputParts.has(t);
         const haystack = `${ep.path} ${ep.summary} ${ep.description ?? ""}`.toLowerCase();
         const primaryEntity = ep.facets?.primary_entity;
         for (const port of consumes) {
             const tokens = entityInputTokens(port.entity);
             // Strong corroboration: a declared input parameter names the entity.
-            if (tokens.some((t) => inputSet.has(t))) {
+            if (tokens.some(inputMatches)) {
                 bonus += 4;
                 continue;
             }

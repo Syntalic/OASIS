@@ -11,3 +11,7 @@ aliases:
   - geo locate IP
   - IP enrichment
   - threat intel for IP
+consumes:
+  - { entity: IpAddress, role: identifier }
+produces:
+  - { entity: StructuredRecord, role: payload }

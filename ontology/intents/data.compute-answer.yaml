@@ -16,3 +16,7 @@ aliases:
   - precise math computation
   - solve calculus problem
   - compute integral from 0 to 3
+consumes:
+  - { entity: Query, role: identifier }
+produces:
+  - { entity: Answer, role: payload }
