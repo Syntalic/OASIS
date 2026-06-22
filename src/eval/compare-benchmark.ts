@@ -68,6 +68,7 @@ function buildExternalReport(
     task: [],
     literal: discoverRanks,
     discover: discoverRanks,
+    select: [],
   });
 }
 
@@ -90,6 +91,8 @@ async function evaluateCdpBazaar(queries: EvalQuery[], delayMs = 0): Promise<Ben
       literal_rank: discover,
       discover_hit: discover === 1,
       discover_rank: discover,
+      select_hit: false,
+      select_rank: null,
       top_label: hits[0]?.description ?? hits[0]?.resource ?? null,
     });
 
@@ -212,7 +215,7 @@ export function formatCompareTable(reports: BenchmarkReport[]): string {
   ].join(" ");
 
   const lines = [
-    "Discovery method comparison (43 messy NL queries)",
+    "Discovery method comparison (messy NL queries)",
     "",
     header,
     "-".repeat(header.length),
@@ -224,8 +227,8 @@ export function formatCompareTable(reports: BenchmarkReport[]): string {
     lines.push(
       [
         label.padEnd(22),
-        `${r.discover_hit_at_1}/${r.api_queries}`.padEnd(8),
-        `${r.discover_hit_at_3}/${r.api_queries}`.padEnd(8),
+        `${r.discover_hit_at_1}/${r.task_queries}`.padEnd(8),
+        `${r.discover_hit_at_3}/${r.task_queries}`.padEnd(8),
         `${r.literal_hit_at_3}/${r.api_queries}`.padEnd(8),
         r.discover_mrr.toFixed(3).padEnd(9),
       ].join(" "),

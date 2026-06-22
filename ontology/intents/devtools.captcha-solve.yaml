@@ -1,4 +1,4 @@
-id: devtools.2captcha
+id: devtools.captcha_solve
 label: Solve CAPTCHA challenges for automation
 description: Automated CAPTCHA solving for web agents, scrapers, and form bots. Use when a headless workflow hits reCAPTCHA, hCaptcha, Turnstile, or image challenges and needs a paid solve-and-continue step.
 aliases:
@@ -6,13 +6,8 @@ aliases:
   - human verification bypass
   - recaptcha solver
   - scraper captcha
-  - 2captcha
+  - paid captcha solving service
   - captcha for scraper
   - automated captcha solving
   - bypass human verification form
   - solve challenge before scraping
-satisfies:
-  - origin: https://2captcha.x402.paysponge.com
-    method: POST
-    path: /createTask
-    confidence: primary

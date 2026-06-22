@@ -16,8 +16,3 @@ aliases:
 related:
   - shop.compare_price
   - shop.track_price_history
-satisfies:
-  - origin: https://api.syntalic.com
-    method: GET
-    path: /v1/shopper/price-drop-alert
-    confidence: primary

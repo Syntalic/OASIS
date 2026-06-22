@@ -862,7 +862,7 @@
   {
     "id": "finance-nansen-api-1",
     "query": "use for smart money tracking",
-    "expect_intent": "finance.nansen_api",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://api.nansen.ai",
       "method": "POST",
@@ -872,7 +872,7 @@
   {
     "id": "finance-nansen-api-2",
     "query": "use for smart money tracking via micropayment",
-    "expect_intent": "finance.nansen_api",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://api.nansen.ai",
       "method": "POST",
@@ -882,7 +882,7 @@
   {
     "id": "finance-nansen-api-3",
     "query": "I need to use for smart money tracking",
-    "expect_intent": "finance.nansen_api",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://api.nansen.ai",
       "method": "POST",
@@ -892,7 +892,7 @@
   {
     "id": "devtools-2captcha-1",
     "query": "use for automated captcha solving in web agents",
-    "expect_intent": "devtools.2captcha",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://2captcha.x402.paysponge.com",
       "method": "POST",
@@ -902,7 +902,7 @@
   {
     "id": "devtools-2captcha-2",
     "query": "use for automated captcha solving in web agents via micropayment",
-    "expect_intent": "devtools.2captcha",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://2captcha.x402.paysponge.com",
       "method": "POST",
@@ -912,7 +912,7 @@
   {
     "id": "devtools-2captcha-3",
     "query": "I need to use for automated captcha solving in web agents",
-    "expect_intent": "devtools.2captcha",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://2captcha.x402.paysponge.com",
       "method": "POST",
@@ -952,7 +952,7 @@
   {
     "id": "data-nyne-1",
     "query": "use for b2b contact enrichment from email",
-    "expect_intent": "data.nyne",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
       "method": "POST",
@@ -962,7 +962,7 @@
   {
     "id": "data-nyne-2",
     "query": "use for b2b contact enrichment from email via micropayment",
-    "expect_intent": "data.nyne",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
       "method": "POST",
@@ -972,7 +972,7 @@
   {
     "id": "data-nyne-3",
     "query": "I need to use for b2b contact enrichment from email",
-    "expect_intent": "data.nyne",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
       "method": "POST",
@@ -982,7 +982,7 @@
   {
     "id": "ai-ml-perplexity-1",
     "query": "use for cited web answers",
-    "expect_intent": "ai_ml.perplexity",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://pplx.x402.paysponge.com",
       "method": "POST",
@@ -992,7 +992,7 @@
   {
     "id": "ai-ml-perplexity-2",
     "query": "use for cited web answers via micropayment",
-    "expect_intent": "ai_ml.perplexity",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://pplx.x402.paysponge.com",
       "method": "POST",
@@ -1002,7 +1002,7 @@
   {
     "id": "ai-ml-perplexity-3",
     "query": "I need to use for cited web answers",
-    "expect_intent": "ai_ml.perplexity",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://pplx.x402.paysponge.com",
       "method": "POST",
@@ -1012,7 +1012,7 @@
   {
     "id": "ai-ml-reducto-1",
     "query": "use for document ocr",
-    "expect_intent": "ai_ml.reducto",
+    "expect_intent": "ai.document_extract",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d672d90ggvqqygj60",
       "method": "POST",
@@ -1022,7 +1022,7 @@
   {
     "id": "ai-ml-reducto-2",
     "query": "use for document ocr via micropayment",
-    "expect_intent": "ai_ml.reducto",
+    "expect_intent": "ai.document_extract",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d672d90ggvqqygj60",
       "method": "POST",
@@ -1032,7 +1032,7 @@
   {
     "id": "ai-ml-reducto-3",
     "query": "I need to use for document ocr",
-    "expect_intent": "ai_ml.reducto",
+    "expect_intent": "ai.document_extract",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d672d90ggvqqygj60",
       "method": "POST",
@@ -1042,7 +1042,7 @@
   {
     "id": "messaging-textbelt-1",
     "query": "use for transactional sms",
-    "expect_intent": "messaging.textbelt",
+    "expect_intent": "comms.send_sms",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d6kszbre4qwg5n4n4",
       "method": "POST",
@@ -1052,7 +1052,7 @@
   {
     "id": "messaging-textbelt-2",
     "query": "use for transactional sms via micropayment",
-    "expect_intent": "messaging.textbelt",
+    "expect_intent": "comms.send_sms",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d6kszbre4qwg5n4n4",
       "method": "POST",
@@ -1062,7 +1062,7 @@
   {
     "id": "messaging-textbelt-3",
     "query": "I need to use for transactional sms",
-    "expect_intent": "messaging.textbelt",
+    "expect_intent": "comms.send_sms",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d6kszbre4qwg5n4n4",
       "method": "POST",
@@ -1372,7 +1372,7 @@
   {
     "id": "ai-ml-embeddings-1",
     "query": "Alibaba Cloud Model Studio Embeddings",
-    "expect_intent": "ai_ml.embeddings",
+    "expect_intent": "ai.embeddings",
     "expect_endpoint": {
       "origin": "https://embeddings.alibaba.gateway-402.com",
       "method": "POST",
@@ -1382,7 +1382,7 @@
   {
     "id": "ai-ml-embeddings-2",
     "query": "Alibaba Cloud Model Studio Embeddings via micropayment",
-    "expect_intent": "ai_ml.embeddings",
+    "expect_intent": "ai.embeddings",
     "expect_endpoint": {
       "origin": "https://embeddings.alibaba.gateway-402.com",
       "method": "POST",
@@ -1392,7 +1392,7 @@
   {
     "id": "ai-ml-embeddings-3",
     "query": "I need to Alibaba Cloud Model Studio Embeddings",
-    "expect_intent": "ai_ml.embeddings",
+    "expect_intent": "ai.embeddings",
     "expect_endpoint": {
       "origin": "https://embeddings.alibaba.gateway-402.com",
       "method": "POST",

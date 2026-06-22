@@ -8,6 +8,7 @@ import {
   searchHybridWithFallback,
   type HybridFusionOptions,
 } from "../search-hybrid.js";
+import { curatedCapabilitiesForSearch } from "../curated-search.js";
 import {
   buildReport,
   discoverRank,
@@ -22,6 +23,7 @@ import {
   type QueryResult,
   type SearchMode,
 } from "./discovery-benchmark.js";
+import { selectRank } from "../select-policy.js";
 import { endpointId } from "../id.js";
 import type { IndexBundle } from "../types.js";
 
@@ -48,6 +50,7 @@ export async function evaluateHybridMode(
   const taskRanks: Array<number | null> = [];
   const literalRanks: Array<number | null> = [];
   const discoverRanks: Array<number | null> = [];
+  const selectRanks: Array<number | null> = [];
 
   for (const q of queries) {
     const hits = await searchHybridWithFallback(
@@ -63,18 +66,26 @@ export async function evaluateHybridMode(
       ? rankIntent(hits, q.expect_intent)
       : null;
     const endpointRank = expectedId ? rankEndpoint(hits, expectedId) : null;
+    const curated = curatedCapabilitiesForSearch(bundle);
     const discover = discoverRank(
       hits,
       q.expect_intent,
       expectedId,
-      bundle.capabilities,
+      curated,
       bundle.endpoints,
     );
+
+    let select: number | null = null;
+    if (expectedId && q.expect_intent) {
+      const intent = curated.find((c) => c.id === q.expect_intent);
+      if (intent) select = selectRank(intent, expectedId, bundle.endpoints);
+    }
 
     if (q.expect_intent) taskRanks.push(intentRank);
     if (expectedId) {
       literalRanks.push(endpointRank);
       discoverRanks.push(discover);
+      selectRanks.push(select);
     }
 
     results.push({
@@ -87,6 +98,8 @@ export async function evaluateHybridMode(
       literal_rank: endpointRank,
       discover_hit: discover === 1,
       discover_rank: discover,
+      select_hit: select === 1,
+      select_rank: select,
       top_label: hits[0]?.label ?? null,
     });
   }
@@ -95,6 +108,7 @@ export async function evaluateHybridMode(
     task: taskRanks,
     literal: literalRanks,
     discover: discoverRanks,
+    select: selectRanks,
   });
 }
 
@@ -205,8 +219,13 @@ export async function verifyMessyQueries(bundle: IndexBundle): Promise<string[]>
 
   for (const q of queries) {
     if (q.expect_intent) {
-      const cap = bundle.capabilities.find((c) => c.id === q.expect_intent);
+      const cap = curatedCapabilitiesForSearch(bundle).find(
+        (c) => c.id === q.expect_intent,
+      );
       if (!cap) issues.push(`${q.id}: missing intent ${q.expect_intent}`);
+      else if (!cap.satisfies.length) {
+        issues.push(`${q.id}: intent ${q.expect_intent} has no materialized candidates`);
+      }
     }
     if (q.expect_endpoint) {
       const id = endpointId(

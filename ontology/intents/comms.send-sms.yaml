@@ -1,4 +1,4 @@
-id: messaging.textbelt
+id: comms.send_sms
 label: Send an SMS text message
 description: Outbound SMS for alerts, reminders, and one-time verification codes. Use when an agent must text a phone number without provisioning Twilio or carrier contracts.
 aliases:
@@ -11,8 +11,3 @@ aliases:
   - SMS to mobile number
   - programmatic text message
   - send text without Twilio
-satisfies:
-  - origin: https://api.paysponge.com/x402/purchase/svc_d6kszbre4qwg5n4n4
-    method: POST
-    path: /text
-    confidence: primary

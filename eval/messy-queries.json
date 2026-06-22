@@ -242,7 +242,7 @@
   {
     "id": "messy-reducto-1",
     "query": "pull structured fields out of a scanned PDF invoice",
-    "expect_intent": "ai_ml.reducto",
+    "expect_intent": "ai.document_extract",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d672d90ggvqqygj60",
       "method": "POST",
@@ -252,7 +252,7 @@
   {
     "id": "messy-reducto-2",
     "query": "document OCR and table extraction from uploaded files",
-    "expect_intent": "ai_ml.reducto",
+    "expect_intent": "ai.document_extract",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d672d90ggvqqygj60",
       "method": "POST",
@@ -262,7 +262,7 @@
   {
     "id": "messy-captcha-1",
     "query": "solve this captcha so my scraper can continue",
-    "expect_intent": "devtools.2captcha",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://2captcha.x402.paysponge.com",
       "method": "POST",
@@ -272,7 +272,7 @@
   {
     "id": "messy-captcha-2",
     "query": "human verification bypass for automated form posting",
-    "expect_intent": "devtools.2captcha",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://2captcha.x402.paysponge.com",
       "method": "POST",
@@ -282,7 +282,7 @@
   {
     "id": "messy-nansen-1",
     "query": "track what smart-money wallets are accumulating on chain",
-    "expect_intent": "finance.nansen_api",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://api.nansen.ai",
       "method": "POST",
@@ -292,7 +292,7 @@
   {
     "id": "messy-nansen-2",
     "query": "on-chain fund flow analytics for labeled wallets",
-    "expect_intent": "finance.nansen_api",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://api.nansen.ai",
       "method": "POST",
@@ -362,7 +362,7 @@
   {
     "id": "messy-perplexity-1",
     "query": "web-grounded research answer with citations",
-    "expect_intent": "ai_ml.perplexity",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://pplx.x402.paysponge.com",
       "method": "POST",
@@ -372,7 +372,7 @@
   {
     "id": "messy-embeddings-1",
     "query": "turn a batch of sentences into dense vectors for retrieval",
-    "expect_intent": "ai_ml.embeddings",
+    "expect_intent": "ai.embeddings",
     "expect_endpoint": {
       "origin": "https://embeddings.alibaba.gateway-402.com",
       "method": "POST",
@@ -382,7 +382,7 @@
   {
     "id": "messy-sms-1",
     "query": "send a one-time SMS verification code to a phone number",
-    "expect_intent": "messaging.textbelt",
+    "expect_intent": "comms.send_sms",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d6kszbre4qwg5n4n4",
       "method": "POST",
@@ -392,7 +392,7 @@
   {
     "id": "messy-person-search-1",
     "query": "lookup public profiles for a person by name and city",
-    "expect_intent": "data.nyne",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
       "method": "POST",
@@ -427,6 +427,206 @@
       "origin": "https://api.onesource.io",
       "method": "GET",
       "path": "/api/chain/erc1155-balance"
+    }
+  },
+  {
+    "id": "messy-fax-1",
+    "query": "fax this signed PDF to the clinic's number before 5pm",
+    "expect_intent": "comms.send_fax",
+    "expect_endpoint": {
+      "origin": "https://agentfax.val.run",
+      "method": "POST",
+      "path": "/v1/fax"
+    }
+  },
+  {
+    "id": "messy-scrape-1",
+    "query": "pull the HTML from a competitor's pricing page",
+    "expect_intent": "data.web_scrape",
+    "expect_endpoint": {
+      "origin": "https://abstract-web-scraping.mpp.paywithlocus.com",
+      "method": "POST",
+      "path": "/abstract-web-scraping/scrape"
+    }
+  },
+  {
+    "id": "messy-markdown-1",
+    "query": "turn this blog post URL into clean markdown for my RAG index",
+    "expect_intent": "web.markdown_extract",
+    "expect_endpoint": {
+      "origin": "https://mpp.orthogonal.com/serper-scrape",
+      "method": "POST",
+      "path": "/"
+    }
+  },
+  {
+    "id": "messy-llm-1",
+    "query": "run a paid Claude chat completion without my own Anthropic key",
+    "expect_intent": "ai.llm_complete",
+    "expect_endpoint": {
+      "origin": "https://anthropic.mpp.tempo.xyz",
+      "method": "POST",
+      "path": "/v1/chat/completions"
+    }
+  },
+  {
+    "id": "messy-stt-1",
+    "query": "transcribe this customer voicemail into searchable text",
+    "expect_intent": "ai.speech_to_text",
+    "expect_endpoint": {
+      "origin": "https://api.glianalabs.com",
+      "method": "POST",
+      "path": "/x402/grok-stt"
+    }
+  },
+  {
+    "id": "messy-tts-1",
+    "query": "generate spoken audio from this support script for IVR",
+    "expect_intent": "ai.text_to_speech",
+    "expect_endpoint": {
+      "origin": "https://api.glianalabs.com",
+      "method": "POST",
+      "path": "/x402/tts-1.5-max"
+    }
+  },
+  {
+    "id": "messy-ocr-1",
+    "query": "read the text in this photo of a street sign",
+    "expect_intent": "data.ocr",
+    "expect_endpoint": {
+      "origin": "https://ai.verifik.co",
+      "method": "POST",
+      "path": "/api/ocr/scan-gpt"
+    }
+  },
+  {
+    "id": "messy-travel-1",
+    "query": "find highly rated sushi restaurants near Shibuya with reviews",
+    "expect_intent": "travel.place_reviews",
+    "expect_endpoint": {
+      "origin": "https://tripadvisor.x402.paysponge.com",
+      "method": "GET",
+      "path": "/api/v1/location/search"
+    }
+  },
+  {
+    "id": "messy-translate-1",
+    "query": "translate this product description from German to English",
+    "expect_intent": "data.translate_text",
+    "expect_endpoint": {
+      "origin": "https://deepl.mpp.paywithlocus.com",
+      "method": "POST",
+      "path": "/deepl/translate"
+    }
+  },
+  {
+    "id": "messy-jobs-1",
+    "query": "show me new backend engineer roles posted in the last day",
+    "expect_intent": "data.job_search",
+    "expect_endpoint": {
+      "origin": "https://mpp.orthogonal.com/fantastic-jobs",
+      "method": "GET",
+      "path": "/v1/active-ats"
+    }
+  },
+  {
+    "id": "messy-weather-1",
+    "query": "what's the current temperature and forecast in Chicago",
+    "expect_intent": "data.weather_forecast",
+    "expect_endpoint": {
+      "origin": "https://openweather.mpp.paywithlocus.com",
+      "method": "POST",
+      "path": "/openweather/current-weather"
+    }
+  },
+  {
+    "id": "messy-ip-1",
+    "query": "where is this login IP address located and who hosts it",
+    "expect_intent": "data.ip_lookup",
+    "expect_endpoint": {
+      "origin": "https://abstract-ip-intelligence.mpp.paywithlocus.com",
+      "method": "POST",
+      "path": "/abstract-ip-intelligence/lookup"
+    }
+  },
+  {
+    "id": "messy-fx-1",
+    "query": "convert 50000 JPY to USD at today's rate",
+    "expect_intent": "data.exchange_rates",
+    "expect_endpoint": {
+      "origin": "https://abstract-exchange-rates.mpp.paywithlocus.com",
+      "method": "POST",
+      "path": "/abstract-exchange-rates/live"
+    }
+  },
+  {
+    "id": "messy-email-validate-1",
+    "query": "is this signup email real or a disposable throwaway",
+    "expect_intent": "data.email_validate",
+    "expect_endpoint": {
+      "origin": "https://abstract-email-reputation.mpp.paywithlocus.com",
+      "method": "POST",
+      "path": "/abstract-email-reputation/check"
+    }
+  },
+  {
+    "id": "messy-whois-1",
+    "query": "look up WHOIS and MX records for a domain before we onboard them",
+    "expect_intent": "data.whois_lookup",
+    "expect_endpoint": {
+      "origin": "https://dns-lookup.x402.paysponge.com",
+      "method": "POST",
+      "path": "/"
+    }
+  },
+  {
+    "id": "messy-wolfram-1",
+    "query": "compute the definite integral of x^2 from 0 to 3 precisely",
+    "expect_intent": "data.compute_answer",
+    "expect_endpoint": {
+      "origin": "https://wolframalpha.x402.paysponge.com",
+      "method": "GET",
+      "path": "/v2/query"
+    }
+  },
+  {
+    "id": "messy-phone-validate-1",
+    "query": "is this US mobile number real before we send OTP texts",
+    "expect_intent": "data.phone_validate",
+    "expect_endpoint": {
+      "origin": "https://abstract-phone-intelligence.mpp.paywithlocus.com",
+      "method": "POST",
+      "path": "/abstract-phone-intelligence/lookup"
+    }
+  },
+  {
+    "id": "messy-places-1",
+    "query": "find highly rated coffee shops open now near downtown Seattle",
+    "expect_intent": "maps.places",
+    "expect_endpoint": {
+      "origin": "https://places.google.gateway-402.com",
+      "method": "POST",
+      "path": "/v1/places:searchText"
+    }
+  },
+  {
+    "id": "messy-web-search-1",
+    "query": "google-style web results for recent OpenAI product announcements",
+    "expect_intent": "search.web",
+    "expect_endpoint": {
+      "origin": "https://mpp.orthogonal.com/serper",
+      "method": "POST",
+      "path": "/search"
+    }
+  },
+  {
+    "id": "messy-stock-1",
+    "query": "what is NVDA trading at right now on the market",
+    "expect_intent": "finance.stock_quote",
+    "expect_endpoint": {
+      "origin": "https://alphavantage.mpp.paywithlocus.com",
+      "method": "POST",
+      "path": "/alphavantage/global-quote"
     }
   }
 ]

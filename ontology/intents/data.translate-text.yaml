@@ -1,0 +1,13 @@
+id: data.translate_text
+label: Translate text between languages
+description: Machine translation for phrases, documents, or web content. Use when an agent localizes user-facing text, converts foreign-language content, or bridges multilingual workflows.
+aliases:
+  - translate text
+  - language translation
+  - convert to another language
+  - machine translation API
+  - localize content
+  - translate paragraph
+  - multilingual translation
+  - text localization
+  - translate English to Spanish

@@ -1,0 +1,13 @@
+id: finance.onchain_analytics
+label: Track on-chain smart money and wallet analytics
+description: On-chain analytics for smart-money flows, wallet profiling, token holder metrics, and fund movements. Use when an agent researches crypto wallets, token accumulation, or labeled on-chain activity.
+aliases:
+  - smart money tracking
+  - on-chain wallet analytics
+  - token holder flows
+  - wallet profiling on chain
+  - fund flow analytics
+  - labeled wallet activity
+  - what wallets are accumulating
+  - on-chain signal discovery
+  - crypto wallet intelligence

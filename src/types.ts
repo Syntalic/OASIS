@@ -48,13 +48,17 @@ export interface SatisfiesRef {
   notes?: string;
 }
 
-export interface CapabilityIntent {
+/** Task-only ontology source (ontology/intents/*.yaml). No vendor endpoints required. */
+export interface CuratedIntentSource {
   id: string;
   label: string;
   description?: string;
   aliases?: string[];
   schema_org?: string[];
   related?: string[];
+}
+
+export interface CapabilityIntent extends CuratedIntentSource {
   satisfies: SatisfiesRef[];
 }
 

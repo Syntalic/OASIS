@@ -1,0 +1,13 @@
+id: ai.text_to_speech
+label: Convert text to speech audio
+description: Text-to-speech synthesis via paid API. Use when an agent generates spoken audio from text for IVR, accessibility, voice assistants, or outbound voice content.
+aliases:
+  - text to speech
+  - TTS API
+  - voice synthesis
+  - generate speech audio
+  - speak this text
+  - synthetic voice from text
+  - audio narration API
+  - convert text to voice
+  - text to audio file

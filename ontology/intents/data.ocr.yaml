@@ -1,0 +1,13 @@
+id: data.ocr
+label: Extract text from images (OCR)
+description: Optical character recognition on images and photos. Use when an agent reads text from screenshots, scans, signs, or photos — distinct from full document parsing pipelines.
+aliases:
+  - OCR
+  - optical character recognition
+  - read text from image
+  - image to text
+  - scan text in photo
+  - extract text from screenshot
+  - OCR API
+  - recognize text in image
+  - photo text extraction

@@ -1,9 +1,9 @@
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { linkCapabilitiesToEndpoints, loadOntology } from "./ontology.js";
+import { materializeCuratedIntents } from "./materialize-satisfies.js";
+import { linkCapabilitiesToEndpoints, loadOntologySources } from "./ontology.js";
 import {
-  expandOntologyFromKeywords,
   expandOntologyFromProviders,
   inferCapabilityLinks,
 } from "./ontology-expand.js";
@@ -91,7 +91,7 @@ export async function buildIndex(options: BuildOptions = {}): Promise<IndexBundl
   const outputDir = options.outputDir ?? path.join(PACKAGE_ROOT, "dist");
   const ontologyDir =
     options.ontologyDir ?? path.join(PACKAGE_ROOT, "ontology", "intents");
-  const curatedCapabilities = await loadOntology(ontologyDir);
+  const curatedSources = await loadOntologySources(ontologyDir);
 
   const sources: IndexBundle["sources"] = [];
   let endpoints: EndpointRecord[] = [];
@@ -205,12 +205,22 @@ export async function buildIndex(options: BuildOptions = {}): Promise<IndexBundl
   const providers = buildProviderRecords(endpoints, paySkillsProviders);
   enrichEndpointsWithProviders(endpoints, providers);
 
-  let capabilities = expandOntologyFromProviders(
-    curatedCapabilities,
+  let capabilities = materializeCuratedIntents(curatedSources, endpoints);
+  const emptyCurated = capabilities.filter((c) => c.satisfies.length === 0);
+  if (emptyCurated.length) {
+    console.warn(
+      `  curated intents with 0 candidates: ${emptyCurated.map((c) => c.id).join(", ")}`,
+    );
+  }
+  const curatedLinks = capabilities.reduce((n, c) => n + c.satisfies.length, 0);
+  console.log(
+    `  materialized ${capabilities.length} curated intents → ${curatedLinks} endpoint candidates`,
+  );
+  capabilities = expandOntologyFromProviders(
+    capabilities,
     paySkillsProviders,
     endpoints,
   );
-  capabilities = expandOntologyFromKeywords(capabilities, endpoints);
 
   const endpointIndex = new Map<string, EndpointRecord>();
   for (const ep of endpoints) {

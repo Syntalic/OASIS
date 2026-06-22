@@ -7,6 +7,7 @@ import { buildIndex } from "./build.js";
 import { endpointId } from "./id.js";
 import { defaultLanceDir, buildLanceIndex } from "./embed/lance-index.js";
 import { DEFAULT_KEYWORD_WEIGHT, DEFAULT_VECTOR_WEIGHT, searchHybridWithFallback, } from "./search-hybrid.js";
+import { curatedCapabilitiesForSearch } from "./curated-search.js";
 import { searchIndex } from "./search.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..");
@@ -31,7 +32,7 @@ function parseWeight(value, flag) {
     return n;
 }
 function resolveIntent(intentId, bundle) {
-    const intent = bundle.capabilities.find((c) => c.id === intentId);
+    const intent = curatedCapabilitiesForSearch(bundle).find((c) => c.id === intentId);
     if (!intent)
         return null;
     const endpoints = [];
@@ -102,7 +103,7 @@ program
     const limit = parsePositiveInt(opts.limit, "--limit");
     const hits = opts.hybrid
         ? await searchHybridWithFallback(query, bundle, defaultLanceDir(opts.dist), limit)
-        : searchIndex(query, bundle.endpoints, bundle.capabilities, limit);
+        : searchIndex(query, bundle.endpoints, curatedCapabilitiesForSearch(bundle), limit);
     if (opts.json) {
         console.log(JSON.stringify(hits, null, 2));
         return;
@@ -230,8 +231,8 @@ program
             !e.provider_fqn.startsWith("mppscan/") &&
             !e.provider_fqn.startsWith("mpp-catalog/")).length;
         console.log(`Coverage: ${cov} unified endpoints vs ${ps} pay-skills-only`);
-        console.log(`Full index discover@3: ${full.discover_hit_at_3}/${full.api_queries}`);
-        console.log(`pay-skills-only discover@3: ${paySkills.discover_hit_at_3}/${paySkills.api_queries}`);
+        console.log(`Full index discover@3: ${full.discover_hit_at_3}/${full.task_queries}`);
+        console.log(`pay-skills-only discover@3: ${paySkills.discover_hit_at_3}/${paySkills.task_queries}`);
     }
 });
 program

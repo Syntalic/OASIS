@@ -19,8 +19,3 @@ aliases:
 related:
   - shop.compare_price
   - shop.price_drop_alert
-satisfies:
-  - origin: https://api.syntalic.com
-    method: GET
-    path: /v1/shopper/deal-finder
-    confidence: primary

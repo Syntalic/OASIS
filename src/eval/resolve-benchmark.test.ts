@@ -3,9 +3,10 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { CURATED_INTENT_IDS } from "../intent-match.js";
 import {
   evaluateResolveAccuracy,
-  loadCuratedIntents,
+  loadCuratedSources,
   runResolveBenchmark,
 } from "./resolve-benchmark.js";
 import type { IndexBundle } from "../types.js";
@@ -28,32 +29,36 @@ async function loadBundle(): Promise<IndexBundle> {
 }
 
 describe("resolve benchmark", () => {
-  it("loads curated intents from ontology/intents", async () => {
-    const intents = await loadCuratedIntents();
-    assert.ok(intents.length >= 25, `expected >= 25 curated intents, got ${intents.length}`);
-    for (const intent of intents) {
+  it("loads task-only curated sources from ontology/intents", async () => {
+    const sources = await loadCuratedSources();
+    assert.ok(sources.length >= 47, `expected >= 47 curated sources, got ${sources.length}`);
+    for (const intent of sources) {
       assert.ok(intent.id);
       assert.ok(intent.label);
-      assert.ok(intent.satisfies.length > 0);
+      assert.equal(
+        (intent as { satisfies?: unknown }).satisfies,
+        undefined,
+        `${intent.id} should not define satisfies in source YAML`,
+      );
     }
   });
 
-  it("all curated intents resolve primary satisfies ref to an indexed endpoint", async (t) => {
+  it("all curated intents materialize to at least one indexed endpoint", async (t) => {
     if (!(await distIndexExists())) {
       t.skip("dist/index.json missing — run pnpm run build first");
       return;
     }
 
     const bundle = await loadBundle();
-    const intents = await loadCuratedIntents();
-    const report = evaluateResolveAccuracy(bundle, intents);
+    const report = evaluateResolveAccuracy(bundle);
 
     const misses = report.results.filter((r) => !r.resolved);
     assert.equal(
       misses.length,
       0,
-      `expected all primary refs to resolve, missing: ${misses.map((m) => m.intent_id).join(", ")}`,
+      `expected all curated intents to have candidates, missing: ${misses.map((m) => m.intent_id).join(", ")}`,
     );
+    assert.equal(report.total, CURATED_INTENT_IDS.length);
   });
 
   it("runResolveBenchmark matches evaluateResolveAccuracy", async (t) => {
@@ -65,6 +70,6 @@ describe("resolve benchmark", () => {
     const bundle = await loadBundle();
     const report = await runResolveBenchmark(bundle);
     assert.equal(report.total, report.resolved + report.missing);
-    assert.ok(report.total >= 25);
+    assert.ok(report.total >= 47);
   });
 });

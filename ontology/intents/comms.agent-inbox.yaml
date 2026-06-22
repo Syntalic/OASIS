@@ -5,7 +5,7 @@ aliases:
   - ai agent email inbox
   - agent inbox
   - create agent inbox
-  - agentmail inbox
+  - dedicated agent email inbox
   - programmatic inbox
   - mailbox my bot can poll
   - dedicated inbox for autonomous agent
@@ -17,14 +17,3 @@ aliases:
   - polling inbox for AI workflows
 related:
   - comms.send_email
-schema_org:
-  - schema:EmailMessage
-satisfies:
-  - origin: https://mpp.api.agentmail.to
-    method: POST
-    path: /v0/inboxes
-    confidence: primary
-  - origin: https://x402.api.agentmail.to
-    method: POST
-    path: /v0/inboxes
-    confidence: secondary

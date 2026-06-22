@@ -1,0 +1,13 @@
+id: ai.speech_to_text
+label: Transcribe audio to text
+description: Speech-to-text transcription via paid API. Use when an agent converts voice recordings, calls, or audio files into searchable text without hosting Whisper or STT infrastructure.
+aliases:
+  - speech to text
+  - transcribe audio
+  - STT API
+  - audio transcription API
+  - audio to text
+  - voice transcription
+  - convert recording to text
+  - transcribe voice memo
+  - speech recognition API

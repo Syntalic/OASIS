@@ -27,6 +27,7 @@
     "eval:resolve": "node dist/cli.js eval:resolve",
     "eval:hybrid": "node dist/cli.js eval:hybrid",
     "eval:compare": "node dist/cli.js eval:compare",
+    "benchmark": "pnpm run build:ts && pnpm test && pnpm run eval:resolve && pnpm run eval:compare -- --offline --methods full,endpoints-only,pay-skills-only,x402scan-only,mpp-only,full-hybrid",
     "eval:generate": "pnpm run build:ts && node dist/eval/generate-queries.js",
     "embed": "node dist/cli.js embed --scope curated",
     "validate": "node dist/cli.js validate",

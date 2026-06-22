@@ -1,0 +1,13 @@
+id: data.weather_forecast
+label: Get current weather and forecasts
+description: Current conditions, multi-day forecasts, and air quality for a location. Use when an agent answers weather questions, plans travel, or checks environmental conditions for a city or coordinates.
+aliases:
+  - weather forecast
+  - current weather
+  - temperature today
+  - 5 day forecast
+  - weather API
+  - air quality index
+  - will it rain tomorrow
+  - local weather conditions
+  - forecast for a city

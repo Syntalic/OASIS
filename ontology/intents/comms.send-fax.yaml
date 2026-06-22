@@ -1,0 +1,13 @@
+id: comms.send_fax
+label: Send a fax via micropayment
+description: Outbound fax delivery priced per page. Use when an agent must transmit documents to a fax number for legal, healthcare, or legacy business workflows without a fax machine or carrier contract.
+aliases:
+  - send fax
+  - fax per page
+  - agent fax
+  - transmit document by fax
+  - fax a PDF to a number
+  - outbound fax API
+  - send pages to fax line
+  - programmatic fax delivery
+  - fax without a phone line

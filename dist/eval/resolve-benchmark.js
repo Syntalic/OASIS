@@ -1,68 +1,95 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { curatedCapabilitiesForSearch } from "../curated-search.js";
 import { endpointId } from "../id.js";
-import { loadOntology } from "../ontology.js";
+import { loadOntologySources } from "../ontology.js";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");
-function primaryRef(intent) {
-    return (intent.satisfies.find((s) => s.confidence === "primary") ?? intent.satisfies[0]);
+
+function formatRef(origin, method, p) {
+    return `${method} ${origin}${p}`;
 }
-function formatRef(ref) {
-    return `${ref.method} ${ref.origin}${ref.path}`;
-}
-export async function loadCuratedIntents() {
+
+export async function loadCuratedSources() {
     const intentsDir = path.join(PACKAGE_ROOT, "ontology", "intents");
-    return loadOntology(intentsDir);
+    return loadOntologySources(intentsDir);
 }
-export function evaluateResolveAccuracy(bundle, intents) {
+
+export function evaluateResolveAccuracy(bundle) {
     const endpointIds = new Set(bundle.endpoints.map((e) => e.id));
+    const curated = curatedCapabilitiesForSearch(bundle);
+
     const results = [];
-    for (const intent of intents) {
-        const ref = primaryRef(intent);
-        const id = endpointId(ref.origin, ref.method, ref.path);
-        const resolved = endpointIds.has(id);
+    let totalRefs = 0;
+    let resolvedRefs = 0;
+
+    for (const intent of curated) {
+        let resolvedCount = 0;
+        for (const ref of intent.satisfies) {
+            totalRefs += 1;
+            const id = endpointId(ref.origin, ref.method, ref.path);
+            if (endpointIds.has(id)) {
+                resolvedCount += 1;
+                resolvedRefs += 1;
+            }
+        }
+
+        const sample = intent.satisfies[0];
         results.push({
             intent_id: intent.id,
             label: intent.label,
-            primary_ref: ref,
-            resolved,
-            endpoint_id: resolved ? id : null,
+            endpoint_count: intent.satisfies.length,
+            resolved_count: resolvedCount,
+            resolved: resolvedCount > 0,
+            sample_ref: sample
+                ? formatRef(sample.origin, sample.method, sample.path)
+                : null,
         });
     }
+
     const resolved = results.filter((r) => r.resolved).length;
+
     return {
         total: results.length,
         resolved,
         missing: results.length - resolved,
+        total_endpoint_refs: totalRefs,
+        resolved_endpoint_refs: resolvedRefs,
         results,
     };
 }
+
 export async function runResolveBenchmark(bundle) {
-    const intents = await loadCuratedIntents();
-    return evaluateResolveAccuracy(bundle, intents);
+    return evaluateResolveAccuracy(bundle);
 }
+
 export function formatResolveReport(report) {
     const lines = [
-        "Resolve accuracy (curated ontology intents)",
+        "Resolve accuracy (materialized curated intents)",
         "",
-        `total: ${report.total}  resolved: ${report.resolved}  missing: ${report.missing}`,
+        `intents: ${report.total}  with_candidates: ${report.resolved}  missing: ${report.missing}`,
+        `endpoint_refs: ${report.resolved_endpoint_refs}/${report.total_endpoint_refs} resolve to index`,
         "",
     ];
+
     const header = [
-        "resolved".padEnd(9),
+        "ok".padEnd(4),
         "intent".padEnd(32),
-        "primary ref".padEnd(48),
-        "endpoint id",
+        "candidates".padEnd(12),
+        "sample endpoint",
     ].join(" ");
+
     lines.push(header, "-".repeat(header.length));
+
     for (const r of report.results) {
         lines.push([
-            (r.resolved ? "yes" : "no").padEnd(9),
+            (r.resolved ? "yes" : "no").padEnd(4),
             r.intent_id.padEnd(32),
-            formatRef(r.primary_ref).padEnd(48),
-            r.endpoint_id ?? "—",
+            `${r.resolved_count}/${r.endpoint_count}`.padEnd(12),
+            r.sample_ref ?? "—",
         ].join(" "));
     }
+
     return lines.join("\n");
 }
-//# sourceMappingURL=resolve-benchmark.js.map

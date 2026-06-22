@@ -1,4 +1,5 @@
 import { existsSync } from "node:fs";
+import { curatedCapabilitiesForSearch } from "./curated-search.js";
 import { embedText } from "./embed/embedder.js";
 import { openLanceTable } from "./embed/lance-index.js";
 import { searchIndex } from "./search.js";
@@ -66,7 +67,7 @@ function mergeKeywordAndVector(keywordHits, vectorHits, bundle, limit, fusion) {
         let hit = null;
         if (item.key.startsWith("cap:")) {
             const capId = item.key.slice(4);
-            const cap = bundle.capabilities.find((c) => c.id === capId);
+            const cap = curatedCapabilitiesForSearch(bundle).find((c) => c.id === capId);
             if (cap)
                 hit = capabilityToHit(cap, item.rrf);
         }
@@ -113,7 +114,7 @@ export async function searchHybrid(query, bundle, lanceDir, limit = 10, options 
     const keywordWeight = options.keywordWeight ?? DEFAULT_KEYWORD_WEIGHT;
     const vectorWeight = options.vectorWeight ?? DEFAULT_VECTOR_WEIGHT;
     const candidatePool = options.candidatePool ?? 50;
-    const keywordHits = searchIndex(query, bundle.endpoints, bundle.capabilities, candidatePool);
+    const keywordHits = searchIndex(query, bundle.endpoints, curatedCapabilitiesForSearch(bundle), candidatePool);
     // No vector index built yet: degrade to keyword-only silently (expected path).
     if (!existsSync(lanceDir)) {
         return keywordHits.slice(0, limit);
@@ -144,7 +145,7 @@ export async function searchHybrid(query, bundle, lanceDir, limit = 10, options 
 }
 export async function searchHybridWithFallback(query, bundle, lanceDir, limit = 10, options = {}) {
     if (!lanceDir) {
-        return searchIndex(query, bundle.endpoints, bundle.capabilities, limit);
+        return searchIndex(query, bundle.endpoints, curatedCapabilitiesForSearch(bundle), limit);
     }
     return searchHybrid(query, bundle, lanceDir, limit, options);
 }

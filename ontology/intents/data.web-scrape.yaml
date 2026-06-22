@@ -1,0 +1,13 @@
+id: data.web_scrape
+label: Scrape or fetch a web page
+description: Fetch and extract content from a public URL via micropayment. Use when an agent needs raw page HTML, rendered content, or structured scrape output for research, monitoring, or downstream parsing.
+aliases:
+  - scrape a URL
+  - web scrape
+  - fetch page content
+  - crawl a webpage
+  - pull HTML from URL
+  - scrape website content
+  - fetch live page data
+  - get webpage HTML
+  - scrape public site

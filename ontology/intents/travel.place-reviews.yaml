@@ -1,0 +1,13 @@
+id: travel.place_reviews
+label: Look up travel reviews and places
+description: Search hotels, restaurants, and attractions with reviews, photos, and place details. Use when an agent plans trips, compares venues, or enriches location data with traveler feedback.
+aliases:
+  - traveler venue reviews
+  - travel reviews
+  - place reviews
+  - hotel reviews API
+  - restaurant lookup with ratings
+  - attraction details and reviews
+  - nearby hotels search
+  - travel place enrichment
+  - find restaurants with reviews

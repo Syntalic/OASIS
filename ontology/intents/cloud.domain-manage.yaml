@@ -11,8 +11,3 @@ aliases:
   - manage DNS records API
   - domain renew without registrar UI
   - programmatic domain renewal
-satisfies:
-  - origin: https://stabledomains.dev
-    method: POST
-    path: /api/domain/renew
-    confidence: primary

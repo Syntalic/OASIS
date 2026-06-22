@@ -36,10 +36,8 @@ function endpointExists(
   return endpoints.some((e) => e.id === id);
 }
 
-function primaryRef(cap: CapabilityIntent) {
-  return (
-    cap.satisfies.find((s) => s.confidence === "primary") ?? cap.satisfies[0]
-  );
+function sampleRef(cap: CapabilityIntent) {
+  return cap.satisfies[0];
 }
 
 function slug(id: string): string {
@@ -63,7 +61,7 @@ function queriesFromCapability(
   endpoints: EndpointRecord[],
   maxPerCap = 4,
 ): EvalQuery[] {
-  const ref = primaryRef(cap);
+  const ref = sampleRef(cap);
   if (!ref || !endpointExists(endpoints, ref)) return [];
 
   const phrases = new Set<string>();

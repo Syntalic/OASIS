@@ -15,8 +15,3 @@ aliases:
   - full page PNG capture
   - webpage image preview
   - render site as screenshot
-satisfies:
-  - origin: https://screenshotone.x402.paysponge.com
-    method: GET
-    path: /take
-    confidence: primary

@@ -22,13 +22,6 @@ aliases:
   - compare same product different shops
   - who sells it cheapest today
   - multi-retailer price lookup
-schema_org:
-  - schema:SearchAction
 related:
   - shop.find_deals
   - shop.track_price_history
-satisfies:
-  - origin: https://api.syntalic.com
-    method: GET
-    path: /v1/shopper/best-price
-    confidence: primary

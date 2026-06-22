@@ -1,0 +1,13 @@
+id: web.markdown_extract
+label: Extract webpage content as clean markdown
+description: Convert a public URL into clean text or markdown, including JavaScript-rendered pages. Use when an agent needs readable article content, docs, or LLM-ready page text instead of raw HTML.
+aliases:
+  - URL to markdown
+  - webpage to markdown
+  - extract markdown from URL
+  - clean text from webpage
+  - readable page content
+  - convert URL to text
+  - markdown extract
+  - scrape page as markdown
+  - JS rendered page to text

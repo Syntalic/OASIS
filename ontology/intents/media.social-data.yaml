@@ -1,0 +1,13 @@
+id: media.social_data
+label: Fetch social media posts and comments
+description: Retrieve profiles, posts, comments, and engagement from major social platforms. Use when an agent monitors brand sentiment, analyzes creator content, or pulls thread data for research.
+aliases:
+  - social media data
+  - fetch post comments
+  - instagram comments API
+  - facebook post comments
+  - tiktok post data
+  - reddit thread content
+  - social listening API
+  - creator content lookup
+  - sentiment from social posts

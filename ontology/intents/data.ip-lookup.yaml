@@ -1,0 +1,13 @@
+id: data.ip_lookup
+label: Look up IP address intelligence
+description: Geolocation, ISP, threat signals, and metadata for an IP address. Use when an agent enriches traffic logs, fraud checks, or security events with IP context.
+aliases:
+  - IP lookup
+  - IP geolocation
+  - IP intelligence
+  - where is this IP from
+  - ISP for IP address
+  - IP address metadata
+  - geo locate IP
+  - IP enrichment
+  - threat intel for IP

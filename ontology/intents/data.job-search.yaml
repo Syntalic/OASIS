@@ -1,0 +1,18 @@
+id: data.job_search
+label: Search job postings and hiring feeds
+description: Query fresh job listings from ATS platforms and job boards with filters. Use when an agent tracks open roles, monitors hiring trends, or surfaces opportunities by title, company, or location.
+aliases:
+  - job search API
+  - find open positions
+  - hiring feed
+  - ATS job listings
+  - search job postings
+  - new jobs by title
+  - career page jobs
+  - job board search
+  - filter jobs by role
+  - backend engineer jobs
+  - new roles posted today
+  - jobs posted in the last day
+  - engineering job listings
+  - fresh ATS job feed

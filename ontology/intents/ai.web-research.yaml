@@ -1,18 +1,13 @@
-id: ai_ml.perplexity
+id: ai.web_research
 label: Web-grounded research with citations
 description: Live web search answers with citations and grounded sources. Use when an agent needs current facts, research summaries, or cited responses instead of static model knowledge.
 aliases:
   - cited web answers
   - live research
-  - perplexity search
+  - web research with citations
   - grounded research
   - web search with sources
   - web-grounded research answer
   - research with citations
   - current events lookup with sources
   - cited web research API
-satisfies:
-  - origin: https://pplx.x402.paysponge.com
-    method: POST
-    path: /search
-    confidence: primary

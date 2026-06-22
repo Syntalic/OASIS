@@ -6,8 +6,8 @@ aliases:
   - text to image
   - image from prompt
   - ai image generation
-  - fast sdxl
-  - SDXL image
+  - fast text to image
+  - text to image generation
   - render a picture from prompt
   - mountain sunset image
   - create image from description
@@ -15,8 +15,3 @@ aliases:
   - make an illustration from prompt
   - draw an image from words
   - AI render from text prompt
-satisfies:
-  - origin: https://fal.x402.paysponge.com
-    method: POST
-    path: /fal-ai/fast-sdxl
-    confidence: primary

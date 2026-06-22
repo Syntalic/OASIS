@@ -39,12 +39,12 @@ How do agents find paid x402/MPP APIs today? Usually one of these:
 | **pay-skills slice only** | Search ~70 curated providers | ~10× smaller coverage than unified index |
 
 **OASIS** unifies those catalogs into one index, adds a **curated task ontology**
-(25 intents in `ontology/intents/`), and follows the agent protocol
+(47 curated task intents in `ontology/intents/`), and follows the agent protocol
 [`search → resolve → schema → execute`](spec/traversal.md).
 
 ### Measured on natural-language queries (honest eval)
 
-**43 messy queries** — hand-written agent phrasing, *not* copied from capability
+**64 messy queries** — hand-written agent phrasing, *not* copied from capability
 labels ([`eval/messy-queries.json`](eval/messy-queries.json)). This is the
 realistic signal.
 
@@ -68,7 +68,7 @@ slices and live external discovery APIs:
 
 External APIs score **URL/literal match** only (no ontology resolve step).
 
-Measured **discover@3** on the same 43 messy queries:
+Measured **discover@3** on the same 64 messy queries:
 
 | Method | discover@3 | discover@1 | discover MRR |
 |--------|------------|------------|--------------|
@@ -84,7 +84,7 @@ Measured **discover@3** on the same 43 messy queries:
 **vs best baseline (pay-skills-only):** **+22 more tasks** found in top 3 (**2.0×**
 hit rate). **vs endpoint grep:** **+30** (**3.3×**).
 
-Hybrid = curated vector recall (25 intents, LanceDB) fused with keyword search
+Hybrid = curated vector recall (47 intents, LanceDB) fused with keyword search
 (keyword×2, vector×1 RRF). Same top-3 coverage; better rank-1 accuracy (+4 queries).
 
 ### Regression set (644 golden queries)
@@ -104,7 +104,7 @@ Search is only half the protocol. **Resolve accuracy** checks that each curated
 intent’s primary `satisfies` ref points at a real indexed endpoint:
 
 ```bash
-pnpm run eval:resolve   # 25/25 curated intents resolve
+pnpm run eval:resolve   # 47/47 curated intents resolve
 ```
 
 ### What we are *not* claiming yet
@@ -117,7 +117,7 @@ pnpm run eval:resolve   # 25/25 curated intents resolve
 
 ```bash
 pnpm run build          # full index (~30k endpoints)
-pnpm run embed          # 25 curated vectors
+pnpm run embed          # 47 curated vectors
 pnpm run eval:hybrid    # messy NL: baseline vs hybrid
 pnpm run eval:compare   # messy NL: all discovery methods (+ external APIs)
 pnpm run eval           # golden 644: all index modes
@@ -249,7 +249,7 @@ Payment metadata is extracted from OpenAPI extensions:
 
 ```
 spec/                  JSON schemas + traversal protocol
-ontology/intents/      Curated capability definitions (25 intents)
+ontology/intents/      Curated capability definitions (47 task intents)
 eval/                  messy-queries.json + queries.json benchmarks
 src/                   Indexer + CLI + hybrid retrieval (TypeScript)
 dist/                  Built artifacts (committed after build)

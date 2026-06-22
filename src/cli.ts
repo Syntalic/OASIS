@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { buildIndex, defaultPaySkillsPath } from "./build.js";
+import { curatedCapabilitiesForSearch } from "./curated-search.js";
 import { endpointId } from "./id.js";
 import { defaultLanceDir, buildLanceIndex } from "./embed/lance-index.js";
 import {
@@ -47,7 +48,7 @@ function resolveIntent(
   intent: CapabilityIntent;
   endpoints: EndpointRecord[];
 } | null {
-  const intent = bundle.capabilities.find((c) => c.id === intentId);
+  const intent = curatedCapabilitiesForSearch(bundle).find((c) => c.id === intentId);
   if (!intent) return null;
 
   const endpoints: EndpointRecord[] = [];
@@ -136,7 +137,12 @@ program
           defaultLanceDir(opts.dist),
           limit,
         )
-      : searchIndex(query, bundle.endpoints, bundle.capabilities, limit);
+      : searchIndex(
+          query,
+          bundle.endpoints,
+          curatedCapabilitiesForSearch(bundle),
+          limit,
+        );
 
     if (opts.json) {
       console.log(JSON.stringify(hits, null, 2));
@@ -287,17 +293,17 @@ program
       ).length;
       console.log(`Coverage: ${cov} unified endpoints vs ${ps} pay-skills-only`);
       console.log(
-        `Full index discover@3: ${full.discover_hit_at_3}/${full.api_queries}`,
+        `Full index discover@3: ${full.discover_hit_at_3}/${full.task_queries}`,
       );
       console.log(
-        `pay-skills-only discover@3: ${paySkills.discover_hit_at_3}/${paySkills.api_queries}`,
+        `pay-skills-only discover@3: ${paySkills.discover_hit_at_3}/${paySkills.task_queries}`,
       );
     }
   });
 
 program
   .command("eval:resolve")
-  .description("Check curated ontology satisfies refs resolve to indexed endpoints")
+  .description("Check materialized curated intents link to indexed endpoints")
   .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
   .option("--json", "Output JSON report")
   .option("--misses", "Show unresolved intents only")
@@ -317,12 +323,9 @@ program
     if (opts.misses) {
       const misses = report.results.filter((r) => !r.resolved);
       if (misses.length) {
-        console.log("\nUnresolved (primary satisfies ref):");
+        console.log("\nUnresolved (no materialized candidates):");
         for (const m of misses) {
-          const ref = m.primary_ref;
-          console.log(
-            `  - ${m.intent_id}: ${ref.method} ${ref.origin}${ref.path}`,
-          );
+          console.log(`  - ${m.intent_id}: ${m.label}`);
         }
       } else {
         console.log("\nNo misses — all curated intents resolve.");

@@ -19,8 +19,3 @@ aliases:
   - what's the price of BTC right now
 related:
   - finance.crypto_market_data
-satisfies:
-  - origin: https://stablecrypto.dev
-    method: POST
-    path: /api/coingecko/price
-    confidence: primary

@@ -1,4 +1,5 @@
 import { existsSync } from "node:fs";
+import { curatedCapabilitiesForSearch } from "./curated-search.js";
 import { embedText } from "./embed/embedder.js";
 import { openLanceTable } from "./embed/lance-index.js";
 import { searchIndex } from "./search.js";
@@ -100,7 +101,7 @@ function mergeKeywordAndVector(
 
     if (item.key.startsWith("cap:")) {
       const capId = item.key.slice(4);
-      const cap = bundle.capabilities.find((c) => c.id === capId);
+      const cap = curatedCapabilitiesForSearch(bundle).find((c) => c.id === capId);
       if (cap) hit = capabilityToHit(cap, item.rrf);
     } else if (item.key.startsWith("ep:")) {
       const epId = item.key.slice(3);
@@ -156,7 +157,7 @@ export async function searchHybrid(
   const keywordHits = searchIndex(
     query,
     bundle.endpoints,
-    bundle.capabilities,
+    curatedCapabilitiesForSearch(bundle),
     candidatePool,
   );
 
@@ -202,7 +203,12 @@ export async function searchHybridWithFallback(
   options: HybridFusionOptions = {},
 ): Promise<SearchHit[]> {
   if (!lanceDir) {
-    return searchIndex(query, bundle.endpoints, bundle.capabilities, limit);
+    return searchIndex(
+      query,
+      bundle.endpoints,
+      curatedCapabilitiesForSearch(bundle),
+      limit,
+    );
   }
   return searchHybrid(query, bundle, lanceDir, limit, options);
 }

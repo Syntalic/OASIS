@@ -157,8 +157,8 @@ export function formatCompareTable(reports) {
         const label = LITERAL_ONLY.has(r.mode) ? `${r.mode} †` : String(r.mode);
         lines.push([
             label.padEnd(22),
-            `${r.discover_hit_at_1}/${r.api_queries}`.padEnd(8),
-            `${r.discover_hit_at_3}/${r.api_queries}`.padEnd(8),
+            `${r.discover_hit_at_1}/${r.task_queries}`.padEnd(8),
+            `${r.discover_hit_at_3}/${r.task_queries}`.padEnd(8),
             `${r.literal_hit_at_3}/${r.api_queries}`.padEnd(8),
             r.discover_mrr.toFixed(3).padEnd(9),
         ].join(" "));

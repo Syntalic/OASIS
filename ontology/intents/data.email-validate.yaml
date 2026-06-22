@@ -1,0 +1,13 @@
+id: data.email_validate
+label: Validate email deliverability and reputation
+description: Check whether an email address is deliverable, risky, or disposable before sending. Use when an agent verifies signup emails, cleans lead lists, or reduces bounce rates.
+aliases:
+  - email validation
+  - verify email address
+  - email reputation check
+  - is this email deliverable
+  - disposable email check
+  - email bounce risk
+  - validate inbox exists
+  - email hygiene API
+  - check email before send

@@ -1,4 +1,4 @@
-id: ai_ml.embeddings
+id: ai.embeddings
 label: Generate text embeddings for retrieval
 description: Dense vector embeddings for semantic search, clustering, and RAG pipelines. Use when an agent needs to embed sentences or documents for retrieval, ranking, or vector indexing without hosting an embedding model.
 aliases:
@@ -11,8 +11,3 @@ aliases:
   - text embeddings for retrieval
   - embedding API for semantic search
   - vectorize text batch
-satisfies:
-  - origin: https://embeddings.alibaba.gateway-402.com
-    method: POST
-    path: /compatible-mode/v1/embeddings
-    confidence: primary

@@ -4,7 +4,7 @@ description: Find property listings, rental comps, and home value estimates in t
 aliases:
   - homes for sale
   - property listings
-  - rentcast
+  - property listing lookup
   - real estate search
   - find homes
   - houses for sale in
@@ -15,8 +15,3 @@ aliases:
   - rental listings by city
   - property search by zip code
   - list houses in a neighborhood
-satisfies:
-  - origin: https://rentcast.x402.paysponge.com
-    method: GET
-    path: /listings/sale
-    confidence: primary

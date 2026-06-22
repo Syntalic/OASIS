@@ -1,5 +1,8 @@
-import { pickPrimaryEndpoints } from "./endpoint-pick.js";
+import { CURATED_INTENT_IDS } from "./intent-match.js";
+import { rankEndpointsNeutral } from "./score-endpoint.js";
 import type { CapabilityIntent, EndpointRecord, PaySkillsProvider } from "./types.js";
+
+const CURATED_ID_SET = new Set<string>(CURATED_INTENT_IDS);
 
 function slugify(value: string): string {
   return value
@@ -57,10 +60,10 @@ export function expandOntologyFromProviders(
 
   for (const provider of paySkillsProviders) {
     const id = intentIdForProvider(provider);
-    if (existingIds.has(id)) continue;
+    if (existingIds.has(id) || CURATED_ID_SET.has(id)) continue;
     if (curatedOrigins.has(provider.service_url.replace(/\/$/, ""))) continue;
     const eps = byFqn.get(provider.fqn) ?? [];
-    const primary = pickPrimaryEndpoints(eps, { provider, max: 3 });
+    const primary = rankEndpointsNeutral(eps, 3);
     if (!primary.length) continue;
 
     const aliases = [
@@ -73,11 +76,10 @@ export function expandOntologyFromProviders(
       label: provider.title,
       description: provider.description ?? provider.use_case,
       aliases,
-      satisfies: primary.map((ep, i) => ({
+      satisfies: primary.map((ep) => ({
         origin: ep.origin,
         method: ep.method,
         path: ep.path,
-        confidence: i === 0 ? "primary" : "secondary",
       })),
     });
     existingIds.add(id);
@@ -94,8 +96,8 @@ export function expandOntologyFromProviders(
 
   for (const [serviceId, eps] of mppByService) {
     const id = intentIdForMpp(serviceId, eps[0]?.category);
-    if (existingIds.has(id)) continue;
-    const primary = pickPrimaryEndpoints(eps, { serviceId, max: 3 });
+    if (existingIds.has(id) || CURATED_ID_SET.has(id)) continue;
+    const primary = rankEndpointsNeutral(eps, 3);
     if (!primary.length) continue;
     const title = eps[0]?.provider_title ?? serviceId;
     const desc = eps[0]?.description ?? `${title} via MPP micropayment`;
@@ -105,11 +107,10 @@ export function expandOntologyFromProviders(
       label: title,
       description: desc,
       aliases: aliasesFromText(desc, title, serviceId.replace(/-/g, " "), eps[0]?.category),
-      satisfies: primary.map((ep, i) => ({
+      satisfies: primary.map((ep) => ({
         origin: ep.origin,
         method: ep.method,
         path: ep.path,
-        confidence: i === 0 ? "primary" : "secondary",
       })),
     });
     existingIds.add(id);
@@ -118,6 +119,7 @@ export function expandOntologyFromProviders(
   return [...curated, ...generated];
 }
 
+/** @deprecated Curated intents use intent-match.ts at build time. */
 const KEYWORD_INTENTS: Array<{
   id: string;
   label: string;
@@ -222,7 +224,9 @@ const KEYWORD_INTENTS: Array<{
     id: "travel.place_reviews",
     label: "Look up travel reviews and places",
     aliases: ["tripadvisor", "travel reviews", "place reviews"],
-    match: (ep) => /tripadvisor|travel|review/i.test(`${ep.summary} ${ep.provider_fqn ?? ""}`),
+    match: (ep) =>
+      /tripadvisor/i.test(`${ep.origin} ${ep.provider_fqn ?? ""}`) ||
+      /\/api\/v1\/location/i.test(ep.path),
   },
   {
     id: "realestate.property_lookup",
@@ -232,34 +236,12 @@ const KEYWORD_INTENTS: Array<{
   },
 ];
 
+/** @deprecated Replaced by materializeCuratedIntents + intent-match.ts */
 export function expandOntologyFromKeywords(
   intents: CapabilityIntent[],
-  endpoints: EndpointRecord[],
+  _endpoints: EndpointRecord[],
 ): CapabilityIntent[] {
-  const existingIds = new Set(intents.map((i) => i.id));
-  const generated: CapabilityIntent[] = [];
-
-  for (const template of KEYWORD_INTENTS) {
-    if (existingIds.has(template.id)) continue;
-    const matches = endpoints.filter(template.match);
-    const primary = pickPrimaryEndpoints(matches, { max: 3 });
-    if (!primary.length) continue;
-
-    generated.push({
-      id: template.id,
-      label: template.label,
-      aliases: template.aliases,
-      satisfies: primary.map((ep, i) => ({
-        origin: ep.origin,
-        method: ep.method,
-        path: ep.path,
-        confidence: i === 0 ? "primary" : "secondary",
-      })),
-    });
-    existingIds.add(template.id);
-  }
-
-  return [...intents, ...generated];
+  return intents;
 }
 
 export function inferCapabilityLinks(

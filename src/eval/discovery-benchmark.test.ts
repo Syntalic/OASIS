@@ -75,15 +75,14 @@ describe("discovery benchmark", () => {
     const endpointsOnly = evaluateMode(queries, bundle, "endpoints-only");
 
     const taskTotal = full.results.filter((r) => r.task_rank != null).length;
-    const apiTotal = full.results.filter((r) => r.literal_rank != null).length;
 
     assert.ok(
       full.task_hit_at_3 >= Math.floor(taskTotal * 0.7),
       `task@3 ${full.task_hit_at_3}/${taskTotal}`,
     );
     assert.ok(
-      full.discover_hit_at_3 >= Math.floor(apiTotal * 0.9),
-      `discover@3 ${full.discover_hit_at_3}/${apiTotal}`,
+      full.discover_hit_at_3 >= Math.floor(taskTotal * 0.9),
+      `discover@3 ${full.discover_hit_at_3}/${taskTotal}`,
     );
     assert.ok(
       full.discover_hit_at_3 > endpointsOnly.discover_hit_at_3,

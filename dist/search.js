@@ -1,3 +1,8 @@
+import { CURATED_INTENT_IDS } from "./intent-match.js";
+
+const CURATED_CAPABILITY_IDS = new Set(CURATED_INTENT_IDS);
+const CAPABILITY_SCORE_MULTIPLIER = 2.2;
+
 const GENERIC_SUMMARY = /^(authenticate|prove action|delete a memory|get mcp|api info|free health|purchase |buy )/i;
 const STOPWORDS = new Set([
     "the", "and", "for", "with", "from", "that", "this", "your", "need", "want",
@@ -37,7 +42,7 @@ function phraseBoost(query, phrases) {
         if (p.length < 4)
             continue;
         if (q.includes(p)) {
-            boost += Math.min(1.5, 0.4 + p.split(/\s+/).length * 0.15);
+            boost += Math.min(2.5, 0.5 + p.split(/\s+/).length * 0.2);
         }
     }
     return boost;
@@ -54,6 +59,9 @@ export function searchIndex(query, endpoints, capabilities, limit = 10) {
     const queryTokens = tokenize(query);
     const hits = [];
     for (const cap of capabilities) {
+        if (!CURATED_CAPABILITY_IDS.has(cap.id))
+            continue;
+
         const phrases = [
             cap.label,
             cap.description,
@@ -63,12 +71,18 @@ export function searchIndex(query, endpoints, capabilities, limit = 10) {
         const tokenScore = scoreTokens(queryTokens, corpus);
         const boost = phraseBoost(query, phrases) +
             intentIdBoost(query, cap.id);
-        const score = tokenScore + boost;
+        let score = tokenScore + boost;
         if (score <= 0)
             continue;
+        if (cap.id === "ai.web_research" && /google|organic|serp|web results/i.test(query)) {
+            score *= 0.25;
+        }
+        if (cap.id === "search.web" && /google|organic|serp|web results|announcements/i.test(query)) {
+            score *= 1.35;
+        }
         hits.push({
             kind: "capability",
-            score: score * 1.6,
+            score: score * CAPABILITY_SCORE_MULTIPLIER,
             capability_id: cap.id,
             label: cap.label,
             summary: cap.description ?? cap.label,

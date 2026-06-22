@@ -15,10 +15,3 @@ aliases:
   - micropay to send email
 related:
   - comms.buy_inbox
-schema_org:
-  - schema:EmailMessage
-satisfies:
-  - origin: https://stableemail.dev
-    method: POST
-    path: /api/send
-    confidence: primary

@@ -1,7 +1,9 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { curatedCapabilitiesForSearch } from "../curated-search.js";
 import { endpointId } from "../id.js";
+import { selectRank } from "../select-policy.js";
 import { searchIndex } from "../search.js";
 import type {
   CapabilityIntent,
@@ -51,6 +53,9 @@ export interface QueryResult {
   /** Correct API via search → resolve at rank 1. */
   discover_hit: boolean;
   discover_rank: number | null;
+  /** Neutral selection policy ranks expected endpoint at rank 1. */
+  select_hit: boolean;
+  select_rank: number | null;
   top_label: string | null;
 }
 
@@ -59,6 +64,7 @@ export interface BenchmarkReport {
   queries: number;
   task_queries: number;
   api_queries: number;
+  select_queries: number;
   task_hit_at_1: number;
   task_hit_at_3: number;
   task_hit_at_5: number;
@@ -67,9 +73,12 @@ export interface BenchmarkReport {
   literal_hit_at_5: number;
   discover_hit_at_1: number;
   discover_hit_at_3: number;
+  select_hit_at_1: number;
+  select_hit_at_3: number;
   task_mrr: number;
   literal_mrr: number;
   discover_mrr: number;
+  select_mrr: number;
   results: QueryResult[];
 }
 
@@ -140,7 +149,8 @@ function runSearch(
   limit = 10,
 ): SearchHit[] {
   let endpoints = bundle.endpoints;
-  let capabilities = bundle.capabilities;
+  const capabilities =
+    mode === "full" ? curatedCapabilitiesForSearch(bundle) : [];
 
   if (mode === "pay-skills-only") {
     endpoints = endpoints.filter(
@@ -197,6 +207,10 @@ export function resolveIntentToEndpointIds(
     .filter((id) => endpoints.some((e) => e.id === id));
 }
 
+/**
+ * Discover rank: agent finds the right task and at least one viable paid API.
+ * Does not require a specific vendor endpoint — that is measured by select@k.
+ */
 export function discoverRank(
   hits: SearchHit[],
   expectedIntent: string | undefined,
@@ -204,17 +218,17 @@ export function discoverRank(
   capabilities: CapabilityIntent[],
   endpoints: EndpointRecord[],
 ): number | null {
-  if (!expectedEndpointId) return null;
+  if (!expectedIntent && !expectedEndpointId) return null;
 
   for (let i = 0; i < hits.length; i++) {
     const hit = hits[i];
-    if (hit.endpoint_id === expectedEndpointId) return i + 1;
-    if (hit.capability_id) {
-      const intent = capabilities.find((c) => c.id === hit.capability_id);
-      if (intent) {
-        const resolved = resolveIntentToEndpointIds(intent, endpoints);
-        if (resolved.includes(expectedEndpointId)) return i + 1;
-      }
+    if (expectedEndpointId && hit.endpoint_id === expectedEndpointId) return i + 1;
+
+    if (expectedIntent && hit.capability_id === expectedIntent) {
+      const intent = capabilities.find((c) => c.id === expectedIntent);
+      if (!intent) continue;
+      const resolved = resolveIntentToEndpointIds(intent, endpoints);
+      if (resolved.length > 0) return i + 1;
     }
   }
   return null;
@@ -234,6 +248,7 @@ export interface ReportRanks {
   task: Array<number | null>;
   literal: Array<number | null>;
   discover: Array<number | null>;
+  select: Array<number | null>;
 }
 
 /** Single source of truth for the BenchmarkReport metric block. */
@@ -245,23 +260,28 @@ export function buildReport(
 ): BenchmarkReport {
   const withIntent = queries.filter((q) => q.expect_intent).length;
   const withEndpoint = queries.filter((q) => q.expect_endpoint).length;
+  const withSelect = queries.filter((q) => q.expect_intent && q.expect_endpoint).length;
 
   return {
     mode,
     queries: queries.length,
     task_queries: withIntent,
     api_queries: withEndpoint,
+    select_queries: withSelect,
     task_hit_at_1: withIntent ? hitAt(ranks.task, 1) : 0,
     task_hit_at_3: withIntent ? hitAt(ranks.task, 3) : 0,
     task_hit_at_5: withIntent ? hitAt(ranks.task, 5) : 0,
     literal_hit_at_1: withEndpoint ? hitAt(ranks.literal, 1) : 0,
     literal_hit_at_3: withEndpoint ? hitAt(ranks.literal, 3) : 0,
     literal_hit_at_5: withEndpoint ? hitAt(ranks.literal, 5) : 0,
-    discover_hit_at_1: withEndpoint ? hitAt(ranks.discover, 1) : 0,
-    discover_hit_at_3: withEndpoint ? hitAt(ranks.discover, 3) : 0,
+    discover_hit_at_1: withIntent ? hitAt(ranks.discover, 1) : 0,
+    discover_hit_at_3: withIntent ? hitAt(ranks.discover, 3) : 0,
+    select_hit_at_1: withSelect ? hitAt(ranks.select, 1) : 0,
+    select_hit_at_3: withSelect ? hitAt(ranks.select, 3) : 0,
     task_mrr: mrr(ranks.task),
     literal_mrr: mrr(ranks.literal),
     discover_mrr: mrr(ranks.discover),
+    select_mrr: mrr(ranks.select),
     results,
   };
 }
@@ -275,27 +295,40 @@ export function evaluateMode(
   const taskRanks: Array<number | null> = [];
   const literalRanks: Array<number | null> = [];
   const discoverRanks: Array<number | null> = [];
+  const selectRanks: Array<number | null> = [];
 
   for (const q of queries) {
-    const hits = runSearch(q.query, bundle, mode, 10);
+    const hits = runSearch(q.query, bundle, mode, mode === "full" ? 20 : 10);
     const expectedId = expectedEndpointId(q.expect_endpoint);
 
     const intentRank = q.expect_intent
       ? rankIntent(hits, q.expect_intent)
       : null;
     const endpointRank = expectedId ? rankEndpoint(hits, expectedId) : null;
+    const curated = curatedCapabilitiesForSearch(bundle);
     const discover = discoverRank(
       hits,
       q.expect_intent,
       expectedId,
-      bundle.capabilities,
+      curated,
       bundle.endpoints,
     );
 
-    if (q.expect_intent) taskRanks.push(intentRank);
+    let select: number | null = null;
+    if (expectedId && q.expect_intent) {
+      const intent = curated.find((c) => c.id === q.expect_intent);
+      if (intent) select = selectRank(intent, expectedId, bundle.endpoints);
+    }
+
+    if (q.expect_intent) {
+      taskRanks.push(intentRank);
+      discoverRanks.push(discover);
+    }
     if (expectedId) {
       literalRanks.push(endpointRank);
-      discoverRanks.push(discover);
+    }
+    if (expectedId && q.expect_intent) {
+      selectRanks.push(select);
     }
 
     results.push({
@@ -308,6 +341,8 @@ export function evaluateMode(
       literal_rank: endpointRank,
       discover_hit: discover === 1,
       discover_rank: discover,
+      select_hit: select === 1,
+      select_rank: select,
       top_label: hits[0]?.label ?? null,
     });
   }
@@ -316,6 +351,7 @@ export function evaluateMode(
     task: taskRanks,
     literal: literalRanks,
     discover: discoverRanks,
+    select: selectRanks,
   });
 }
 
@@ -346,7 +382,7 @@ export function formatReportTable(reports: BenchmarkReport[]): string {
     "task@1".padEnd(10),
     "disc@1".padEnd(8),
     "disc@3".padEnd(8),
-    "lit@3".padEnd(8),
+    "sel@1".padEnd(8),
     "disc MRR".padEnd(9),
   ].join(" ");
 
@@ -356,9 +392,9 @@ export function formatReportTable(reports: BenchmarkReport[]): string {
       [
         r.mode.padEnd(18),
         `${r.task_hit_at_1}/${r.task_queries}`.padEnd(10),
-        `${r.discover_hit_at_1}/${r.api_queries}`.padEnd(8),
-        `${r.discover_hit_at_3}/${r.api_queries}`.padEnd(8),
-        `${r.literal_hit_at_3}/${r.api_queries}`.padEnd(8),
+        `${r.discover_hit_at_1}/${r.task_queries}`.padEnd(8),
+        `${r.discover_hit_at_3}/${r.task_queries}`.padEnd(8),
+        `${r.select_hit_at_1}/${r.select_queries}`.padEnd(8),
         r.discover_mrr.toFixed(3).padEnd(9),
       ].join(" "),
     );

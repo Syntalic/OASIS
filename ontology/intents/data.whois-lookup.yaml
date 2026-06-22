@@ -1,0 +1,13 @@
+id: data.whois_lookup
+label: Look up DNS records and WHOIS for domains
+description: DNS record and WHOIS registration data for one or more domains. Use when an agent audits domain configuration, checks registrar details, or investigates hostname ownership.
+aliases:
+  - WHOIS lookup
+  - DNS records lookup
+  - domain WHOIS
+  - check domain registrar
+  - MX records for domain
+  - domain DNS config
+  - who owns this domain
+  - domain registration info
+  - lookup nameserver records

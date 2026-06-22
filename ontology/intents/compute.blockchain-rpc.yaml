@@ -20,13 +20,3 @@ aliases:
   - remote blockchain node call
 related:
   - finance.crypto_spot_price
-satisfies:
-  - origin: https://x402.quicknode.com
-    method: POST
-    path: /solana-mainnet/
-    confidence: primary
-  - origin: https://x402.quicknode.com
-    method: POST
-    path: /ethereum-mainnet/
-    confidence: secondary
-    notes: QuickNode x402 JSON-RPC proxy (140+ network paths available)

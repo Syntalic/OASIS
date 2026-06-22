@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { loadOntology } from "../ontology.js";
+import { CURATED_INTENT_IDS } from "../intent-match.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");
@@ -10,8 +10,7 @@ export function defaultIntentsDir(packageRoot = PACKAGE_ROOT): string {
 }
 
 export async function loadCuratedIntentIds(
-  intentsDir = defaultIntentsDir(),
+  _intentsDir = defaultIntentsDir(),
 ): Promise<Set<string>> {
-  const intents = await loadOntology(intentsDir);
-  return new Set(intents.map((i) => i.id));
+  return new Set(CURATED_INTENT_IDS);
 }

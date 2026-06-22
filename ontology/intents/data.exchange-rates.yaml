@@ -1,0 +1,13 @@
+id: data.exchange_rates
+label: Convert and look up currency exchange rates
+description: Live and historical foreign exchange rates between currency pairs. Use when an agent converts amounts, quotes FX rates, or normalizes multi-currency financial data.
+aliases:
+  - exchange rates
+  - currency conversion
+  - FX rate lookup
+  - convert USD to EUR
+  - live forex rates
+  - historical exchange rate
+  - currency converter API
+  - foreign exchange API
+  - get rate between currencies

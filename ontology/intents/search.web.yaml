@@ -1,0 +1,16 @@
+id: search.web
+label: Search the web for organic results
+description: Real-time web search returning organic links, snippets, knowledge panels, and related queries. Use when an agent needs current SERP results, source URLs, or quick fact-finding across the open web.
+aliases:
+  - web search
+  - organic web search results
+  - search the internet
+  - find sources online
+  - organic search results
+  - SERP lookup
+  - web search query
+  - live web results
+  - people also ask search
+  - google-style web results
+  - recent product announcements search
+  - organic SERP results

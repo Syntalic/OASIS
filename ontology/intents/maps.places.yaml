@@ -1,0 +1,13 @@
+id: maps.places
+label: Search local businesses and points of interest
+description: Find restaurants, stores, hotels, and other places with ratings, hours, contact info, and location metadata. Use when an agent discovers nearby businesses, resolves addresses, or enriches location context for users.
+aliases:
+  - find nearby businesses
+  - local place search
+  - local business place search
+  - restaurant lookup near me
+  - business hours and ratings
+  - POI search
+  - store locator API
+  - address autocomplete
+  - search coffee shops in Austin

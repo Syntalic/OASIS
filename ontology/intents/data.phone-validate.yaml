@@ -1,0 +1,13 @@
+id: data.phone_validate
+label: Validate a phone number and carrier info
+description: Check whether a phone number is valid, reachable, and identify carrier or line type metadata. Use when an agent verifies signup numbers, cleans contact lists, or enriches leads before SMS or voice outreach.
+aliases:
+  - phone validation
+  - validate phone number
+  - phone carrier lookup
+  - is this number real
+  - phone line type check
+  - mobile vs landline lookup
+  - phone number intelligence
+  - verify SMS number
+  - carrier info for phone

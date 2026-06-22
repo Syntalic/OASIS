@@ -18,8 +18,3 @@ aliases:
   - telephony task via AI
 related:
   - comms.send_email
-satisfies:
-  - origin: https://stablephone.dev
-    method: POST
-    path: /api/call
-    confidence: primary

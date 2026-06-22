@@ -2,17 +2,23 @@ import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { parse as parseYaml } from "yaml";
 import { canonicalOrigin } from "./origin-aliases.js";
-export async function loadOntology(intentsDir) {
+export async function loadOntologySources(intentsDir) {
     const files = (await readdir(intentsDir)).filter((f) => f.endsWith(".yaml") || f.endsWith(".yml"));
     const intents = [];
     for (const file of files.sort()) {
         const raw = await readFile(path.join(intentsDir, file), "utf8");
         const parsed = parseYaml(raw);
-        if (parsed?.id && parsed.label && parsed.satisfies?.length) {
+        if (parsed?.id && parsed.label) {
             intents.push(parsed);
         }
     }
     return intents;
+}
+
+/** @deprecated Use loadOntologySources — bundle capabilities come from materialize step. */
+export async function loadOntology(intentsDir) {
+    const sources = await loadOntologySources(intentsDir);
+    return sources.map((s) => ({ ...s, satisfies: [] }));
 }
 export function linkCapabilitiesToEndpoints(capabilities, endpointIndex) {
     for (const cap of capabilities) {

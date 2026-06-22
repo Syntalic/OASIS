@@ -15,8 +15,3 @@ aliases:
   - business info from URL
   - company profile from domain
   - what company owns this domain
-satisfies:
-  - origin: https://abstract-company-enrichment.mpp.paywithlocus.com
-    method: POST
-    path: /abstract-company-enrichment/lookup
-    confidence: primary

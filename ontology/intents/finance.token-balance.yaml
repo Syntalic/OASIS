@@ -11,8 +11,3 @@ aliases:
   - ERC1155 token count
   - what tokens does this wallet hold
   - on-chain balance lookup
-satisfies:
-  - origin: https://api.onesource.io
-    method: GET
-    path: /api/chain/erc1155-balance
-    confidence: primary

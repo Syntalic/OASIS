@@ -1,0 +1,13 @@
+id: finance.stock_quote
+label: Look up stock price quotes and market data
+description: Current and recent equity quotes, prices, and trading metadata by ticker symbol. Use when an agent answers stock price questions, monitors portfolios, or grounds financial analysis in live market data.
+aliases:
+  - stock price
+  - stock quote
+  - share price lookup
+  - what is AAPL trading at
+  - equity quote API
+  - ticker price now
+  - market quote by symbol
+  - real time stock price
+  - get quote for ticker
