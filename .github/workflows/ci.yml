@@ -17,7 +17,12 @@ jobs:
           cache: "pnpm"
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build:ts
-      - run: pnpm test
-      - run: node dist/cli.js build --openapi fixtures/minimal.openapi.json --origin https://api.example.com -o /tmp/capindex-dist
+      # Fast, index-free unit tests. The retrieval-quality benchmarks
+      # (discovery/compare/resolve/curated-search) need the full built index,
+      # which is not committed; run them locally via `pnpm test` after a build.
+      - run: pnpm run test:unit
+      # Smoke-test the build -> validate -> search pipeline OFFLINE from a fixture
+      # (no catalog crawl), so CI stays fast and deterministic.
+      - run: node dist/cli.js build --openapi fixtures/minimal.openapi.json --origin https://api.example.com --no-x402scan --no-mppscan --skip-pay-skills -o /tmp/capindex-dist
       - run: node dist/cli.js validate -d /tmp/capindex-dist
       - run: node dist/cli.js search "demo" -d /tmp/capindex-dist
