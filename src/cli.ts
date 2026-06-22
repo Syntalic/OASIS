@@ -338,6 +338,24 @@ program
   });
 
 program
+  .command("eval:multi")
+  .description("Multi-label / hard-negative / related discovery benchmark")
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--json", "Output JSON report")
+  .action(async (opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const { loadMultiLabelQueries, runMultiLabelBenchmark, formatMultiLabelReport } =
+      await import("./eval/multi-label-benchmark.js");
+    const queries = await loadMultiLabelQueries();
+    const report = runMultiLabelBenchmark(bundle, queries);
+    if (opts.json) {
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      console.log(formatMultiLabelReport(report));
+    }
+  });
+
+program
   .command("eval:compare")
   .description(
     "Compare discovery methods on messy NL queries (internal slices + external APIs)",

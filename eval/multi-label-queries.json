@@ -1,0 +1,29 @@
+[
+  { "id": "ml-url-content", "kind": "multi_label", "query": "pull the readable content from this URL", "expect_intents": ["web.markdown_extract", "data.web_scrape"] },
+  { "id": "ml-places", "kind": "multi_label", "query": "restaurants near me with ratings and reviews", "expect_intents": ["maps.places", "travel.place_reviews"] },
+  { "id": "ml-ocr-doc", "kind": "multi_label", "query": "extract the text from this scanned receipt image", "expect_intents": ["data.ocr", "ai.document_extract"] },
+  { "id": "ml-domain", "kind": "multi_label", "query": "look up information about this domain name", "expect_intents": ["data.whois_lookup", "data.company_enrich", "cloud.domains"] },
+  { "id": "ml-message", "kind": "multi_label", "query": "send a message to a customer", "expect_intents": ["comms.send_email", "comms.send_sms", "comms.voice_call"] },
+  { "id": "ml-asset-price", "kind": "multi_label", "query": "get a current price quote for an asset", "expect_intents": ["finance.crypto_spot_price", "finance.stock_quote"] },
+
+  { "id": "hn-research-google", "kind": "hard_negative", "query": "research the Google antitrust ruling and cite the sources", "expect_intents": ["ai.web_research"], "negative_intents": ["search.web"] },
+  { "id": "hn-serp-announce", "kind": "hard_negative", "query": "google-style organic web results for recent OpenAI announcements", "expect_intents": ["search.web"], "negative_intents": ["ai.web_research"] },
+  { "id": "hn-markdown", "kind": "hard_negative", "query": "convert this web page into clean readable markdown", "expect_intents": ["web.markdown_extract"], "negative_intents": ["data.web_scrape", "web.screenshot"] },
+  { "id": "hn-screenshot", "kind": "hard_negative", "query": "take a full-page PNG screenshot of nike.com", "expect_intents": ["web.screenshot"], "negative_intents": ["web.markdown_extract", "data.web_scrape"] },
+  { "id": "hn-invoice", "kind": "hard_negative", "query": "pull structured fields and tables from this invoice PDF", "expect_intents": ["ai.document_extract"], "negative_intents": ["data.ocr"] },
+  { "id": "hn-stock", "kind": "hard_negative", "query": "current stock price of AAPL", "expect_intents": ["finance.stock_quote"], "negative_intents": ["finance.crypto_spot_price"] },
+
+  { "id": "pp-embed", "kind": "paraphrase", "query": "I need a numeric vector representation of this sentence for semantic search", "expect_intents": ["ai.embeddings"] },
+  { "id": "pp-voice", "kind": "paraphrase", "query": "place an automated phone call where an AI speaks to the person", "expect_intents": ["comms.voice_call"] },
+  { "id": "pp-email-validate", "kind": "paraphrase", "query": "check whether this email address will bounce before I send to it", "expect_intents": ["data.email_validate"] },
+  { "id": "pp-stt", "kind": "paraphrase", "query": "turn this voice memo recording into written text", "expect_intents": ["ai.speech_to_text"] },
+  { "id": "pp-weather", "kind": "paraphrase", "query": "what is the forecast for Tokyo this weekend", "expect_intents": ["data.weather_forecast"] },
+  { "id": "pp-realestate", "kind": "paraphrase", "query": "houses for sale in Austin under 500k", "expect_intents": ["realestate.property_lookup"] },
+
+  { "id": "rel-compare-price", "kind": "related", "query": "compare airpods prices across stores", "expect_intents": ["shop.compare_price"], "expect_related": ["shop.find_deals", "shop.track_price_history"] },
+  { "id": "rel-send-email", "kind": "related", "query": "send an outbound email to a lead", "expect_intents": ["comms.send_email"], "expect_related": ["comms.send_sms", "comms.send_fax", "comms.voice_call"] },
+  { "id": "rel-crypto", "kind": "related", "query": "what is ethereum trading at right now", "expect_intents": ["finance.crypto_spot_price"], "expect_related": ["finance.token_balance", "finance.onchain_analytics", "finance.stock_quote"] },
+  { "id": "rel-stt", "kind": "related", "query": "transcribe this audio recording to text", "expect_intents": ["ai.speech_to_text"], "expect_related": ["ai.text_to_speech"] },
+  { "id": "rel-places", "kind": "related", "query": "find a place to eat near downtown Seattle", "expect_intents": ["maps.places"], "expect_related": ["travel.place_reviews"] },
+  { "id": "rel-websearch", "kind": "related", "query": "search the web for organic result links", "expect_intents": ["search.web"], "expect_related": ["ai.web_research"] }
+]
