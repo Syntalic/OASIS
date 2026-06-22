@@ -228,6 +228,48 @@ program
   });
 
 program
+  .command("validate-source [file]")
+  .description("Validate a contributor task-intent YAML (or all ontology/intents) against the taxonomy")
+  .action(async (file?: string) => {
+    const { validateSourceFile, validateAllSources } = await import("./validate-source.js");
+    const results = file
+      ? [{ file, result: await validateSourceFile(file) }]
+      : await validateAllSources();
+    let failed = 0;
+    for (const { file: f, result } of results) {
+      for (const e of result.errors) {
+        console.error(`✗ ${f}: ${e}`);
+        failed += 1;
+      }
+      for (const w of result.warnings) console.error(`⚠ ${f}: ${w}`);
+    }
+    if (failed > 0) {
+      console.error(`\n${failed} validation error(s)`);
+      process.exitCode = 1;
+      return;
+    }
+    console.log(`${results.length} source intent(s) valid`);
+  });
+
+program
+  .command("taxonomy")
+  .description("Dump the controlled vocabulary (capabilities + facet enums + entity vocab) to bind into")
+  .option("--json", "Full JSON (default: summary)")
+  .action(async (opts) => {
+    const { getTaxonomy } = await import("./taxonomy.js");
+    const tax = await getTaxonomy();
+    if (opts.json) {
+      console.log(JSON.stringify(tax, null, 2));
+      return;
+    }
+    console.log(`${tax.capabilities.length} capabilities, ${tax.entities.length} entities`);
+    console.log(`facets.domain: ${tax.facets.domain.join(", ")}`);
+    console.log(`facets.action: ${tax.facets.action.join(", ")}`);
+    console.log(`facets.modality: ${tax.facets.modality.join(", ")}`);
+    console.log(`facets.freshness: ${tax.facets.freshness.join(", ")}`);
+  });
+
+program
   .command("embed")
   .description("Build LanceDB vector index from capabilities and providers")
   .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))

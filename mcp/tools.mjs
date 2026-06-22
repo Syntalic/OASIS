@@ -9,6 +9,8 @@ import { resolveEndpointsForQuery } from "../dist/select-policy.js";
 import { relatedOptions } from "../dist/related.js";
 import { curatedCapabilitiesForSearch } from "../dist/curated-search.js";
 import { defaultLanceDir } from "../dist/embed/lance-index.js";
+import { getTaxonomy } from "../dist/taxonomy.js";
+import { validateSourceIntent } from "../dist/validate-source.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "..", "dist");
@@ -114,6 +116,8 @@ export async function handleTool(name, args) {
   if (name === "oasis_search") return oasisSearch(args ?? {});
   if (name === "oasis_resolve") return oasisResolve(args ?? {});
   if (name === "oasis_find") return oasisFind(args ?? {});
+  if (name === "oasis_taxonomy") return getTaxonomy();
+  if (name === "oasis_validate") return validateSourceIntent(args?.intent ?? args ?? {});
   return { error: `unknown tool: ${name}` };
 }
 
@@ -127,8 +131,42 @@ export const ANTHROPIC_TOOLS = TOOLS.map((t) => ({
   input_schema: t.schema,
 }));
 
-/** MCP tool shape ({ inputSchema }). */
-export const MCP_TOOLS = TOOLS.map((t) => ({
+/** MCP tool shape ({ inputSchema }). The server exposes the one-hop primary tool
+ *  (oasis_find), the lower-level search/resolve, and the contribution tools. */
+const FIND_SCHEMA = {
+  type: "object",
+  properties: {
+    query: { type: "string", description: "The task in natural language." },
+    limit: { type: "number", description: "Max endpoints (default 8)." },
+  },
+  required: ["query"],
+};
+const SERVER_TOOLS = [
+  {
+    name: "oasis_find",
+    description:
+      "Find the best paid HTTP API endpoints for a task in ONE call. Returns a ranked, flat list of endpoints (method, url, summary, price, payment rails). Use this first when an agent is unsure which tool/service to use.",
+    schema: FIND_SCHEMA,
+  },
+  ...TOOLS,
+  {
+    name: "oasis_taxonomy",
+    description:
+      "Return the OASIS controlled vocabulary to bind a service INTO: existing task capabilities (+aliases), facet enums (domain/action/modality/freshness), and the closed entity vocab. Call before authoring or updating a capability.",
+    schema: { type: "object", properties: {} },
+  },
+  {
+    name: "oasis_validate",
+    description:
+      "Validate a proposed task-intent object (an ontology/intents capability) against the taxonomy: schema, facet/entity vocab, link targets. Returns { valid, isNew, errors, warnings }. SAME check CI runs on the PR.",
+    schema: {
+      type: "object",
+      properties: { intent: { type: "object", description: "The capability intent object to validate." } },
+      required: ["intent"],
+    },
+  },
+];
+export const MCP_TOOLS = SERVER_TOOLS.map((t) => ({
   name: t.name,
   description: t.description,
   inputSchema: t.schema,
