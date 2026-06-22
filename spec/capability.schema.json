@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://syntalic.com/oasis/spec/capability.schema.json",
+  "$id": "https://github.com/Syntalic/OASIS/spec/capability.schema.json",
   "title": "CapabilityIntent",
   "type": "object",
   "required": ["id", "label", "satisfies"],

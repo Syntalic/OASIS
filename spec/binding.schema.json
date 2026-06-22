@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://syntalic.com/oasis/spec/binding.schema.json",
+  "$id": "https://github.com/Syntalic/OASIS/spec/binding.schema.json",
   "title": "ServiceBinding",
   "description": "Authoritative endpoint→capability bindings for a service, authored by a maintainer or service owner. Applied at index build / enrich-facets time to OVERRIDE the heuristic binder for the listed endpoints. The minimal, certain core of a contributed service's curation: endpoint identity + capability ids (richer per-endpoint facets/price come later).",
   "type": "object",

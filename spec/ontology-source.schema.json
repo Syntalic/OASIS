@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://syntalic.com/oasis/spec/ontology-source.schema.json",
+  "$id": "https://github.com/Syntalic/OASIS/spec/ontology-source.schema.json",
   "title": "CuratedIntentSource",
   "description": "Task-only ontology intent. Endpoint membership is materialized at index build time.",
   "type": "object",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://syntalic.com/oasis/spec/provider-record.schema.json",
+  "$id": "https://github.com/Syntalic/OASIS/spec/provider-record.schema.json",
   "title": "ProviderRecord",
   "type": "object",
   "required": ["fqn", "title", "service_url", "origins", "endpoint_count", "payment_rails", "sources", "search_text"],

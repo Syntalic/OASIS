@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://syntalic.com/oasis/spec/ontology.schema.json",
+  "$id": "https://github.com/Syntalic/OASIS/spec/ontology.schema.json",
   "title": "OasisIndex",
   "type": "object",
   "required": ["index_version", "spec_version", "built_at", "endpoints", "capabilities"],
@@ -36,19 +36,19 @@
     "providers": {
       "type": "array",
       "items": {
-        "$ref": "https://syntalic.com/oasis/spec/provider-record.schema.json"
+        "$ref": "https://github.com/Syntalic/OASIS/spec/provider-record.schema.json"
       }
     },
     "endpoints": {
       "type": "array",
       "items": {
-        "$ref": "https://syntalic.com/oasis/spec/endpoint-record.schema.json"
+        "$ref": "https://github.com/Syntalic/OASIS/spec/endpoint-record.schema.json"
       }
     },
     "capabilities": {
       "type": "array",
       "items": {
-        "$ref": "https://syntalic.com/oasis/spec/capability.schema.json"
+        "$ref": "https://github.com/Syntalic/OASIS/spec/capability.schema.json"
       }
     }
   }
