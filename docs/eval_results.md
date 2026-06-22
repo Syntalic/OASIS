@@ -124,6 +124,49 @@ Remaining tracked follow-up:
 
 ---
 
+## Generalization — the held-out number (the honest one)
+
+The 63 messy queries and the 28 multi-label queries are hand-authored against the
+known intents and share vocabulary with the aliases. To measure real
+generalization, `eval/heldout-queries.json` (44 queries) is deliberately phrased
+*away* from the labels — **mean alias overlap 0.23; 66% of queries share <30% of
+their words with the target intent's aliases**:
+
+```bash
+node dist/cli.js eval:heldout
+```
+
+| Retrieval path (44 held-out queries) | discover@1 | discover@3 |
+|---|---|---|
+| keyword (`full`) | 18/44 (41%) | 23/44 (52%) |
+| current hybrid (keyword + vector RRF) | 19/44 (43%) | 23/44 (52%) |
+| **vector-only (capability embeddings)** | **34/44 (77%)** | **40/44 (91%)** |
+
+**The curated ~100% was a measurement illusion** — keyword discovery is overfit
+to the alias vocabulary, and on novel phrasings it collapses (most misses return
+*no* capability at all, because the query shares no alias tokens).
+
+**But generalization is recoverable, and the fix is not what we assumed.** The
+embedding model already finds the right intent on novel phrasings
+(`"pack an umbrella for Berlin"` → `data.weather_forecast` rank 1;
+`"boil this contract down"` → `ai.llm_complete` rank 2) — **vector-only scores
+77% / 91%.** The current **hybrid fusion destroys that signal**: keyword weight
+is 2× and endpoint hits dominate by count, so a correct capability that only the
+vector arm found gets buried below keyword endpoint noise (hybrid 43% < vector
+77%).
+
+So the priority order, corrected by this measurement:
+1. **Fix the hybrid fusion** so vector capability hits are not buried (guarantee
+   capability representation / rebalance weights / trust the vector arm when
+   keyword overlap is low). Likely the single biggest real-accuracy win
+   (~+30pts discover@1 on novel queries) — and it needs no rebuild, no new data.
+2. Then **facet coverage** and **richer capability embed text** (description +
+   use-cases) to push vector recall past 91%.
+3. **Full index rebuild** remains a resolve-side (endpoint-precision) concern,
+   separate from this discovery-side finding.
+
+---
+
 ## Method definitions
 
 | Method | What it simulates |

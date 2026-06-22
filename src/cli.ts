@@ -359,6 +359,21 @@ program
   });
 
 program
+  .command("eval:heldout")
+  .description("Held-out generalization benchmark (queries phrased away from labels)")
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--json", "Output JSON report")
+  .action(async (opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const { loadHeldoutQueries, runHeldoutBenchmark, formatHeldoutReport } =
+      await import("./eval/heldout-benchmark.js");
+    const report = runHeldoutBenchmark(bundle, await loadHeldoutQueries());
+    console.log(
+      opts.json ? JSON.stringify(report, null, 2) : formatHeldoutReport(report),
+    );
+  });
+
+program
   .command("eval:compare")
   .description(
     "Compare discovery methods on messy NL queries (internal slices + external APIs)",
