@@ -1,5 +1,13 @@
 # OASIS Evaluation Results
 
+> **The shipped OASIS method is `oasis_find`** — one MCP call that returns a ranked, priced
+> endpoint list. End-to-end it is the **cheapest discovery method tested** (~2,562 tokens/task,
+> 6–95% below the keyword baselines) at **equal-or-better accuracy**, and its retrieval
+> generalizes to held-out queries at **72% discover@1 / 88% discover@3**. The sections below
+> benchmark it against the keyword/registry baselines and document the methodology that led to
+> it — **earlier OASIS variants (the two-hop `search`→`resolve`) appear only as superseded
+> comparison points**, not as a recommended method.
+
 Measured on commit `98e2865` (Tranche A + resolve round), against the frozen
 ~30,561-endpoint index, on the **64 hand-written messy NL queries**
 (`eval/messy-queries.json`, 63 carry an `expect_intent` and are scored for
@@ -119,7 +127,7 @@ cd mcp && node --env-file=../.env compare.mjs
 
 | discovery tool the agent had | judged-correct (neutral) | curated-match |
 |---|---|---|
-| **OASIS (search→resolve)** | **18/18 (100%)** | 18/18 |
+| earlier two-hop OASIS (superseded) | **18/18 (100%)** | 18/18 |
 | keyword — all endpoints | 18/18 (100%) | 11/18 |
 | keyword — mpp slice | 17/18 (94%) | 4/18 |
 | keyword — x402scan slice | 16/18 (89%) | 12/18 |
@@ -159,7 +167,7 @@ We then ran the conditions where the ontology *should* help most:
 
   | discovery tool | judged-correct | avg tokens/task (in+out) | avg tool-calls |
   |---|---|---|---|
-  | OASIS (search→resolve) | 18/18 | **5021** (4669 + 352) | 2.1 |
+  | earlier two-hop OASIS (superseded) | 18/18 | **5021** (4669 + 352) | 2.1 |
   | keyword — all endpoints | 18/18 | **3247** (2947 + 300) | 2.2 |
 
   OASIS costs **~55% more tokens** for the same result — not from extra round-trips
@@ -200,12 +208,12 @@ list with payment metadata inline. Full 6-method run, common set, Sonnet 4.6
 
 | discovery method | judged-correct | avg tokens/task (in+out) | tool-calls | vs `oasis_find` |
 |---|---|---|---|---|
-| **OASIS 1-hop (`oasis_find`)** | 17/18 (94%) | **2562** (2247 + 315) | 1.2 | — |
+| **`oasis_find` — the shipped OASIS method** | 17/18 (94%) | **2562** (2247 + 315) | 1.2 | — |
 | keyword — all endpoints | 17/18 (94%) | 2723 (2462 + 261) | 1.9 | +6% |
 | keyword — mpp slice | 17/18 (94%) | 3116 (2821 + 295) | 2.2 | +22% |
 | keyword — x402scan slice | 18/18 (100%) | 3166 (2892 + 274) | 2.1 | +24% |
 | keyword — pay-skills slice | 14/18 (78%) | 5005 (4651 + 354) | 3.3 | +95% |
-| OASIS 2-hop (search→resolve) | 18/18 (100%) | 5031 (4672 + 359) | 2.1 | +96% |
+| earlier two-hop OASIS (superseded) | 18/18 (100%) | 5031 (4672 + 359) | 2.1 | +96% |
 
 The one-hop is the **cheapest of all six methods** at top accuracy — every alternative
 costs **6–96% more tokens**. The **two-hop** pays ~2× (the agent reads a capability list +

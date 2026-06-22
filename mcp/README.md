@@ -34,9 +34,9 @@ provider is involved in the server itself.
 
 ## Agent probe (automated, any provider)
 
-Drives an LLM through `search → resolve → pick` on 18 real tasks and reports whether
-OASIS leads it to the right capability. The harness ([`llm.mjs`](llm.mjs)) is
-**provider-agnostic** — two native paths, selected by `LLM_PROVIDER`:
+Drives an LLM through `oasis_find → pick` (the shipped one-hop method) on 18 real tasks
+and reports whether OASIS leads it to an endpoint that does the task. The harness
+([`llm.mjs`](llm.mjs)) is **provider-agnostic** — two native paths, selected by `LLM_PROVIDER`:
 
 | `LLM_PROVIDER` | SDK | Use for |
 |---|---|---|
@@ -75,12 +75,11 @@ Config env vars (all optional, sensible defaults): `LLM_PROVIDER`, `LLM_MODEL`,
 
 ### Latest result (Claude Sonnet 4.6, 18 tasks)
 
-The agent is told to always route through OASIS (find a tool, don't answer from its
-own knowledge). Across runs: **discovery top-3 ~17/18 (94%)**, **agent resolved the
-right capability ~17–18/18 (94–100%)** — the stable headline. The strict `CHOSEN`-line
-parse reads lower (12–14/18) because it needs one exact line and several "misses" are
-valid alternatives reached via the typed links. The one discovery miss moves between
-runs (LLM first-search phrasing), so it is not a fixed index gap. Full write-up:
+The agent is told to route through OASIS (find a tool, don't answer from its own
+knowledge). Using `oasis_find`, it **chose an endpoint of the right capability 16/18
+(89%)** (±1 run-to-run; the misses are usually an adjacent-capability pick — e.g. a
+place-reviews API for "find restaurants near my hotel"). Token cost and the full
+per-method comparison (`oasis_find` vs the keyword baselines) are in
 [`../docs/eval_results.md`](../docs/eval_results.md).
 
 ## Head-to-head: OASIS vs raw keyword (`compare.mjs`)

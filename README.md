@@ -28,21 +28,20 @@ The server also exposes the lower-level `search` / `resolve` primitives and the
 ### 💸 Token cost — cheapest of every method tested
 
 End-to-end (a live LLM picks a paid endpoint for 18 real tasks; a method-neutral judge
-scores the pick), `oasis_find` finds *and* picks in one call at the lowest token cost of
-any discovery method — every alternative costs **6–96% more**:
+scores the pick), `oasis_find` finds *and* picks in one call at the lowest token cost of any
+discovery method — every keyword baseline costs **6–95% more**:
 
 | discovery method | tokens/task | tool-calls | vs `oasis_find` |
 |---|---|---|---|
-| **`oasis_find` (one call)** | **2,562** | 1.2 | — |
+| **`oasis_find` (OASIS, one call)** | **2,562** | 1.2 | — |
 | keyword — all endpoints | 2,723 | 1.9 | +6% |
 | keyword — mpp slice | 3,116 | 2.2 | +22% |
 | keyword — x402scan slice | 3,166 | 2.1 | +24% |
 | keyword — pay-skills slice | 5,005 | 3.3 | +95% |
-| two-hop `search`→`resolve` | 5,031 | 2.1 | +96% |
 
-The two-hop pays ~2× (the agent reads a capability list + a resolve round + a related-options
-payload); a low-coverage registry pays ~2× because the agent searches repeatedly. Full
-analysis + reproduction: **[docs/eval_results.md](docs/eval_results.md)**.
+A low-coverage registry (pay-skills) pays ~2× because the agent searches repeatedly (3.3
+calls) for a match it often never finds. Full analysis + reproduction:
+**[docs/eval_results.md](docs/eval_results.md)**.
 
 ### 🎯 Accuracy — the honest, generalizing number
 

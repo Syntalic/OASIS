@@ -1,44 +1,74 @@
 #!/usr/bin/env node
-// Automated agent probe: drive an LLM through OASIS (search -> resolve -> pick)
-// on real tasks and measure whether OASIS leads it to the right capability.
-// Provider-agnostic — see llm.mjs for config (LLM_PROVIDER=anthropic|openai).
+// Automated agent probe for the SHIPPED OASIS method (oasis_find): drive an LLM
+// through one call -> pick, and measure whether it lands on an endpoint that does
+// the task. Provider-agnostic — see llm.mjs (LLM_PROVIDER=anthropic|openai).
 // Run: node --env-file=../.env probe.mjs
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { runAgent, providerLabel } from "./llm.mjs";
 import { TASKS } from "./tasks.mjs";
 
+// The shipped one-hop tool. (handleTool in tools.mjs serves oasis_find.)
+const FIND_SCHEMA = {
+  type: "object",
+  properties: {
+    query: { type: "string", description: "the task in natural language" },
+    limit: { type: "number", description: "max endpoints (default 8)" },
+  },
+  required: ["query"],
+};
+const FIND_DESC =
+  "Find the best paid HTTP API endpoints for a task in ONE call. Returns a ranked, flat list of endpoints (method, url, summary, price, payment rails). Use this first.";
+const FIND_ANTHROPIC = [{ name: "oasis_find", description: FIND_DESC, input_schema: FIND_SCHEMA }];
+const FIND_OPENAI = [{ type: "function", function: { name: "oasis_find", description: FIND_DESC, parameters: FIND_SCHEMA } }];
+
 const SYSTEM =
-  "You are a tool-routing agent. Your ONLY job is to find which external PAID HTTP " +
-  "API the user should call — assume the task MUST be done via an external paid API, " +
-  "never by you directly, and never ask for the input payload. " +
-  "ALWAYS begin by calling oasis_search with the task, then oasis_resolve (best " +
-  "capability id AND the original task) for concrete endpoints. " +
-  "Pick exactly ONE endpoint. End your final reply with a line: CHOSEN <intent_id> <METHOD> <url>";
+  "You are a tool-routing agent. Find which external PAID HTTP API the user should " +
+  "call — assume the task MUST be done via an external paid API, never by you " +
+  "directly, and never ask for the input payload. Call oasis_find with the task, then " +
+  "pick exactly ONE endpoint. End your final reply with a line: CHOSEN <METHOD> <URL>";
 
-const runTask = (task) => runAgent({ system: SYSTEM, query: task.q });
+// Answer key: the agent's CHOSEN endpoint must satisfy the expected capability.
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const bundle = JSON.parse(readFileSync(path.join(__dirname, "..", "dist", "index.json"), "utf8"));
+const norm = (u) =>
+  String(u).trim().replace(/^[<`'"(]+/, "").replace(/[>`'".,)\]]+$/, "").split(/[?#]/)[0].replace(/\/+$/, "");
+const urlCaps = new Map();
+for (const e of bundle.endpoints) {
+  const u = norm(`${e.origin}${e.path}`);
+  let s = urlCaps.get(u);
+  if (!s) urlCaps.set(u, (s = new Set()));
+  for (const c of e.capabilities || []) s.add(c);
+}
+function chosenSatisfies(final, expect) {
+  const line = (final || "").split(/\r?\n/).reverse().find((l) => /CHOSEN/i.test(l));
+  const url = (line?.match(/https?:\/\/\S+/) ?? (final || "").match(/https?:\/\/\S+/))?.[0];
+  return !!(url && urlCaps.get(norm(url))?.has(expect));
+}
 
+let chose = 0;
 const rows = [];
-let discoveredTop3 = 0, resolvedRight = 0, chosenRight = 0;
 for (const task of TASKS) {
   try {
-    const r = await runTask(task);
-    const inTop3 = r.searchTop3.includes(task.expect);
-    const resolvedExpect = r.resolved.includes(task.expect);
-    const choseExpect = new RegExp(`CHOSEN\\s+${task.expect.replace(/[.]/g, "\\.")}\\b`).test(r.final);
-    if (inTop3) discoveredTop3++;
-    if (resolvedExpect) resolvedRight++;
-    if (choseExpect) chosenRight++;
-    rows.push({ q: task.q.slice(0, 48), expect: task.expect, inTop3, resolvedExpect, choseExpect, calls: r.calls });
-    console.error(`${choseExpect ? "✓" : resolvedExpect ? "~" : "✗"} ${task.expect}  (search-top3:${inTop3} resolved:${resolvedExpect} chose:${choseExpect})`);
+    const r = await runAgent({
+      system: SYSTEM,
+      query: task.q,
+      anthropicTools: FIND_ANTHROPIC,
+      openaiTools: FIND_OPENAI,
+    });
+    const ok = chosenSatisfies(r.final, task.expect);
+    if (ok) chose += 1;
+    rows.push({ expect: task.expect, ok });
+    console.error(`${ok ? "✓" : "✗"} ${task.expect}`);
   } catch (err) {
-    rows.push({ q: task.q.slice(0, 48), expect: task.expect, error: String(err).slice(0, 80) });
+    rows.push({ expect: task.expect, error: String(err).slice(0, 80) });
     console.error(`✗ ${task.expect}  ERROR ${String(err).slice(0, 80)}`);
   }
 }
 
-const n = TASKS.length, p = (x) => `${x}/${n} (${Math.round((x / n) * 100)}%)`;
-console.log("\n=== OASIS agent probe (" + providerLabel() + ", " + n + " tasks) ===");
-console.log("expected capability in search top-3:   " + p(discoveredTop3));
-console.log("agent RESOLVED the expected capability: " + p(resolvedRight));
-console.log("agent CHOSE an endpoint of expected cap: " + p(chosenRight));
-console.log("\nmisses:");
-for (const r of rows.filter((r) => !r.choseExpect)) console.log("  " + r.expect + "  " + JSON.stringify({ inTop3: r.inTop3, resolved: r.resolvedExpect, err: r.error }));
+const n = TASKS.length;
+console.log(`\n=== OASIS oasis_find probe (${providerLabel()}, ${n} tasks) ===`);
+console.log(`agent chose an endpoint of the right capability: ${chose}/${n} (${Math.round((chose / n) * 100)}%)`);
+const misses = rows.filter((r) => !r.ok).map((r) => r.expect);
+if (misses.length) console.log("misses: " + misses.join(", "));
