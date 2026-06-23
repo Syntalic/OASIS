@@ -1,4 +1,4 @@
-import { CURATED_INTENT_IDS, matchEndpointsForIntent } from "./intent-match.js";
+import { CURATED_INTENT_IDS } from "./intent-match.js";
 import { rankEndpointsNeutral } from "./score-endpoint.js";
 import type {
   CapabilityIntent,
@@ -68,8 +68,10 @@ export function materializeCuratedIntent(
   // pass of a full build, before linkCapabilitiesToEndpoints runs) fall back to the
   // regex matcher so the build is unaffected; the offline `enrich-facets` re-pass
   // then rebuilds satisfies from the now-present capabilities binding.
-  const byCapability = endpoints.filter((e) => e.capabilities?.includes(source.id));
-  const matches = byCapability.length > 0 ? byCapability : matchEndpointsForIntent(source.id, endpoints);
+  // Embedding-bound only. endpoint.capabilities[] is set by bindEndpointsByEmbedding
+  // (semantic similarity + floor); the legacy regex INTENT_MATCHERS fallback is gone,
+  // so an intent with no semantic match gets fewer (clean) endpoints, never junk.
+  const matches = endpoints.filter((e) => e.capabilities?.includes(source.id));
   // Pass the source's typed ports so satisfies[] is ordered by per-intent
   // relevance (input-identifier / output-entity overlap), not just the neutral
   // quality prior — this is what lands the best-fit endpoint at satisfies[0].

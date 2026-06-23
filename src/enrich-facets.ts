@@ -15,6 +15,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { applyBindings, loadBindings } from "./binding.js";
 import { deriveEndpointFacets } from "./build.js";
+import { bindEndpointsByEmbedding } from "./embed/bind-endpoints.js";
 import { materializeCuratedIntents } from "./materialize-satisfies.js";
 import { loadOntologySources } from "./ontology.js";
 import type {
@@ -65,8 +66,20 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
 
   const endpoints = bundle.endpoints.map(deriveEndpointFacets);
 
-  // Apply authored endpoint→capability bindings as an authoritative override BEFORE
-  // re-materializing satisfies, so a maintainer can correct the heuristic binder.
+  // Recompute endpoint→capability binding SEMANTICALLY (replaces the regex
+  // INTENT_MATCHERS): embed every endpoint + every curated intent and bind by
+  // cosine similarity above a floor. This is what removes the satisfies[] junk
+  // (e.g. prediction-market endpoints bound to finance.stock_quote). Uses the
+  // active embedder — run without GOOGLE_API_KEY to bind with local MiniLM
+  // (fast, offline); runtime query→intent routing uses gemini independently.
+  const ontologyDir = path.join(PACKAGE_ROOT, "ontology", "intents");
+  const sources = await loadOntologySources(ontologyDir);
+  const bindResult = await bindEndpointsByEmbedding(endpoints, sources);
+  console.error(
+    `  semantic binding: ${bindResult.bound}/${endpoints.length} endpoints → ${bindResult.perIntent.size} curated intents`,
+  );
+
+  // Authored endpoint→capability bindings override the semantic binder.
   const appliedBindings = applyBindings(endpoints, await loadBindings());
   if (appliedBindings) console.error(`  applied ${appliedBindings} authored endpoint binding(s)`);
 
@@ -75,12 +88,8 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
     facetByKey.set(`${ep.origin}|${ep.method}|${ep.path}`, ep.facets);
   }
 
-  // Re-materialize curated capabilities from the YAML sources over the frozen
-  // endpoint set (the build's materialize step, run offline). This carries the
-  // authored ports/facets/links AND the relevance-ranked satisfies[] ordering
-  // into dist — `deriveCapabilityFacets` alone only patched a derived domain.
-  const ontologyDir = path.join(PACKAGE_ROOT, "ontology", "intents");
-  const sources = await loadOntologySources(ontologyDir);
+  // Re-materialize curated capabilities from the YAML sources over the frozen,
+  // freshly-bound endpoint set (the build's materialize step, run offline).
   const curated = materializeCuratedIntents(sources, endpoints);
   const curatedIds = new Set(curated.map((c) => c.id));
 
