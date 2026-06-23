@@ -36,7 +36,7 @@ primary_region = "sjc"      # pick the region nearest you / your agents
     path = "/health"
     interval = "30s"
     timeout = "5s"
-    grace_period = "20s"   # first boot parses the 83MB index before /health is ready
+    grace_period = "45s"   # first boot parses the 83MB index + loads the 86MB int8 endpoint arm (~23s observed) before /health is ready
 
 [[vm]]
   size = "shared-cpu-1x"

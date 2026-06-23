@@ -9,7 +9,10 @@ node_modules
 .env
 .env.*
 
-# Not needed in the image (keeps the build context small). dist/ IS needed — don't ignore it.
+# Not needed in the image (keeps the build context small). dist/ IS needed — don't ignore it,
+# EXCEPT the ~344MB f32 endpoint-vector cache: the server loads the ~86MB int8 index
+# (dist/endpoint-index.i8.*) instead, and the Dockerfile deletes dist/cache anyway.
+dist/cache
 .git
 .github
 docs

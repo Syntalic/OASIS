@@ -33,7 +33,36 @@ standard; self-host the same image (see [`mcp/deploy/`](mcp/deploy/)) or run it 
 The server also exposes the lower-level `search` / `resolve` primitives and the
 `oasis_taxonomy` / `oasis_validate` contribution tools. See [`mcp/`](mcp/).
 
-## Why it holds up — cost, accuracy, scale
+## Why it holds up
+
+Two kinds of evidence: a **head-to-head against the other live discovery layers** (below), and
+an **internal comparison of discovery techniques** on our own corpus — token cost, accuracy, scale.
+
+### 🥇 Head-to-head vs the other x402 discovery layers
+
+We benchmark `oasis_find` directly against the two other live discovery layers for paid agentic
+APIs — **AgentCash** (vector search + usage telemetry) and **Coinbase's x402 Bazaar** (a
+~25,000-resource catalog) — on **40 colloquial tasks** a person would actually type ("what's
+bitcoin going for right now?"). Each engine returns its top 8 endpoints, and every result is
+hand-scored for whether it *directly performs the task*. OASIS leads on all four axes that matter:
+
+| Metric (what it means) | **OASIS** | AgentCash | Bazaar |
+|---|---|---|---|
+| **Useful options per task** — how many *distinct* providers (each unique host counted once) it returns that *directly do the task*. The real "how many useful, different APIs did the agent actually get to choose from" number. | **5.6** | 3.0 | 1.6 |
+| **Precision** — of the 8 results returned, the share that are on-target (directly do the task, not merely adjacent). Higher = less noise to wade through. | **71%** | 62% | 54% |
+| **Complete misses** — tasks (out of 40) where *none* of the 8 results was usable, i.e. the engine whiffed entirely. Lower = more reliable. | **1** | 1 | 11 |
+| **Cost per useful result** — response size in tokens divided by the number of useful providers: how many tokens the agent must read to get *one* genuinely useful API. Rewards being useful, not just terse. Lower = cheaper. | **97** | 1,831 | 1,292 |
+
+In plain terms: on 40 real tasks OASIS hands the agent **~5.6 genuinely useful, different APIs per
+task** (vs 3.0 and 1.6), almost never comes up empty, and does it for **~19× fewer tokens per
+useful result** than the next engine — because it returns a tight, pre-ranked, de-duplicated list
+instead of a long, repetitive one (AgentCash often repeats one host; Bazaar's 25k catalog still
+whiffs on 11 of 40).
+
+This is **not** "one index sees everything" — the three catalogs are **~90% disjoint** (they mostly
+index *different* providers, so querying two and merging is still the most complete strategy). It's
+that, on the same tasks, OASIS's curated-intent routing surfaces more of the *right* endpoints,
+cleaner. Method + the full per-task breakdown: **[docs/eval_results.md](docs/eval_results.md)**.
 
 ### 💸 Token cost — cheapest of every method tested
 
@@ -99,7 +128,7 @@ best-of-many ranking, and token growth. Thesis + evidence: **[docs/scaling.md](d
 ```bash
 git clone https://github.com/Syntalic/OASIS.git && cd OASIS && pnpm install
 pnpm run build    # full ingest (~30k endpoints; needs network)
-pnpm run embed    # vector index (47 curated intents, gemini-embedding-001)
+pnpm run embed    # vector index (56 curated intents, gemini-embedding-001)
 pnpm test
 ```
 
