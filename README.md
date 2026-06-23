@@ -118,9 +118,11 @@ new ones sparingly (flagged for review). Full guide:
 
 ## Docs
 
+- **[docs/OASIS-explainer.pdf](docs/OASIS-explainer.pdf)** — visual explainer deck (PDF overview of OASIS)
 - **[docs/eval_results.md](docs/eval_results.md)** — full benchmarks: accuracy, token cost, generalization, the agent probe
 - **[docs/scaling.md](docs/scaling.md)** — the endpoint-atomic direction, why it scales, the per-service binding artifact
 - **[docs/contributing-capabilities.md](docs/contributing-capabilities.md)** — how to add a service
+- **[docs/proposals/onchain-usage-ranking.md](docs/proposals/onchain-usage-ranking.md)** — proposed (**help wanted**): quality-aware ranking from on-chain usage (volume/trend/buyers)
 - [ARCHITECTURE.md](ARCHITECTURE.md) · [GOVERNANCE.md](GOVERNANCE.md) · [spec/traversal.md](spec/traversal.md)
 
 ## Design principles

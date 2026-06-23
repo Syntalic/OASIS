@@ -122,21 +122,13 @@ export const DEFAULT_ID_WEIGHT = 25;
  * ties among comparably on-task endpoints.
  */
 export const DEFAULT_NEUTRAL_SCALE = 0.15;
-/**
- * Popularity / trust from on-chain PAYMENT ACTIVITY — historical volume, revenue, and a
- * recent uptick (trending up). THIS is the quality signal endpoint ranking optimizes for:
- * among many endpoints that do the same task, the heavily-used and growing one is the one
- * an agent should prefer. It is **not yet ingested** — x402scan/mppscan observe every
- * x402/MPP settlement on-chain, so the data exists at the source; pulling it into endpoint
- * records is the next step (see docs/scaling.md). Until then this returns 0 and ranking
- * falls back to task fit + weak structural quality proxies.
- */
-export const DEFAULT_POPULARITY_WEIGHT = 30;
-function popularityScore(_ep: EndpointRecord, _weight: number): number {
-  // const u = _ep.usage; if (!u) return 0;
-  // return _weight * (norm(u.revenue_30d) + trendBonus(u.volume_7d, u.volume_30d));
-  return 0; // pending on-chain volume/revenue ingestion
-}
+// NOTE: a popularity / usage signal (on-chain volume, revenue, recent uptick) is the
+// intended PRIMARY quality ranker — among endpoints that do the same task, prefer the
+// heavily-used and trending one. It is deliberately NOT implemented: per-endpoint usage
+// could not be sourced cleanly at the time of writing (mppscan exposes it, x402scan does
+// not). The goal, the data-source investigation, and concrete contributor steps live in
+// docs/proposals/onchain-usage-ranking.md. Until it lands, resolve ranks on task fit +
+// structural quality, with only a guard against absurd prices.
 
 /** Weak INTERIM quality proxy — documented + a real input schema. Structural (harder to
  *  game than self-description), but a placeholder until popularity lands. */
@@ -180,7 +172,6 @@ export function resolveEndpointsForQuery(
   vocabWeight = DEFAULT_VOCAB_WEIGHT,
   idWeight = DEFAULT_ID_WEIGHT,
   neutralScale = DEFAULT_NEUTRAL_SCALE,
-  popularityWeight = DEFAULT_POPULARITY_WEIGHT,
   qualityWeight = DEFAULT_QUALITY_WEIGHT,
   priceOutlierPenalty = DEFAULT_PRICE_OUTLIER_PENALTY,
 ): EndpointRecord[] {
@@ -193,15 +184,14 @@ export function resolveEndpointsForQuery(
   return [...candidates]
     .map((ep) => ({
       ep,
-      // Task fit (id/vocab/query) GATES; among on-task endpoints, popularity (on-chain
-      // usage — the target, 0 until ingested) decides, with weak structural quality as the
-      // interim proxy and an outlier guard against absurd prices.
+      // Task fit (id/vocab/query) GATES; among comparably on-task endpoints, weak
+      // structural quality breaks ties, with an outlier guard against absurd prices.
+      // (A popularity/usage term belongs here — see docs/proposals/onchain-usage-ranking.md.)
       score:
         neutralScale * scoreEndpointNeutral(ep, intent) +
         idWeight * matchCount(ep, idTokens) +
         vocabWeight * lexicalScore(ep, vocabTokens) +
         queryWeight * lexicalScore(ep, qTokens) +
-        popularityScore(ep, popularityWeight) +
         qualityScore(ep, qualityWeight) +
         priceOutlierGuard(ep, median, priceOutlierPenalty),
     }))
