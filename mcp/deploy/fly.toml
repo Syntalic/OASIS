@@ -1,0 +1,43 @@
+# Fly.io config for the OASIS reference MCP server — operated by the stewards as a free
+# public instance. NOT part of the standard (see mcp/deploy/README.md). Multi-tenant
+# pattern (one shared app, many users) per Fly's remote-MCP blueprint.
+#
+# Deploy from the REPO ROOT (build context = repo root; index built via pnpm build && embed):
+#   fly apps create oasis-mcp
+#   fly secrets set OASIS_AUTH_TOKEN=$(openssl rand -hex 24) -a oasis-mcp
+#   fly deploy --config mcp/deploy/fly.toml
+app = "oasis-mcp"            # change to your app name
+primary_region = "sjc"      # pick the region nearest you / your agents
+
+[build]
+  # Path is relative to THIS fly.toml's directory (mcp/deploy/), so just "Dockerfile".
+  # The build CONTEXT, however, is the repo root — run `fly deploy` from there so the
+  # Dockerfile's COPY dist/mcp/ontology/spec paths resolve.
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  MCP_PATH = "/mcp"
+  # Open endpoint (no OASIS_AUTH_TOKEN set) + per-IP rate limit so it can't be abused.
+  RATE_LIMIT = "60"          # requests/min/IP (0 = off); bump without a code change
+  RATE_WINDOW_MS = "60000"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_start_machines = true
+  # Warm: keep one instance up so the model + 83MB index stay loaded (no cold start).
+  # Cheapest: min_machines_running = 0 and auto_stop_machines = "suspend" (scales to zero).
+  auto_stop_machines = "stop"
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    method = "GET"
+    path = "/health"
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "20s"   # first boot parses the 83MB index before /health is ready
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "1gb"           # ~1GB: embedding model + index in memory (256MB OOMs)

@@ -32,6 +32,35 @@ provider is involved in the server itself.
     "args": ["/absolute/path/OASIS/mcp/server.mjs"] } } }
 ```
 
+## Remote hosting (Streamable HTTP)
+
+`http-server.mjs` serves the **same tools** over MCP Streamable HTTP, for hosting the
+reference endpoint. Stateless (a fresh server/transport per request; the index + model
+load once at import and are shared), with optional bearer auth. Hosting a public endpoint
+is a **stewardship convenience, not part of the standard** — anyone may self-host or skip
+the server entirely (download the index).
+
+```bash
+npm run http                                   # http://127.0.0.1:8080/mcp  (GET /health)
+OASIS_AUTH_TOKEN=secret PORT=8080 npm run http # require Authorization: Bearer secret
+```
+
+Env: `PORT` (8080), `MCP_PATH` (`/mcp`), `OASIS_AUTH_TOKEN` (if set, required as a bearer
+token), `MCP_JSON_RESPONSE` (`1` = plain JSON, `0` = SSE). Client config once live:
+
+```json
+{ "mcpServers": { "oasis": { "url": "https://<app>.fly.dev/mcp",
+    "headers": { "Authorization": "Bearer <token>" } } } }
+```
+
+### Deploy
+
+The hosting setup — `Dockerfile`, `fly.toml`, and how the stewards run the free public
+instance — lives in **[`deploy/`](deploy/)** (following Fly's
+[remote-MCP blueprint](https://fly.io/docs/blueprints/remote-mcp-servers/), multi-tenant
+pattern). See **[`deploy/README.md`](deploy/README.md)**. It is operational tooling, kept
+out of the normative root; self-hosting is first-class.
+
 ## Agent probe (automated, any provider)
 
 Drives an LLM through `oasis_find → pick` (the shipped one-hop method) on 18 real tasks

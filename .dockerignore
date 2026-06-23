@@ -1,0 +1,21 @@
+# Build context for mcp/deploy/Dockerfile — deploy from the repo root:
+#   fly deploy --config mcp/deploy/fly.toml
+
+# Rebuilt inside the image
+node_modules
+**/node_modules
+
+# Secrets — NEVER ship these
+.env
+.env.*
+
+# Not needed in the image (keeps the build context small). dist/ IS needed — don't ignore it.
+.git
+.github
+docs
+src
+eval
+.DS_Store
+*.log
+**/*.log
+mcp/_smoke.mjs
