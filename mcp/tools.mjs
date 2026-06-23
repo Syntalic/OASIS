@@ -113,10 +113,49 @@ async function oasisFind({ query, limit = 8 }) {
   return { endpoints: out.slice(0, limit) };
 }
 
+// oasis_next: from a query (routed) or an intent id, surface the ontology-graph
+// follow-ups so an agent can dig deeper / chain tools instead of re-searching. The
+// typed-link graph (pipes_to / narrower / broader / alternatives) is something flat
+// keyword or spec-embedding search structurally can't offer.
+async function oasisNext({ query, intent_id, limit = 12 }) {
+  let intent;
+  if (intent_id) {
+    intent = capById.get(intent_id);
+    if (!intent) return { error: `unknown intent_id: ${intent_id}` };
+  } else if (query) {
+    const hits = await searchHybridWithFallback(query, bundle, lanceDir, 5);
+    const top = hits.find((h) => h.kind === "capability");
+    if (!top) return { error: "no capability matched the query" };
+    intent = capById.get(top.capability_id);
+  } else {
+    return { error: "provide a query or an intent_id" };
+  }
+  const options = relatedOptions(intent, bundle).slice(0, limit);
+  const fmt = (o) => ({
+    intent_id: o.intent_id,
+    label: o.label,
+    why: o.note,
+    endpoint: o.top_endpoint
+      ? `${o.top_endpoint.method} ${o.top_endpoint.origin}${o.top_endpoint.path}`
+      : undefined,
+    price_usd: o.top_endpoint?.price_usd,
+  });
+  const byRel = (rels) => options.filter((o) => rels.includes(o.relation)).map(fmt);
+  return {
+    intent: { id: intent.id, label: intent.label },
+    next_steps: byRel(["pipes_to"]),
+    drill_down: byRel(["broader_of"]),
+    generalize: byRel(["narrower_of"]),
+    alternatives: byRel(["alternative_of", "sibling_of"]),
+    prior_steps: byRel(["fed_by"]),
+  };
+}
+
 export async function handleTool(name, args) {
   if (name === "oasis_search") return oasisSearch(args ?? {});
   if (name === "oasis_resolve") return oasisResolve(args ?? {});
   if (name === "oasis_find") return oasisFind(args ?? {});
+  if (name === "oasis_next") return oasisNext(args ?? {});
   if (name === "oasis_taxonomy") return getTaxonomy();
   if (name === "oasis_validate") return validateSourceIntent(args?.intent ?? args ?? {});
   if (name === "oasis_validate_binding") return validateBinding(args?.binding ?? args ?? {}, bundle.endpoints);
@@ -149,6 +188,19 @@ const SERVER_TOOLS = [
     description:
       "Find the best paid HTTP API endpoints for a task in ONE call. Returns a ranked, flat list of endpoints (method, url, summary, price, payment rails). Use this first when an agent is unsure which tool/service to use.",
     schema: FIND_SCHEMA,
+  },
+  {
+    name: "oasis_next",
+    description:
+      "Given a task (query) or a capability intent id, return ontology-graph FOLLOW-UPS to dig deeper: next_steps (what to do with the result next), drill_down / generalize (more specific / more general capabilities), alternatives, and prior_steps (what feeds this intent). Chains tools and explores a topic without re-searching from scratch.",
+    schema: {
+      type: "object",
+      properties: {
+        query: { type: "string", description: "The task in natural language (routed to an intent)." },
+        intent_id: { type: "string", description: "A capability id, instead of a query." },
+        limit: { type: "number", description: "Max follow-ups (default 12)." },
+      },
+    },
   },
   ...TOOLS,
   {
