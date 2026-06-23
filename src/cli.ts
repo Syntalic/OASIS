@@ -514,11 +514,11 @@ program
 program
   .command("eval:methods")
   .description(
-    "Discovery-method comparison: oasis vs spec-embedding vs catalog vs live Coinbase Bazaar",
+    "Discovery-method comparison: oasis vs spec-embedding vs catalog (+ optional live registry)",
   )
   .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
   .option("--json", "Output JSON report")
-  .option("--live", "Also hit the LIVE Coinbase Bazaar API (cross-corpus floor, not apples-to-apples)")
+  .option("--live", "Also hit a live external registry API (cross-corpus floor, not apples-to-apples)")
   .action(async (opts) => {
     const bundle = await loadBundle(opts.dist);
     const { runMethodBenchmark, formatMethodTable } = await import(

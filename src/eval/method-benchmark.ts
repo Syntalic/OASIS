@@ -1,28 +1,27 @@
 // Discovery-method comparison. Each method is a real discovery TECHNIQUE in the
-// agentic-commerce ecosystem:
+// agentic-commerce ecosystem (described generically — by technique, not vendor):
 //
 //   oasis           — curated task intents + vector search (this project)
-//   spec-embedding  — semantic retrieval over raw endpoint specs. Models Bazaar /
-//                     Agentic.Market / AgentCash / x402-discovery-MCP (all semantic
-//                     metadata search), run on OUR corpus so coverage is equal.
-//   catalog         — third-party scanner registry, keyword lookup. x402scan and
-//                     mppscan crawl the same ecosystem, so they're consolidated.
-//   coinbase-bazaar — the LIVE Coinbase x402 Bazaar discovery API (external registry)
+//   spec-embedding  — semantic retrieval over raw endpoint specs. This is the
+//                     technique third-party semantic registries / discovery MCP
+//                     servers use; run on OUR corpus so coverage is equal.
+//   catalog         — third-party scanner registry, keyword lookup. The scanner
+//                     slices crawl the same ecosystem, so they're consolidated.
+//   live-registry   — a LIVE external discovery-registry API (opt-in)
 //
 // Accuracy metric. The three INTERNAL methods all return OUR endpoint ids, so
 // they're scored task-level and identically: top-k holds the golden endpoint OR an
 // endpoint the index binds to the expected task intent (= "found a task-appropriate
-// API", not "guessed the one label"). The LIVE bazaar returns external URLs not in
+// API", not "guessed the one label"). The LIVE registry returns external URLs not in
 // our index, so it can only be scored on literal golden-URL match — a strict floor
 // that UNDERSELLS it; its TECHNIQUE is fairly measured by spec-embedding.
 //
 // Efficiency metrics. `tool_calls` = round-trips to reach an INVOCABLE endpoint:
 // oasis_find returns price + rails inline (1 hop); a semantic search / catalog
 // returns candidates that need a follow-up detail/schema fetch (2). `avg_tokens` =
-// the discovery payload the agent reads (≈ chars/4) — oasis carries price/rails
-// inline, the others carry url+summary and defer the (larger) schema to the 2nd
-// call. The true END-TO-END agent token cost is the LLM probe (compare.mjs), not
-// this. spec-embedding reuses the build cache, so no endpoints are re-embedded.
+// the discovery payload the agent reads (≈ chars/4). The true END-TO-END agent token
+// cost is the LLM probe (compare.mjs), not this. spec-embedding reuses the build
+// cache, so no endpoints are re-embedded.
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { curatedCapabilitiesForSearch } from "../curated-search.js";
@@ -35,14 +34,14 @@ import { searchIndex } from "../search.js";
 import { resolveEndpointsForQuery } from "../select-policy.js";
 import type { EndpointRecord, IndexBundle } from "../types.js";
 import { expectedEndpointId, type EvalQuery } from "./discovery-benchmark.js";
-import { searchCdpBazaar } from "./external/cdp-bazaar.js";
+import { searchCdpBazaar as searchLiveRegistry } from "./external/cdp-bazaar.js";
 import { loadMessyQueries } from "./hybrid-mvp.js";
 import { rankExternalHits } from "./url-match.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");
 
-export type DiscoveryMethod = "oasis" | "spec-embedding" | "catalog" | "coinbase-bazaar";
+export type DiscoveryMethod = "oasis" | "spec-embedding" | "catalog" | "live-registry";
 
 export interface MethodReport {
   method: DiscoveryMethod;
@@ -106,7 +105,7 @@ function taskRank(
 
 export interface MethodBenchmarkOptions {
   distDir?: string;
-  /** Also hit the live Coinbase Bazaar API. Default false (cross-corpus floor). */
+  /** Also hit the live external registry API. Default false (cross-corpus floor). */
   live?: boolean;
   topK?: number;
 }
@@ -129,6 +128,7 @@ export async function runMethodBenchmark(
     endpoints.map(endpointEmbedText),
     path.join(distDir, "cache"),
   );
+  // catalog: the third-party scanner slices (they crawl the same ecosystem, consolidated).
   const scanner = endpoints.filter((e) => {
     const p = e.provider_fqn ?? "";
     return p.startsWith("x402scan/") || p.startsWith("mppscan/") || p.startsWith("mpp-catalog/");
@@ -176,7 +176,7 @@ export async function runMethodBenchmark(
     specRanks.push(taskRank(ids, expectedEndpointId(q.expect_endpoint), q.expect_intent, epById, K));
     specTok += tokEst(payloadCandidates(top));
   }
-  reports.push({ method: "spec-embedding", represents: "semantic over endpoint specs (Bazaar / Agentic.Market / AgentCash-style)", metric: "task-level", queries: n, ...score(specRanks), tool_calls: 2, avg_tokens: Math.round(specTok / n) });
+  reports.push({ method: "spec-embedding", represents: "semantic over endpoint specs (third-party semantic-registry technique)", metric: "task-level", queries: n, ...score(specRanks), tool_calls: 2, avg_tokens: Math.round(specTok / n) });
 
   // --- catalog: keyword lookup over the scanner registry (browse + detail) ---
   const catRanks: Array<number | null> = [];
@@ -189,22 +189,24 @@ export async function runMethodBenchmark(
     catRanks.push(taskRank(ids, expectedEndpointId(q.expect_endpoint), q.expect_intent, epById, K));
     catTok += tokEst(payloadCandidates(top));
   }
-  reports.push({ method: "catalog", represents: "third-party scanner registry, keyword (x402scan + mppscan)", metric: "task-level", queries: n, ...score(catRanks), tool_calls: 2, avg_tokens: Math.round(catTok / n) });
+  reports.push({ method: "catalog", represents: "third-party scanner registry, keyword (consolidated)", metric: "task-level", queries: n, ...score(catRanks), tool_calls: 2, avg_tokens: Math.round(catTok / n) });
 
-  // --- coinbase-bazaar: the LIVE external registry (opt-in; literal golden-URL floor) ---
+  // --- live-registry: a LIVE external registry (opt-in; literal golden-URL floor) ---
+  // Opt-in: its endpoints aren't in our golden set, so this is a cross-corpus floor,
+  // not a fair comparison. Its *technique* is fairly measured by spec-embedding.
   if (opts.live === true) {
     try {
-      const bazRanks: Array<number | null> = [];
-      let bazTok = 0;
+      const liveRanks: Array<number | null> = [];
+      let liveTok = 0;
       for (const q of queries) {
-        const hits = await searchCdpBazaar(q.query, K);
-        bazRanks.push(rankExternalHits(hits, q.expect_endpoint));
-        bazTok += tokEst(hits.map((h) => `${h.resource ?? ""} — ${h.description ?? ""}`).join("\n"));
+        const hits = await searchLiveRegistry(q.query, K);
+        liveRanks.push(rankExternalHits(hits, q.expect_endpoint));
+        liveTok += tokEst(hits.map((h) => `${h.resource ?? ""} — ${h.description ?? ""}`).join("\n"));
         await new Promise((r) => setTimeout(r, 100));
       }
-      reports.push({ method: "coinbase-bazaar", represents: "LIVE Coinbase x402 Bazaar API", metric: "literal-url", queries: n, ...score(bazRanks), tool_calls: 2, avg_tokens: Math.round(bazTok / n) });
+      reports.push({ method: "live-registry", represents: "LIVE external registry API", metric: "literal-url", queries: n, ...score(liveRanks), tool_calls: 2, avg_tokens: Math.round(liveTok / n) });
     } catch (err) {
-      reports.push({ method: "coinbase-bazaar", represents: `LIVE Bazaar — unavailable (${err instanceof Error ? err.message : String(err)})`, metric: "literal-url", queries: 0, disc_at_1: 0, disc_at_3: 0, mrr: 0, tool_calls: 2, avg_tokens: 0 });
+      reports.push({ method: "live-registry", represents: `live registry — unavailable (${err instanceof Error ? err.message : String(err)})`, metric: "literal-url", queries: 0, disc_at_1: 0, disc_at_3: 0, mrr: 0, tool_calls: 2, avg_tokens: 0 });
     }
   }
 
@@ -235,7 +237,7 @@ export function formatMethodTable(reports: MethodReport[]): string {
     "tools  = round-trips to an invocable endpoint (oasis_find returns price+rails inline = 1 hop).",
     "tokens = avg discovery-payload tokens the agent reads (≈ chars/4); end-to-end agent cost is the LLM probe.",
     "task-level: top-k holds the golden endpoint OR an endpoint bound to the expected task intent.",
-    "literal-url: golden-URL match only — a strict cross-corpus floor (live registry).",
+    "literal-url: golden-URL match only — a strict cross-corpus floor (live external registry).",
   );
   return lines.join("\n");
 }

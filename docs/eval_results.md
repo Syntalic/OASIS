@@ -29,13 +29,13 @@ expected task intent):
 | `catalog` — scanner registry, keyword | 33.3% | 52.4% | 0.444 | 2 | 303 |
 
 `spec-embedding` (embed every endpoint spec, semantic-rank) is the technique behind
-the Coinbase **Bazaar**, **Agentic.Market**, **AgentCash**, and the x402-discovery
-MCP servers — run on our corpus so coverage is equal. Curated-intent routing beats it
+current third-party semantic registries and discovery MCP servers — run on our
+corpus so coverage is equal. Curated-intent routing beats it
 by ~13 pts **and** resolves in **one hop**: `oasis_find` returns price + rails inline,
 while semantic-search / catalogs return candidates that need a 2nd call to fetch the
 endpoint schema (`tool calls` = round-trips to an invocable endpoint; `discovery
 tokens` ≈ chars/4 of the payload the agent reads — the true end-to-end agent cost is
-the LLM probe below). Keyword catalogs aren't close. The live Coinbase Bazaar API is
+the LLM probe below). Keyword catalogs aren't close. A live external registry API is
 opt-in (`eval:methods --live`); it returns its own catalog's URLs, so a literal-URL
 match against our golden set is a cross-corpus floor, not a fair number — its
 *technique* is the `spec-embedding` row.
@@ -47,6 +47,36 @@ pnpm run build:ts && node dist/enrich-facets.js && node dist/cli.js embed --scop
 node dist/cli.js eval:methods          # the table above
 node dist/cli.js eval:resolve          # binding/resolve accuracy
 ```
+
+### End-to-end agent A/B — real tokens + tool-calls (`compare.mjs`)
+
+Offline retrieval (above) doesn't capture cost. Driving a real agent (Sonnet 4.6)
+through each discovery tool on the 18 common tasks, judged neutrally ("does the
+chosen endpoint do the task?"):
+
+| Method | judged correct | tokens/task (in+out) | tool-calls |
+|---|---|---|---|
+| **`oasis` (1-hop find)** | 16/18 (89%) | **2,354** (2052+302) | **1.1** |
+| `spec-embedding` (semantic) | 17/18 (94%) | 2,715 (2444+271) | 1.9 |
+| `catalog` (single-registry keyword) | 18/18 (100%) | 3,358 (3036+322) | 2.2 |
+
+**OASIS is the cheapest — ~30% fewer tokens and half the round-trips** (one compact
+`oasis_find` vs ~2 searches reading more candidates). Accuracy is near-parity here
+(89–100%): these are common, high-coverage tasks and the judge credits *any* working
+endpoint, so broad keyword search finds one for all 18. Two things worth stating:
+
+- **`oasis` and `spec-embedding` do NOT share an embedding base.** `spec-embedding`
+  embeds the 30k *raw* endpoint specs (noisy, vendor-written) and matches
+  query→endpoint; `oasis` embeds the 47 *curated* intents (clean, query-shaped) and
+  matches query→intent→resolve. The ontology *is* the embedded layer, not a layer over
+  identical vectors — so the `eval:methods` gap is the value of a clean target, and
+  spec-embedding is capped by raw-spec quality.
+- The two metrics disagree by construction: `eval:methods` (retrieval, binding-based)
+  is mildly OASIS-favorable; the agent judge (any-working-endpoint) is mildly
+  spec-favorable. The metric-independent OASIS win is **efficiency** (tokens +
+  tool-calls) plus **discovery quality on hard/colloquial queries**.
+
+Reproduce: `cd mcp && COMPARE_BACKENDS="1-hop,spec,x402scan" node --env-file=../.env compare.mjs`
 
 ---
 
@@ -450,5 +480,5 @@ a capability OASIS can't surface.
   discover@3 / literal@3 / coverage (structural superiority), not exact accuracy.
 - All numbers are **offline** against the **frozen** committed endpoint set, so
   before/after deltas reflect code changes, not catalog drift.
-- External live methods (CDP x402 Bazaar, mpp.dev catalog) are excluded here
+- External live registry methods are excluded here
   (`--offline`); they score literal URL match only and historically land ≤1/63.
