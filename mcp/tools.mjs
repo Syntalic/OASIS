@@ -102,14 +102,20 @@ async function oasisFind({ query, limit = 8 }) {
   for (const h of hits) {
     if (h.kind === "endpoint") add(h.method, h.origin, h.path, h.label, h.price_usd, undefined, "match");
   }
-  for (const h of hits) {
-    if (h.kind !== "capability" || out.length >= limit + 4) continue;
+  // Concentrate on the TOP-routed intent — return many of ITS providers, and pull only
+  // a couple from each subsequent intent as a fallback (used mainly when the top intent
+  // is thin). Resolving 3 from every routed intent padded the list with adjacent-
+  // capability endpoints and diluted precision (dogfooding tail-drift: ~38% vs ~72%).
+  const caps = hits.filter((h) => h.kind === "capability");
+  caps.forEach((h, i) => {
+    if (out.length >= limit) return;
     const intent = capById.get(h.capability_id);
-    if (!intent) continue;
-    for (const e of resolveEndpointsForQuery(intent, bundle.endpoints, query, 3)) {
+    if (!intent) return;
+    const n = i === 0 ? limit : 2;
+    for (const e of resolveEndpointsForQuery(intent, bundle.endpoints, query, n)) {
       add(e.method, e.origin, e.path, e.summary, e.payment?.price_usd, (e.payment?.rails ?? []).map((r) => r.protocol), h.capability_id);
     }
-  }
+  });
   return { endpoints: out.slice(0, limit) };
 }
 
