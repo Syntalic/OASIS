@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # OASIS reference MCP server (Streamable HTTP) — how the stewards host the free public
 # instance. NOT part of the OASIS standard; anyone may self-host this image or host
 # differently. Build CONTEXT is the REPO ROOT (needs package.json, dist/, mcp/):
@@ -44,10 +45,16 @@ COPY spec ./spec
 # 5) Server source.
 COPY mcp ./mcp
 
-# 6) Re-embed the curated capabilities INSIDE the image: caches the embedding model and
-#    regenerates dist/lance for THIS platform (matching the container's lancedb build).
-#    Also fails the build early if the retrieval stack is broken. Reads dist/index.json only.
-RUN node dist/cli.js embed --scope curated
+# 6) Re-embed the curated capabilities INSIDE the image: regenerates dist/lance for THIS
+#    platform and fails the build early if retrieval is broken. Reads dist/index.json only.
+#    GOOGLE_API_KEY is passed as a BUILD SECRET so the table is built with the SAME embedder
+#    the server uses at runtime (gemini-embedding-001, 3072-dim). Without it the table would
+#    be MiniLM 384-dim and every gemini query would dimension-mismatch into the keyword
+#    fallback. Absent secret => keyless MiniLM build (dev/offline). Deploy with:
+#      fly deploy --config mcp/deploy/fly.toml --build-secret GOOGLE_API_KEY=$GOOGLE_API_KEY
+RUN --mount=type=secret,id=GOOGLE_API_KEY \
+    GOOGLE_API_KEY="$(cat /run/secrets/GOOGLE_API_KEY 2>/dev/null || true)" \
+    node dist/cli.js embed --scope curated
 
 ENV PORT=8080
 EXPOSE 8080
