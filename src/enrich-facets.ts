@@ -76,9 +76,18 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
   const sources = await loadOntologySources(ontologyDir);
   const bindResult = await bindEndpointsByEmbedding(endpoints, sources, {
     cacheDir: path.join(distDir, "cache"),
+    // Lower the DENSE floor for sparse intents the global 0.78 floor starves; the
+    // sparse-vocabulary floor still guards against binding noise to them.
+    floorOverrides: {
+      "shop.price_drop_alert": 0.75,
+      "shop.find_deals": 0.75,
+      "comms.send_fax": 0.75,
+      "analyst.inflation_tracker": 0.75,
+      "marketing.competitive_landscape": 0.75,
+    },
   });
   console.error(
-    `  semantic binding: ${bindResult.bound}/${endpoints.length} endpoints → ${bindResult.perIntent.size} curated intents (embedded ${bindResult.embedded}, reused ${bindResult.reused})`,
+    `  hybrid binding: ${bindResult.bound}/${endpoints.length} endpoints → ${bindResult.perIntent.size} curated intents (embedded ${bindResult.embedded}, reused ${bindResult.reused}); gated ${bindResult.gatedMeta} meta-files + ${bindResult.gatedSparse} below sparse-vocab floor`,
   );
 
   // Authored endpoint→capability bindings override the semantic binder.

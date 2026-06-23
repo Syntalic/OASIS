@@ -1,0 +1,20 @@
+id: agent.marketplace
+label: Register and discover agents in a marketplace
+description: Agent marketplace and registry operations — register an agent, fetch an agent's profile, and post or read reviews and reputation of agents. Use for an agent-to-agent directory and reputation system, not generic service or API catalogs, buyer menus, or human people search (data.person_search).
+aliases:
+  - register an agent in the marketplace
+  - fetch an agent's marketplace profile
+  - post a review of another agent
+  - agent registry lookup
+  - agent reputation and reviews
+  - discover other agents in the marketplace
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: AgentProfile
+    role: payload
+    cardinality: many
+facets:
+  domain: data
+  action: lookup

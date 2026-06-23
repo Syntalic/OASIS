@@ -1,0 +1,25 @@
+id: agent.memory
+label: Read and write agent memory
+description: Persistent key-value memory for autonomous agents — read, write, list, and delete entries in a namespace, and query another agent's shared memory. Use when an agent stores or recalls its own state across calls, not file or object hosting (storage.hosting).
+aliases:
+  - agent memory store
+  - read a memory entry
+  - write to agent memory
+  - list keys in a memory namespace
+  - delete a memory entry
+  - remember this for later
+  - query a peer agent's memory
+  - persistent key-value memory for agents
+consumes:
+  - entity: MemoryKey
+    role: identifier
+produces:
+  - entity: MemoryEntry
+    role: payload
+facets:
+  domain: storage
+  action: lookup
+links:
+  - type: sibling_of
+    to: agent.marketplace
+    note: both agent-native infrastructure, not user-facing data tasks

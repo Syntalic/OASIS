@@ -1,20 +1,17 @@
 id: ai.llm_complete
 label: LLM text completion or chat
-description: Paid chat or completion APIs for frontier language models. Use when an agent needs generative text, reasoning, or tool-use responses without managing provider API keys or billing accounts.
+description: Paid chat or completion APIs for general-purpose language models. Use when an agent needs generative text, reasoning, or tool-use responses from a language model — not task-specific text tools like document extraction (data.document_extract), translation (data.translate_text), or embeddings (ai.embeddings).
 aliases:
   - chat completion
   - LLM API
   - LLM text completion
   - chat completion API
-  - paid LLM inference
   - text generation API
   - model chat endpoint
-  - micropayment LLM
-  - compatible chat completion API
-  - Claude chat completion
-  - paid Claude without API key
-  - Anthropic chat without my own key
-  - run Claude completion via micropayment
+  - generative text response
+  - run a language model prompt
+  - chat with a hosted language model
+  - general-purpose completion endpoint
 consumes:
   - { entity: Text, role: identifier }
 produces:

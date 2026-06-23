@@ -11,6 +11,8 @@ export interface RelatedOption {
   relation_label: string;
   intent_id: string;
   label: string;
+  /** Why this neighbor is linked (the edge's note), when present. */
+  note?: string;
   top_endpoint?: {
     origin: string;
     method: string;
@@ -69,6 +71,7 @@ export function relatedOptions(
       relation_label: RELATION_LABEL[link.type] ?? link.type,
       intent_id: target.id,
       label: target.label,
+      note: link.note,
       top_endpoint: ep
         ? {
             origin: ep.origin,

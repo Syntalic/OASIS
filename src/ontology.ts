@@ -2,7 +2,29 @@ import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { parse as parseYaml } from "yaml";
 import { canonicalOrigin } from "./origin-aliases.js";
-import type { CapabilityIntent, CuratedIntentSource } from "./types.js";
+import type { CapabilityIntent, CapabilityLink, CuratedIntentSource } from "./types.js";
+
+/**
+ * Centrally-inferred inter-intent typed links (`ontology/inferred-links.json`),
+ * grouped by source intent. These power oasis_next; authored YAML links always win.
+ */
+async function loadInferredLinks(intentsDir: string): Promise<Map<string, CapabilityLink[]>> {
+  const byFrom = new Map<string, CapabilityLink[]>();
+  try {
+    const file = path.join(path.dirname(intentsDir), "inferred-links.json");
+    const data = JSON.parse(await readFile(file, "utf8")) as {
+      edges?: Array<{ from: string; type: CapabilityLink["type"]; to: string; why?: string }>;
+    };
+    for (const e of data.edges ?? []) {
+      const list = byFrom.get(e.from) ?? [];
+      list.push({ type: e.type, to: e.to, note: e.why });
+      byFrom.set(e.from, list);
+    }
+  } catch {
+    /* no inferred-links file — fine, links come from YAML only */
+  }
+  return byFrom;
+}
 
 export async function loadOntologySources(
   intentsDir: string,
@@ -17,6 +39,23 @@ export async function loadOntologySources(
     const parsed = parseYaml(raw) as CuratedIntentSource;
     if (parsed?.id && parsed.label) {
       intents.push(parsed);
+    }
+  }
+
+  // Merge the inferred inter-intent links into each source — authored links win,
+  // inferred ones dedupe by target. Inverses (fed_by/broader_of) are generated later
+  // at materialize (addInverseLinks).
+  const inferred = await loadInferredLinks(intentsDir);
+  for (const intent of intents) {
+    const add = inferred.get(intent.id);
+    if (!add) continue;
+    const authored = intent.links ?? [];
+    const seenTargets = new Set(authored.map((l) => l.to));
+    intent.links = [...authored];
+    for (const l of add) {
+      if (seenTargets.has(l.to)) continue;
+      seenTargets.add(l.to);
+      intent.links.push(l);
     }
   }
 

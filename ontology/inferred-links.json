@@ -1,0 +1,769 @@
+{
+  "_comment": "Typed inter-intent links inferred by a 3-lens consensus panel + merge (see oasis_next). Merged into each intent's links by loadOntologySources; inverses auto-generated at materialize.",
+  "count": 109,
+  "edges": [
+    {
+      "from": "agent.marketplace",
+      "type": "pipes_to",
+      "to": "agent.memory",
+      "why": "read a discovered agent's shared memory",
+      "votes": 3
+    },
+    {
+      "from": "ai.document_extract",
+      "type": "pipes_to",
+      "to": "ai.embeddings",
+      "why": "embed extracted text for retrieval",
+      "votes": 3
+    },
+    {
+      "from": "ai.document_extract",
+      "type": "pipes_to",
+      "to": "data.translate_text",
+      "why": "translate extracted document fields or text",
+      "votes": 3
+    },
+    {
+      "from": "ai.image_generate",
+      "type": "pipes_to",
+      "to": "storage.hosting",
+      "why": "publish generated image to a permanent CDN URL",
+      "votes": 3
+    },
+    {
+      "from": "ai.speech_to_text",
+      "type": "pipes_to",
+      "to": "ai.llm_complete",
+      "why": "reason over the transcript text",
+      "votes": 3
+    },
+    {
+      "from": "ai.text_to_speech",
+      "type": "pipes_to",
+      "to": "storage.hosting",
+      "why": "host synthesized audio at a public URL",
+      "votes": 3
+    },
+    {
+      "from": "ai.web_research",
+      "type": "pipes_to",
+      "to": "data.web_scrape",
+      "why": "fetch full content of a cited source URL",
+      "votes": 3
+    },
+    {
+      "from": "cloud.domains",
+      "type": "pipes_to",
+      "to": "data.whois_lookup",
+      "why": "verify DNS and registration of the domain",
+      "votes": 3
+    },
+    {
+      "from": "cloud.domains",
+      "type": "pipes_to",
+      "to": "storage.hosting",
+      "why": "host a static site on the new domain",
+      "votes": 3
+    },
+    {
+      "from": "comms.agent_inbox",
+      "type": "pipes_to",
+      "to": "comms.send_email",
+      "why": "send outbound mail from the provisioned inbox",
+      "votes": 3
+    },
+    {
+      "from": "comms.voice_call",
+      "type": "pipes_to",
+      "to": "ai.speech_to_text",
+      "why": "transcribe the recorded call audio",
+      "votes": 3
+    },
+    {
+      "from": "data.company_enrich",
+      "type": "pipes_to",
+      "to": "data.job_search",
+      "why": "pull the company's open job postings",
+      "votes": 3
+    },
+    {
+      "from": "data.company_enrich",
+      "type": "pipes_to",
+      "to": "data.person_search",
+      "why": "find people once the company is identified",
+      "votes": 3
+    },
+    {
+      "from": "data.email_validate",
+      "type": "pipes_to",
+      "to": "comms.send_email",
+      "why": "send only after the address passes validation",
+      "votes": 3
+    },
+    {
+      "from": "data.job_search",
+      "type": "pipes_to",
+      "to": "data.company_enrich",
+      "why": "enrich the hiring company behind a posting",
+      "votes": 3
+    },
+    {
+      "from": "data.ocr",
+      "type": "pipes_to",
+      "to": "ai.llm_complete",
+      "why": "interpret the extracted raw text",
+      "votes": 3
+    },
+    {
+      "from": "data.phone_validate",
+      "type": "pipes_to",
+      "to": "comms.send_sms",
+      "why": "text only after the number validates",
+      "votes": 3
+    },
+    {
+      "from": "data.translate_text",
+      "type": "pipes_to",
+      "to": "ai.llm_complete",
+      "why": "reason over the translated text",
+      "votes": 3
+    },
+    {
+      "from": "data.web_scrape",
+      "type": "pipes_to",
+      "to": "ai.document_extract",
+      "why": "extract structured fields from scraped content",
+      "votes": 3
+    },
+    {
+      "from": "data.whois_lookup",
+      "type": "pipes_to",
+      "to": "data.company_enrich",
+      "why": "enrich the company owning the domain",
+      "votes": 3
+    },
+    {
+      "from": "devtools.captcha_solve",
+      "type": "pipes_to",
+      "to": "data.web_scrape",
+      "why": "resume scraping once the challenge is solved",
+      "votes": 3
+    },
+    {
+      "from": "finance.onchain_analytics",
+      "type": "pipes_to",
+      "to": "finance.token_balance",
+      "why": "drill into a flagged wallet's balances",
+      "votes": 3
+    },
+    {
+      "from": "finance.token_balance",
+      "type": "pipes_to",
+      "to": "finance.crypto_spot_price",
+      "why": "price the held tokens for valuation",
+      "votes": 3
+    },
+    {
+      "from": "maps.geocode",
+      "type": "pipes_to",
+      "to": "data.gov_civic",
+      "why": "look up civic data for the coordinates",
+      "votes": 3
+    },
+    {
+      "from": "maps.geocode",
+      "type": "pipes_to",
+      "to": "maps.places",
+      "why": "find nearby businesses around the point",
+      "votes": 3
+    },
+    {
+      "from": "marketing.competitive_landscape",
+      "type": "pipes_to",
+      "to": "shop.compare_price",
+      "why": "compare a specific SKU across retailers",
+      "votes": 3
+    },
+    {
+      "from": "realestate.property_lookup",
+      "type": "pipes_to",
+      "to": "data.gov_civic",
+      "why": "check flood zone and district for a property",
+      "votes": 3
+    },
+    {
+      "from": "realestate.property_lookup",
+      "type": "pipes_to",
+      "to": "maps.geocode",
+      "why": "geocode a listing address to coordinates",
+      "votes": 3
+    },
+    {
+      "from": "search.web",
+      "type": "pipes_to",
+      "to": "web.markdown_extract",
+      "why": "extract clean article text from a result",
+      "votes": 3
+    },
+    {
+      "from": "social.influencer_search",
+      "type": "pipes_to",
+      "to": "media.social_data",
+      "why": "pull a creator's posts and engagement",
+      "votes": 3
+    },
+    {
+      "from": "storage.hosting",
+      "type": "pipes_to",
+      "to": "cloud.domains",
+      "why": "map a custom domain to the hosted site",
+      "votes": 3
+    },
+    {
+      "from": "web.markdown_extract",
+      "type": "pipes_to",
+      "to": "ai.embeddings",
+      "why": "embed extracted markdown for retrieval",
+      "votes": 3
+    },
+    {
+      "from": "web.markdown_extract",
+      "type": "pipes_to",
+      "to": "data.translate_text",
+      "why": "translate the extracted article text",
+      "votes": 3
+    },
+    {
+      "from": "web.screenshot",
+      "type": "pipes_to",
+      "to": "data.ocr",
+      "why": "read text from the captured screenshot",
+      "votes": 3
+    },
+    {
+      "from": "web.screenshot",
+      "type": "pipes_to",
+      "to": "storage.hosting",
+      "why": "host the captured screenshot at a URL",
+      "votes": 3
+    },
+    {
+      "from": "ai.document_extract",
+      "type": "pipes_to",
+      "to": "ai.llm_complete",
+      "why": "reason over extracted structured fields",
+      "votes": 2
+    },
+    {
+      "from": "ai.embeddings",
+      "type": "pipes_to",
+      "to": "ai.llm_complete",
+      "why": "retrieved context feeds a RAG completion",
+      "votes": 2
+    },
+    {
+      "from": "ai.llm_complete",
+      "type": "pipes_to",
+      "to": "ai.text_to_speech",
+      "why": "voice the model's generated text response",
+      "votes": 2
+    },
+    {
+      "from": "ai.text_to_speech",
+      "type": "pipes_to",
+      "to": "comms.voice_call",
+      "why": "play synthesized audio on an outbound call",
+      "votes": 2
+    },
+    {
+      "from": "comms.agent_inbox",
+      "type": "pipes_to",
+      "to": "data.email_validate",
+      "why": "validate inbound sender addresses before reply",
+      "votes": 2
+    },
+    {
+      "from": "compute.blockchain_rpc",
+      "type": "pipes_to",
+      "to": "finance.onchain_analytics",
+      "why": "raw chain reads feed wallet analytics",
+      "votes": 2
+    },
+    {
+      "from": "compute.blockchain_rpc",
+      "type": "pipes_to",
+      "to": "finance.token_balance",
+      "why": "RPC balance call resolves wallet holdings",
+      "votes": 2
+    },
+    {
+      "from": "data.compute_answer",
+      "type": "pipes_to",
+      "to": "data.exchange_rates",
+      "why": "convert currency for a computed amount",
+      "votes": 2
+    },
+    {
+      "from": "data.ip_lookup",
+      "type": "pipes_to",
+      "to": "maps.geocode",
+      "why": "reverse-geocode the IP location coordinates",
+      "votes": 2
+    },
+    {
+      "from": "data.job_search",
+      "type": "pipes_to",
+      "to": "data.person_search",
+      "why": "find the recruiter or hiring contact",
+      "votes": 2
+    },
+    {
+      "from": "data.person_search",
+      "type": "pipes_to",
+      "to": "data.email_validate",
+      "why": "verify a discovered contact email",
+      "votes": 2
+    },
+    {
+      "from": "data.person_search",
+      "type": "pipes_to",
+      "to": "media.social_data",
+      "why": "pull found person's posts and engagement",
+      "votes": 2
+    },
+    {
+      "from": "data.phone_validate",
+      "type": "pipes_to",
+      "to": "comms.voice_call",
+      "why": "call only valid reachable numbers",
+      "votes": 2
+    },
+    {
+      "from": "data.scientific_lookup",
+      "type": "pipes_to",
+      "to": "ai.web_research",
+      "why": "deepen entity facts with cited research",
+      "votes": 2
+    },
+    {
+      "from": "data.scientific_lookup",
+      "type": "pipes_to",
+      "to": "data.compute_answer",
+      "why": "compute over resolved scientific constants",
+      "votes": 2
+    },
+    {
+      "from": "data.web_scrape",
+      "type": "pipes_to",
+      "to": "ai.embeddings",
+      "why": "embed scraped content for retrieval",
+      "votes": 2
+    },
+    {
+      "from": "data.web_scrape",
+      "type": "pipes_to",
+      "to": "data.translate_text",
+      "why": "translate foreign-language scraped text",
+      "votes": 2
+    },
+    {
+      "from": "data.whois_lookup",
+      "type": "pipes_to",
+      "to": "data.ip_lookup",
+      "why": "investigate the resolved host IP",
+      "votes": 2
+    },
+    {
+      "from": "finance.crypto_spot_price",
+      "type": "pipes_to",
+      "to": "finance.token_balance",
+      "why": "value holdings at the current spot price",
+      "votes": 2
+    },
+    {
+      "from": "finance.economic_data",
+      "type": "pipes_to",
+      "to": "finance.stock_quote",
+      "why": "check equities against macro releases",
+      "votes": 2
+    },
+    {
+      "from": "finance.onchain_analytics",
+      "type": "pipes_to",
+      "to": "finance.crypto_spot_price",
+      "why": "value tracked flows at spot price",
+      "votes": 2
+    },
+    {
+      "from": "finance.prediction_markets",
+      "type": "pipes_to",
+      "to": "ai.web_research",
+      "why": "research news driving an event's odds",
+      "votes": 2
+    },
+    {
+      "from": "finance.stock_quote",
+      "type": "pipes_to",
+      "to": "finance.economic_data",
+      "why": "contextualize a quote with macro indicators",
+      "votes": 2
+    },
+    {
+      "from": "finance.token_balance",
+      "type": "pipes_to",
+      "to": "finance.onchain_analytics",
+      "why": "profile the wallet behind the balances",
+      "votes": 2
+    },
+    {
+      "from": "finance.trading_signals",
+      "type": "pipes_to",
+      "to": "finance.crypto_spot_price",
+      "why": "confirm crypto price before acting on signal",
+      "votes": 2
+    },
+    {
+      "from": "finance.trading_signals",
+      "type": "pipes_to",
+      "to": "finance.stock_quote",
+      "why": "confirm the current price before acting",
+      "votes": 2
+    },
+    {
+      "from": "maps.geocode",
+      "type": "pipes_to",
+      "to": "realestate.property_lookup",
+      "why": "find listings near the geocoded location",
+      "votes": 2
+    },
+    {
+      "from": "maps.places",
+      "type": "pipes_to",
+      "to": "data.weather_forecast",
+      "why": "check weather at the place's location",
+      "votes": 2
+    },
+    {
+      "from": "maps.places",
+      "type": "pipes_to",
+      "to": "travel.place_reviews",
+      "why": "pull reviews for a discovered venue",
+      "votes": 2
+    },
+    {
+      "from": "media.social_data",
+      "type": "pipes_to",
+      "to": "ai.llm_complete",
+      "why": "summarize sentiment from fetched posts",
+      "votes": 2
+    },
+    {
+      "from": "media.social_data",
+      "type": "pipes_to",
+      "to": "data.person_search",
+      "why": "resolve a poster's public identity",
+      "votes": 2
+    },
+    {
+      "from": "media.social_data",
+      "type": "pipes_to",
+      "to": "social.influencer_search",
+      "why": "find creators behind high-engagement posts",
+      "votes": 2
+    },
+    {
+      "from": "search.web",
+      "type": "pipes_to",
+      "to": "ai.llm_complete",
+      "why": "summarize search results into an answer",
+      "votes": 2
+    },
+    {
+      "from": "shop.compare_price",
+      "type": "pipes_to",
+      "to": "shop.price_drop_alert",
+      "why": "watch the cheapest SKU for a markdown",
+      "votes": 2
+    },
+    {
+      "from": "shop.compare_price",
+      "type": "pipes_to",
+      "to": "shop.track_price_history",
+      "why": "check if the current price is historically low",
+      "votes": 2
+    },
+    {
+      "from": "shop.find_deals",
+      "type": "pipes_to",
+      "to": "shop.compare_price",
+      "why": "compare a discounted item across retailers",
+      "votes": 2
+    },
+    {
+      "from": "shop.find_deals",
+      "type": "pipes_to",
+      "to": "shop.track_price_history",
+      "why": "verify a deal against historical pricing",
+      "votes": 2
+    },
+    {
+      "from": "shop.price_drop_alert",
+      "type": "pipes_to",
+      "to": "shop.compare_price",
+      "why": "find the cheapest store after a drop",
+      "votes": 2
+    },
+    {
+      "from": "shop.track_price_history",
+      "type": "pipes_to",
+      "to": "shop.compare_price",
+      "why": "compare current prices after reviewing history",
+      "votes": 2
+    },
+    {
+      "from": "storage.hosting",
+      "type": "pipes_to",
+      "to": "web.screenshot",
+      "why": "capture the deployed site for QA",
+      "votes": 2
+    },
+    {
+      "from": "travel.place_reviews",
+      "type": "pipes_to",
+      "to": "data.weather_forecast",
+      "why": "check weather for a trip destination",
+      "votes": 2
+    },
+    {
+      "from": "travel.place_reviews",
+      "type": "pipes_to",
+      "to": "maps.geocode",
+      "why": "geocode a reviewed venue's address",
+      "votes": 2
+    },
+    {
+      "from": "web.markdown_extract",
+      "type": "pipes_to",
+      "to": "ai.llm_complete",
+      "why": "feed clean page text to the model",
+      "votes": 2
+    },
+    {
+      "from": "ai.speech_to_text",
+      "type": "pipes_to",
+      "to": "data.compute_answer",
+      "why": "answer factual questions parsed from transcript",
+      "votes": 1
+    },
+    {
+      "from": "data.ocr",
+      "type": "pipes_to",
+      "to": "data.compute_answer",
+      "why": "compute over numbers read from the image",
+      "votes": 1
+    },
+    {
+      "from": "data.person_search",
+      "type": "pipes_to",
+      "to": "comms.send_email",
+      "why": "reach out to the resolved person",
+      "votes": 1
+    },
+    {
+      "from": "data.weather_forecast",
+      "type": "pipes_to",
+      "to": "ai.llm_complete",
+      "why": "summarize forecast into user-facing advice",
+      "votes": 1
+    },
+    {
+      "from": "finance.stock_quote",
+      "type": "pipes_to",
+      "to": "data.exchange_rates",
+      "why": "convert the quote to another currency",
+      "votes": 1
+    },
+    {
+      "from": "shop.price_drop_alert",
+      "type": "pipes_to",
+      "to": "comms.send_sms",
+      "why": "text the user when a price drops",
+      "votes": 1
+    },
+    {
+      "from": "social.influencer_search",
+      "type": "pipes_to",
+      "to": "comms.send_email",
+      "why": "reach out to a creator for a campaign",
+      "votes": 1
+    },
+    {
+      "from": "comms.send_email",
+      "type": "narrower_of",
+      "to": "comms.agent_inbox",
+      "why": "inbox is the broader send-and-receive capability",
+      "votes": 2
+    },
+    {
+      "from": "finance.token_balance",
+      "type": "narrower_of",
+      "to": "compute.blockchain_rpc",
+      "why": "token balance is a specific RPC use",
+      "votes": 2
+    },
+    {
+      "from": "shop.track_price_history",
+      "type": "narrower_of",
+      "to": "analyst.inflation_tracker",
+      "why": "product history rolls up to category inflation",
+      "votes": 2
+    },
+    {
+      "from": "shop.compare_price",
+      "type": "narrower_of",
+      "to": "marketing.competitive_landscape",
+      "why": "single-SKU compare narrows category landscape",
+      "votes": 1
+    },
+    {
+      "from": "shop.find_deals",
+      "type": "narrower_of",
+      "to": "marketing.competitive_landscape",
+      "why": "deals narrow category to discounted items",
+      "votes": 1
+    },
+    {
+      "from": "shop.price_drop_alert",
+      "type": "narrower_of",
+      "to": "shop.track_price_history",
+      "why": "recent drop is a slice of full price history",
+      "votes": 1
+    },
+    {
+      "from": "social.influencer_search",
+      "type": "narrower_of",
+      "to": "data.person_search",
+      "why": "creator discovery specializes people search",
+      "votes": 1
+    },
+    {
+      "from": "ai.image_generate",
+      "type": "sibling_of",
+      "to": "ai.llm_complete",
+      "why": "adjacent generative AI modalities",
+      "votes": 3
+    },
+    {
+      "from": "ai.web_research",
+      "type": "sibling_of",
+      "to": "data.compute_answer",
+      "why": "both return grounded factual answers",
+      "votes": 3
+    },
+    {
+      "from": "analyst.inflation_tracker",
+      "type": "sibling_of",
+      "to": "finance.economic_data",
+      "why": "both track price-level and macro trends",
+      "votes": 3
+    },
+    {
+      "from": "data.email_validate",
+      "type": "sibling_of",
+      "to": "data.phone_validate",
+      "why": "parallel contact-field validation checks",
+      "votes": 3
+    },
+    {
+      "from": "data.exchange_rates",
+      "type": "sibling_of",
+      "to": "finance.economic_data",
+      "why": "both are macro financial reference series",
+      "votes": 3
+    },
+    {
+      "from": "data.gov_civic",
+      "type": "sibling_of",
+      "to": "data.weather_forecast",
+      "why": "both are location-keyed lookups",
+      "votes": 3
+    },
+    {
+      "from": "data.ip_lookup",
+      "type": "sibling_of",
+      "to": "data.whois_lookup",
+      "why": "both resolve network ownership intelligence",
+      "votes": 3
+    },
+    {
+      "from": "devtools.captcha_solve",
+      "type": "sibling_of",
+      "to": "web.screenshot",
+      "why": "both support headless browser automation",
+      "votes": 3
+    },
+    {
+      "from": "ai.embeddings",
+      "type": "sibling_of",
+      "to": "search.web",
+      "why": "both serve retrieval and search",
+      "votes": 2
+    },
+    {
+      "from": "ai.llm_complete",
+      "type": "sibling_of",
+      "to": "data.compute_answer",
+      "why": "alternative for precise factual/numeric queries",
+      "votes": 2
+    },
+    {
+      "from": "data.code_repository",
+      "type": "sibling_of",
+      "to": "data.company_enrich",
+      "why": "both enrich an org from public signals",
+      "votes": 2
+    },
+    {
+      "from": "data.code_repository",
+      "type": "sibling_of",
+      "to": "data.job_search",
+      "why": "both surface hiring and engineering signals",
+      "votes": 2
+    },
+    {
+      "from": "data.compute_answer",
+      "type": "sibling_of",
+      "to": "data.scientific_lookup",
+      "why": "both resolve precise reference facts",
+      "votes": 2
+    },
+    {
+      "from": "data.gov_civic",
+      "type": "sibling_of",
+      "to": "realestate.property_lookup",
+      "why": "both resolve location-tied US property context",
+      "votes": 2
+    },
+    {
+      "from": "finance.stock_quote",
+      "type": "sibling_of",
+      "to": "finance.trading_signals",
+      "why": "both inform equity trading decisions",
+      "votes": 2
+    },
+    {
+      "from": "comms.send_email",
+      "type": "alternative_of",
+      "to": "comms.send_sms",
+      "why": "alternate channel to notify the same recipient",
+      "votes": 2
+    },
+    {
+      "from": "comms.send_sms",
+      "type": "alternative_of",
+      "to": "comms.voice_call",
+      "why": "alternate channel to reach the same number",
+      "votes": 2
+    }
+  ]
+}
