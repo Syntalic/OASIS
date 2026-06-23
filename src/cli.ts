@@ -512,6 +512,30 @@ program
   });
 
 program
+  .command("eval:methods")
+  .description(
+    "Discovery-method comparison: oasis vs spec-embedding vs catalog vs live Coinbase Bazaar",
+  )
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--json", "Output JSON report")
+  .option("--live", "Also hit the LIVE Coinbase Bazaar API (cross-corpus floor, not apples-to-apples)")
+  .action(async (opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const { runMethodBenchmark, formatMethodTable } = await import(
+      "./eval/method-benchmark.js"
+    );
+    const reports = await runMethodBenchmark(bundle, {
+      distDir: opts.dist,
+      live: Boolean(opts.live),
+    });
+    if (opts.json) {
+      console.log(JSON.stringify(reports, null, 2));
+      return;
+    }
+    console.log(formatMethodTable(reports));
+  });
+
+program
   .command("eval:hybrid")
   .description("Compare keyword vs hybrid search on messy natural-language queries")
   .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))

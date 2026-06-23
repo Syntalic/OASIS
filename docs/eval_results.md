@@ -3,10 +3,52 @@
 > **The shipped OASIS method is `oasis_find`** — one MCP call that returns a ranked, priced
 > endpoint list. End-to-end it is the **cheapest discovery method tested** (~2,562 tokens/task,
 > 6–95% below the keyword baselines) at **equal-or-better accuracy**, and its retrieval
-> generalizes to held-out queries at **72% discover@1 / 88% discover@3**. The sections below
+> generalizes to held-out queries at **95% discover@1 / 99% discover@3** (gemini-embedding-001, vector-only). The sections below
 > benchmark it against the keyword/registry baselines and document the methodology that led to
 > it — **earlier OASIS variants (the two-hop `search`→`resolve`) appear only as superseded
 > comparison points**, not as a recommended method.
+
+## Current — gemini-embedding-001 + vector-only routing
+
+The shipped method now embeds with **Google `gemini-embedding-001`** (3072-dim) and
+routes **vector-only** — the keyword + RRF-hybrid arm was net-negative on novel
+phrasing and was removed — with **embedding-driven endpoint→intent binding** (no
+regex matchers). Across the 150 messy + held-out queries this lifts routing from the
+old hybrid's **disc@1 87.3% → 97.3%** (held-out **78.2% → 95.4%**).
+
+### Discovery-method comparison (`eval:methods`)
+
+Each method is a real discovery *technique*, scored identically on the 63 messy
+queries (top-k holds the golden endpoint OR an endpoint the index binds to the
+expected task intent):
+
+| Method | disc@1 | disc@3 | MRR | tool calls | discovery tokens |
+|---|---|---|---|---|---|
+| **`oasis` — curated intents + vector search** | **100%** | **100%** | **1.000** | **1** | 297 |
+| `spec-embedding` — semantic over endpoint specs | 87.3% | 98.4% | 0.924 | 2 | 259 |
+| `catalog` — scanner registry, keyword | 33.3% | 52.4% | 0.444 | 2 | 303 |
+
+`spec-embedding` (embed every endpoint spec, semantic-rank) is the technique behind
+the Coinbase **Bazaar**, **Agentic.Market**, **AgentCash**, and the x402-discovery
+MCP servers — run on our corpus so coverage is equal. Curated-intent routing beats it
+by ~13 pts **and** resolves in **one hop**: `oasis_find` returns price + rails inline,
+while semantic-search / catalogs return candidates that need a 2nd call to fetch the
+endpoint schema (`tool calls` = round-trips to an invocable endpoint; `discovery
+tokens` ≈ chars/4 of the payload the agent reads — the true end-to-end agent cost is
+the LLM probe below). Keyword catalogs aren't close. The live Coinbase Bazaar API is
+opt-in (`eval:methods --live`); it returns its own catalog's URLs, so a literal-URL
+match against our golden set is a cross-corpus floor, not a fair number — its
+*technique* is the `spec-embedding` row.
+
+Reproduce:
+
+```bash
+pnpm run build:ts && node dist/enrich-facets.js && node dist/cli.js embed --scope curated
+node dist/cli.js eval:methods          # the table above
+node dist/cli.js eval:resolve          # binding/resolve accuracy
+```
+
+---
 
 Measured on commit `98e2865` (Tranche A + resolve round), against the frozen
 ~30,561-endpoint index, on the **64 hand-written messy NL queries**
