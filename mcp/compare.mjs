@@ -16,8 +16,11 @@
 import { writeFileSync } from "node:fs";
 import os from "node:os";
 import nodePath from "node:path";
+import { fileURLToPath } from "node:url";
 import { searchIndex } from "../dist/search.js";
 import { resolveEndpointsForQuery } from "../dist/select-policy.js";
+import { embedText } from "../dist/embed/embedder.js";
+import { embedEndpointsCached } from "../dist/embed/endpoint-cache.js";
 import { runAgent, providerLabel, simpleComplete } from "./llm.mjs";
 import { ANTHROPIC_TOOLS, OPENAI_TOOLS, handleTool, bundle, capById } from "./tools.mjs";
 import { TASKS as COMMON_TASKS } from "./tasks.mjs";
@@ -27,6 +30,31 @@ import { TASKS as HARD_TASKS } from "./tasks-hard.mjs";
 const TASKS = process.env.COMPARE_TASKS === "hard" ? HARD_TASKS : COMMON_TASKS;
 
 const ENDPOINTS = bundle.endpoints;
+
+// --- spec-embedding discovery: semantic search over endpoint spec vectors (the
+// semantic-spec technique third-party registries use). Vectors come from the build
+// cache, so this reuses them with no re-embedding. ---
+const __dirname = nodePath.dirname(fileURLToPath(import.meta.url));
+const epText = (e) => [e.summary, e.description, e.path, ...(e.inputs || [])].filter(Boolean).join(" ");
+console.error("loading endpoint vectors (cache) for the spec-embedding backend ...");
+const { vectors: EP_VECS } = await embedEndpointsCached(ENDPOINTS.map(epText), nodePath.join(__dirname, "..", "dist", "cache"));
+const dotp = (a, b) => { let s = 0; for (let i = 0; i < a.length; i++) s += a[i] * b[i]; return s; };
+const specHandle = async (name, args) => {
+  if (name !== "search_endpoints") return { error: `unknown tool: ${name}` };
+  const { query, limit = 8 } = args ?? {};
+  const qv = await embedText(query, "RETRIEVAL_QUERY");
+  const k = Math.min(limit || 8, 8);
+  const sc = new Array(k).fill(-Infinity), ix = new Array(k).fill(-1);
+  for (let i = 0; i < ENDPOINTS.length; i++) {
+    const s = dotp(qv, EP_VECS[i]);
+    if (s > sc[k - 1]) { let j = k - 1; while (j > 0 && sc[j - 1] < s) { sc[j] = sc[j - 1]; ix[j] = ix[j - 1]; j--; } sc[j] = s; ix[j] = i; }
+  }
+  const endpoints = ix.filter((i) => i >= 0).map((i) => {
+    const e = ENDPOINTS[i];
+    return { method: e.method, url: `${e.origin}${e.path}`, summary: e.summary, price_usd: e.payment?.price_usd };
+  });
+  return { endpoints };
+};
 
 // --- baseline discovery tool: keyword search over a (sliced) endpoint corpus ---
 const KW_SCHEMA = {
@@ -93,6 +121,7 @@ const SLICES = {
 const BACKENDS = [
   { name: "OASIS 1-hop (find)", system: FIND_SYSTEM, anthropicTools: FIND_ANTHROPIC, openaiTools: FIND_OPENAI, handle: handleTool },
   { name: "OASIS 2-hop (search→resolve)", system: OASIS_SYSTEM, anthropicTools: ANTHROPIC_TOOLS, openaiTools: OPENAI_TOOLS, handle: handleTool },
+  { name: "spec-embedding (semantic)", system: KW_SYSTEM, anthropicTools: KW_ANTHROPIC, openaiTools: KW_OPENAI, handle: specHandle },
   ...Object.entries(SLICES).map(([name, corpus]) => ({
     name, system: KW_SYSTEM, anthropicTools: KW_ANTHROPIC, openaiTools: KW_OPENAI, handle: kwHandle(corpus),
   })),

@@ -2,10 +2,8 @@ import { CURATED_INTENT_IDS } from "./intent-match.js";
 import type {
   CapabilityIntent,
   EndpointRecord,
-  Facets,
   FacetDomain,
   FacetModality,
-  Port,
   SearchHit,
 } from "./types.js";
 
@@ -181,92 +179,6 @@ export function inferQueryFacets(query: string): InferredQueryFacets {
   return out;
 }
 
-function consumesEntities(ports: Port[] | undefined): Set<string> {
-  return new Set((ports ?? []).map((p) => p.entity));
-}
-
-function producesEntities(ports: Port[] | undefined): Set<string> {
-  return new Set((ports ?? []).map((p) => p.entity));
-}
-
-/**
- * Multiplicative facet-agreement factor in roughly [0.55, 1.25].
- *   - mild boost when a capability's facets AGREE with the inferred query facets;
- *   - DEMOTION (factor < 1) when they DISAGREE on a discriminating axis.
- * The mismatch-demotion is the key new precision signal: a naive additive boost
- * is inert, but pushing a wrong-domain / wrong-entity twin DOWN separates the
- * near-collisions (stock vs crypto, maps vs shop, ...). Never a hard gate.
- *
- * Returns 1 (no-op) whenever the capability carries no facet metadata or the
- * query yields no inferred facets, so the keyword baseline is preserved until
- * intents actually expose facets at search time.
- */
-function facetMatchBoost(
-  cap: CapabilityIntent,
-  inferred: InferredQueryFacets,
-): number {
-  const facets: Facets | undefined = cap.facets;
-  const consume = consumesEntities(cap.consumes);
-  const produce = producesEntities(cap.produces);
-  const hasFacetMeta =
-    !!facets || consume.size > 0 || produce.size > 0;
-  if (!hasFacetMeta) return 1;
-
-  let factor = 1;
-
-  // Domain axis: agreement nudges up, a concrete disagreement nudges down.
-  if (inferred.domain && facets?.domain) {
-    if (facets.domain === inferred.domain) factor *= 1.12;
-    else factor *= 0.75;
-  }
-
-  // Primary-entity (input noun) axis — the discriminator for the
-  // stock/crypto/fx and OCR/document families.
-  if (inferred.primary_entity && consume.size > 0) {
-    if (consume.has(inferred.primary_entity)) factor *= 1.18;
-    // Only demote on a genuine mismatch — not when the query's salient entity is
-    // what this capability PRODUCES (e.g. "text-to-image" infers Image, which is
-    // image_generate's output, not its input). Penalizing that is a false mismatch.
-    else if (!produce.has(inferred.primary_entity)) factor *= 0.6;
-  }
-
-  // Output-entity / modality axis — the discriminator for the Webpage trio
-  // (html/markdown/png) and search.web vs ai.web_research.
-  if (inferred.output_entity && produce.size > 0) {
-    if (produce.has(inferred.output_entity)) factor *= 1.18;
-    else factor *= 0.7;
-  }
-  if (inferred.modality?.length && facets?.modality?.length) {
-    const capMods = new Set(facets.modality);
-    if (inferred.modality.some((m) => capMods.has(m))) factor *= 1.1;
-    else factor *= 0.8;
-  }
-
-  // Clamp so a single signal can never dominate keyword evidence.
-  return Math.max(0.55, Math.min(1.25, factor));
-}
-
-/**
- * Multiplicative demotion when a capability's authored negative_terms[] appear
- * in the query — soft (<1), never a hard gate. Replaces scattered regex
- * negative look-aheads with declarative, author-owned terms.
- */
-function negativeTermsDemotion(
-  cap: CapabilityIntent,
-  query: string,
-): number {
-  const terms = cap.negative_terms;
-  if (!terms?.length) return 1;
-  const q = query.toLowerCase();
-  let factor = 1;
-  for (const term of terms) {
-    const t = term.toLowerCase().trim();
-    if (t.length < 2) continue;
-    if (q.includes(t)) factor *= 0.6;
-  }
-  return Math.max(0.3, factor);
-}
-
 export function searchIndex(
   query: string,
   endpoints: EndpointRecord[],
@@ -274,7 +186,6 @@ export function searchIndex(
   limit = 10,
 ): SearchHit[] {
   const queryTokens = tokenize(query);
-  const inferred = inferQueryFacets(query);
   const hits: SearchHit[] = [];
 
   for (const cap of capabilities) {
@@ -301,10 +212,6 @@ export function searchIndex(
     const confidence = Math.min(1, tokenScore / 0.5);
     const capMultiplier = 1 + 1.2 * confidence;
     score *= capMultiplier;
-
-    // Facet agreement / mismatch-demotion + soft negative-terms demotion.
-    score *= facetMatchBoost(cap, inferred);
-    score *= negativeTermsDemotion(cap, query);
 
     hits.push({
       kind: "capability",
