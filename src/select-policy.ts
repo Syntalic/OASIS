@@ -122,6 +122,47 @@ export const DEFAULT_ID_WEIGHT = 25;
  * ties among comparably on-task endpoints.
  */
 export const DEFAULT_NEUTRAL_SCALE = 0.15;
+/**
+ * Popularity / trust from on-chain PAYMENT ACTIVITY — historical volume, revenue, and a
+ * recent uptick (trending up). THIS is the quality signal endpoint ranking optimizes for:
+ * among many endpoints that do the same task, the heavily-used and growing one is the one
+ * an agent should prefer. It is **not yet ingested** — x402scan/mppscan observe every
+ * x402/MPP settlement on-chain, so the data exists at the source; pulling it into endpoint
+ * records is the next step (see docs/scaling.md). Until then this returns 0 and ranking
+ * falls back to task fit + weak structural quality proxies.
+ */
+export const DEFAULT_POPULARITY_WEIGHT = 30;
+function popularityScore(_ep: EndpointRecord, _weight: number): number {
+  // const u = _ep.usage; if (!u) return 0;
+  // return _weight * (norm(u.revenue_30d) + trendBonus(u.volume_7d, u.volume_30d));
+  return 0; // pending on-chain volume/revenue ingestion
+}
+
+/** Weak INTERIM quality proxy — documented + a real input schema. Structural (harder to
+ *  game than self-description), but a placeholder until popularity lands. */
+export const DEFAULT_QUALITY_WEIGHT = 4;
+function qualityScore(ep: EndpointRecord, weight: number): number {
+  let q = 0;
+  if (ep.guidance_available) q += 0.5;
+  if ((ep.inputs?.length ?? 0) > 0) q += 0.5;
+  return weight * q;
+}
+
+/** Price is NOT an optimization target — only a guard against the absurd. An endpoint
+ *  priced far above the candidate median is pushed down; otherwise price is ignored. */
+export const DEFAULT_PRICE_OUTLIER_PENALTY = 8;
+function priceMedian(candidates: EndpointRecord[]): number | null {
+  const ps = candidates
+    .map((e) => e.payment?.price_usd)
+    .filter((p): p is number => typeof p === "number" && p > 0)
+    .sort((a, b) => a - b);
+  return ps.length ? ps[Math.floor(ps.length / 2)] : null;
+}
+function priceOutlierGuard(ep: EndpointRecord, median: number | null, penalty: number): number {
+  const p = ep.payment?.price_usd;
+  if (median == null || typeof p !== "number") return 0;
+  return p > 20 * median ? -penalty : 0; // "insanely expensive" → deprioritize; don't prefer cheapest
+}
 
 /**
  * Query-AWARE resolve: rank an intent's candidate endpoints by task fit — relevance
@@ -139,20 +180,30 @@ export function resolveEndpointsForQuery(
   vocabWeight = DEFAULT_VOCAB_WEIGHT,
   idWeight = DEFAULT_ID_WEIGHT,
   neutralScale = DEFAULT_NEUTRAL_SCALE,
+  popularityWeight = DEFAULT_POPULARITY_WEIGHT,
+  qualityWeight = DEFAULT_QUALITY_WEIGHT,
+  priceOutlierPenalty = DEFAULT_PRICE_OUTLIER_PENALTY,
 ): EndpointRecord[] {
   const candidates = satisfiesRefsToEndpoints(intent.satisfies, endpoints);
   const qTokens = queryTokens(query);
   const idTokens = intentIdTokens(intent);
   const vocabTokens = intentVocabTokens(intent);
+  const median = priceMedian(candidates);
 
   return [...candidates]
     .map((ep) => ({
       ep,
+      // Task fit (id/vocab/query) GATES; among on-task endpoints, popularity (on-chain
+      // usage — the target, 0 until ingested) decides, with weak structural quality as the
+      // interim proxy and an outlier guard against absurd prices.
       score:
         neutralScale * scoreEndpointNeutral(ep, intent) +
         idWeight * matchCount(ep, idTokens) +
         vocabWeight * lexicalScore(ep, vocabTokens) +
-        queryWeight * lexicalScore(ep, qTokens),
+        queryWeight * lexicalScore(ep, qTokens) +
+        popularityScore(ep, popularityWeight) +
+        qualityScore(ep, qualityWeight) +
+        priceOutlierGuard(ep, median, priceOutlierPenalty),
     }))
     .sort((a, b) => b.score - a.score)
     .slice(0, max)
