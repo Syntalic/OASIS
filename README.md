@@ -15,6 +15,16 @@ Drop the reference MCP server into any agent. **`oasis_find` returns the right p
 for a task in a single call** — a flat, ranked list with price + payment rails inline. Works
 with any LLM provider.
 
+**👉 Just want to try it?** A free hosted instance is live — no clone, no key:
+
+```bash
+claude mcp add --transport http oasis https://mcp.oasisindex.org/mcp
+```
+
+(or any MCP client: `{ "mcpServers": { "oasis": { "url": "https://mcp.oasisindex.org/mcp" } } }`).
+Open + per-IP rate-limited, operated by the stewards as a convenience — **not** part of the
+standard; self-host the same image (see [`mcp/deploy/`](mcp/deploy/)) or run it locally:
+
 ```json
 { "mcpServers": { "oasis": { "command": "node",
     "args": ["/absolute/path/OASIS/mcp/server.mjs"] } } }
