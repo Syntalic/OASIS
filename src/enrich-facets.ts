@@ -74,9 +74,11 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
   // (fast, offline); runtime query→intent routing uses gemini independently.
   const ontologyDir = path.join(PACKAGE_ROOT, "ontology", "intents");
   const sources = await loadOntologySources(ontologyDir);
-  const bindResult = await bindEndpointsByEmbedding(endpoints, sources);
+  const bindResult = await bindEndpointsByEmbedding(endpoints, sources, {
+    cacheDir: path.join(distDir, "cache"),
+  });
   console.error(
-    `  semantic binding: ${bindResult.bound}/${endpoints.length} endpoints → ${bindResult.perIntent.size} curated intents`,
+    `  semantic binding: ${bindResult.bound}/${endpoints.length} endpoints → ${bindResult.perIntent.size} curated intents (embedded ${bindResult.embedded}, reused ${bindResult.reused})`,
   );
 
   // Authored endpoint→capability bindings override the semantic binder.

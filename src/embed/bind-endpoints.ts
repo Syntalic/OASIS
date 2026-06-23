@@ -5,12 +5,14 @@
 // is simply far from finance.stock_quote and never binds. Precision comes from
 // the floor, not from per-intent rules, so it scales as the index grows.
 //
-// Uses the active embedder: run the build/enrich WITHOUT GOOGLE_API_KEY to bind
-// with local MiniLM (fast, offline, no quota); the runtime query→intent routing
-// uses gemini independently — binding and routing are separate similarity spaces.
+// Endpoint vectors are reused across runs via the build-time cache (endpoint-cache.ts):
+// an unchanged endpoint is embedded once, ever. Uses the active embedder — run the
+// build/enrich WITHOUT GOOGLE_API_KEY to bind with local MiniLM (offline, no quota);
+// runtime query→intent routing uses gemini independently (separate similarity spaces).
 import { CURATED_INTENT_IDS } from "../intent-match.js";
 import type { CapabilityIntent, CuratedIntentSource, EndpointRecord } from "../types.js";
-import { embedTexts, EMBED_BACKEND } from "./embedder.js";
+import { EMBED_BACKEND, embedTexts } from "./embedder.js";
+import { embedEndpointsCached } from "./endpoint-cache.js";
 import { capabilityEmbedText } from "./lance-index.js";
 
 const CURATED = new Set<string>(CURATED_INTENT_IDS);
@@ -24,7 +26,7 @@ function endpointEmbedText(ep: EndpointRecord): string {
 }
 
 /** Dot product == cosine: the embedder returns L2-normalized vectors. */
-function cosine(a: number[], b: number[]): number {
+function cosine(a: ArrayLike<number>, b: ArrayLike<number>): number {
   let s = 0;
   for (let i = 0; i < a.length; i++) s += a[i] * b[i];
   return s;
@@ -35,12 +37,19 @@ export interface BindOptions {
   floor?: number;
   /** Max intents a single endpoint may bind to. */
   topKPerEndpoint?: number;
+  /** Build-time embedding cache dir (e.g. dist/cache). Reuses unchanged endpoint
+   *  vectors across runs so a rebuild embeds only the delta, not all 30k. */
+  cacheDir?: string;
   onProgress?: (done: number, total: number) => void;
 }
 
 export interface BindResult {
   bound: number;
   perIntent: Map<string, number>;
+  /** Endpoints freshly embedded this run (cache miss). */
+  embedded: number;
+  /** Endpoints served from the embedding cache. */
+  reused: number;
 }
 
 /**
@@ -67,11 +76,21 @@ export async function bindEndpointsByEmbedding(
     { taskType: "RETRIEVAL_DOCUMENT" },
   );
 
-  const endpointVecs = await embedTexts(
-    endpoints.map(endpointEmbedText),
-    opts.onProgress,
-    { taskType: "RETRIEVAL_DOCUMENT", batchSize: 64 },
-  );
+  const endpointTexts = endpoints.map(endpointEmbedText);
+  let endpointVecs: ArrayLike<number>[];
+  let embedded = endpointTexts.length;
+  let reused = 0;
+  if (opts.cacheDir) {
+    const r = await embedEndpointsCached(endpointTexts, opts.cacheDir, opts.onProgress);
+    endpointVecs = r.vectors;
+    embedded = r.embedded;
+    reused = r.reused;
+  } else {
+    endpointVecs = await embedTexts(endpointTexts, opts.onProgress, {
+      taskType: "RETRIEVAL_DOCUMENT",
+      batchSize: 64,
+    });
+  }
 
   const perIntent = new Map<string, number>();
   let bound = 0;
@@ -90,5 +109,5 @@ export async function bindEndpointsByEmbedding(
       for (const m of matches) perIntent.set(m.id, (perIntent.get(m.id) ?? 0) + 1);
     }
   }
-  return { bound, perIntent };
+  return { bound, perIntent, embedded, reused };
 }

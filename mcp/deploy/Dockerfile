@@ -31,7 +31,7 @@ RUN cd mcp && npm ci --omit=dev
 # 3) Prebuilt index + compiled JS. The server loads index.json + the LanceDB table only,
 #    so drop the big published-artifact duplicates and the host-built vectors.
 COPY dist ./dist
-RUN rm -f dist/endpoints.json dist/providers.json && rm -rf dist/lance
+RUN rm -f dist/endpoints.json dist/providers.json && rm -rf dist/lance dist/cache
 
 # 4) Taxonomy sources the SERVER reads at runtime (not just at build):
 #      - ontology/intents — loaded synchronously at startup by curated-search.js (tools.mjs
