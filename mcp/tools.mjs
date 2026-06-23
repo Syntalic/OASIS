@@ -29,9 +29,16 @@ const capById = new Map(
 // notReady() (→ pure concentration) when the cache is absent, so this is safe before the
 // vectors ship. The routing-margin threshold below which the arm takes over is tunable.
 const endpointArm = loadEndpointArm(DIST, bundle.endpoints);
+// The arm fires when (1) the router was a near-tie — top-two intents within MARGIN_GATE —
+// OR (2) the router was moderately unsure (margin < ARM_CONSIDER_MARGIN) AND the arm finds
+// an endpoint whose query-cosine beats concentration's best by ARM_BEATS_DELTA. (1) catches
+// routing mis-picks (whois, onchain); (2) catches mis-bindings the margin alone misses
+// (domain_register, social_data) without disturbing the working low-margin routes.
 const MARGIN_GATE = Number(process.env.OASIS_MARGIN_GATE ?? "0.011");
+const ARM_CONSIDER_MARGIN = Number(process.env.OASIS_ARM_CONSIDER ?? "0.05");
+const ARM_BEATS_DELTA = Number(process.env.OASIS_ARM_BEATS ?? "0.08");
 if (endpointArm.ready) {
-  console.error(`[oasis] endpoint arm ready (${endpointArm.size} endpoints, ${endpointArm.source}), margin gate < ${MARGIN_GATE}`);
+  console.error(`[oasis] endpoint arm ready (${endpointArm.size} endpoints, ${endpointArm.source}); gate: margin<${MARGIN_GATE} or (margin<${ARM_CONSIDER_MARGIN} & arm beats conc by ${ARM_BEATS_DELTA})`);
 }
 
 const TOOLS = [
@@ -144,10 +151,15 @@ async function oasisFind({ query, limit = 8 }) {
   // the 38/40 wins are structurally protected (a naive merge cost −27; this only swaps the
   // close-race tail). Degrades to pure concentration when the vector cache is absent.
   const margin = caps.length >= 2 ? caps[0].score - caps[1].score : 1;
-  if (endpointArm.ready && margin < MARGIN_GATE) {
+  if (endpointArm.ready && out.length && margin < ARM_CONSIDER_MARGIN) {
     const queryVec = await embedText(query);
     const armHits = endpointArm.topK(queryVec, limit * 3);
-    if (armHits.length) {
+    // Gate signal 2: does the arm's best beat concentration's #1 on query-cosine by a clear
+    // margin? (cosineToEndpoint reuses the same in-memory vectors — no extra embed call.)
+    const concCosine = endpointArm.cosineToEndpoint(queryVec, `${out[0].method} ${out[0].url}`);
+    const armTop = armHits[0]?.score ?? 0;
+    const fire = margin < MARGIN_GATE || (concCosine != null && armTop - concCosine > ARM_BEATS_DELTA);
+    if (fire && armHits.length) {
       const picked = [];
       const seenHost = new Set();
       for (const a of armHits) { if (picked.length >= limit) break; const ho = hostOf(a.ep.origin); if (seenHost.has(ho)) continue; seenHost.add(ho); picked.push(a); }
