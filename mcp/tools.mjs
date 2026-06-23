@@ -102,14 +102,29 @@ async function oasisFind({ query, limit = 8 }) {
   for (const h of hits) {
     if (h.kind === "endpoint") add(h.method, h.origin, h.path, h.label, h.price_usd, undefined, "match");
   }
-  for (const h of hits) {
-    if (h.kind !== "capability" || out.length >= limit + 4) continue;
+  // Concentrate on the TOP-routed intent — return many of ITS providers — and pull only
+  // a couple from each subsequent intent as a fallback (mainly when the top is thin).
+  // Resolving 3 from every routed intent padded the list with adjacent-capability
+  // endpoints, diluting precision (dogfooding tail-drift: ~38% vs ~72%).
+  // For the top intent, prefer one endpoint per DISTINCT host first, so the flat list
+  // maximizes distinct relevant providers instead of stacking several paths on one host.
+  const caps = hits.filter((h) => h.kind === "capability");
+  const hostOf = (origin) => origin.replace(/^https?:\/\//, "").split("/")[0];
+  caps.forEach((h, i) => {
+    if (out.length >= limit) return;
     const intent = capById.get(h.capability_id);
-    if (!intent) continue;
-    for (const e of resolveEndpointsForQuery(intent, bundle.endpoints, query, 3)) {
+    if (!intent) return;
+    const pool = resolveEndpointsForQuery(intent, bundle.endpoints, query, i === 0 ? limit * 3 : 4);
+    const addEp = (e) =>
       add(e.method, e.origin, e.path, e.summary, e.payment?.price_usd, (e.payment?.rails ?? []).map((r) => r.protocol), h.capability_id);
+    if (i === 0) {
+      const seenHost = new Set();
+      for (const e of pool) { if (out.length >= limit) break; const ho = hostOf(e.origin); if (seenHost.has(ho)) continue; seenHost.add(ho); addEp(e); }
+      for (const e of pool) { if (out.length >= limit) break; addEp(e); } // fill remaining (allow same-host)
+    } else {
+      for (const e of pool.slice(0, 2)) { if (out.length >= limit) break; addEp(e); }
     }
-  }
+  });
   return { endpoints: out.slice(0, limit) };
 }
 

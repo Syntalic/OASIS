@@ -12,6 +12,10 @@ aliases:
   - run a language model prompt
   - chat with a hosted language model
   - general-purpose completion endpoint
+  - rewrite or rephrase this text
+  - paraphrase or reword a paragraph
+  - make this writing more formal or polished
+  - summarize or edit a passage of text
 consumes:
   - { entity: Text, role: identifier }
 produces:
