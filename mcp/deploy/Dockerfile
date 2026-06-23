@@ -6,7 +6,9 @@
 #
 # Debian-based Node, NOT Alpine: the native @lancedb/lancedb and onnxruntime
 # (via @xenova/transformers) binaries need glibc. Build the index first on your
-# machine:  pnpm install && pnpm build && pnpm embed
+# machine:  pnpm install && pnpm build && pnpm embed && pnpm build:endpoint-index
+# (the last step quantizes the f32 endpoint-vector cache into the ~86MB int8
+#  dist/endpoint-index.i8.* the gated endpoint arm loads — see src/endpoint-arm.ts).
 FROM node:22-slim
 
 # libgomp1: required by onnxruntime-node. ca-certificates: HTTPS model download.
@@ -28,8 +30,10 @@ RUN npm install --omit=dev --no-audit --no-fund
 COPY mcp/package.json mcp/package-lock.json ./mcp/
 RUN cd mcp && npm ci --omit=dev
 
-# 3) Prebuilt index + compiled JS. The server loads index.json + the LanceDB table only,
-#    so drop the big published-artifact duplicates and the host-built vectors.
+# 3) Prebuilt index + compiled JS. The server loads index.json + the LanceDB table + the
+#    int8 endpoint index (dist/endpoint-index.i8.*, for the gated arm). Drop the big
+#    published-artifact duplicates and the host-built F32 vector cache (dist/cache, ~344MB)
+#    — the int8 index supersedes it at runtime; KEEP dist/endpoint-index.i8.*.
 COPY dist ./dist
 RUN rm -f dist/endpoints.json dist/providers.json && rm -rf dist/lance dist/cache
 
