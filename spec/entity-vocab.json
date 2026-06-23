@@ -50,6 +50,17 @@
     "Ticker": { "role": "identifier" },
     "Domain": { "role": "identifier" },
     "DnsRecord": { "role": "payload" },
-    "IpAddress": { "role": "identifier" }
+    "IpAddress": { "role": "identifier" },
+    "PostalAddress": { "role": "identifier", "schema_org": ["PostalAddress"] },
+    "GeoCoordinates": { "role": "payload", "schema_org": ["GeoCoordinates"] },
+    "GovernmentService": { "role": "payload" },
+    "PredictionMarket": { "role": "payload" },
+    "TradingSignal": { "role": "payload" },
+    "ScientificEntity": { "role": "payload" },
+    "CodeRepository": { "role": "payload", "schema_org": ["SoftwareSourceCode"] },
+    "EconomicIndicator": { "role": "payload" },
+    "MemoryKey": { "role": "identifier" },
+    "MemoryEntry": { "role": "payload" },
+    "AgentProfile": { "role": "payload" }
   }
 }
