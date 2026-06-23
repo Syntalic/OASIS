@@ -1,0 +1,30 @@
+id: maps.geocode
+label: Geocode an address to coordinates (and reverse)
+description: Convert a street address or place name into latitude/longitude coordinates (forward geocoding), or turn coordinates back into a formatted postal address (reverse geocoding). Use when an agent needs the map point for an address, or a human-readable address for a lat/long pair — not for discovering nearby businesses (maps.places) and not for locating an IP address (data.ip_lookup).
+aliases:
+  - geocode this street address into latitude and longitude
+  - convert an address to coordinates
+  - address to lat long
+  - forward geocoding API
+  - reverse geocoding API
+  - lat long to street address
+  - what are the coordinates of this address
+  - resolve a postal address to a geo point
+  - turn a latitude longitude into a formatted address
+  - geocode a place name to a map point
+consumes:
+  - entity: PostalAddress
+    role: identifier
+produces:
+  - entity: GeoCoordinates
+    role: payload
+facets:
+  domain: maps
+  action: lookup
+links:
+  - type: sibling_of
+    to: maps.places
+    note: same maps domain but not substitutable — geocode resolves address↔coordinates, places finds nearby businesses
+  - type: pipes_to
+    to: data.weather_forecast
+    note: geocode an address to coordinates, then fetch the weather at that point

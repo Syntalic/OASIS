@@ -1,0 +1,20 @@
+id: data.code_repository
+label: Look up source code repository data
+description: Read hosted source-code repository data — repository metadata, commits, pull requests, issues, releases, tags, and programming-language breakdown by owner and name. Use when an agent inspects a code repository's history or contents, not general web pages (data.web_scrape) or web search (search.web).
+aliases:
+  - look up a public code repository by owner and name
+  - list issues for a repository
+  - list pull requests for a repository
+  - commit history for a repository
+  - repository releases and version tags
+  - programming-language breakdown of a repository
+  - source code repository metadata
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: CodeRepository
+    role: payload
+facets:
+  domain: data
+  action: lookup

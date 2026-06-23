@@ -1,6 +1,6 @@
 id: comms.send_sms
 label: Send an SMS text message
-description: Outbound SMS for alerts, reminders, and one-time verification codes. Use when an agent must text a phone number without provisioning Twilio or carrier contracts.
+description: Outbound SMS for alerts, reminders, and one-time verification codes. Use when an agent must text a phone number without provisioning carrier contracts.
 aliases:
   - SMS verification code
   - one-time text message
@@ -10,7 +10,7 @@ aliases:
   - text message verification
   - SMS to mobile number
   - programmatic text message
-  - send text without Twilio
+  - send text without a carrier contract
 consumes:
   - entity: Contact
     role: identifier

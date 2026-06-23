@@ -1,6 +1,6 @@
 id: ai.image_generate
 label: Generate an image from a text prompt
-description: Text-to-image generation via AI models with per-image micropayment. Use when an agent must render a visual asset from a natural-language prompt for mockups, illustrations, or user-facing content.
+description: Text-to-image generation via AI models. Use when an agent must render a NEW visual asset from a natural-language prompt for mockups, illustrations, or user-facing content — not image analysis, captioning, moderation, or editing, which read an existing image and return text or a modified image.
 aliases:
   - generate image
   - text to image
@@ -9,7 +9,6 @@ aliases:
   - fast text to image
   - text to image generation
   - render a picture from prompt
-  - mountain sunset image
   - create image from description
   - generate picture from text
   - make an illustration from prompt

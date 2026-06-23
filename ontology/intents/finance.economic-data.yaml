@@ -1,0 +1,25 @@
+id: finance.economic_data
+label: Get macroeconomic indicators and economic data
+description: Macroeconomic time series and indicators — central-bank and government economic series, regional and national economic data, recession-signal dashboards, and point-in-time (vintage) economic releases. Use when an agent needs economy-wide indicators (GDP, CPI, rates, employment), not single-company equity quotes (finance.stock_quote).
+aliases:
+  - macroeconomic indicators
+  - central bank economic series
+  - government economic data series
+  - recession signal dashboard
+  - GDP CPI unemployment rate data
+  - point-in-time vintage economic release
+  - regional economic data snapshot
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: EconomicIndicator
+    role: payload
+    cardinality: many
+facets:
+  domain: finance
+  action: lookup
+links:
+  - type: sibling_of
+    to: finance.stock_quote
+    note: adjacent market data, not substitutable — economic_data is economy-wide indicators, stock_quote is single-company equity prices

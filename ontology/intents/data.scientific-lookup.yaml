@@ -1,0 +1,21 @@
+id: data.scientific_lookup
+label: Look up scientific reference data (genes, proteins, chemicals, organisms)
+description: Resolve scientific entities from public reference databases — genes by symbol, proteins by accession, chemical compounds by identifier or name, and organisms by scientific or common name. Use when an agent needs biology or chemistry reference data, not people (data.person_search) or companies (data.company_enrich).
+aliases:
+  - look up a gene by its official symbol
+  - find a protein by accession
+  - chemical compound by identifier or name
+  - resolve an organism by scientific or common name
+  - gene protein chemical lookup
+  - bioinformatics reference data
+  - compound lookup by identifier
+  - taxonomy name resolver
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: ScientificEntity
+    role: payload
+facets:
+  domain: data
+  action: lookup
