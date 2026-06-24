@@ -1,0 +1,13 @@
+[
+  {
+    "method": "oasis",
+    "represents": "curated intents + vector search (this project)",
+    "metric": "task-level",
+    "queries": 63,
+    "disc_at_1": 85.7,
+    "disc_at_3": 87.3,
+    "mrr": 0.872,
+    "tool_calls": 1,
+    "avg_tokens": 115
+  }
+]

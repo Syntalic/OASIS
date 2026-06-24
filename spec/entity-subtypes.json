@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Syntalic/OASIS/spec/entity-subtypes.json",
+  "title": "EntitySubtypes",
+  "description": "Narrow one-hop parent compatibility for port matching. v1: place family → Place, Brand → Company only.",
+  "spec_version": "0.1.0",
+  "subtypes": {
+    "PostalAddress": { "parent": "Place" },
+    "GeoCoordinates": { "parent": "Place" },
+    "Location": { "parent": "Place" },
+    "City": { "parent": "Place" },
+    "Region": { "parent": "Place" },
+    "Brand": { "parent": "Company" }
+  }
+}

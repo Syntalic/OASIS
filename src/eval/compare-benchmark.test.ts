@@ -2,14 +2,12 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { evaluateMode } from "./discovery-benchmark.js";
 import { runCompareBenchmark } from "./compare-benchmark.js";
 import type { IndexBundle } from "../types.js";
+import { oasisDistIndex, SKIP_NO_INDEX, skipIfPinned } from "../test-helpers.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const distIndex = path.join(__dirname, "..", "..", "dist", "index.json");
+const distIndex = oasisDistIndex();
 
 async function loadBundle(): Promise<IndexBundle> {
   const raw = await readFile(distIndex, "utf8");
@@ -18,11 +16,10 @@ async function loadBundle(): Promise<IndexBundle> {
 
 // dist/index.json is a build artifact (gitignored). Skip when absent rather
 // than fail (e.g. CI that only compiles); run after `pnpm run build` locally.
-const SKIP_MSG = "dist/index.json missing — run pnpm run build first";
-
 describe("compare benchmark", () => {
   it("x402scan-only slice is smaller than full index", async (t) => {
-    if (!existsSync(distIndex)) return t.skip(SKIP_MSG);
+    if (skipIfPinned(t)) return;
+    if (!existsSync(distIndex)) return t.skip(SKIP_NO_INDEX);
     const bundle = await loadBundle();
     const x402 = bundle.endpoints.filter((e) =>
       e.provider_fqn?.startsWith("x402scan/"),
@@ -32,7 +29,8 @@ describe("compare benchmark", () => {
   });
 
   it("mpp-only slice includes catalog and mppscan endpoints", async (t) => {
-    if (!existsSync(distIndex)) return t.skip(SKIP_MSG);
+    if (skipIfPinned(t)) return;
+    if (!existsSync(distIndex)) return t.skip(SKIP_NO_INDEX);
     const bundle = await loadBundle();
     const mpp = bundle.endpoints.filter(
       (e) =>
@@ -47,7 +45,8 @@ describe("compare benchmark", () => {
   });
 
   it("full index beats every baseline on messy discover@3", async (t) => {
-    if (!existsSync(distIndex)) return t.skip(SKIP_MSG);
+    if (skipIfPinned(t)) return;
+    if (!existsSync(distIndex)) return t.skip(SKIP_NO_INDEX);
     const bundle = await loadBundle();
     const { loadMessyQueries } = await import("./hybrid-mvp.js");
     const queries = await loadMessyQueries();
@@ -79,7 +78,8 @@ describe("compare benchmark", () => {
   });
 
   it("runs offline compare without external APIs", async (t) => {
-    if (!existsSync(distIndex)) return t.skip(SKIP_MSG);
+    if (skipIfPinned(t)) return;
+    if (!existsSync(distIndex)) return t.skip(SKIP_NO_INDEX);
     const bundle = await loadBundle();
     const reports = await runCompareBenchmark(bundle, {
       offline: true,

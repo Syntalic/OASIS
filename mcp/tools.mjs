@@ -9,6 +9,8 @@ import { resolveEndpointsForQuery } from "../dist/select-policy.js";
 import { loadEndpointArm } from "../dist/endpoint-arm.js";
 import { embedText } from "../dist/embed/embedder.js";
 import { relatedOptions } from "../dist/related.js";
+import { loadEntityFlowRuntime, suggestFollowUps } from "../dist/entity-flow-traverse.js";
+import { extractEntities } from "../dist/entity-extract.js";
 import { curatedCapabilitiesForSearch } from "../dist/curated-search.js";
 import { defaultLanceDir } from "../dist/embed/lance-index.js";
 import { getTaxonomy } from "../dist/taxonomy.js";
@@ -20,9 +22,19 @@ const DIST = path.join(__dirname, "..", "dist");
 
 const bundle = JSON.parse(readFileSync(path.join(DIST, "index.json"), "utf8"));
 const lanceDir = defaultLanceDir(DIST);
-const capById = new Map(
-  curatedCapabilitiesForSearch(bundle).map((c) => [c.id, c]),
-);
+const curatedCaps = curatedCapabilitiesForSearch(bundle);
+const capById = new Map(curatedCaps.map((c) => [c.id, c]));
+
+let entityFlowRuntime = null;
+async function getEntityFlowRuntime() {
+  if (entityFlowRuntime) return entityFlowRuntime;
+  try {
+    entityFlowRuntime = await loadEntityFlowRuntime(DIST, curatedCaps);
+    return entityFlowRuntime;
+  } catch {
+    return null;
+  }
+}
 
 // Direct endpoint-embedding arm — a confidence-GATED fallback consulted only when the
 // router is unsure (see oasisFind). Reuses the build-time endpoint-vector cache; reports
@@ -179,24 +191,28 @@ async function oasisFind({ query, limit = 8 }) {
   return { endpoints: out.slice(0, limit) };
 }
 
-// oasis_next: from a query (routed) or an intent id, surface the ontology-graph
-// follow-ups so an agent can dig deeper / chain tools instead of re-searching. The
-// typed-link graph (pipes_to / narrower / broader / alternatives) is something flat
-// keyword or spec-embedding search structurally can't offer.
-async function oasisNext({ query, intent_id, limit = 12 }) {
-  let intent;
-  if (intent_id) {
-    intent = capById.get(intent_id);
-    if (!intent) return { error: `unknown intent_id: ${intent_id}` };
-  } else if (query) {
-    const hits = await searchHybridWithFallback(query, bundle, lanceDir, 5);
-    const top = hits.find((h) => h.kind === "capability");
-    if (!top) return { error: "no capability matched the query" };
-    intent = capById.get(top.capability_id);
-  } else {
-    return { error: "provide a query or an intent_id" };
-  }
-  const options = relatedOptions(intent, bundle).slice(0, limit);
+function fmtFollowUp(lead) {
+  return {
+    intent_id: lead.intent_id,
+    label: lead.label,
+    bridging_entity: lead.bridging_entity,
+    match_kind: lead.match_kind,
+    why: lead.why,
+    score: lead.score,
+    forward: [],
+    endpoint: lead.top_endpoint
+      ? {
+          method: lead.top_endpoint.method,
+          url: `${lead.top_endpoint.origin}${lead.top_endpoint.path}`,
+          price_usd: lead.top_endpoint.price_usd,
+          rails: lead.top_endpoint.rails,
+        }
+      : undefined,
+  };
+}
+
+function legacyRelatedGroups(intent) {
+  const options = relatedOptions(intent, bundle).slice(0, 12);
   const fmt = (o) => ({
     intent_id: o.intent_id,
     label: o.label,
@@ -208,13 +224,100 @@ async function oasisNext({ query, intent_id, limit = 12 }) {
   });
   const byRel = (rels) => options.filter((o) => rels.includes(o.relation)).map(fmt);
   return {
-    intent: { id: intent.id, label: intent.label },
     next_steps: byRel(["pipes_to"]),
     drill_down: byRel(["broader_of"]),
     generalize: byRel(["narrower_of"]),
     alternatives: byRel(["alternative_of", "sibling_of"]),
     prior_steps: byRel(["fed_by"]),
   };
+}
+
+// oasis_next v1: cross-domain investigative leads from held identity entities.
+async function oasisNext({
+  finding,
+  entities: explicitEntities,
+  intent_id,
+  query,
+  exclude_intent_ids = [],
+  limit = 8,
+} = {}) {
+  const runtime = await getEntityFlowRuntime();
+  if (!runtime) {
+    if (intent_id || query) {
+      let intent;
+      if (intent_id) {
+        intent = capById.get(intent_id);
+        if (!intent) return { error: `unknown intent_id: ${intent_id}` };
+      } else {
+        const hits = await searchHybridWithFallback(query, bundle, lanceDir, 5);
+        const top = hits.find((h) => h.kind === "capability");
+        if (!top) return { error: "no capability matched the query" };
+        intent = capById.get(top.capability_id);
+      }
+      const legacy = legacyRelatedGroups(intent);
+      return {
+        source: { intent_id: intent.id, label: intent.label },
+        forward: [],
+        investigative: [],
+        entity_context: { method: "legacy_fallback", held: [] },
+        ...legacy,
+        hint: "entity-flow index not built — rebuild with pnpm run build",
+      };
+    }
+    return { error: "entity-flow index not available — run pnpm run build" };
+  }
+
+  let source_intent_id = intent_id;
+  if (!source_intent_id && query) {
+    const hits = await searchHybridWithFallback(query, bundle, lanceDir, 5);
+    const top = hits.find((h) => h.kind === "capability");
+    if (!top) return { error: "no capability matched the query" };
+    source_intent_id = top.capability_id;
+  }
+
+  const extraction = extractEntities({
+    finding,
+    explicitEntities,
+    source_intent_id,
+    bundle,
+    capabilitiesById: capById,
+  });
+
+  if (!extraction.entities.length) {
+    return {
+      error: "no entities held — pass entities[] or a finding with extractable typed nouns",
+    };
+  }
+
+  const source = source_intent_id ? capById.get(source_intent_id) : undefined;
+  const result = suggestFollowUps(
+    {
+      source_intent_id,
+      entities: extraction.entities,
+      exclude: exclude_intent_ids,
+      finding,
+    },
+    runtime,
+    { limit, capabilities: curatedCaps, endpoints: bundle.endpoints },
+  );
+
+  const out = {
+    source: source ? { intent_id: source.id, label: source.label } : undefined,
+    entity_context: { method: extraction.method, held: extraction.entities },
+    forward: [],
+    forward_note: "v2 — forward (process-output chaining) is always [] in v1",
+    investigative: result.investigative.map(fmtFollowUp),
+  };
+
+  if (!out.investigative.length && extraction.entities.some((e) => e.kind === "observation")) {
+    out.hint = "pass identity entities (e.g. Place, Company) for cross-domain leads";
+  }
+
+  if (process.env.OASIS_NEXT_LEGACY === "1" && source) {
+    Object.assign(out, legacyRelatedGroups(source));
+  }
+
+  return out;
 }
 
 export async function handleTool(name, args) {
@@ -258,14 +361,37 @@ const SERVER_TOOLS = [
   {
     name: "oasis_next",
     description:
-      "Given a task (query) or a capability intent id, return ontology-graph FOLLOW-UPS to dig deeper: next_steps (what to do with the result next), drill_down / generalize (more specific / more general capabilities), alternatives, and prior_steps (what feeds this intent). Chains tools and explores a topic without re-searching from scratch.",
+      "Given what an agent just found (finding) and/or typed identity entities it holds, return CALLABLE cross-domain investigative follow-ups — other-domain capabilities that consume an identity you hold. Each suggestion includes the bridging entity proving you can invoke it. Prefer passing entities[] explicitly. Forward chaining is v2 (forward always []).",
     schema: {
       type: "object",
       properties: {
-        query: { type: "string", description: "The task in natural language (routed to an intent)." },
-        intent_id: { type: "string", description: "A capability id, instead of a query." },
-        limit: { type: "number", description: "Max follow-ups (default 12)." },
+        finding: { type: "string", description: "What the agent just learned — used for heuristic extraction when entities omitted." },
+        entities: {
+          type: "array",
+          description: "Typed entities held (identity preferred for investigative leads).",
+          items: {
+            type: "object",
+            properties: {
+              entity: { type: "string" },
+              value: { type: "string" },
+              kind: { type: "string", enum: ["identity", "observation"] },
+              source_intent_id: { type: "string" },
+              role: { type: "string", enum: ["identifier", "payload"] },
+            },
+            required: ["entity"],
+          },
+        },
+        intent_id: { type: "string", description: "Last capability invoked (source domain for cross-domain bias)." },
+        query: { type: "string", description: "DEPRECATED — routes to intent when intent_id omitted." },
+        exclude_intent_ids: { type: "array", items: { type: "string" } },
+        limit: { type: "number", description: "Max investigative follow-ups (default 8)." },
       },
+      anyOf: [
+        { required: ["entities"] },
+        { required: ["finding"] },
+        { required: ["intent_id"] },
+        { required: ["query"] },
+      ],
     },
   },
   ...TOOLS,

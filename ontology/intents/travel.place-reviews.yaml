@@ -12,7 +12,7 @@ aliases:
   - travel place enrichment
   - find restaurants with reviews
 consumes:
-  - entity: Query
+  - entity: Place
     role: identifier
 produces:
   - entity: Place

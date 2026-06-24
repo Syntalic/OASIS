@@ -17,6 +17,10 @@ aliases:
   - engineering job listings
   - fresh ATS job feed
 consumes:
-  - { entity: Query, role: identifier }
+  - { entity: Company, role: identifier }
+  - { entity: ProductCategory, role: identifier }
 produces:
-  - { entity: StructuredRecord, role: payload }
+  - { entity: CodeRepository, role: payload }
+facets:
+  domain: data
+  action: search

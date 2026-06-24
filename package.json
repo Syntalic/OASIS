@@ -33,6 +33,8 @@
     "eval:compare": "node dist/cli.js eval:compare",
     "eval:multi": "node dist/cli.js eval:multi",
     "eval:heldout": "node dist/cli.js eval:heldout",
+    "eval:bridges": "node dist/cli.js eval:bridges",
+    "eval:usefulness": "node dist/cli.js eval:usefulness",
     "benchmark": "pnpm run build:ts && pnpm test && pnpm run eval:resolve && pnpm run eval:compare -- --offline --methods full,endpoints-only,pay-skills-only,x402scan-only,mpp-only,full-hybrid",
     "eval:generate": "pnpm run build:ts && node dist/eval/generate-queries.js",
     "embed": "node dist/cli.js embed --scope curated",

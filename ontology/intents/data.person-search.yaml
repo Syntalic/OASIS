@@ -12,7 +12,9 @@ aliases:
   - profile lookup by name
   - B2B contact discovery
 consumes:
-  - entity: Query
+  - entity: Person
+    role: identifier
+  - entity: Company
     role: identifier
 produces:
   - entity: Person

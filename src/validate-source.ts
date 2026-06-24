@@ -33,18 +33,30 @@ async function schemaValidator(): Promise<void> {
   _validate = ajv.compile(schema);
 }
 
+interface VocabEntityDef {
+  absorbs?: string[];
+  kind?: string;
+  deprecated?: boolean;
+}
+
 let _entities: Set<string> | null = null;
+let _vocabEntities: Record<string, VocabEntityDef> | null = null;
+
 async function entityVocab(): Promise<Set<string>> {
   if (_entities) return _entities;
   const vocab = JSON.parse(await readFile(path.join(SPEC, "entity-vocab.json"), "utf8"));
+  _vocabEntities = vocab.entities ?? {};
   const set = new Set<string>();
-  for (const [name, def] of Object.entries<{ absorbs?: string[] }>(vocab.entities ?? {})) {
+  for (const [name, def] of Object.entries<VocabEntityDef>(_vocabEntities!)) {
     set.add(name);
     for (const a of def.absorbs ?? []) set.add(a);
   }
   _entities = set;
   return set;
 }
+
+const DEPRECATED_PORT_ENTITIES = new Set(["StructuredRecord", "Location", "PostalAddress", "GeoCoordinates"]);
+const ABSTRACT_ENTITIES = new Set(["NamedEntity", "Org"]);
 
 async function existingIds(): Promise<Set<string>> {
   const files = (await readdir(INTENTS).catch(() => [])).filter(
@@ -85,11 +97,28 @@ export async function validateSourceIntent(source: unknown): Promise<SourceValid
   // Closed entity vocab — the schema lets `entity` be any string; enforce the controlled
   // vocabulary here so consumes/produces stay typed (chaining + guards depend on it).
   const entities = await entityVocab();
+  await entityVocab();
   for (const port of [...(src.consumes ?? []), ...(src.produces ?? [])]) {
-    if (port?.entity && !entities.has(port.entity)) {
+    if (!port?.entity) continue;
+    if (!entities.has(port.entity)) {
       errors.push(
         `unknown entity "${port.entity}" — consumes/produces must use the closed entity vocab (spec/entity-vocab.json)`,
       );
+      continue;
+    }
+    if (ABSTRACT_ENTITIES.has(port.entity) || _vocabEntities![port.entity]?.kind === "abstract") {
+      errors.push(`abstract entity "${port.entity}" must not appear on consumes/produces ports`);
+    }
+    if (DEPRECATED_PORT_ENTITIES.has(port.entity)) {
+      errors.push(`deprecated entity "${port.entity}" must not appear on consumes/produces ports — migrate per entity-model spec`);
+    }
+    const def = _vocabEntities![port.entity];
+    if (port.entity === "Query" && def) {
+      const typedAlternatives = ["Place", "Company", "Person", "Product", "ProductCategory", "Domain", "CryptoAsset", "WalletAddress"];
+      const label = `${src.label ?? ""} ${src.description ?? ""}`.toLowerCase();
+      if (typedAlternatives.some((t) => label.includes(t.toLowerCase()))) {
+        warnings.push(`Query consume on "${id}" — a typed entity from the decision tree may apply`);
+      }
     }
   }
 

@@ -25,6 +25,8 @@ import type {
   PaySkillsProvider,
 } from "./types.js";
 import { validateBundle } from "./validate.js";
+import { buildEntityIndexFromVocab, loadEntityVocabAndSubtypes } from "./entity-index.js";
+import { buildEntityFlow } from "./entity-flow.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..");
@@ -515,6 +517,18 @@ export async function buildIndex(options: BuildOptions = {}): Promise<IndexBundl
       null,
       2,
     ),
+  );
+
+  const { vocab, subtypes } = await loadEntityVocabAndSubtypes();
+  const entityIndex = buildEntityIndexFromVocab(vocab, subtypes, capabilities);
+  const entityFlow = buildEntityFlow(capabilities, entityIndex);
+  await writeFile(
+    path.join(outputDir, "entity-index.json"),
+    JSON.stringify(entityIndex, null, 2),
+  );
+  await writeFile(
+    path.join(outputDir, "entity-flow.json"),
+    JSON.stringify(entityFlow, null, 2),
   );
 
   return bundle;

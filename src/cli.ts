@@ -539,6 +539,7 @@ program
   )
   .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
   .option("--json", "Output JSON report")
+  .option("--out <file>", "Write JSON report to file (E3 baseline capture)")
   .option("--live", "Also hit a live external registry API (cross-corpus floor, not apples-to-apples)")
   .action(async (opts) => {
     const bundle = await loadBundle(opts.dist);
@@ -549,11 +550,18 @@ program
       distDir: opts.dist,
       live: Boolean(opts.live),
     });
+    if (opts.out) {
+      const { writeFile } = await import("node:fs/promises");
+      await writeFile(opts.out, `${JSON.stringify(reports, null, 2)}\n`, "utf8");
+      console.log(`wrote ${opts.out}`);
+    }
     if (opts.json) {
       console.log(JSON.stringify(reports, null, 2));
       return;
     }
-    console.log(formatMethodTable(reports));
+    if (!opts.out) {
+      console.log(formatMethodTable(reports));
+    }
   });
 
 program
@@ -655,5 +663,63 @@ function formatResolve(payload: {
   }
   return lines.filter(Boolean).join("\n");
 }
+
+program
+  .command("eval:bridges")
+  .description("E1 bridge validation on built entity-index (v1 identity lateral gates)")
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--json", "Output JSON report")
+  .action(async (opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const { loadEntityIndex } = await import("./entity-index.js");
+    const { loadBridgeScenarios, runBridgeValidation } = await import(
+      "./eval/bridge-validation.js"
+    );
+    const { curatedCapabilitiesForSearch } = await import("./curated-search.js");
+    const entityIndex = await loadEntityIndex(opts.dist);
+    const scenarios = await loadBridgeScenarios();
+    const capabilities = curatedCapabilitiesForSearch(bundle);
+    const report = runBridgeValidation(capabilities, entityIndex, scenarios);
+    if (opts.json) {
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      console.log(`E1 bridge validation: ${report.passed}/${report.passed + report.failed} passed`);
+      for (const r of report.results) {
+        console.log(`  ${r.passed ? "✓" : "✗"} ${r.id}${r.missing.length ? ` missing: ${r.missing.join(", ")}` : ""}`);
+      }
+    }
+    if (report.failed > 0) process.exit(1);
+  });
+
+program
+  .command("eval:usefulness")
+  .description("E2 usefulness eval — investigative leads from real suggestFollowUps path")
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--json", "Output JSON report")
+  .action(async (opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const { runUsefulnessEval } = await import("./eval/usefulness-eval.js");
+    const report = await runUsefulnessEval(bundle, opts.dist);
+    if (opts.json) {
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      console.log("E2 usefulness eval:");
+      console.log(`  callable_precision: ${report.callable_precision.toFixed(3)}`);
+      console.log(`  lateral_relevance_precision: ${report.lateral_relevance_precision.toFixed(3)}`);
+      console.log(`  identity_recall: ${report.identity_recall.toFixed(3)}`);
+      console.log(`  good_recall@6: ${report.good_recall_at_6.toFixed(3)}`);
+      console.log(`  bad_rate@8: ${report.bad_rate_at_8.toFixed(3)}`);
+      console.log(`  domain_diversity: ${report.domain_diversity.toFixed(2)}`);
+      console.log(
+        `  baseline catalog_aware good_recall@6: ${report.baseline_catalog_aware.good_recall_at_6.toFixed(3)}`,
+      );
+      console.log(
+        `  baseline catalog_aware lateral_precision: ${report.baseline_catalog_aware.lateral_relevance_precision.toFixed(3)}`,
+      );
+      console.log(`  beats_baseline: ${report.beats_baseline}`);
+      console.log(`  passed: ${report.passed}`);
+    }
+    if (!report.passed) process.exit(1);
+  });
 
 program.parse();

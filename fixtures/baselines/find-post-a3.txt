@@ -1,0 +1,12 @@
+Discovery-method comparison — hand-labeled NL queries, top-10
+
+method           disc@1   disc@3   MRR     tools  tokens  metric       represents
+--------------------------------------------------------------------------------------------------------
+oasis            85.7%    87.3%    0.872   1      115     task-level   curated intents + vector search (this project)
+spec-embedding   27.0%    39.7%    0.367   2      268     task-level   semantic over endpoint specs (third-party semantic-registry technique)
+catalog          1.6%     9.5%     0.062   2      292     task-level   third-party scanner registry, keyword (consolidated)
+
+tools  = round-trips to an invocable endpoint (oasis_find returns price+rails inline = 1 hop).
+tokens = avg discovery-payload tokens the agent reads (≈ chars/4); end-to-end agent cost is the LLM probe.
+task-level: top-k holds the golden endpoint OR an endpoint bound to the expected task intent.
+literal-url: golden-URL match only — a strict cross-corpus floor (live external registry).
