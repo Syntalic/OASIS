@@ -87,7 +87,7 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
     },
   });
   console.error(
-    `  hybrid binding: ${bindResult.bound}/${endpoints.length} endpoints → ${bindResult.perIntent.size} curated intents (embedded ${bindResult.embedded}, reused ${bindResult.reused}); gated ${bindResult.gatedMeta} meta-files + ${bindResult.gatedSparse} below sparse-vocab floor`,
+    `  hybrid binding: ${bindResult.bound}/${endpoints.length} endpoints → ${bindResult.perIntent.size} curated intents (embedded ${bindResult.embedded}, reused ${bindResult.reused}); ${bindResult.promotedSparse} promoted by strong-sparse; gated ${bindResult.gatedMeta} meta-files + ${bindResult.gatedSparse} below sparse-vocab floor`,
   );
 
   // Authored endpoint→capability bindings override the semantic binder.

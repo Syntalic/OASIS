@@ -7,6 +7,12 @@ import type {
 } from "./types.js";
 import { endpointId } from "./id.js";
 import { canonicalOrigin } from "./origin-aliases.js";
+import {
+  derivePriceUsd,
+  deriveRails,
+  parsePaymentOffers,
+  parseServiceInfo,
+} from "./payment-spec.js";
 
 const HTTP_METHODS = new Set([
   "get",
@@ -31,6 +37,7 @@ interface OpenApiDoc {
   paths?: Record<string, Record<string, unknown>>;
   components?: Record<string, unknown>;
   "x-faremeter-assets"?: Record<string, { chain?: string }>;
+  "x-service-info"?: unknown;
 }
 
 function normalizeOrigin(url: string): string {
@@ -271,6 +278,7 @@ export function parseOpenApi(
     doc.info?.["x-guidance"] ??
     doc.info?.guidance;
   const guidanceAvailable = Boolean(guidance);
+  const service = parseServiceInfo(doc["x-service-info"]);
   const openapiUrl = `${origin}/openapi.json`;
   const records: EndpointRecord[] = [];
 
@@ -284,15 +292,39 @@ export function parseOpenApi(
         (op.summary as string) ||
         (op.description as string)?.slice(0, 120) ||
         `${httpMethod} ${path}`;
-      const paid = isPaid(op);
-      const payment: PaymentInfo = {
-        price_usd: extractPriceUsd(op),
-        paid,
-        rails: paid ? extractRails(doc, op) : [{ protocol: "x402" }],
-      };
-      if (!paid) {
-        payment.rails = [];
+      // Canonical x-payment-info per draft-payment-discovery-00 (validated offers);
+      // fall back to legacy faremeter/pricing extraction for non-spec specs.
+      const { offers } = parsePaymentOffers(op["x-payment-info"]);
+      const paid = offers.length > 0 || isPaid(op);
+      let payment: PaymentInfo;
+      if (offers.length > 0) {
+        const { price, currency } = derivePriceUsd(offers);
+        const railsFromOffers = deriveRails(offers);
+        payment = {
+          price_usd: price ?? extractPriceUsd(op),
+          paid: true,
+          rails: railsFromOffers.length ? railsFromOffers : extractRails(doc, op),
+          offers,
+          currency,
+        };
+      } else if (paid) {
+        payment = {
+          price_usd: extractPriceUsd(op),
+          paid: true,
+          rails: extractRails(doc, op),
+        };
+      } else {
+        payment = { paid: false, rails: [] };
       }
+
+      const responsesObj = op.responses as Record<string, unknown> | undefined;
+      const responses = {
+        has200: Boolean(responsesObj?.["200"]),
+        has402: Boolean(responsesObj?.["402"]),
+      };
+      const writeMethod =
+        httpMethod === "POST" || httpMethod === "PUT" || httpMethod === "PATCH";
+      const schemaMissing = paid && writeMethod && !op.requestBody;
 
       const tags = op.tags as string[] | undefined;
       const provider = options.provider;
@@ -327,6 +359,9 @@ export function parseOpenApi(
         capabilities: options.capabilityIds,
         inputs: extractInputs(op, doc),
         payment,
+        service,
+        responses,
+        schema_missing: schemaMissing,
         guidance_available: guidanceAvailable,
         openapi_url: openapiUrl,
         search_text: searchText,

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Syntalic/OASIS/spec/x-service-info.schema.json",
+  "title": "x-service-info",
+  "description": "OpenAPI root extension carrying service-level metadata. Verbatim from draft-payment-discovery-00 Appendix D (Tempo Labs + Merit Systems).",
+  "type": "object",
+  "properties": {
+    "categories": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "docs": {
+      "type": "object",
+      "properties": {
+        "apiReference": { "type": "string", "format": "uri" },
+        "homepage": { "type": "string", "format": "uri" },
+        "llms": { "type": "string", "format": "uri" }
+      }
+    }
+  }
+}

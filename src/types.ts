@@ -13,10 +13,28 @@ export interface PaymentRail {
   networks?: string[];
 }
 
+/** A single payment offer (draft-payment-discovery-00 x-payment-info.offers[]). */
+export interface PaymentOffer {
+  /** "charge" (per-request) or "session" (pay-as-you-go). */
+  intent: "charge" | "session";
+  /** Payment method identifier (e.g. "tempo", "stripe", "x402"). */
+  method: string;
+  /** Cost in base currency units (integer string), or null for dynamic pricing. */
+  amount: string | null;
+  /** Token contract address (blockchain methods) or ISO-4217 code (fiat). */
+  currency?: string;
+  description?: string;
+}
+
 export interface PaymentInfo {
+  /** Derived convenience: cheapest charge offer expressed in USD. */
   price_usd?: number;
   paid: boolean;
   rails: PaymentRail[];
+  /** Canonical multi-offer payment terms parsed from x-payment-info. */
+  offers?: PaymentOffer[];
+  /** Currency of the offer used to derive price_usd. */
+  currency?: string;
 }
 
 /** Facet enum axes (mirror spec/ontology-source.schema.json). */
@@ -110,6 +128,16 @@ export interface EndpointFacets {
   modality?: FacetModality[];
 }
 
+/** Service-level metadata from the OpenAPI root x-service-info extension. */
+export interface ServiceInfo {
+  categories?: string[];
+  docs?: {
+    apiReference?: string;
+    homepage?: string;
+    llms?: string;
+  };
+}
+
 export interface EndpointRecord {
   id: string;
   origin: string;
@@ -126,6 +154,11 @@ export interface EndpointRecord {
   inputs?: string[];
   facets?: EndpointFacets;
   payment: PaymentInfo;
+  service?: ServiceInfo;
+  /** Declared responses presence; draft-payment-discovery-00 requires 402 on payable ops. */
+  responses?: { has200?: boolean; has402?: boolean };
+  /** Payable operation lacking a requestBody schema (the spec's "schema-missing"). */
+  schema_missing?: boolean;
   guidance_available?: boolean;
   openapi_url?: string;
   search_text: string;

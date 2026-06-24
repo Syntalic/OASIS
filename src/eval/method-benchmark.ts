@@ -37,6 +37,7 @@ import { expectedEndpointId, type EvalQuery } from "./discovery-benchmark.js";
 import { searchCdpBazaar as searchLiveRegistry } from "./external/cdp-bazaar.js";
 import { loadMessyQueries } from "./hybrid-mvp.js";
 import { rankExternalHits } from "./url-match.js";
+import { endpointEmbedText } from "../embed/endpoint-text.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");
@@ -56,9 +57,6 @@ export interface MethodReport {
   /** Avg discovery-payload tokens the agent reads (≈ chars/4). */
   avg_tokens: number;
 }
-
-const endpointEmbedText = (ep: EndpointRecord): string =>
-  [ep.summary, ep.description, ep.path, ...(ep.inputs ?? [])].filter(Boolean).join(" ");
 
 const dot = (a: ArrayLike<number>, b: ArrayLike<number>): number => {
   let s = 0;

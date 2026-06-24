@@ -21,6 +21,7 @@ import { searchIndex } from "../dist/search.js";
 import { resolveEndpointsForQuery } from "../dist/select-policy.js";
 import { embedText } from "../dist/embed/embedder.js";
 import { embedEndpointsCached } from "../dist/embed/endpoint-cache.js";
+import { endpointEmbedText } from "../dist/embed/endpoint-text.js";
 import { runAgent, providerLabel, simpleComplete } from "./llm.mjs";
 import { ANTHROPIC_TOOLS, OPENAI_TOOLS, handleTool, bundle, capById } from "./tools.mjs";
 import { TASKS as COMMON_TASKS } from "./tasks.mjs";
@@ -35,7 +36,7 @@ const ENDPOINTS = bundle.endpoints;
 // semantic-spec technique third-party registries use). Vectors come from the build
 // cache, so this reuses them with no re-embedding. ---
 const __dirname = nodePath.dirname(fileURLToPath(import.meta.url));
-const epText = (e) => [e.summary, e.description, e.path, ...(e.inputs || [])].filter(Boolean).join(" ");
+const epText = endpointEmbedText; // shared with the binder so the cache hashes line up
 console.error("loading endpoint vectors (cache) for the spec-embedding backend ...");
 const { vectors: EP_VECS } = await embedEndpointsCached(ENDPOINTS.map(epText), nodePath.join(__dirname, "..", "dist", "cache"));
 const dotp = (a, b) => { let s = 0; for (let i = 0; i < a.length; i++) s += a[i] * b[i]; return s; };
