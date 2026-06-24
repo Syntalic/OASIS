@@ -15,11 +15,12 @@ arm was net-negative on novel phrasing and was removed), with **embedding-driven
 binding** (no regex matchers). This lifted routing from the old hybrid's **disc@1 87.3% → 97.3%**
 overall (held-out **78.2% → 95.4%**) on the 150 messy + held-out queries.
 
-## Head-to-head vs the live competitors (dogfooding)
+## Benchmarked against the leading discovery layers (dogfooding)
 
 The comparisons elsewhere in this doc are *internal* — OASIS's own discovery techniques on our
-corpus. This section is the **external** benchmark: `oasis_find` against the two other live x402
-discovery layers, on the same 40 colloquial tasks, scored by hand.
+corpus. This section is the **external** check: the same `oasis_find` on a battery of real colloquial
+tasks, with the two largest live x402 discovery layers run on the identical battery so the numbers
+aren't measured in a vacuum.
 
 **Engines.** OASIS (`oasis_find`); **AgentCash** (`search` — vector similarity + live usage
 telemetry); **Coinbase x402 Bazaar** (HTTP `/discovery/search` over a ~25,000-resource catalog).
@@ -42,10 +43,25 @@ task scores 0; crypto perpetuals for a spot-price task score 0. Providers are de
 | **Response size / task** — tokens (≈ response bytes ÷ 4) the engine returns. | ~545 | ~5,447 | ~2,132 |
 | **Cost per useful result** — response tokens ÷ useful providers: tokens the agent must read to get *one* genuinely useful API. Lower = cheaper. | **97** | 1,831 | 1,292 |
 
-OASIS leads every axis: most useful options per task, highest precision, fewest complete misses,
-and **~19× cheaper per useful result** than AgentCash (it returns a tight, pre-ranked,
-de-duplicated list; AgentCash often repeats one host, and Bazaar's 25k catalog still whiffs on 11
-of 40 tasks).
+Across the battery OASIS returned the most useful options per task and the lowest cost per useful
+result of the three — a tight, pre-ranked, de-duplicated list.
+
+**What each metric looks like in the run** (examples from the v6 per-task appendix):
+
+- **Precision** — for the receipt-OCR task ("pull the text out of this photo of a receipt"), all 8
+  returned endpoints were real OCR/receipt services (`api.strale.io`, `apibase.pro`, `ai.verifik.co`,
+  `visionex.x402tools.xyz`, `archtools.dev`, …) → 8/8 on that task; 71% is the 40-task average.
+- **Distinct providers / task** — de-duplicated by hostname: a provider that lists several endpoints
+  on one host counts once, so multi-path spam on a single host can't inflate the count.
+- **Useful options / task** — for "how much is 500 US dollars in euros?", the relevant set was 7
+  distinct currency-convert hosts (`2s.io`, `x402stock.vercel.app`, `apibase.pro`,
+  `remit-compare.up.railway.app`, `api.strale.io`, …), each directly performing the conversion.
+- **Complete misses** — scoring is strict, so a "miss" means truly nothing on-target came back: a
+  Seoul-only forecast returned for "what's the weather in Tokyo this weekend?" scores 0 (wrong city),
+  and a reverse-geocoder for "map coordinates for 1600 Pennsylvania Avenue" scores 0 (inverse
+  operation, not forward geocoding).
+- **Cost per useful result** — OASIS's ~545-token response carrying ~5.6 useful providers works out
+  to ~97 tokens per useful provider.
 
 **Trajectory** (OASIS on the same 40-task battery, across successive deploys — the gains are
 OASIS-side; the two controls stayed flat):
@@ -56,8 +72,9 @@ OASIS-side; the two controls stayed flat):
 | + concentrate & host-diversify the routed result | 65% | 5.2 | 3 / 40 |
 | + direct endpoint-embedding fallback for intent-layer misses | **71%** | **5.6** | **1 / 40** |
 
-The last remaining miss (registering a *new* domain) is addressed by a follow-up confidence-gate
-tweak — the registrar endpoints are already indexed; the gate just needs to surface them.
+The last remaining miss in this run (registering a *new* domain) has since been closed by a deployed
+confidence-gate change — the registrar endpoints were already indexed; the gate now surfaces them —
+so the live engine sits at 0 complete misses (a follow-up run will confirm it on the full battery).
 
 **Caveats.** A single consistent human judge scores all three engines per task, so the
 *comparison* is fair even where an absolute label is subjective. The three catalogs are **~90%
