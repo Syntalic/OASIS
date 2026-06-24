@@ -1,3 +1,7 @@
+
+<img width="2752" height="1536" alt="OASIS_Discovery_Layer_for_AI" src="https://github.com/user-attachments/assets/f293aabc-074b-4f48-907d-8252f9a79c40" />
+
+
 # OASIS
 
 **Open standard for discoverability of paid HTTP APIs in agentic commerce** (x402 / MPP) —
