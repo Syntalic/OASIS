@@ -16,6 +16,8 @@ import { fileURLToPath } from "node:url";
 import { applyBindings, loadBindings } from "./binding.js";
 import { deriveEndpointFacets } from "./build.js";
 import { bindEndpointsByEmbedding } from "./embed/bind-endpoints.js";
+import { buildEntityFlow } from "./entity-flow.js";
+import { buildEntityIndexFromVocab, loadEntityVocabAndSubtypes } from "./entity-index.js";
 import { materializeCuratedIntents } from "./materialize-satisfies.js";
 import { loadOntologySources } from "./ontology.js";
 import type {
@@ -148,6 +150,16 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
       2,
     ),
   );
+
+  // Entity-flow artifacts for oasis_next — the SAME builders the legacy `capindex build` uses
+  // (build.ts). The production ingest+enrich pipeline must emit these or oasis_next has no
+  // entity-flow.json and degrades to NOT_READY. Built from the materialized curated capabilities.
+  const { vocab, subtypes } = await loadEntityVocabAndSubtypes();
+  const entityIndex = buildEntityIndexFromVocab(vocab, subtypes, capabilities);
+  const entityFlow = buildEntityFlow(capabilities, entityIndex);
+  await writeFile(path.join(distDir, "entity-index.json"), JSON.stringify(entityIndex, null, 2));
+  await writeFile(path.join(distDir, "entity-flow.json"), JSON.stringify(entityFlow, null, 2));
+  console.error(`  entity-flow: ${(entityIndex.bridge_eligible ?? []).length} bridges → entity-index.json + entity-flow.json`);
 
   return {
     endpoints: endpoints.length,
