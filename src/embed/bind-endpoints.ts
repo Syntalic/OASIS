@@ -129,7 +129,7 @@ export async function bindEndpointsByEmbedding(
   // Promotion floor — calibrated on a full gemini run (31,810-endpoint corpus, 4-floor sweep):
   // 0.12 is the knee that captures real Apify-class binds (the founding Apify reddit-scraper-lite
   // case sits at sparse 0.1364, so 0.15 would strand it) while the precision cost is dominated by
-  // boilerplate providers now dropped at the gate (content-free summaries). See docs/proposals/ingestion-overhaul.md.
+  // boilerplate providers now dropped at the gate (content-free summaries). See docs/proposals/completed/ingestion-overhaul.md.
   const strongSparseFloor = opts.strongSparseFloor ?? 0.12;
   const topK = opts.topKPerEndpoint ?? (isGoogle ? 1 : 2);
   const floorOverrides = opts.floorOverrides ?? {};
