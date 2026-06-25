@@ -87,8 +87,18 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
   // (fast, offline); runtime query→intent routing uses gemini independently.
   const ontologyDir = path.join(PACKAGE_ROOT, "ontology", "intents");
   const sources = await loadOntologySources(ontologyDir);
+  // Binder floors are tunable via env (for offline calibration, e.g. the Optuna harness in
+  // eval/optuna). Unset → the calibrated defaults in bind-endpoints.ts.
+  const envNum = (k: string): number | undefined => {
+    const v = process.env[k];
+    return v != null && v !== "" ? Number(v) : undefined;
+  };
   const bindResult = await bindEndpointsByEmbedding(endpoints, sources, {
     cacheDir: path.join(distDir, "cache"),
+    floor: envNum("OASIS_BIND_FLOOR"),
+    sparseFloor: envNum("OASIS_BIND_SPARSE_FLOOR"),
+    strongSparseFloor: envNum("OASIS_BIND_STRONG_SPARSE"),
+    denseMargin: envNum("OASIS_BIND_DENSE_MARGIN"),
     // Lower the DENSE floor for sparse intents the global 0.78 floor starves; the
     // sparse-vocabulary floor still guards against binding noise to them.
     floorOverrides: {
