@@ -26,7 +26,6 @@ jobs:
       - run: node dist/cli.js validate-source
       # Gate authored endpoint→capability bindings (schema + capability ids in the taxonomy).
       - run: node dist/cli.js validate-binding
-      # The former offline build smoke (`cli.js build --openapi <fixture>`) was removed with the
-      # legacy heuristic build path. The production pipeline (`cli.js ingest` crawl -> `enrich-facets`)
-      # is network-bound, so the end-to-end build is smoke-tested on a full local/deploy build, not in
-      # CI; correctness here is covered by test:unit (search/validate logic) + validate-source/-binding.
+      # No offline end-to-end build smoke: the production pipeline (`cli.js ingest` crawl ->
+      # `enrich-facets`) is network-bound, so it's smoke-tested on a full local/deploy build. CI
+      # correctness is covered by test:unit (search/validate logic) + validate-source/-binding above.

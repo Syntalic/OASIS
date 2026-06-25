@@ -59,7 +59,7 @@ flowchart LR
 
 ## Index build pipeline
 
-The production build is `pnpm build` = **`capindex ingest`** (federate registries → enrich each origin's `/openapi.json` → quality gate → `dist/index.json`) followed by **`enrich-facets`** (semantic endpoint→intent binding + `satisfies[]` materialization). The legacy single-pass `capindex build` (heuristic binding) has been removed — production is this two-pass ingest → enrich-facets.
+The production build is `pnpm build` = **`capindex ingest`** (federate registries → enrich each origin's `/openapi.json` → quality gate → `dist/index.json`) followed by **`enrich-facets`** (semantic endpoint→intent binding + `satisfies[]` materialization).
 
 ```mermaid
 flowchart TB
@@ -167,9 +167,7 @@ embedded (`gemini-embedding-001`) and bound by dense similarity above a floor, w
 **strong-sparse promotion** path that rescues endpoints the dense floor misses but whose sparse
 (lexical) signal is strong. This binding runs in the production build via **`enrich-facets`**,
 written onto each endpoint as `endpoint.capabilities[]`; `materialize-satisfies.ts` then derives
-each intent's `satisfies[]`. The legacy regex `INTENT_MATCHERS` heuristic and the single-pass
-`build:index` path have been removed; binding is semantic-only (`intent-match.ts` now just defines
-the curated intent ids).
+each intent's `satisfies[]`. Binding is semantic-only.
 
 ```mermaid
 flowchart LR
