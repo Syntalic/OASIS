@@ -17,6 +17,9 @@ export interface GateResult {
 const META_FILE = /(\/\.well-known\/|\/robots\.txt|\/llms\.txt|sitemap|\/favicon|openapi\.json|swagger\.json)/i;
 const META_PATH = /^\/(api\/)?(health|healthz|status|ping|metrics|version|info)\/?$/i;
 const STUB = /^(GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+\//i;
+// Ephemeral preview deploys (Vercel branch URLs `*-git-<branch>-*.vercel.app`) churn and duplicate
+// the provider's real host — not stable endpoints. Drop them.
+const PREVIEW_HOST = /-git-[a-z0-9-]+\.vercel\.app$/i;
 
 // Content-free boilerplate: a non-stub string that nonetheless conveys no capability — e.g.
 // one provider stamping "Premium API Access" across 10k templated endpoints. The dense
@@ -75,6 +78,7 @@ export function gradeEndpoint(ep: EndpointRecord): GateResult {
 
   // DROP — not a real endpoint.
   if (META_FILE.test(path) || META_PATH.test(path)) return { verdict: "drop", reasons: ["meta/well-known path"], flags: [], completeness: comp };
+  if (PREVIEW_HOST.test(ep.origin ?? "")) return { verdict: "drop", reasons: ["ephemeral preview deploy"], flags: [], completeness: comp };
   if (!summary || STUB.test(summary)) return { verdict: "drop", reasons: ["stub: synthesized summary"], flags: [], completeness: comp };
   // DROP — summary is content-free boilerplate with no real description to fall back on
   // (e.g. "Premium API Access" stamped across a provider's whole catalog). Conveys no capability.

@@ -84,6 +84,11 @@ export interface BindOptions {
    *  (a gating floor) so only discriminative matches promote. NEEDS CALIBRATION against the
    *  orphan audit + eval before the default is trusted. */
   strongSparseFloor?: number;
+  /** Discrimination margin: when an endpoint's top intent is only a DENSE-floor pass with weak
+   *  sparse overlap, require its dense cosine to beat the runner-up by at least this much — else
+   *  orphan it (don't spill). gemini's dense scale is compressed, so a near-tie + weak lexical
+   *  overlap is the spill signature (e.g. satellite-tile → maps.geocode). */
+  denseMargin?: number;
   /** Max intents a single endpoint may bind to. */
   topKPerEndpoint?: number;
   /** Per-intent DENSE floor overrides — lower the floor for sparse intents the global
@@ -109,6 +114,9 @@ export interface BindResult {
   /** Endpoints bound ONLY because a strong sparse match promoted an intent the dense floor
    *  rejected — the orphan-rescue path. Observability for the promotion threshold. */
   promotedSparse: number;
+  /** Endpoints orphaned by the discrimination margin — top intent was an ambiguous near-tie with
+   *  weak sparse overlap (a spill we declined to bind). */
+  gatedMargin: number;
 }
 
 /** Reciprocal-rank-fusion constant — merges the dense and sparse rankings. */
@@ -131,6 +139,9 @@ export async function bindEndpointsByEmbedding(
   // case sits at sparse 0.1364, so 0.15 would strand it) while the precision cost is dominated by
   // boilerplate providers now dropped at the gate (content-free summaries). See docs/proposals/completed/ingestion-overhaul.md.
   const strongSparseFloor = opts.strongSparseFloor ?? 0.12;
+  // Discrimination margin — orphan ambiguous near-ties (the spill). Calibrate via the gatedMargin
+  // count + the coverage eval before trusting the default.
+  const denseMargin = opts.denseMargin ?? 0.02;
   const topK = opts.topKPerEndpoint ?? (isGoogle ? 1 : 2);
   const floorOverrides = opts.floorOverrides ?? {};
   const floorFor = (id: string): number => floorOverrides[id] ?? floor;
@@ -178,6 +189,7 @@ export async function bindEndpointsByEmbedding(
   let gatedMeta = 0;
   let gatedSparse = 0;
   let promotedSparse = 0;
+  let gatedMargin = 0;
   for (let i = 0; i < endpoints.length; i++) {
     const ep = endpoints[i];
     if (META_FILE.test(ep.path ?? "")) {
@@ -210,6 +222,7 @@ export async function bindEndpointsByEmbedding(
       .map((x) => ({
         id: x.id,
         sparse: x.sparse,
+        dense: x.dense,
         promoted: promotedBySparse(x),
         rrf: 1 / (RRF_K + (dRank.get(x.id) ?? 0)) + 1 / (RRF_K + (sRank.get(x.id) ?? 0)),
       }))
@@ -219,9 +232,24 @@ export async function bindEndpointsByEmbedding(
       ...passers.filter((p) => !p.promoted),
       ...passers.filter((p) => p.promoted),
     ];
-    // Keep the top-K candidates that share real task vocabulary (sparse floor).
-    const matches = ranked.slice(0, topK).filter((x) => x.sparse >= sparseFloor);
-    if (!matches.length && passers.length) gatedSparse += 1;
+    // Discrimination gate: gemini's dense scale is compressed, so a bare dense-floor pass on a
+    // near-tie with weak sparse is a spill (satellite-tile → maps.geocode). Require the winner to
+    // be a real lexical match OR beat the runner-up's dense by `denseMargin`; else orphan it.
+    let maxDense = -Infinity;
+    let secondDense = -Infinity;
+    for (const s of scored) {
+      if (s.dense > maxDense) { secondDense = maxDense; maxDense = s.dense; }
+      else if (s.dense > secondDense) secondDense = s.dense;
+    }
+    const discriminative = (p: { sparse: number; dense: number }): boolean =>
+      p.sparse >= strongSparseFloor || p.dense - (p.dense >= maxDense ? secondDense : maxDense) >= denseMargin;
+    // Keep the top-K that share real task vocabulary (sparse floor) AND discriminate.
+    const sparsePassing = ranked.slice(0, topK).filter((x) => x.sparse >= sparseFloor);
+    const matches = sparsePassing.filter(discriminative);
+    if (!matches.length) {
+      if (sparsePassing.length) gatedMargin += 1;
+      else if (passers.length) gatedSparse += 1;
+    }
     // Always overwrite: clear stale bindings even when nothing matches.
     ep.capabilities = matches.map((m) => m.id);
     if (matches.length) {
@@ -230,5 +258,5 @@ export async function bindEndpointsByEmbedding(
       for (const m of matches) perIntent.set(m.id, (perIntent.get(m.id) ?? 0) + 1);
     }
   }
-  return { bound, perIntent, embedded, reused, gatedMeta, gatedSparse, promotedSparse };
+  return { bound, perIntent, embedded, reused, gatedMeta, gatedSparse, promotedSparse, gatedMargin };
 }

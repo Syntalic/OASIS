@@ -15,7 +15,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { applyBindings, loadBindings } from "./binding.js";
 import { deriveEndpointFacets } from "./build.js";
+import { dedupeMirrors } from "./dedup-endpoints.js";
 import { bindEndpointsByEmbedding } from "./embed/bind-endpoints.js";
+import { gradeEndpoint } from "./quality-gate.js";
 import { buildEntityFlow } from "./entity-flow.js";
 import { buildEntityIndexFromVocab, loadEntityVocabAndSubtypes } from "./entity-index.js";
 import { materializeCuratedIntents } from "./materialize-satisfies.js";
@@ -66,7 +68,16 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
   const raw = await readFile(indexPath, "utf8");
   const bundle = JSON.parse(raw) as IndexBundle;
 
-  const endpoints = bundle.endpoints.map(deriveEndpointFacets);
+  const ingested = bundle.endpoints.map(deriveEndpointFacets);
+  // Re-gate + de-mirror before binding: re-applies the current quality gate (e.g. ephemeral preview
+  // deploys) and collapses mirror hosts that ingest admitted as distinct records. Lets gate/dedup
+  // rules iterate without a re-crawl; idempotent on an already-clean corpus.
+  const gated = ingested.filter((e) => gradeEndpoint(e).verdict === "pass");
+  const demirror = dedupeMirrors(gated);
+  const endpoints = demirror.kept;
+  console.error(
+    `  re-gate + de-mirror: ${ingested.length} ingested → ${gated.length} gated → ${endpoints.length} (−${demirror.dropped} mirrors)`,
+  );
 
   // Recompute endpoint→capability binding SEMANTICALLY (replaces the regex
   // INTENT_MATCHERS): embed every endpoint + every curated intent and bind by
@@ -89,7 +100,7 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
     },
   });
   console.error(
-    `  hybrid binding: ${bindResult.bound}/${endpoints.length} endpoints → ${bindResult.perIntent.size} curated intents (embedded ${bindResult.embedded}, reused ${bindResult.reused}); ${bindResult.promotedSparse} promoted by strong-sparse; gated ${bindResult.gatedMeta} meta-files + ${bindResult.gatedSparse} below sparse-vocab floor`,
+    `  hybrid binding: ${bindResult.bound}/${endpoints.length} endpoints → ${bindResult.perIntent.size} curated intents (embedded ${bindResult.embedded}, reused ${bindResult.reused}); ${bindResult.promotedSparse} promoted by strong-sparse; gated ${bindResult.gatedMeta} meta-files + ${bindResult.gatedSparse} below sparse-vocab floor + ${bindResult.gatedMargin} orphaned by margin`,
   );
 
   // Authored endpoint→capability bindings override the semantic binder.
