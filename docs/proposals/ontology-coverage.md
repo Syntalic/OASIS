@@ -65,7 +65,7 @@ Guardrails (per `oasis-discovery-architecture-philosophy`):
 
 Top binders added: `shop.tcg_catalog` (~1,290), `compute.convert_units` (~887), `compute.financial_calculator` (~367), `finance.stablecoin_monitor` (~206), `data.vat_validate` (~187).
 
-**Naming rule:** major platforms and category references (Reddit, Twitter, DeFiLlama, …) are fine in aliases; endpoint- or niche-service-specific names are not.
+**Naming rule:** intents stay vendor-neutral — do **not** name specific API endpoints or niche services (Open Library, GLEIF, Google Flights, openFDA, …). **Do** include major platforms, government agencies (FDA, EPA, USDA, CFTC, …), well-known brands/franchises (Pokemon, Magic, …), model providers (DeepSeek, Gemini, Grok), and common tickers (USDC, USDT, DAI). Prefer **adding** these alongside neutral aliases rather than replacing them.
 
 **Round 4 (80 intents):** `finance.defi_analytics`, `data.nft_metadata`, `devtools.webhook_tools`, `finance.crypto_market_intel`, `data.airdrop_tracker`, `data.agriculture_stats`, `data.lei_lookup` (`media.anime_lookup` already in round 3).
 

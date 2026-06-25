@@ -4,6 +4,9 @@ description: Paid chat or completion APIs for general-purpose language models. U
 aliases:
   - list available LLM models
   - list hosted language models API
+  - list DeepSeek models API
+  - list Gemini models API
+  - list Grok models API
   - chat completion
   - LLM API
   - LLM text completion

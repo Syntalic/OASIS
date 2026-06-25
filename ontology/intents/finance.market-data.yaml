@@ -1,8 +1,9 @@
 id: finance.market_data
 label: Get market reference data and positioning reports
-description: Raw market reference datasets and positioning reports — commitments-of-traders positioning, daily market briefs, sector positioning, and macro positioning context. Use when an agent needs reference market structure, not actionable trade calls (finance.trading_signals) or a single ticker quote (finance.stock_quote).
+description: Raw market reference datasets and positioning reports — CFTC Commitments of Traders, commitments-of-traders positioning, daily market briefs, sector positioning, and macro positioning context. Use when an agent needs reference market structure, not actionable trade calls (finance.trading_signals) or a single ticker quote (finance.stock_quote).
 aliases:
   - commitments of traders report
+  - CFTC commitments of traders
   - market positioning data
   - daily market brief
   - futures positioning report
