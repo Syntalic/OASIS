@@ -14,7 +14,7 @@ consumes:
   - entity: Query
     role: identifier
 produces:
-  - entity: StructuredRecord
+  - entity: Answer
     role: payload
     cardinality: many
 facets:

@@ -16,7 +16,7 @@ aliases:
   - marketing influencers by location
   - niche creator profiles instagram
 consumes:
-  - entity: Person
+  - entity: Topic
     role: identifier
 produces:
   - entity: SocialProfile

@@ -9,10 +9,10 @@ aliases:
   - national holidays lookup
   - holiday schedule by country
 consumes:
-  - entity: Query
+  - entity: Place
     role: identifier
 produces:
-  - entity: StructuredRecord
+  - entity: Answer
     role: payload
     cardinality: many
 facets:

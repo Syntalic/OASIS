@@ -16,7 +16,7 @@ consumes:
   - entity: Query
     role: identifier
 produces:
-  - entity: StructuredRecord
+  - entity: Answer
     role: payload
 facets:
   domain: compute

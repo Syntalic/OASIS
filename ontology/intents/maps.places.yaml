@@ -12,7 +12,7 @@ aliases:
   - address autocomplete
   - search coffee shops in Austin
 consumes:
-  - entity: Query
+  - entity: Place
     role: identifier
 produces:
   - entity: Place
