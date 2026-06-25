@@ -26,8 +26,7 @@ jobs:
       - run: node dist/cli.js validate-source
       # Gate authored endpoint→capability bindings (schema + capability ids in the taxonomy).
       - run: node dist/cli.js validate-binding
-      # Smoke-test the build -> validate -> search pipeline OFFLINE from a fixture
-      # (no catalog crawl), so CI stays fast and deterministic.
-      - run: node dist/cli.js build --openapi fixtures/minimal.openapi.json --origin https://api.example.com --no-x402scan --no-mppscan --skip-pay-skills -o /tmp/capindex-dist
-      - run: node dist/cli.js validate -d /tmp/capindex-dist
-      - run: node dist/cli.js search "demo" -d /tmp/capindex-dist
+      # The former offline build smoke (`cli.js build --openapi <fixture>`) was removed with the
+      # legacy heuristic build path. The production pipeline (`cli.js ingest` crawl -> `enrich-facets`)
+      # is network-bound, so the end-to-end build is smoke-tested on a full local/deploy build, not in
+      # CI; correctness here is covered by test:unit (search/validate logic) + validate-source/-binding.
