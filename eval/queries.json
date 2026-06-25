@@ -252,12 +252,13 @@
   {
     "id": "devtools-captcha-1",
     "query": "solve recaptcha for my web agent",
-    "expect_intent": "compute.captcha_solve",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://2captcha.x402.paysponge.com",
       "method": "POST",
       "path": "/createTask"
-    }
+    },
+    "expect_intent_legacy": "compute.captcha_solve"
   },
   {
     "id": "web-screenshot-1",
@@ -687,7 +688,9 @@
       "origin": "https://clustly.ai",
       "method": "GET",
       "path": "/api/v1/tip/x402/{recipient}"
-    }
+    },
+    "expect_intent_legacy": "finance.tipping",
+    "out_of_scope": true
   },
   {
     "id": "finance-tipping-2",
@@ -697,7 +700,9 @@
       "origin": "https://clustly.ai",
       "method": "GET",
       "path": "/api/v1/tip/x402/{recipient}"
-    }
+    },
+    "expect_intent_legacy": "finance.tipping",
+    "out_of_scope": true
   },
   {
     "id": "finance-tipping-3",
@@ -707,37 +712,42 @@
       "origin": "https://clustly.ai",
       "method": "GET",
       "path": "/api/v1/tip/x402/{recipient}"
-    }
+    },
+    "expect_intent_legacy": "finance.tipping",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-voice-1",
     "query": "use for realtime ai voice conversations",
-    "expect_intent": "ai_ml.voice",
+    "expect_intent": "comms.voice_call",
     "expect_endpoint": {
       "origin": "https://x402.dtelecom.org",
       "method": "POST",
       "path": "/v1/credits/purchase"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.voice"
   },
   {
     "id": "ai-ml-voice-2",
     "query": "use for realtime ai voice conversations via micropayment",
-    "expect_intent": "ai_ml.voice",
+    "expect_intent": "comms.voice_call",
     "expect_endpoint": {
       "origin": "https://x402.dtelecom.org",
       "method": "POST",
       "path": "/v1/credits/purchase"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.voice"
   },
   {
     "id": "ai-ml-voice-3",
     "query": "I need to use for realtime ai voice conversations",
-    "expect_intent": "ai_ml.voice",
+    "expect_intent": "comms.voice_call",
     "expect_endpoint": {
       "origin": "https://x402.dtelecom.org",
       "method": "POST",
       "path": "/v1/credits/purchase"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.voice"
   },
   {
     "id": "cloud-domains-1",
@@ -772,32 +782,35 @@
   {
     "id": "data-enrichment-1",
     "query": "use for contact enrichment",
-    "expect_intent": "data.enrichment",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://stableenrich.dev",
       "method": "POST",
       "path": "/api/serper/people-image-search"
-    }
+    },
+    "expect_intent_legacy": "data.enrichment"
   },
   {
     "id": "data-enrichment-2",
     "query": "use for contact enrichment via micropayment",
-    "expect_intent": "data.enrichment",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://stableenrich.dev",
       "method": "POST",
       "path": "/api/serper/people-image-search"
-    }
+    },
+    "expect_intent_legacy": "data.enrichment"
   },
   {
     "id": "data-enrichment-3",
     "query": "I need to use for contact enrichment",
-    "expect_intent": "data.enrichment",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://stableenrich.dev",
       "method": "POST",
       "path": "/api/serper/people-image-search"
-    }
+    },
+    "expect_intent_legacy": "data.enrichment"
   },
   {
     "id": "shopping-merchandise-1",
@@ -807,7 +820,9 @@
       "origin": "https://stablemerch.dev",
       "method": "POST",
       "path": "/api/heavyweight-shirt"
-    }
+    },
+    "expect_intent_legacy": "shopping.merchandise",
+    "out_of_scope": true
   },
   {
     "id": "shopping-merchandise-2",
@@ -817,7 +832,9 @@
       "origin": "https://stablemerch.dev",
       "method": "POST",
       "path": "/api/heavyweight-shirt"
-    }
+    },
+    "expect_intent_legacy": "shopping.merchandise",
+    "out_of_scope": true
   },
   {
     "id": "shopping-merchandise-3",
@@ -827,7 +844,9 @@
       "origin": "https://stablemerch.dev",
       "method": "POST",
       "path": "/api/heavyweight-shirt"
-    }
+    },
+    "expect_intent_legacy": "shopping.merchandise",
+    "out_of_scope": true
   },
   {
     "id": "media-social-data-1",
@@ -922,32 +941,35 @@
   {
     "id": "finance-coingecko-1",
     "query": "CoinGecko Onchain DEX API",
-    "expect_intent": "finance.coingecko",
+    "expect_intent": "finance.crypto_spot_price",
     "expect_endpoint": {
       "origin": "https://pro-api.coingecko.com/api/v3/x402/onchain",
       "method": "GET",
       "path": "/x402/onchain/search/pools"
-    }
+    },
+    "expect_intent_legacy": "finance.coingecko"
   },
   {
     "id": "finance-coingecko-2",
     "query": "CoinGecko Onchain DEX API via micropayment",
-    "expect_intent": "finance.coingecko",
+    "expect_intent": "finance.crypto_spot_price",
     "expect_endpoint": {
       "origin": "https://pro-api.coingecko.com/api/v3/x402/onchain",
       "method": "GET",
       "path": "/x402/onchain/search/pools"
-    }
+    },
+    "expect_intent_legacy": "finance.coingecko"
   },
   {
     "id": "finance-coingecko-3",
     "query": "I need to CoinGecko Onchain DEX API",
-    "expect_intent": "finance.coingecko",
+    "expect_intent": "finance.crypto_spot_price",
     "expect_endpoint": {
       "origin": "https://pro-api.coingecko.com/api/v3/x402/onchain",
       "method": "GET",
       "path": "/x402/onchain/search/pools"
-    }
+    },
+    "expect_intent_legacy": "finance.coingecko"
   },
   {
     "id": "data-nyne-1",
@@ -1072,272 +1094,299 @@
   {
     "id": "maps-tripadvisor-1",
     "query": "use for hotel and restaurant discovery",
-    "expect_intent": "maps.tripadvisor",
+    "expect_intent": "travel.place_reviews",
     "expect_endpoint": {
       "origin": "https://tripadvisor.x402.paysponge.com",
       "method": "GET",
       "path": "/api/v1/location/search"
-    }
+    },
+    "expect_intent_legacy": "maps.tripadvisor"
   },
   {
     "id": "maps-tripadvisor-2",
     "query": "use for hotel and restaurant discovery via micropayment",
-    "expect_intent": "maps.tripadvisor",
+    "expect_intent": "travel.place_reviews",
     "expect_endpoint": {
       "origin": "https://tripadvisor.x402.paysponge.com",
       "method": "GET",
       "path": "/api/v1/location/search"
-    }
+    },
+    "expect_intent_legacy": "maps.tripadvisor"
   },
   {
     "id": "maps-tripadvisor-3",
     "query": "I need to use for hotel and restaurant discovery",
-    "expect_intent": "maps.tripadvisor",
+    "expect_intent": "travel.place_reviews",
     "expect_endpoint": {
       "origin": "https://tripadvisor.x402.paysponge.com",
       "method": "GET",
       "path": "/api/v1/location/search"
-    }
+    },
+    "expect_intent_legacy": "maps.tripadvisor"
   },
   {
     "id": "data-wolframalpha-1",
     "query": "use for math and science questions",
-    "expect_intent": "data.wolframalpha",
+    "expect_intent": "data.compute_answer",
     "expect_endpoint": {
       "origin": "https://wolframalpha.x402.paysponge.com",
       "method": "GET",
       "path": "/v2/query"
-    }
+    },
+    "expect_intent_legacy": "data.wolframalpha"
   },
   {
     "id": "data-wolframalpha-2",
     "query": "use for math and science questions via micropayment",
-    "expect_intent": "data.wolframalpha",
+    "expect_intent": "data.compute_answer",
     "expect_endpoint": {
       "origin": "https://wolframalpha.x402.paysponge.com",
       "method": "GET",
       "path": "/v2/query"
-    }
+    },
+    "expect_intent_legacy": "data.wolframalpha"
   },
   {
     "id": "data-wolframalpha-3",
     "query": "I need to use for math and science questions",
-    "expect_intent": "data.wolframalpha",
+    "expect_intent": "data.compute_answer",
     "expect_endpoint": {
       "origin": "https://wolframalpha.x402.paysponge.com",
       "method": "GET",
       "path": "/v2/query"
-    }
+    },
+    "expect_intent_legacy": "data.wolframalpha"
   },
   {
     "id": "shopping-marketplace-1",
     "query": "use for product search",
-    "expect_intent": "shopping.marketplace",
+    "expect_intent": "shop.compare_price",
     "expect_endpoint": {
       "origin": "https://api.purch.xyz",
       "method": "POST",
       "path": "/x402/buy"
-    }
+    },
+    "expect_intent_legacy": "shopping.marketplace"
   },
   {
     "id": "shopping-marketplace-2",
     "query": "use for product search via micropayment",
-    "expect_intent": "shopping.marketplace",
+    "expect_intent": "shop.compare_price",
     "expect_endpoint": {
       "origin": "https://api.purch.xyz",
       "method": "POST",
       "path": "/x402/buy"
-    }
+    },
+    "expect_intent_legacy": "shopping.marketplace"
   },
   {
     "id": "shopping-marketplace-3",
     "query": "I need to use for product search",
-    "expect_intent": "shopping.marketplace",
+    "expect_intent": "shop.compare_price",
     "expect_endpoint": {
       "origin": "https://api.purch.xyz",
       "method": "POST",
       "path": "/x402/buy"
-    }
+    },
+    "expect_intent_legacy": "shopping.marketplace"
   },
   {
     "id": "search-agentexplorer-1",
     "query": "Alibaba Cloud Agent Skills Explorer",
-    "expect_intent": "search.agentexplorer",
+    "expect_intent": "agent.marketplace",
     "expect_endpoint": {
       "origin": "https://agentexplorer.alibaba.gateway-402.com",
       "method": "GET",
       "path": "/openapi/skills/{skillName}"
-    }
+    },
+    "expect_intent_legacy": "search.agentexplorer"
   },
   {
     "id": "search-agentexplorer-2",
     "query": "Alibaba Cloud Agent Skills Explorer via micropayment",
-    "expect_intent": "search.agentexplorer",
+    "expect_intent": "agent.marketplace",
     "expect_endpoint": {
       "origin": "https://agentexplorer.alibaba.gateway-402.com",
       "method": "GET",
       "path": "/openapi/skills/{skillName}"
-    }
+    },
+    "expect_intent_legacy": "search.agentexplorer"
   },
   {
     "id": "search-agentexplorer-3",
     "query": "I need to Alibaba Cloud Agent Skills Explorer",
-    "expect_intent": "search.agentexplorer",
+    "expect_intent": "agent.marketplace",
     "expect_endpoint": {
       "origin": "https://agentexplorer.alibaba.gateway-402.com",
       "method": "GET",
       "path": "/openapi/skills/{skillName}"
-    }
+    },
+    "expect_intent_legacy": "search.agentexplorer"
   },
   {
     "id": "ai-ml-aigen-1",
     "query": "Alibaba Cloud AI Generation",
-    "expect_intent": "ai_ml.aigen",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://aigen.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/generate-cosplay-image"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.aigen"
   },
   {
     "id": "ai-ml-aigen-2",
     "query": "Alibaba Cloud AI Generation via micropayment",
-    "expect_intent": "ai_ml.aigen",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://aigen.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/generate-cosplay-image"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.aigen"
   },
   {
     "id": "ai-ml-aigen-3",
     "query": "I need to Alibaba Cloud AI Generation",
-    "expect_intent": "ai_ml.aigen",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://aigen.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/generate-cosplay-image"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.aigen"
   },
   {
     "id": "translation-anytrans-1",
     "query": "use for text translation",
-    "expect_intent": "translation.anytrans",
+    "expect_intent": "data.translate_text",
     "expect_endpoint": {
       "origin": "https://anytrans.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/anytrans/translate/batchForHtml"
-    }
+    },
+    "expect_intent_legacy": "translation.anytrans"
   },
   {
     "id": "translation-anytrans-2",
     "query": "use for text translation via micropayment",
-    "expect_intent": "translation.anytrans",
+    "expect_intent": "data.translate_text",
     "expect_endpoint": {
       "origin": "https://anytrans.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/anytrans/translate/batchForHtml"
-    }
+    },
+    "expect_intent_legacy": "translation.anytrans"
   },
   {
     "id": "translation-anytrans-3",
     "query": "I need to use for text translation",
-    "expect_intent": "translation.anytrans",
+    "expect_intent": "data.translate_text",
     "expect_endpoint": {
       "origin": "https://anytrans.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/anytrans/translate/batchForHtml"
-    }
+    },
+    "expect_intent_legacy": "translation.anytrans"
   },
   {
     "id": "ai-ml-captcha-1",
     "query": "use for intelligent verification code authentication",
-    "expect_intent": "ai_ml.captcha",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://captcha.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/verify-intelligent-captcha"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.captcha"
   },
   {
     "id": "ai-ml-captcha-2",
     "query": "use for intelligent verification code authentication via micropayment",
-    "expect_intent": "ai_ml.captcha",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://captcha.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/verify-intelligent-captcha"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.captcha"
   },
   {
     "id": "ai-ml-captcha-3",
     "query": "I need to use for intelligent verification code authentication",
-    "expect_intent": "ai_ml.captcha",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://captcha.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/verify-intelligent-captcha"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.captcha"
   },
   {
     "id": "ai-ml-contactcenterai-1",
     "query": "Alibaba Cloud Contact Center AI",
-    "expect_intent": "ai_ml.contactcenterai",
+    "expect_intent": "comms.voice_call",
     "expect_endpoint": {
       "origin": "https://contactcenterai.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/{workspaceId}/ccai/app/{appId}/completion_message"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.contactcenterai"
   },
   {
     "id": "ai-ml-contactcenterai-2",
     "query": "Alibaba Cloud Contact Center AI via micropayment",
-    "expect_intent": "ai_ml.contactcenterai",
+    "expect_intent": "comms.voice_call",
     "expect_endpoint": {
       "origin": "https://contactcenterai.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/{workspaceId}/ccai/app/{appId}/completion_message"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.contactcenterai"
   },
   {
     "id": "ai-ml-contactcenterai-3",
     "query": "I need to Alibaba Cloud Contact Center AI",
-    "expect_intent": "ai_ml.contactcenterai",
+    "expect_intent": "comms.voice_call",
     "expect_endpoint": {
       "origin": "https://contactcenterai.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/{workspaceId}/ccai/app/{appId}/completion_message"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.contactcenterai"
   },
   {
     "id": "ai-ml-documentparseservice-1",
     "query": "Alibaba Cloud Document Parse Service",
-    "expect_intent": "ai_ml.documentparseservice",
+    "expect_intent": "ai.document_extract",
     "expect_endpoint": {
       "origin": "https://documentparseservice.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/document-parse-online-api"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.documentparseservice"
   },
   {
     "id": "ai-ml-documentparseservice-2",
     "query": "Alibaba Cloud Document Parse Service via micropayment",
-    "expect_intent": "ai_ml.documentparseservice",
+    "expect_intent": "ai.document_extract",
     "expect_endpoint": {
       "origin": "https://documentparseservice.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/document-parse-online-api"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.documentparseservice"
   },
   {
     "id": "ai-ml-documentparseservice-3",
     "query": "I need to Alibaba Cloud Document Parse Service",
-    "expect_intent": "ai_ml.documentparseservice",
+    "expect_intent": "ai.document_extract",
     "expect_endpoint": {
       "origin": "https://documentparseservice.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/document-parse-online-api"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.documentparseservice"
   },
   {
     "id": "ai-ml-edututor-1",
@@ -1347,7 +1396,9 @@
       "origin": "https://edututor.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/service/cutApi"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.edututor",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-edututor-2",
@@ -1357,7 +1408,9 @@
       "origin": "https://edututor.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/service/cutApi"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.edututor",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-edututor-3",
@@ -1367,7 +1420,9 @@
       "origin": "https://edututor.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/service/cutApi"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.edututor",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-embeddings-1",
@@ -1407,7 +1462,9 @@
       "origin": "https://facebody.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/detect-face"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.facebody",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-facebody-2",
@@ -1417,7 +1474,9 @@
       "origin": "https://facebody.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/detect-face"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.facebody",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-facebody-3",
@@ -1427,37 +1486,42 @@
       "origin": "https://facebody.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/detect-face"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.facebody",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-farui-1",
     "query": "Extract contract fields, generate review results, and answer legal questions with Alibaba Cloud FaRui.",
-    "expect_intent": "ai_ml.farui",
+    "expect_intent": "ai.document_extract",
     "expect_endpoint": {
       "origin": "https://farui.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/{workspaceId}/pop/contract/extraction"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.farui"
   },
   {
     "id": "ai-ml-farui-2",
     "query": "Extract contract fields, generate review results, and answer legal questions with Alibaba Cloud FaRui. via micropayment",
-    "expect_intent": "ai_ml.farui",
+    "expect_intent": "ai.document_extract",
     "expect_endpoint": {
       "origin": "https://farui.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/{workspaceId}/pop/contract/extraction"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.farui"
   },
   {
     "id": "ai-ml-farui-3",
     "query": "I need to Extract contract fields, generate review results, and answer legal questions with Alibaba Cloud FaRui.",
-    "expect_intent": "ai_ml.farui",
+    "expect_intent": "ai.document_extract",
     "expect_endpoint": {
       "origin": "https://farui.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/{workspaceId}/pop/contract/extraction"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.farui"
   },
   {
     "id": "ai-ml-goodstech-1",
@@ -1467,7 +1531,9 @@
       "origin": "https://goodstech.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/classify-commodity"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.goodstech",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-goodstech-2",
@@ -1477,7 +1543,9 @@
       "origin": "https://goodstech.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/classify-commodity"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.goodstech",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-goodstech-3",
@@ -1487,7 +1555,9 @@
       "origin": "https://goodstech.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/classify-commodity"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.goodstech",
+    "out_of_scope": true
   },
   {
     "id": "security-green-1",
@@ -1497,7 +1567,9 @@
       "origin": "https://green.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/text-moderation-plus"
-    }
+    },
+    "expect_intent_legacy": "security.green",
+    "out_of_scope": true
   },
   {
     "id": "security-green-2",
@@ -1507,7 +1579,9 @@
       "origin": "https://green.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/text-moderation-plus"
-    }
+    },
+    "expect_intent_legacy": "security.green",
+    "out_of_scope": true
   },
   {
     "id": "security-green-3",
@@ -1517,7 +1591,9 @@
       "origin": "https://green.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/text-moderation-plus"
-    }
+    },
+    "expect_intent_legacy": "security.green",
+    "out_of_scope": true
   },
   {
     "id": "security-imageaudit-1",
@@ -1527,7 +1603,9 @@
       "origin": "https://imageaudit.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/scan-image"
-    }
+    },
+    "expect_intent_legacy": "security.imageaudit",
+    "out_of_scope": true
   },
   {
     "id": "security-imageaudit-2",
@@ -1537,7 +1615,9 @@
       "origin": "https://imageaudit.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/scan-image"
-    }
+    },
+    "expect_intent_legacy": "security.imageaudit",
+    "out_of_scope": true
   },
   {
     "id": "security-imageaudit-3",
@@ -1547,7 +1627,9 @@
       "origin": "https://imageaudit.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/scan-image"
-    }
+    },
+    "expect_intent_legacy": "security.imageaudit",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-imagerecog-1",
@@ -1557,7 +1639,9 @@
       "origin": "https://imagerecog.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/evaluate-certificate-quality"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.imagerecog",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-imagerecog-2",
@@ -1567,7 +1651,9 @@
       "origin": "https://imagerecog.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/evaluate-certificate-quality"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.imagerecog",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-imagerecog-3",
@@ -1577,7 +1663,9 @@
       "origin": "https://imagerecog.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/evaluate-certificate-quality"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.imagerecog",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-imageseg-1",
@@ -1587,7 +1675,9 @@
       "origin": "https://imageseg.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/parse-face"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.imageseg",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-imageseg-2",
@@ -1597,7 +1687,9 @@
       "origin": "https://imageseg.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/parse-face"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.imageseg",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-imageseg-3",
@@ -1607,67 +1699,75 @@
       "origin": "https://imageseg.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/parse-face"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.imageseg",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-intelligentspeechinteraction-1",
     "query": "Alibaba Cloud Intelligent Speech Interaction",
-    "expect_intent": "ai_ml.intelligentspeechinteraction",
+    "expect_intent": "ai.speech_to_text",
     "expect_endpoint": {
       "origin": "https://intelligentspeechinteraction.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/stream/v1/asr"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.intelligentspeechinteraction"
   },
   {
     "id": "ai-ml-intelligentspeechinteraction-2",
     "query": "Alibaba Cloud Intelligent Speech Interaction via micropayment",
-    "expect_intent": "ai_ml.intelligentspeechinteraction",
+    "expect_intent": "ai.speech_to_text",
     "expect_endpoint": {
       "origin": "https://intelligentspeechinteraction.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/stream/v1/asr"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.intelligentspeechinteraction"
   },
   {
     "id": "ai-ml-intelligentspeechinteraction-3",
     "query": "I need to Alibaba Cloud Intelligent Speech Interaction",
-    "expect_intent": "ai_ml.intelligentspeechinteraction",
+    "expect_intent": "ai.speech_to_text",
     "expect_endpoint": {
       "origin": "https://intelligentspeechinteraction.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/stream/v1/asr"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.intelligentspeechinteraction"
   },
   {
     "id": "search-iqs-1",
     "query": "Alibaba Cloud Information Query Service",
-    "expect_intent": "search.iqs",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://iqs.alibaba.gateway-402.com",
       "method": "GET",
       "path": "/linked-retrieval/linked-retrieval-entry/v1/iqs/search/global"
-    }
+    },
+    "expect_intent_legacy": "search.iqs"
   },
   {
     "id": "search-iqs-2",
     "query": "Alibaba Cloud Information Query Service via micropayment",
-    "expect_intent": "search.iqs",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://iqs.alibaba.gateway-402.com",
       "method": "GET",
       "path": "/linked-retrieval/linked-retrieval-entry/v1/iqs/search/global"
-    }
+    },
+    "expect_intent_legacy": "search.iqs"
   },
   {
     "id": "search-iqs-3",
     "query": "I need to Alibaba Cloud Information Query Service",
-    "expect_intent": "search.iqs",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://iqs.alibaba.gateway-402.com",
       "method": "GET",
       "path": "/linked-retrieval/linked-retrieval-entry/v1/iqs/search/global"
-    }
+    },
+    "expect_intent_legacy": "search.iqs"
   },
   {
     "id": "ai-ml-ivpd-1",
@@ -1677,7 +1777,9 @@
       "origin": "https://ivpd.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/extend-image-style"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.ivpd",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-ivpd-2",
@@ -1687,7 +1789,9 @@
       "origin": "https://ivpd.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/extend-image-style"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.ivpd",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-ivpd-3",
@@ -1697,37 +1801,42 @@
       "origin": "https://ivpd.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/extend-image-style"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.ivpd",
+    "out_of_scope": true
   },
   {
     "id": "translation-machinetranslation-1",
     "query": "Alibaba Cloud Machine Translation",
-    "expect_intent": "translation.machinetranslation",
+    "expect_intent": "data.translate_text",
     "expect_endpoint": {
       "origin": "https://machinetranslation.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/api/translate/web/ecommerce"
-    }
+    },
+    "expect_intent_legacy": "translation.machinetranslation"
   },
   {
     "id": "translation-machinetranslation-2",
     "query": "Alibaba Cloud Machine Translation via micropayment",
-    "expect_intent": "translation.machinetranslation",
+    "expect_intent": "data.translate_text",
     "expect_endpoint": {
       "origin": "https://machinetranslation.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/api/translate/web/ecommerce"
-    }
+    },
+    "expect_intent_legacy": "translation.machinetranslation"
   },
   {
     "id": "translation-machinetranslation-3",
     "query": "I need to Alibaba Cloud Machine Translation",
-    "expect_intent": "translation.machinetranslation",
+    "expect_intent": "data.translate_text",
     "expect_endpoint": {
       "origin": "https://machinetranslation.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/api/translate/web/ecommerce"
-    }
+    },
+    "expect_intent_legacy": "translation.machinetranslation"
   },
   {
     "id": "ai-ml-objectdet-1",
@@ -1737,7 +1846,9 @@
       "origin": "https://objectdet.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/detect-ipcobject"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.objectdet",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-objectdet-2",
@@ -1747,7 +1858,9 @@
       "origin": "https://objectdet.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/detect-ipcobject"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.objectdet",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-objectdet-3",
@@ -1757,97 +1870,108 @@
       "origin": "https://objectdet.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/detect-ipcobject"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.objectdet",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-ocr-1",
     "query": "Alibaba Cloud Model Studio OCR",
-    "expect_intent": "ai_ml.ocr",
+    "expect_intent": "data.ocr",
     "expect_endpoint": {
       "origin": "https://ocr.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/compatible-mode/v1/chat/completions"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.ocr"
   },
   {
     "id": "ai-ml-ocr-2",
     "query": "Alibaba Cloud Model Studio OCR via micropayment",
-    "expect_intent": "ai_ml.ocr",
+    "expect_intent": "data.ocr",
     "expect_endpoint": {
       "origin": "https://ocr.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/compatible-mode/v1/chat/completions"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.ocr"
   },
   {
     "id": "ai-ml-ocr-3",
     "query": "I need to Alibaba Cloud Model Studio OCR",
-    "expect_intent": "ai_ml.ocr",
+    "expect_intent": "data.ocr",
     "expect_endpoint": {
       "origin": "https://ocr.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/compatible-mode/v1/chat/completions"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.ocr"
   },
   {
     "id": "ai-ml-ocr-api-1",
     "query": "Alibaba Cloud OCR API",
-    "expect_intent": "ai_ml.ocr_api",
+    "expect_intent": "data.ocr",
     "expect_endpoint": {
       "origin": "https://ocr-api.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/recognize-general-structure"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.ocr_api"
   },
   {
     "id": "ai-ml-ocr-api-2",
     "query": "Alibaba Cloud OCR API via micropayment",
-    "expect_intent": "ai_ml.ocr_api",
+    "expect_intent": "data.ocr",
     "expect_endpoint": {
       "origin": "https://ocr-api.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/recognize-general-structure"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.ocr_api"
   },
   {
     "id": "ai-ml-ocr-api-3",
     "query": "I need to Alibaba Cloud OCR API",
-    "expect_intent": "ai_ml.ocr_api",
+    "expect_intent": "data.ocr",
     "expect_endpoint": {
       "origin": "https://ocr-api.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/recognize-general-structure"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.ocr_api"
   },
   {
     "id": "ai-ml-paimodelgallery-1",
     "query": "Alibaba Cloud PAI Model Gallery",
-    "expect_intent": "ai_ml.paimodelgallery",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://paimodelgallery.alibaba.gateway-402.com",
       "method": "GET",
       "path": "/api/v1/modelgallery/models"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.paimodelgallery"
   },
   {
     "id": "ai-ml-paimodelgallery-2",
     "query": "Alibaba Cloud PAI Model Gallery via micropayment",
-    "expect_intent": "ai_ml.paimodelgallery",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://paimodelgallery.alibaba.gateway-402.com",
       "method": "GET",
       "path": "/api/v1/modelgallery/models"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.paimodelgallery"
   },
   {
     "id": "ai-ml-paimodelgallery-3",
     "query": "I need to Alibaba Cloud PAI Model Gallery",
-    "expect_intent": "ai_ml.paimodelgallery",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://paimodelgallery.alibaba.gateway-402.com",
       "method": "GET",
       "path": "/api/v1/modelgallery/models"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.paimodelgallery"
   },
   {
     "id": "security-rai-1",
@@ -1857,7 +1981,9 @@
       "origin": "https://rai.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/model-input-content-sync-detect"
-    }
+    },
+    "expect_intent_legacy": "security.rai",
+    "out_of_scope": true
   },
   {
     "id": "security-rai-2",
@@ -1867,7 +1993,9 @@
       "origin": "https://rai.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/model-input-content-sync-detect"
-    }
+    },
+    "expect_intent_legacy": "security.rai",
+    "out_of_scope": true
   },
   {
     "id": "security-rai-3",
@@ -1877,7 +2005,9 @@
       "origin": "https://rai.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/model-input-content-sync-detect"
-    }
+    },
+    "expect_intent_legacy": "security.rai",
+    "out_of_scope": true
   },
   {
     "id": "security-saf-1",
@@ -1887,7 +2017,9 @@
       "origin": "https://saf.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/execute-request-ml"
-    }
+    },
+    "expect_intent_legacy": "security.saf",
+    "out_of_scope": true
   },
   {
     "id": "security-saf-2",
@@ -1897,7 +2029,9 @@
       "origin": "https://saf.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/execute-request-ml"
-    }
+    },
+    "expect_intent_legacy": "security.saf",
+    "out_of_scope": true
   },
   {
     "id": "security-saf-3",
@@ -1907,127 +2041,141 @@
       "origin": "https://saf.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/execute-request-ml"
-    }
+    },
+    "expect_intent_legacy": "security.saf",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-speech-1",
     "query": "Alibaba Cloud Model Studio Speech Recognition",
-    "expect_intent": "ai_ml.speech",
+    "expect_intent": "ai.speech_to_text",
     "expect_endpoint": {
       "origin": "https://speech.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/api/v1/services/audio/asr/transcription"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.speech"
   },
   {
     "id": "ai-ml-speech-2",
     "query": "Alibaba Cloud Model Studio Speech Recognition via micropayment",
-    "expect_intent": "ai_ml.speech",
+    "expect_intent": "ai.speech_to_text",
     "expect_endpoint": {
       "origin": "https://speech.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/api/v1/services/audio/asr/transcription"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.speech"
   },
   {
     "id": "ai-ml-speech-3",
     "query": "I need to Alibaba Cloud Model Studio Speech Recognition",
-    "expect_intent": "ai_ml.speech",
+    "expect_intent": "ai.speech_to_text",
     "expect_endpoint": {
       "origin": "https://speech.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/api/v1/services/audio/asr/transcription"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.speech"
   },
   {
     "id": "ai-ml-texttospeech-1",
     "query": "Alibaba Cloud Model Studio Text-to-Speech",
-    "expect_intent": "ai_ml.texttospeech",
+    "expect_intent": "ai.text_to_speech",
     "expect_endpoint": {
       "origin": "https://texttospeech.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/api/v1/services/aigc/multimodal-generation/generation"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.texttospeech"
   },
   {
     "id": "ai-ml-texttospeech-2",
     "query": "Alibaba Cloud Model Studio Text-to-Speech via micropayment",
-    "expect_intent": "ai_ml.texttospeech",
+    "expect_intent": "ai.text_to_speech",
     "expect_endpoint": {
       "origin": "https://texttospeech.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/api/v1/services/aigc/multimodal-generation/generation"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.texttospeech"
   },
   {
     "id": "ai-ml-texttospeech-3",
     "query": "I need to Alibaba Cloud Model Studio Text-to-Speech",
-    "expect_intent": "ai_ml.texttospeech",
+    "expect_intent": "ai.text_to_speech",
     "expect_endpoint": {
       "origin": "https://texttospeech.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/api/v1/services/aigc/multimodal-generation/generation"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.texttospeech"
   },
   {
     "id": "translation-translate-1",
     "query": "Alibaba Cloud Model Studio Translation",
-    "expect_intent": "translation.translate",
+    "expect_intent": "data.translate_text",
     "expect_endpoint": {
       "origin": "https://translate.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/compatible-mode/v1/chat/completions"
-    }
+    },
+    "expect_intent_legacy": "translation.translate"
   },
   {
     "id": "translation-translate-2",
     "query": "Alibaba Cloud Model Studio Translation via micropayment",
-    "expect_intent": "translation.translate",
+    "expect_intent": "data.translate_text",
     "expect_endpoint": {
       "origin": "https://translate.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/compatible-mode/v1/chat/completions"
-    }
+    },
+    "expect_intent_legacy": "translation.translate"
   },
   {
     "id": "translation-translate-3",
     "query": "I need to Alibaba Cloud Model Studio Translation",
-    "expect_intent": "translation.translate",
+    "expect_intent": "data.translate_text",
     "expect_endpoint": {
       "origin": "https://translate.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/compatible-mode/v1/chat/completions"
-    }
+    },
+    "expect_intent_legacy": "translation.translate"
   },
   {
     "id": "ai-ml-viapi-ocr-1",
     "query": "Alibaba Cloud OCR (VIAPI)",
-    "expect_intent": "ai_ml.viapi_ocr",
+    "expect_intent": "data.ocr",
     "expect_endpoint": {
       "origin": "https://viapi-ocr.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/recognize-bank-card"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.viapi_ocr"
   },
   {
     "id": "ai-ml-viapi-ocr-2",
     "query": "Alibaba Cloud OCR (VIAPI) via micropayment",
-    "expect_intent": "ai_ml.viapi_ocr",
+    "expect_intent": "data.ocr",
     "expect_endpoint": {
       "origin": "https://viapi-ocr.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/recognize-bank-card"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.viapi_ocr"
   },
   {
     "id": "ai-ml-viapi-ocr-3",
     "query": "I need to Alibaba Cloud OCR (VIAPI)",
-    "expect_intent": "ai_ml.viapi_ocr",
+    "expect_intent": "data.ocr",
     "expect_endpoint": {
       "origin": "https://viapi-ocr.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/recognize-bank-card"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.viapi_ocr"
   },
   {
     "id": "ai-ml-videoenhan-1",
@@ -2037,7 +2185,9 @@
       "origin": "https://videoenhan.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/change-video-size"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.videoenhan",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-videoenhan-2",
@@ -2047,7 +2197,9 @@
       "origin": "https://videoenhan.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/change-video-size"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.videoenhan",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-videoenhan-3",
@@ -2057,7 +2209,9 @@
       "origin": "https://videoenhan.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/change-video-size"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.videoenhan",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-videorecog-1",
@@ -2067,7 +2221,9 @@
       "origin": "https://videorecog.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/detect-video-shot"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.videorecog",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-videorecog-2",
@@ -2077,7 +2233,9 @@
       "origin": "https://videorecog.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/detect-video-shot"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.videorecog",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-videorecog-3",
@@ -2087,7 +2245,9 @@
       "origin": "https://videorecog.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/detect-video-shot"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.videorecog",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-videoseg-1",
@@ -2097,7 +2257,9 @@
       "origin": "https://videoseg.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/segment-video-body"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.videoseg",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-videoseg-2",
@@ -2107,7 +2269,9 @@
       "origin": "https://videoseg.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/segment-video-body"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.videoseg",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-videoseg-3",
@@ -2117,7 +2281,9 @@
       "origin": "https://videoseg.alibaba.gateway-402.com",
       "method": "POST",
       "path": "/segment-video-body"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.videoseg",
+    "out_of_scope": true
   },
   {
     "id": "data-bigquery-1",
@@ -2127,7 +2293,9 @@
       "origin": "https://bigquery.google.gateway-402.com/bigquery/v2",
       "method": "POST",
       "path": "/projects/{projectId}/queries"
-    }
+    },
+    "expect_intent_legacy": "data.bigquery",
+    "out_of_scope": true
   },
   {
     "id": "data-bigquery-2",
@@ -2137,7 +2305,9 @@
       "origin": "https://bigquery.google.gateway-402.com/bigquery/v2",
       "method": "POST",
       "path": "/projects/{projectId}/queries"
-    }
+    },
+    "expect_intent_legacy": "data.bigquery",
+    "out_of_scope": true
   },
   {
     "id": "data-bigquery-3",
@@ -2147,97 +2317,108 @@
       "origin": "https://bigquery.google.gateway-402.com/bigquery/v2",
       "method": "POST",
       "path": "/projects/{projectId}/queries"
-    }
+    },
+    "expect_intent_legacy": "data.bigquery",
+    "out_of_scope": true
   },
   {
     "id": "search-civicinfo-1",
     "query": "Google Civic Information API",
-    "expect_intent": "search.civicinfo",
+    "expect_intent": "data.gov_civic",
     "expect_endpoint": {
       "origin": "https://civicinfo.google.gateway-402.com",
       "method": "GET",
       "path": "/civicinfo/v2/voterinfo"
-    }
+    },
+    "expect_intent_legacy": "search.civicinfo"
   },
   {
     "id": "search-civicinfo-2",
     "query": "Google Civic Information API via micropayment",
-    "expect_intent": "search.civicinfo",
+    "expect_intent": "data.gov_civic",
     "expect_endpoint": {
       "origin": "https://civicinfo.google.gateway-402.com",
       "method": "GET",
       "path": "/civicinfo/v2/voterinfo"
-    }
+    },
+    "expect_intent_legacy": "search.civicinfo"
   },
   {
     "id": "search-civicinfo-3",
     "query": "I need to Google Civic Information API",
-    "expect_intent": "search.civicinfo",
+    "expect_intent": "data.gov_civic",
     "expect_endpoint": {
       "origin": "https://civicinfo.google.gateway-402.com",
       "method": "GET",
       "path": "/civicinfo/v2/voterinfo"
-    }
+    },
+    "expect_intent_legacy": "search.civicinfo"
   },
   {
     "id": "search-factchecktools-1",
     "query": "Fact Check Tools API",
-    "expect_intent": "search.factchecktools",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://factchecktools.google.gateway-402.com",
       "method": "GET",
       "path": "/v1alpha1/claims:search"
-    }
+    },
+    "expect_intent_legacy": "search.factchecktools"
   },
   {
     "id": "search-factchecktools-2",
     "query": "Fact Check Tools API via micropayment",
-    "expect_intent": "search.factchecktools",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://factchecktools.google.gateway-402.com",
       "method": "GET",
       "path": "/v1alpha1/claims:search"
-    }
+    },
+    "expect_intent_legacy": "search.factchecktools"
   },
   {
     "id": "search-factchecktools-3",
     "query": "I need to Fact Check Tools API",
-    "expect_intent": "search.factchecktools",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://factchecktools.google.gateway-402.com",
       "method": "GET",
       "path": "/v1alpha1/claims:search"
-    }
+    },
+    "expect_intent_legacy": "search.factchecktools"
   },
   {
     "id": "search-kgsearch-1",
     "query": "Knowledge Graph Search API",
-    "expect_intent": "search.kgsearch",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://kgsearch.google.gateway-402.com",
       "method": "GET",
       "path": "/v1/entities:search"
-    }
+    },
+    "expect_intent_legacy": "search.kgsearch"
   },
   {
     "id": "search-kgsearch-2",
     "query": "Knowledge Graph Search API via micropayment",
-    "expect_intent": "search.kgsearch",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://kgsearch.google.gateway-402.com",
       "method": "GET",
       "path": "/v1/entities:search"
-    }
+    },
+    "expect_intent_legacy": "search.kgsearch"
   },
   {
     "id": "search-kgsearch-3",
     "query": "I need to Knowledge Graph Search API",
-    "expect_intent": "search.kgsearch",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://kgsearch.google.gateway-402.com",
       "method": "GET",
       "path": "/v1/entities:search"
-    }
+    },
+    "expect_intent_legacy": "search.kgsearch"
   },
   {
     "id": "ai-ml-language-1",
@@ -2247,7 +2428,9 @@
       "origin": "https://language.google.gateway-402.com",
       "method": "POST",
       "path": "/v2/documents:analyzeEntities"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.language",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-language-2",
@@ -2257,7 +2440,9 @@
       "origin": "https://language.google.gateway-402.com",
       "method": "POST",
       "path": "/v2/documents:analyzeEntities"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.language",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-language-3",
@@ -2267,7 +2452,9 @@
       "origin": "https://language.google.gateway-402.com",
       "method": "POST",
       "path": "/v2/documents:analyzeEntities"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.language",
+    "out_of_scope": true
   },
   {
     "id": "maps-places-1",
@@ -2307,7 +2494,9 @@
       "origin": "https://videointelligence.google.gateway-402.com",
       "method": "POST",
       "path": "/v1/videos:annotate"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.videointelligence",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-videointelligence-2",
@@ -2317,7 +2506,9 @@
       "origin": "https://videointelligence.google.gateway-402.com",
       "method": "POST",
       "path": "/v1/videos:annotate"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.videointelligence",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-videointelligence-3",
@@ -2327,7 +2518,9 @@
       "origin": "https://videointelligence.google.gateway-402.com",
       "method": "POST",
       "path": "/v1/videos:annotate"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.videointelligence",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-vision-1",
@@ -2337,7 +2530,9 @@
       "origin": "https://vision.google.gateway-402.com",
       "method": "POST",
       "path": "/v1/files:annotate"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.vision",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-vision-2",
@@ -2347,7 +2542,9 @@
       "origin": "https://vision.google.gateway-402.com",
       "method": "POST",
       "path": "/v1/files:annotate"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.vision",
+    "out_of_scope": true
   },
   {
     "id": "ai-ml-vision-3",
@@ -2357,97 +2554,108 @@
       "origin": "https://vision.google.gateway-402.com",
       "method": "POST",
       "path": "/v1/files:annotate"
-    }
+    },
+    "expect_intent_legacy": "ai_ml.vision",
+    "out_of_scope": true
   },
   {
     "id": "data-abstract-company-enrichment-1",
     "query": "lookup company enrichment abstract company enrichment data",
-    "expect_intent": "data.abstract_company_enrichment",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://abstract-company-enrichment.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-company-enrichment/lookup"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_company_enrichment"
   },
   {
     "id": "data-abstract-company-enrichment-2",
     "query": "lookup company enrichment abstract company enrichment data via micropayment",
-    "expect_intent": "data.abstract_company_enrichment",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://abstract-company-enrichment.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-company-enrichment/lookup"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_company_enrichment"
   },
   {
     "id": "data-abstract-company-enrichment-3",
     "query": "I need to lookup company enrichment abstract company enrichment data",
-    "expect_intent": "data.abstract_company_enrichment",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://abstract-company-enrichment.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-company-enrichment/lookup"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_company_enrichment"
   },
   {
     "id": "data-abstract-email-reputation-1",
     "query": "Email Reputation",
-    "expect_intent": "data.abstract_email_reputation",
+    "expect_intent": "data.email_validate",
     "expect_endpoint": {
       "origin": "https://abstract-email-reputation.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-email-reputation/check"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_email_reputation"
   },
   {
     "id": "data-abstract-email-reputation-2",
     "query": "Email Reputation via micropayment",
-    "expect_intent": "data.abstract_email_reputation",
+    "expect_intent": "data.email_validate",
     "expect_endpoint": {
       "origin": "https://abstract-email-reputation.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-email-reputation/check"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_email_reputation"
   },
   {
     "id": "data-abstract-email-reputation-3",
     "query": "I need to Email Reputation",
-    "expect_intent": "data.abstract_email_reputation",
+    "expect_intent": "data.email_validate",
     "expect_endpoint": {
       "origin": "https://abstract-email-reputation.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-email-reputation/check"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_email_reputation"
   },
   {
     "id": "data-abstract-exchange-rates-1",
     "query": "convert exchange rates abstract exchange rates data",
-    "expect_intent": "data.abstract_exchange_rates",
+    "expect_intent": "data.exchange_rates",
     "expect_endpoint": {
       "origin": "https://abstract-exchange-rates.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-exchange-rates/convert"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_exchange_rates"
   },
   {
     "id": "data-abstract-exchange-rates-2",
     "query": "convert exchange rates abstract exchange rates data via micropayment",
-    "expect_intent": "data.abstract_exchange_rates",
+    "expect_intent": "data.exchange_rates",
     "expect_endpoint": {
       "origin": "https://abstract-exchange-rates.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-exchange-rates/convert"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_exchange_rates"
   },
   {
     "id": "data-abstract-exchange-rates-3",
     "query": "I need to convert exchange rates abstract exchange rates data",
-    "expect_intent": "data.abstract_exchange_rates",
+    "expect_intent": "data.exchange_rates",
     "expect_endpoint": {
       "origin": "https://abstract-exchange-rates.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-exchange-rates/convert"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_exchange_rates"
   },
   {
     "id": "data-abstract-holidays-1",
@@ -2457,7 +2665,9 @@
       "origin": "https://abstract-holidays.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-holidays/lookup"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_holidays",
+    "out_of_scope": true
   },
   {
     "id": "data-abstract-holidays-2",
@@ -2467,7 +2677,9 @@
       "origin": "https://abstract-holidays.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-holidays/lookup"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_holidays",
+    "out_of_scope": true
   },
   {
     "id": "data-abstract-holidays-3",
@@ -2477,7 +2689,9 @@
       "origin": "https://abstract-holidays.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-holidays/lookup"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_holidays",
+    "out_of_scope": true
   },
   {
     "id": "data-abstract-iban-validation-1",
@@ -2487,7 +2701,9 @@
       "origin": "https://abstract-iban-validation.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-iban-validation/validate"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_iban_validation",
+    "out_of_scope": true
   },
   {
     "id": "data-abstract-iban-validation-2",
@@ -2497,7 +2713,9 @@
       "origin": "https://abstract-iban-validation.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-iban-validation/validate"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_iban_validation",
+    "out_of_scope": true
   },
   {
     "id": "data-abstract-iban-validation-3",
@@ -2507,67 +2725,75 @@
       "origin": "https://abstract-iban-validation.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-iban-validation/validate"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_iban_validation",
+    "out_of_scope": true
   },
   {
     "id": "data-abstract-ip-intelligence-1",
     "query": "lookup ip intelligence abstract ip intelligence data",
-    "expect_intent": "data.abstract_ip_intelligence",
+    "expect_intent": "data.ip_lookup",
     "expect_endpoint": {
       "origin": "https://abstract-ip-intelligence.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-ip-intelligence/lookup"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_ip_intelligence"
   },
   {
     "id": "data-abstract-ip-intelligence-2",
     "query": "lookup ip intelligence abstract ip intelligence data via micropayment",
-    "expect_intent": "data.abstract_ip_intelligence",
+    "expect_intent": "data.ip_lookup",
     "expect_endpoint": {
       "origin": "https://abstract-ip-intelligence.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-ip-intelligence/lookup"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_ip_intelligence"
   },
   {
     "id": "data-abstract-ip-intelligence-3",
     "query": "I need to lookup ip intelligence abstract ip intelligence data",
-    "expect_intent": "data.abstract_ip_intelligence",
+    "expect_intent": "data.ip_lookup",
     "expect_endpoint": {
       "origin": "https://abstract-ip-intelligence.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-ip-intelligence/lookup"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_ip_intelligence"
   },
   {
     "id": "data-abstract-phone-intelligence-1",
     "query": "lookup phone intelligence abstract phone intelligence data",
-    "expect_intent": "data.abstract_phone_intelligence",
+    "expect_intent": "data.phone_validate",
     "expect_endpoint": {
       "origin": "https://abstract-phone-intelligence.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-phone-intelligence/lookup"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_phone_intelligence"
   },
   {
     "id": "data-abstract-phone-intelligence-2",
     "query": "lookup phone intelligence abstract phone intelligence data via micropayment",
-    "expect_intent": "data.abstract_phone_intelligence",
+    "expect_intent": "data.phone_validate",
     "expect_endpoint": {
       "origin": "https://abstract-phone-intelligence.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-phone-intelligence/lookup"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_phone_intelligence"
   },
   {
     "id": "data-abstract-phone-intelligence-3",
     "query": "I need to lookup phone intelligence abstract phone intelligence data",
-    "expect_intent": "data.abstract_phone_intelligence",
+    "expect_intent": "data.phone_validate",
     "expect_endpoint": {
       "origin": "https://abstract-phone-intelligence.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-phone-intelligence/lookup"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_phone_intelligence"
   },
   {
     "id": "data-abstract-timezone-1",
@@ -2577,7 +2803,9 @@
       "origin": "https://abstract-timezone.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-timezone/convert-time"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_timezone",
+    "out_of_scope": true
   },
   {
     "id": "data-abstract-timezone-2",
@@ -2587,7 +2815,9 @@
       "origin": "https://abstract-timezone.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-timezone/convert-time"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_timezone",
+    "out_of_scope": true
   },
   {
     "id": "data-abstract-timezone-3",
@@ -2597,7 +2827,9 @@
       "origin": "https://abstract-timezone.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-timezone/convert-time"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_timezone",
+    "out_of_scope": true
   },
   {
     "id": "data-abstract-vat-1",
@@ -2607,7 +2839,9 @@
       "origin": "https://abstract-vat.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-vat/calculate"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_vat",
+    "out_of_scope": true
   },
   {
     "id": "data-abstract-vat-2",
@@ -2617,7 +2851,9 @@
       "origin": "https://abstract-vat.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-vat/calculate"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_vat",
+    "out_of_scope": true
   },
   {
     "id": "data-abstract-vat-3",
@@ -2627,97 +2863,108 @@
       "origin": "https://abstract-vat.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-vat/calculate"
-    }
+    },
+    "expect_intent_legacy": "data.abstract_vat",
+    "out_of_scope": true
   },
   {
     "id": "web-abstract-web-scraping-1",
     "query": "scrape web scraping abstract web scraping web",
-    "expect_intent": "web.abstract_web_scraping",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://abstract-web-scraping.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-web-scraping/scrape"
-    }
+    },
+    "expect_intent_legacy": "web.abstract_web_scraping"
   },
   {
     "id": "web-abstract-web-scraping-2",
     "query": "scrape web scraping abstract web scraping web via micropayment",
-    "expect_intent": "web.abstract_web_scraping",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://abstract-web-scraping.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-web-scraping/scrape"
-    }
+    },
+    "expect_intent_legacy": "web.abstract_web_scraping"
   },
   {
     "id": "web-abstract-web-scraping-3",
     "query": "I need to scrape web scraping abstract web scraping web",
-    "expect_intent": "web.abstract_web_scraping",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://abstract-web-scraping.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/abstract-web-scraping/scrape"
-    }
+    },
+    "expect_intent_legacy": "web.abstract_web_scraping"
   },
   {
     "id": "social-agentfax-1",
     "query": "Send a fax to any phone number — priced per page",
-    "expect_intent": "social.agentfax",
+    "expect_intent": "comms.send_fax",
     "expect_endpoint": {
       "origin": "https://agentfax.val.run",
       "method": "POST",
       "path": "/v1/fax"
-    }
+    },
+    "expect_intent_legacy": "social.agentfax"
   },
   {
     "id": "social-agentfax-2",
     "query": "Send a fax to any phone number — priced per page via micropayment",
-    "expect_intent": "social.agentfax",
+    "expect_intent": "comms.send_fax",
     "expect_endpoint": {
       "origin": "https://agentfax.val.run",
       "method": "POST",
       "path": "/v1/fax"
-    }
+    },
+    "expect_intent_legacy": "social.agentfax"
   },
   {
     "id": "social-agentfax-3",
     "query": "I need to Send a fax to any phone number — priced per page",
-    "expect_intent": "social.agentfax",
+    "expect_intent": "comms.send_fax",
     "expect_endpoint": {
       "origin": "https://agentfax.val.run",
       "method": "POST",
       "path": "/v1/fax"
-    }
+    },
+    "expect_intent_legacy": "social.agentfax"
   },
   {
     "id": "blockchain-allium-1",
     "query": "Get latest token prices",
-    "expect_intent": "blockchain.allium",
+    "expect_intent": "finance.crypto_spot_price",
     "expect_endpoint": {
       "origin": "https://agents.allium.so",
       "method": "POST",
       "path": "/api/v1/developer/prices"
-    }
+    },
+    "expect_intent_legacy": "blockchain.allium"
   },
   {
     "id": "blockchain-allium-2",
     "query": "Get latest token prices via micropayment",
-    "expect_intent": "blockchain.allium",
+    "expect_intent": "finance.crypto_spot_price",
     "expect_endpoint": {
       "origin": "https://agents.allium.so",
       "method": "POST",
       "path": "/api/v1/developer/prices"
-    }
+    },
+    "expect_intent_legacy": "blockchain.allium"
   },
   {
     "id": "blockchain-allium-3",
     "query": "I need to Get latest token prices",
-    "expect_intent": "blockchain.allium",
+    "expect_intent": "finance.crypto_spot_price",
     "expect_endpoint": {
       "origin": "https://agents.allium.so",
       "method": "POST",
       "path": "/api/v1/developer/prices"
-    }
+    },
+    "expect_intent_legacy": "blockchain.allium"
   },
   {
     "id": "web-martin-estate-1",
@@ -2727,7 +2974,9 @@
       "origin": "https://agents.martinestate.com",
       "method": "GET",
       "path": "/catalog"
-    }
+    },
+    "expect_intent_legacy": "web.martin_estate",
+    "out_of_scope": true
   },
   {
     "id": "web-martin-estate-2",
@@ -2737,7 +2986,9 @@
       "origin": "https://agents.martinestate.com",
       "method": "GET",
       "path": "/catalog"
-    }
+    },
+    "expect_intent_legacy": "web.martin_estate",
+    "out_of_scope": true
   },
   {
     "id": "web-martin-estate-3",
@@ -2747,7 +2998,9 @@
       "origin": "https://agents.martinestate.com",
       "method": "GET",
       "path": "/catalog"
-    }
+    },
+    "expect_intent_legacy": "web.martin_estate",
+    "out_of_scope": true
   },
   {
     "id": "web-prospect-butcher-1",
@@ -2757,7 +3010,9 @@
       "origin": "https://agents.prospectbutcher.shop",
       "method": "GET",
       "path": "/buy/:slug"
-    }
+    },
+    "expect_intent_legacy": "web.prospect_butcher",
+    "out_of_scope": true
   },
   {
     "id": "web-prospect-butcher-2",
@@ -2767,7 +3022,9 @@
       "origin": "https://agents.prospectbutcher.shop",
       "method": "GET",
       "path": "/buy/:slug"
-    }
+    },
+    "expect_intent_legacy": "web.prospect_butcher",
+    "out_of_scope": true
   },
   {
     "id": "web-prospect-butcher-3",
@@ -2777,7 +3034,9 @@
       "origin": "https://agents.prospectbutcher.shop",
       "method": "GET",
       "path": "/buy/:slug"
-    }
+    },
+    "expect_intent_legacy": "web.prospect_butcher",
+    "out_of_scope": true
   },
   {
     "id": "web-sayer-and-stone-1",
@@ -2787,7 +3046,9 @@
       "origin": "https://agents.sayerandstone.com",
       "method": "GET",
       "path": "/catalog"
-    }
+    },
+    "expect_intent_legacy": "web.sayer_and_stone",
+    "out_of_scope": true
   },
   {
     "id": "web-sayer-and-stone-2",
@@ -2797,7 +3058,9 @@
       "origin": "https://agents.sayerandstone.com",
       "method": "GET",
       "path": "/catalog"
-    }
+    },
+    "expect_intent_legacy": "web.sayer_and_stone",
+    "out_of_scope": true
   },
   {
     "id": "web-sayer-and-stone-3",
@@ -2807,127 +3070,141 @@
       "origin": "https://agents.sayerandstone.com",
       "method": "GET",
       "path": "/catalog"
-    }
+    },
+    "expect_intent_legacy": "web.sayer_and_stone",
+    "out_of_scope": true
   },
   {
     "id": "data-alphavantage-1",
     "query": "balance sheet alpha vantage alphavantage data",
-    "expect_intent": "data.alphavantage",
+    "expect_intent": "finance.stock_quote",
     "expect_endpoint": {
       "origin": "https://alphavantage.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/alphavantage/balance-sheet"
-    }
+    },
+    "expect_intent_legacy": "data.alphavantage"
   },
   {
     "id": "data-alphavantage-2",
     "query": "balance sheet alpha vantage alphavantage data via micropayment",
-    "expect_intent": "data.alphavantage",
+    "expect_intent": "finance.stock_quote",
     "expect_endpoint": {
       "origin": "https://alphavantage.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/alphavantage/balance-sheet"
-    }
+    },
+    "expect_intent_legacy": "data.alphavantage"
   },
   {
     "id": "data-alphavantage-3",
     "query": "I need to balance sheet alpha vantage alphavantage data",
-    "expect_intent": "data.alphavantage",
+    "expect_intent": "finance.stock_quote",
     "expect_endpoint": {
       "origin": "https://alphavantage.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/alphavantage/balance-sheet"
-    }
+    },
+    "expect_intent_legacy": "data.alphavantage"
   },
   {
     "id": "ai-anthropic-1",
     "query": "OpenAI-compatible chat completions (auto-converted to Anthropic format)",
-    "expect_intent": "ai.anthropic",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://anthropic.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/messages"
-    }
+    },
+    "expect_intent_legacy": "ai.anthropic"
   },
   {
     "id": "ai-anthropic-2",
     "query": "OpenAI-compatible chat completions (auto-converted to Anthropic format) via micropayment",
-    "expect_intent": "ai.anthropic",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://anthropic.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/messages"
-    }
+    },
+    "expect_intent_legacy": "ai.anthropic"
   },
   {
     "id": "ai-anthropic-3",
     "query": "I need to OpenAI-compatible chat completions (auto-converted to Anthropic format)",
-    "expect_intent": "ai.anthropic",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://anthropic.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/messages"
-    }
+    },
+    "expect_intent_legacy": "ai.anthropic"
   },
   {
     "id": "ai-autoexchange-1",
     "query": "List all available agents on the marketplace",
-    "expect_intent": "ai.autoexchange",
+    "expect_intent": "agent.marketplace",
     "expect_endpoint": {
       "origin": "https://api.auto.exchange",
       "method": "GET",
       "path": "/agents"
-    }
+    },
+    "expect_intent_legacy": "ai.autoexchange"
   },
   {
     "id": "ai-autoexchange-2",
     "query": "List all available agents on the marketplace via micropayment",
-    "expect_intent": "ai.autoexchange",
+    "expect_intent": "agent.marketplace",
     "expect_endpoint": {
       "origin": "https://api.auto.exchange",
       "method": "GET",
       "path": "/agents"
-    }
+    },
+    "expect_intent_legacy": "ai.autoexchange"
   },
   {
     "id": "ai-autoexchange-3",
     "query": "I need to List all available agents on the marketplace",
-    "expect_intent": "ai.autoexchange",
+    "expect_intent": "agent.marketplace",
     "expect_endpoint": {
       "origin": "https://api.auto.exchange",
       "method": "GET",
       "path": "/agents"
-    }
+    },
+    "expect_intent_legacy": "ai.autoexchange"
   },
   {
     "id": "data-dune-1",
     "query": "Download CSV results for an execution",
-    "expect_intent": "data.dune",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://api.dune.com",
       "method": "POST",
       "path": "/api/v1/sql/execute"
-    }
+    },
+    "expect_intent_legacy": "data.dune"
   },
   {
     "id": "data-dune-2",
     "query": "Download CSV results for an execution via micropayment",
-    "expect_intent": "data.dune",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://api.dune.com",
       "method": "POST",
       "path": "/api/v1/sql/execute"
-    }
+    },
+    "expect_intent_legacy": "data.dune"
   },
   {
     "id": "data-dune-3",
     "query": "I need to Download CSV results for an execution",
-    "expect_intent": "data.dune",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://api.dune.com",
       "method": "POST",
       "path": "/api/v1/sql/execute"
-    }
+    },
+    "expect_intent_legacy": "data.dune"
   },
   {
     "id": "ai-moltycash-1",
@@ -2937,7 +3214,9 @@
       "origin": "https://api.molty.cash",
       "method": "POST",
       "path": "/a2a"
-    }
+    },
+    "expect_intent_legacy": "ai.moltycash",
+    "out_of_scope": true
   },
   {
     "id": "ai-moltycash-2",
@@ -2947,7 +3226,9 @@
       "origin": "https://api.molty.cash",
       "method": "POST",
       "path": "/a2a"
-    }
+    },
+    "expect_intent_legacy": "ai.moltycash",
+    "out_of_scope": true
   },
   {
     "id": "ai-moltycash-3",
@@ -2957,37 +3238,42 @@
       "origin": "https://api.molty.cash",
       "method": "POST",
       "path": "/a2a"
-    }
+    },
+    "expect_intent_legacy": "ai.moltycash",
+    "out_of_scope": true
   },
   {
     "id": "data-apollo-1",
     "query": "Bulk Organization Enrichment",
-    "expect_intent": "data.apollo",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://apollo.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/apollo/org-search"
-    }
+    },
+    "expect_intent_legacy": "data.apollo"
   },
   {
     "id": "data-apollo-2",
     "query": "Bulk Organization Enrichment via micropayment",
-    "expect_intent": "data.apollo",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://apollo.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/apollo/org-search"
-    }
+    },
+    "expect_intent_legacy": "data.apollo"
   },
   {
     "id": "data-apollo-3",
     "query": "I need to Bulk Organization Enrichment",
-    "expect_intent": "data.apollo",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://apollo.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/apollo/org-search"
-    }
+    },
+    "expect_intent_legacy": "data.apollo"
   },
   {
     "id": "data-aviationstack-1",
@@ -2997,7 +3283,9 @@
       "origin": "https://aviationstack.mpp.tempo.xyz",
       "method": "GET",
       "path": "/v1/aircraft_types"
-    }
+    },
+    "expect_intent_legacy": "data.aviationstack",
+    "out_of_scope": true
   },
   {
     "id": "data-aviationstack-2",
@@ -3007,7 +3295,9 @@
       "origin": "https://aviationstack.mpp.tempo.xyz",
       "method": "GET",
       "path": "/v1/aircraft_types"
-    }
+    },
+    "expect_intent_legacy": "data.aviationstack",
+    "out_of_scope": true
   },
   {
     "id": "data-aviationstack-3",
@@ -3017,7 +3307,9 @@
       "origin": "https://aviationstack.mpp.tempo.xyz",
       "method": "GET",
       "path": "/v1/aircraft_types"
-    }
+    },
+    "expect_intent_legacy": "data.aviationstack",
+    "out_of_scope": true
   },
   {
     "id": "data-billboard-1",
@@ -3027,7 +3319,9 @@
       "origin": "https://billboard.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/billboard/post"
-    }
+    },
+    "expect_intent_legacy": "data.billboard",
+    "out_of_scope": true
   },
   {
     "id": "data-billboard-2",
@@ -3037,7 +3331,9 @@
       "origin": "https://billboard.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/billboard/post"
-    }
+    },
+    "expect_intent_legacy": "data.billboard",
+    "out_of_scope": true
   },
   {
     "id": "data-billboard-3",
@@ -3047,97 +3343,108 @@
       "origin": "https://billboard.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/billboard/post"
-    }
+    },
+    "expect_intent_legacy": "data.billboard",
+    "out_of_scope": true
   },
   {
     "id": "search-brave-1",
     "query": "Brave Search",
-    "expect_intent": "search.brave",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://brave.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/brave/answers"
-    }
+    },
+    "expect_intent_legacy": "search.brave"
   },
   {
     "id": "search-brave-2",
     "query": "Brave Search via micropayment",
-    "expect_intent": "search.brave",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://brave.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/brave/answers"
-    }
+    },
+    "expect_intent_legacy": "search.brave"
   },
   {
     "id": "search-brave-3",
     "query": "I need to Brave Search",
-    "expect_intent": "search.brave",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://brave.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/brave/answers"
-    }
+    },
+    "expect_intent_legacy": "search.brave"
   },
   {
     "id": "data-builtwith-1",
     "query": "company to url builtwith builtwith data",
-    "expect_intent": "data.builtwith",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://builtwith.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/builtwith/company-to-url"
-    }
+    },
+    "expect_intent_legacy": "data.builtwith"
   },
   {
     "id": "data-builtwith-2",
     "query": "company to url builtwith builtwith data via micropayment",
-    "expect_intent": "data.builtwith",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://builtwith.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/builtwith/company-to-url"
-    }
+    },
+    "expect_intent_legacy": "data.builtwith"
   },
   {
     "id": "data-builtwith-3",
     "query": "I need to company to url builtwith builtwith data",
-    "expect_intent": "data.builtwith",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://builtwith.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/builtwith/company-to-url"
-    }
+    },
+    "expect_intent_legacy": "data.builtwith"
   },
   {
     "id": "data-clado-1",
     "query": "bulk contact enrichment clado clado data",
-    "expect_intent": "data.clado",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://clado.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/clado/bulk-contacts"
-    }
+    },
+    "expect_intent_legacy": "data.clado"
   },
   {
     "id": "data-clado-2",
     "query": "bulk contact enrichment clado clado data via micropayment",
-    "expect_intent": "data.clado",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://clado.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/clado/bulk-contacts"
-    }
+    },
+    "expect_intent_legacy": "data.clado"
   },
   {
     "id": "data-clado-3",
     "query": "I need to bulk contact enrichment clado clado data",
-    "expect_intent": "data.clado",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://clado.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/clado/bulk-contacts"
-    }
+    },
+    "expect_intent_legacy": "data.clado"
   },
   {
     "id": "web-stripe-climate-1",
@@ -3147,7 +3454,9 @@
       "origin": "https://climate.stripe.dev",
       "method": "POST",
       "path": "/api/contribute"
-    }
+    },
+    "expect_intent_legacy": "web.stripe_climate",
+    "out_of_scope": true
   },
   {
     "id": "web-stripe-climate-2",
@@ -3157,7 +3466,9 @@
       "origin": "https://climate.stripe.dev",
       "method": "POST",
       "path": "/api/contribute"
-    }
+    },
+    "expect_intent_legacy": "web.stripe_climate",
+    "out_of_scope": true
   },
   {
     "id": "web-stripe-climate-3",
@@ -3167,397 +3478,438 @@
       "origin": "https://climate.stripe.dev",
       "method": "POST",
       "path": "/api/contribute"
-    }
+    },
+    "expect_intent_legacy": "web.stripe_climate",
+    "out_of_scope": true
   },
   {
     "id": "storage-codestorage-1",
     "query": "Create a Git repository",
-    "expect_intent": "storage.codestorage",
+    "expect_intent": "data.code_repository",
     "expect_endpoint": {
       "origin": "https://codestorage.mpp.tempo.xyz",
       "method": "POST",
       "path": "/repos"
-    }
+    },
+    "expect_intent_legacy": "storage.codestorage"
   },
   {
     "id": "storage-codestorage-2",
     "query": "Create a Git repository via micropayment",
-    "expect_intent": "storage.codestorage",
+    "expect_intent": "data.code_repository",
     "expect_endpoint": {
       "origin": "https://codestorage.mpp.tempo.xyz",
       "method": "POST",
       "path": "/repos"
-    }
+    },
+    "expect_intent_legacy": "storage.codestorage"
   },
   {
     "id": "storage-codestorage-3",
     "query": "I need to Create a Git repository",
-    "expect_intent": "storage.codestorage",
+    "expect_intent": "data.code_repository",
     "expect_endpoint": {
       "origin": "https://codestorage.mpp.tempo.xyz",
       "method": "POST",
       "path": "/repos"
-    }
+    },
+    "expect_intent_legacy": "storage.codestorage"
   },
   {
     "id": "data-coingecko-1",
     "query": "categories coingecko coingecko data",
-    "expect_intent": "data.coingecko",
+    "expect_intent": "finance.crypto_spot_price",
     "expect_endpoint": {
       "origin": "https://coingecko.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/coingecko/coin-data"
-    }
+    },
+    "expect_intent_legacy": "data.coingecko"
   },
   {
     "id": "data-coingecko-2",
     "query": "categories coingecko coingecko data via micropayment",
-    "expect_intent": "data.coingecko",
+    "expect_intent": "finance.crypto_spot_price",
     "expect_endpoint": {
       "origin": "https://coingecko.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/coingecko/coin-data"
-    }
+    },
+    "expect_intent_legacy": "data.coingecko"
   },
   {
     "id": "data-coingecko-3",
     "query": "I need to categories coingecko coingecko data",
-    "expect_intent": "data.coingecko",
+    "expect_intent": "finance.crypto_spot_price",
     "expect_endpoint": {
       "origin": "https://coingecko.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/coingecko/coin-data"
-    }
+    },
+    "expect_intent_legacy": "data.coingecko"
   },
   {
     "id": "data-deepgram-1",
     "query": "Analyze Text",
-    "expect_intent": "data.deepgram",
+    "expect_intent": "ai.speech_to_text",
     "expect_endpoint": {
       "origin": "https://deepgram.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/deepgram/transcribe"
-    }
+    },
+    "expect_intent_legacy": "data.deepgram"
   },
   {
     "id": "data-deepgram-2",
     "query": "Analyze Text via micropayment",
-    "expect_intent": "data.deepgram",
+    "expect_intent": "ai.speech_to_text",
     "expect_endpoint": {
       "origin": "https://deepgram.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/deepgram/transcribe"
-    }
+    },
+    "expect_intent_legacy": "data.deepgram"
   },
   {
     "id": "data-deepgram-3",
     "query": "I need to Analyze Text",
-    "expect_intent": "data.deepgram",
+    "expect_intent": "ai.speech_to_text",
     "expect_endpoint": {
       "origin": "https://deepgram.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/deepgram/transcribe"
-    }
+    },
+    "expect_intent_legacy": "data.deepgram"
   },
   {
     "id": "data-deepl-1",
     "query": "languages deepl deepl data",
-    "expect_intent": "data.deepl",
+    "expect_intent": "data.translate_text",
     "expect_endpoint": {
       "origin": "https://deepl.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/deepl/translate"
-    }
+    },
+    "expect_intent_legacy": "data.deepl"
   },
   {
     "id": "data-deepl-2",
     "query": "languages deepl deepl data via micropayment",
-    "expect_intent": "data.deepl",
+    "expect_intent": "data.translate_text",
     "expect_endpoint": {
       "origin": "https://deepl.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/deepl/translate"
-    }
+    },
+    "expect_intent_legacy": "data.deepl"
   },
   {
     "id": "data-deepl-3",
     "query": "I need to languages deepl deepl data",
-    "expect_intent": "data.deepl",
+    "expect_intent": "data.translate_text",
     "expect_endpoint": {
       "origin": "https://deepl.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/deepl/translate"
-    }
+    },
+    "expect_intent_legacy": "data.deepl"
   },
   {
     "id": "ai-deepseek-1",
     "query": "chat deepseek deepseek ai",
-    "expect_intent": "ai.deepseek",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://deepseek.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/deepseek/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.deepseek"
   },
   {
     "id": "ai-deepseek-2",
     "query": "chat deepseek deepseek ai via micropayment",
-    "expect_intent": "ai.deepseek",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://deepseek.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/deepseek/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.deepseek"
   },
   {
     "id": "ai-deepseek-3",
     "query": "I need to chat deepseek deepseek ai",
-    "expect_intent": "ai.deepseek",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://deepseek.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/deepseek/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.deepseek"
   },
   {
     "id": "data-diffbot-kg-1",
     "query": "enhance diffbot kg diffbot kg data",
-    "expect_intent": "data.diffbot_kg",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://diffbot-kg.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/diffbot-kg/enhance"
-    }
+    },
+    "expect_intent_legacy": "data.diffbot_kg"
   },
   {
     "id": "data-diffbot-kg-2",
     "query": "enhance diffbot kg diffbot kg data via micropayment",
-    "expect_intent": "data.diffbot_kg",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://diffbot-kg.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/diffbot-kg/enhance"
-    }
+    },
+    "expect_intent_legacy": "data.diffbot_kg"
   },
   {
     "id": "data-diffbot-kg-3",
     "query": "I need to enhance diffbot kg diffbot kg data",
-    "expect_intent": "data.diffbot_kg",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://diffbot-kg.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/diffbot-kg/enhance"
-    }
+    },
+    "expect_intent_legacy": "data.diffbot_kg"
   },
   {
     "id": "web-diffbot-1",
     "query": "analyze diffbot diffbot web",
-    "expect_intent": "web.diffbot",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://diffbot.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/diffbot/analyze"
-    }
+    },
+    "expect_intent_legacy": "web.diffbot"
   },
   {
     "id": "web-diffbot-2",
     "query": "analyze diffbot diffbot web via micropayment",
-    "expect_intent": "web.diffbot",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://diffbot.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/diffbot/analyze"
-    }
+    },
+    "expect_intent_legacy": "web.diffbot"
   },
   {
     "id": "web-diffbot-3",
     "query": "I need to analyze diffbot diffbot web",
-    "expect_intent": "web.diffbot",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://diffbot.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/diffbot/analyze"
-    }
+    },
+    "expect_intent_legacy": "web.diffbot"
   },
   {
     "id": "web-dripstack-1",
     "query": "list publications (free) dripstack dripstack web",
-    "expect_intent": "web.dripstack",
+    "expect_intent": "media.social_data",
     "expect_endpoint": {
       "origin": "https://dripstack.xyz",
       "method": "GET",
       "path": "/api/v1/publications"
-    }
+    },
+    "expect_intent_legacy": "web.dripstack"
   },
   {
     "id": "web-dripstack-2",
     "query": "list publications (free) dripstack dripstack web via micropayment",
-    "expect_intent": "web.dripstack",
+    "expect_intent": "media.social_data",
     "expect_endpoint": {
       "origin": "https://dripstack.xyz",
       "method": "GET",
       "path": "/api/v1/publications"
-    }
+    },
+    "expect_intent_legacy": "web.dripstack"
   },
   {
     "id": "web-dripstack-3",
     "query": "I need to list publications (free) dripstack dripstack web",
-    "expect_intent": "web.dripstack",
+    "expect_intent": "media.social_data",
     "expect_endpoint": {
       "origin": "https://dripstack.xyz",
       "method": "GET",
       "path": "/api/v1/publications"
-    }
+    },
+    "expect_intent_legacy": "web.dripstack"
   },
   {
     "id": "data-edgar-search-1",
     "query": "EDGAR Full-Text Search",
-    "expect_intent": "data.edgar_search",
+    "expect_intent": "finance.economic_data",
     "expect_endpoint": {
       "origin": "https://edgar-search.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/edgar-search/search"
-    }
+    },
+    "expect_intent_legacy": "data.edgar_search"
   },
   {
     "id": "data-edgar-search-2",
     "query": "EDGAR Full-Text Search via micropayment",
-    "expect_intent": "data.edgar_search",
+    "expect_intent": "finance.economic_data",
     "expect_endpoint": {
       "origin": "https://edgar-search.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/edgar-search/search"
-    }
+    },
+    "expect_intent_legacy": "data.edgar_search"
   },
   {
     "id": "data-edgar-search-3",
     "query": "I need to EDGAR Full-Text Search",
-    "expect_intent": "data.edgar_search",
+    "expect_intent": "finance.economic_data",
     "expect_endpoint": {
       "origin": "https://edgar-search.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/edgar-search/search"
-    }
+    },
+    "expect_intent_legacy": "data.edgar_search"
   },
   {
     "id": "data-edgar-1",
     "query": "company concept edgar (sec) edgar data",
-    "expect_intent": "data.edgar",
+    "expect_intent": "finance.economic_data",
     "expect_endpoint": {
       "origin": "https://edgar.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/edgar/company-concept"
-    }
+    },
+    "expect_intent_legacy": "data.edgar"
   },
   {
     "id": "data-edgar-2",
     "query": "company concept edgar (sec) edgar data via micropayment",
-    "expect_intent": "data.edgar",
+    "expect_intent": "finance.economic_data",
     "expect_endpoint": {
       "origin": "https://edgar.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/edgar/company-concept"
-    }
+    },
+    "expect_intent_legacy": "data.edgar"
   },
   {
     "id": "data-edgar-3",
     "query": "I need to company concept edgar (sec) edgar data",
-    "expect_intent": "data.edgar",
+    "expect_intent": "finance.economic_data",
     "expect_endpoint": {
       "origin": "https://edgar.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/edgar/company-concept"
-    }
+    },
+    "expect_intent_legacy": "data.edgar"
   },
   {
     "id": "search-exa-1",
     "query": "Get AI-powered answers",
-    "expect_intent": "search.exa",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://exa.mpp.tempo.xyz",
       "method": "POST",
       "path": "/answer"
-    }
+    },
+    "expect_intent_legacy": "search.exa"
   },
   {
     "id": "search-exa-2",
     "query": "Get AI-powered answers via micropayment",
-    "expect_intent": "search.exa",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://exa.mpp.tempo.xyz",
       "method": "POST",
       "path": "/answer"
-    }
+    },
+    "expect_intent_legacy": "search.exa"
   },
   {
     "id": "search-exa-3",
     "query": "I need to Get AI-powered answers",
-    "expect_intent": "search.exa",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://exa.mpp.tempo.xyz",
       "method": "POST",
       "path": "/answer"
-    }
+    },
+    "expect_intent_legacy": "search.exa"
   },
   {
     "id": "ai-fal-1",
     "query": "ai model generation fal",
-    "expect_intent": "ai.fal",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://fal.mpp.tempo.xyz",
       "method": "POST",
       "path": "/fal-ai/:model"
-    }
+    },
+    "expect_intent_legacy": "ai.fal"
   },
   {
     "id": "ai-fal-2",
     "query": "ai model generation fal via micropayment",
-    "expect_intent": "ai.fal",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://fal.mpp.tempo.xyz",
       "method": "POST",
       "path": "/fal-ai/:model"
-    }
+    },
+    "expect_intent_legacy": "ai.fal"
   },
   {
     "id": "ai-fal-3",
     "query": "I need to ai model generation fal",
-    "expect_intent": "ai.fal",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://fal.mpp.tempo.xyz",
       "method": "POST",
       "path": "/fal-ai/:model"
-    }
+    },
+    "expect_intent_legacy": "ai.fal"
   },
   {
     "id": "web-firecrawl-1",
     "query": "crawl a website firecrawl firecrawl web",
-    "expect_intent": "web.firecrawl",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://firecrawl.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/crawl"
-    }
+    },
+    "expect_intent_legacy": "web.firecrawl"
   },
   {
     "id": "web-firecrawl-2",
     "query": "crawl a website firecrawl firecrawl web via micropayment",
-    "expect_intent": "web.firecrawl",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://firecrawl.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/crawl"
-    }
+    },
+    "expect_intent_legacy": "web.firecrawl"
   },
   {
     "id": "web-firecrawl-3",
     "query": "I need to crawl a website firecrawl firecrawl web",
-    "expect_intent": "web.firecrawl",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://firecrawl.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/crawl"
-    }
+    },
+    "expect_intent_legacy": "web.firecrawl"
   },
   {
     "id": "data-flightapi-1",
@@ -3567,7 +3919,9 @@
       "origin": "https://flightapi.mpp.tempo.xyz",
       "method": "GET",
       "path": "/airline/:rest*"
-    }
+    },
+    "expect_intent_legacy": "data.flightapi",
+    "out_of_scope": true
   },
   {
     "id": "data-flightapi-2",
@@ -3577,7 +3931,9 @@
       "origin": "https://flightapi.mpp.tempo.xyz",
       "method": "GET",
       "path": "/airline/:rest*"
-    }
+    },
+    "expect_intent_legacy": "data.flightapi",
+    "out_of_scope": true
   },
   {
     "id": "data-flightapi-3",
@@ -3587,37 +3943,42 @@
       "origin": "https://flightapi.mpp.tempo.xyz",
       "method": "GET",
       "path": "/airline/:rest*"
-    }
+    },
+    "expect_intent_legacy": "data.flightapi",
+    "out_of_scope": true
   },
   {
     "id": "ai-gemini-1",
     "query": "List cached contents (free)",
-    "expect_intent": "ai.gemini",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://gemini.mpp.tempo.xyz",
       "method": "POST",
       "path": "/:version/files"
-    }
+    },
+    "expect_intent_legacy": "ai.gemini"
   },
   {
     "id": "ai-gemini-2",
     "query": "List cached contents (free) via micropayment",
-    "expect_intent": "ai.gemini",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://gemini.mpp.tempo.xyz",
       "method": "POST",
       "path": "/:version/files"
-    }
+    },
+    "expect_intent_legacy": "ai.gemini"
   },
   {
     "id": "ai-gemini-3",
     "query": "I need to List cached contents (free)",
-    "expect_intent": "ai.gemini",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://gemini.mpp.tempo.xyz",
       "method": "POST",
       "path": "/:version/files"
-    }
+    },
+    "expect_intent_legacy": "ai.gemini"
   },
   {
     "id": "data-goflightlabs-1",
@@ -3627,7 +3988,9 @@
       "origin": "https://goflightlabs.mpp.tempo.xyz",
       "method": "GET",
       "path": "/airports-by-filters"
-    }
+    },
+    "expect_intent_legacy": "data.goflightlabs",
+    "out_of_scope": true
   },
   {
     "id": "data-goflightlabs-2",
@@ -3637,7 +4000,9 @@
       "origin": "https://goflightlabs.mpp.tempo.xyz",
       "method": "GET",
       "path": "/airports-by-filters"
-    }
+    },
+    "expect_intent_legacy": "data.goflightlabs",
+    "out_of_scope": true
   },
   {
     "id": "data-goflightlabs-3",
@@ -3647,217 +4012,240 @@
       "origin": "https://goflightlabs.mpp.tempo.xyz",
       "method": "GET",
       "path": "/airports-by-filters"
-    }
+    },
+    "expect_intent_legacy": "data.goflightlabs",
+    "out_of_scope": true
   },
   {
     "id": "data-googlemaps-1",
     "query": "Look up an aerial view video",
-    "expect_intent": "data.googlemaps",
+    "expect_intent": "maps.places",
     "expect_endpoint": {
       "origin": "https://googlemaps.mpp.tempo.xyz",
       "method": "GET",
       "path": "/maps/staticmap"
-    }
+    },
+    "expect_intent_legacy": "data.googlemaps"
   },
   {
     "id": "data-googlemaps-2",
     "query": "Look up an aerial view video via micropayment",
-    "expect_intent": "data.googlemaps",
+    "expect_intent": "maps.places",
     "expect_endpoint": {
       "origin": "https://googlemaps.mpp.tempo.xyz",
       "method": "GET",
       "path": "/maps/staticmap"
-    }
+    },
+    "expect_intent_legacy": "data.googlemaps"
   },
   {
     "id": "data-googlemaps-3",
     "query": "I need to Look up an aerial view video",
-    "expect_intent": "data.googlemaps",
+    "expect_intent": "maps.places",
     "expect_endpoint": {
       "origin": "https://googlemaps.mpp.tempo.xyz",
       "method": "GET",
       "path": "/maps/staticmap"
-    }
+    },
+    "expect_intent_legacy": "data.googlemaps"
   },
   {
     "id": "data-govlaws-1",
     "query": "Recent Federal Register change events filtered by agency, citation, or lookback",
-    "expect_intent": "data.govlaws",
+    "expect_intent": "data.gov_civic",
     "expect_endpoint": {
       "origin": "https://govlaws.ai",
       "method": "GET",
       "path": "/api/mpp/changes"
-    }
+    },
+    "expect_intent_legacy": "data.govlaws"
   },
   {
     "id": "data-govlaws-2",
     "query": "Recent Federal Register change events filtered by agency, citation, or lookback via micropayment",
-    "expect_intent": "data.govlaws",
+    "expect_intent": "data.gov_civic",
     "expect_endpoint": {
       "origin": "https://govlaws.ai",
       "method": "GET",
       "path": "/api/mpp/changes"
-    }
+    },
+    "expect_intent_legacy": "data.govlaws"
   },
   {
     "id": "data-govlaws-3",
     "query": "I need to Recent Federal Register change events filtered by agency, citation, or lookback",
-    "expect_intent": "data.govlaws",
+    "expect_intent": "data.gov_civic",
     "expect_endpoint": {
       "origin": "https://govlaws.ai",
       "method": "GET",
       "path": "/api/mpp/changes"
-    }
+    },
+    "expect_intent_legacy": "data.govlaws"
   },
   {
     "id": "blockchain-codex-1",
     "query": "GraphQL query (token data, trades, liquidity, NFTs, wallets)",
-    "expect_intent": "blockchain.codex",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://graph.codex.io",
       "method": "POST",
       "path": "/graphql"
-    }
+    },
+    "expect_intent_legacy": "blockchain.codex"
   },
   {
     "id": "blockchain-codex-2",
     "query": "GraphQL query (token data, trades, liquidity, NFTs, wallets) via micropayment",
-    "expect_intent": "blockchain.codex",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://graph.codex.io",
       "method": "POST",
       "path": "/graphql"
-    }
+    },
+    "expect_intent_legacy": "blockchain.codex"
   },
   {
     "id": "blockchain-codex-3",
     "query": "I need to GraphQL query (token data, trades, liquidity, NFTs, wallets)",
-    "expect_intent": "blockchain.codex",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://graph.codex.io",
       "method": "POST",
       "path": "/graphql"
-    }
+    },
+    "expect_intent_legacy": "blockchain.codex"
   },
   {
     "id": "ai-grok-1",
     "query": "chat completions grok grok ai",
-    "expect_intent": "ai.grok",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://grok.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/grok/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.grok"
   },
   {
     "id": "ai-grok-2",
     "query": "chat completions grok grok ai via micropayment",
-    "expect_intent": "ai.grok",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://grok.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/grok/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.grok"
   },
   {
     "id": "ai-grok-3",
     "query": "I need to chat completions grok grok ai",
-    "expect_intent": "ai.grok",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://grok.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/grok/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.grok"
   },
   {
     "id": "ai-groq-1",
     "query": "chat completion groq groq ai",
-    "expect_intent": "ai.groq",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://groq.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/groq/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.groq"
   },
   {
     "id": "ai-groq-2",
     "query": "chat completion groq groq ai via micropayment",
-    "expect_intent": "ai.groq",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://groq.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/groq/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.groq"
   },
   {
     "id": "ai-groq-3",
     "query": "I need to chat completion groq groq ai",
-    "expect_intent": "ai.groq",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://groq.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/groq/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.groq"
   },
   {
     "id": "data-hunter-1",
     "query": "combined enrichment hunter hunter data",
-    "expect_intent": "data.hunter",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://hunter.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/hunter/combined-enrichment"
-    }
+    },
+    "expect_intent_legacy": "data.hunter"
   },
   {
     "id": "data-hunter-2",
     "query": "combined enrichment hunter hunter data via micropayment",
-    "expect_intent": "data.hunter",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://hunter.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/hunter/combined-enrichment"
-    }
+    },
+    "expect_intent_legacy": "data.hunter"
   },
   {
     "id": "data-hunter-3",
     "query": "I need to combined enrichment hunter hunter data",
-    "expect_intent": "data.hunter",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://hunter.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/hunter/combined-enrichment"
-    }
+    },
+    "expect_intent_legacy": "data.hunter"
   },
   {
     "id": "data-ipinfo-1",
     "query": "ip lite ipinfo ipinfo data",
-    "expect_intent": "data.ipinfo",
+    "expect_intent": "data.ip_lookup",
     "expect_endpoint": {
       "origin": "https://ipinfo.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/ipinfo/ip-lite"
-    }
+    },
+    "expect_intent_legacy": "data.ipinfo"
   },
   {
     "id": "data-ipinfo-2",
     "query": "ip lite ipinfo ipinfo data via micropayment",
-    "expect_intent": "data.ipinfo",
+    "expect_intent": "data.ip_lookup",
     "expect_endpoint": {
       "origin": "https://ipinfo.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/ipinfo/ip-lite"
-    }
+    },
+    "expect_intent_legacy": "data.ipinfo"
   },
   {
     "id": "data-ipinfo-3",
     "query": "I need to ip lite ipinfo ipinfo data",
-    "expect_intent": "data.ipinfo",
+    "expect_intent": "data.ip_lookup",
     "expect_endpoint": {
       "origin": "https://ipinfo.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/ipinfo/ip-lite"
-    }
+    },
+    "expect_intent_legacy": "data.ipinfo"
   },
   {
     "id": "compute-judge0-1",
@@ -3867,7 +4255,9 @@
       "origin": "https://judge0.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/judge0/execute-code"
-    }
+    },
+    "expect_intent_legacy": "compute.judge0",
+    "out_of_scope": true
   },
   {
     "id": "compute-judge0-2",
@@ -3877,7 +4267,9 @@
       "origin": "https://judge0.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/judge0/execute-code"
-    }
+    },
+    "expect_intent_legacy": "compute.judge0",
+    "out_of_scope": true
   },
   {
     "id": "compute-judge0-3",
@@ -3887,97 +4279,108 @@
       "origin": "https://judge0.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/judge0/execute-code"
-    }
+    },
+    "expect_intent_legacy": "compute.judge0",
+    "out_of_scope": true
   },
   {
     "id": "data-kicksdb-1",
     "query": "daily csv snapshot kicksdb kicksdb data",
-    "expect_intent": "data.kicksdb",
+    "expect_intent": "shop.track_price_history",
     "expect_endpoint": {
       "origin": "https://kicksdb.mpp.tempo.xyz",
       "method": "GET",
       "path": "/v3/exports/daily"
-    }
+    },
+    "expect_intent_legacy": "data.kicksdb"
   },
   {
     "id": "data-kicksdb-2",
     "query": "daily csv snapshot kicksdb kicksdb data via micropayment",
-    "expect_intent": "data.kicksdb",
+    "expect_intent": "shop.track_price_history",
     "expect_endpoint": {
       "origin": "https://kicksdb.mpp.tempo.xyz",
       "method": "GET",
       "path": "/v3/exports/daily"
-    }
+    },
+    "expect_intent_legacy": "data.kicksdb"
   },
   {
     "id": "data-kicksdb-3",
     "query": "I need to daily csv snapshot kicksdb kicksdb data",
-    "expect_intent": "data.kicksdb",
+    "expect_intent": "shop.track_price_history",
     "expect_endpoint": {
       "origin": "https://kicksdb.mpp.tempo.xyz",
       "method": "GET",
       "path": "/v3/exports/daily"
-    }
+    },
+    "expect_intent_legacy": "data.kicksdb"
   },
   {
     "id": "data-mapbox-1",
     "query": "directions mapbox mapbox data",
-    "expect_intent": "data.mapbox",
+    "expect_intent": "maps.geocode",
     "expect_endpoint": {
       "origin": "https://mapbox.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/mapbox/directions"
-    }
+    },
+    "expect_intent_legacy": "data.mapbox"
   },
   {
     "id": "data-mapbox-2",
     "query": "directions mapbox mapbox data via micropayment",
-    "expect_intent": "data.mapbox",
+    "expect_intent": "maps.geocode",
     "expect_endpoint": {
       "origin": "https://mapbox.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/mapbox/directions"
-    }
+    },
+    "expect_intent_legacy": "data.mapbox"
   },
   {
     "id": "data-mapbox-3",
     "query": "I need to directions mapbox mapbox data",
-    "expect_intent": "data.mapbox",
+    "expect_intent": "maps.geocode",
     "expect_endpoint": {
       "origin": "https://mapbox.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/mapbox/directions"
-    }
+    },
+    "expect_intent_legacy": "data.mapbox"
   },
   {
     "id": "ai-mathpix-1",
     "query": "process image mathpix mathpix ai",
-    "expect_intent": "ai.mathpix",
+    "expect_intent": "data.ocr",
     "expect_endpoint": {
       "origin": "https://mathpix.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/mathpix/process-image"
-    }
+    },
+    "expect_intent_legacy": "ai.mathpix"
   },
   {
     "id": "ai-mathpix-2",
     "query": "process image mathpix mathpix ai via micropayment",
-    "expect_intent": "ai.mathpix",
+    "expect_intent": "data.ocr",
     "expect_endpoint": {
       "origin": "https://mathpix.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/mathpix/process-image"
-    }
+    },
+    "expect_intent_legacy": "ai.mathpix"
   },
   {
     "id": "ai-mathpix-3",
     "query": "I need to process image mathpix mathpix ai",
-    "expect_intent": "ai.mathpix",
+    "expect_intent": "data.ocr",
     "expect_endpoint": {
       "origin": "https://mathpix.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/mathpix/process-image"
-    }
+    },
+    "expect_intent_legacy": "ai.mathpix"
   },
   {
     "id": "web-megapot-1",
@@ -3987,7 +4390,9 @@
       "origin": "https://megapot.mpp.paysponge.com",
       "method": "POST",
       "path": "/purchase"
-    }
+    },
+    "expect_intent_legacy": "web.megapot",
+    "out_of_scope": true
   },
   {
     "id": "web-megapot-2",
@@ -3997,7 +4402,9 @@
       "origin": "https://megapot.mpp.paysponge.com",
       "method": "POST",
       "path": "/purchase"
-    }
+    },
+    "expect_intent_legacy": "web.megapot",
+    "out_of_scope": true
   },
   {
     "id": "web-megapot-3",
@@ -4007,37 +4414,42 @@
       "origin": "https://megapot.mpp.paysponge.com",
       "method": "POST",
       "path": "/purchase"
-    }
+    },
+    "expect_intent_legacy": "web.megapot",
+    "out_of_scope": true
   },
   {
     "id": "ai-mistral-1",
     "query": "chat completion mistral ai mistral ai",
-    "expect_intent": "ai.mistral",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://mistral.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/mistral/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.mistral"
   },
   {
     "id": "ai-mistral-2",
     "query": "chat completion mistral ai mistral ai via micropayment",
-    "expect_intent": "ai.mistral",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://mistral.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/mistral/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.mistral"
   },
   {
     "id": "ai-mistral-3",
     "query": "I need to chat completion mistral ai mistral ai",
-    "expect_intent": "ai.mistral",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://mistral.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/mistral/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.mistral"
   },
   {
     "id": "compute-modal-1",
@@ -4047,7 +4459,9 @@
       "origin": "https://modal.mpp.tempo.xyz",
       "method": "POST",
       "path": "/sandbox/exec"
-    }
+    },
+    "expect_intent_legacy": "compute.modal",
+    "out_of_scope": true
   },
   {
     "id": "compute-modal-2",
@@ -4057,7 +4471,9 @@
       "origin": "https://modal.mpp.tempo.xyz",
       "method": "POST",
       "path": "/sandbox/exec"
-    }
+    },
+    "expect_intent_legacy": "compute.modal",
+    "out_of_scope": true
   },
   {
     "id": "compute-modal-3",
@@ -4067,97 +4483,108 @@
       "origin": "https://modal.mpp.tempo.xyz",
       "method": "POST",
       "path": "/sandbox/exec"
-    }
+    },
+    "expect_intent_legacy": "compute.modal",
+    "out_of_scope": true
   },
   {
     "id": "blockchain-alchemy-1",
     "query": "nft api v3 alchemy alchemy blockchain",
-    "expect_intent": "blockchain.alchemy",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://mpp.alchemy.com",
       "method": "POST",
       "path": "/:network/v2"
-    }
+    },
+    "expect_intent_legacy": "blockchain.alchemy"
   },
   {
     "id": "blockchain-alchemy-2",
     "query": "nft api v3 alchemy alchemy blockchain via micropayment",
-    "expect_intent": "blockchain.alchemy",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://mpp.alchemy.com",
       "method": "POST",
       "path": "/:network/v2"
-    }
+    },
+    "expect_intent_legacy": "blockchain.alchemy"
   },
   {
     "id": "blockchain-alchemy-3",
     "query": "I need to nft api v3 alchemy alchemy blockchain",
-    "expect_intent": "blockchain.alchemy",
+    "expect_intent": "finance.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://mpp.alchemy.com",
       "method": "POST",
       "path": "/:network/v2"
-    }
+    },
+    "expect_intent_legacy": "blockchain.alchemy"
   },
   {
     "id": "ai-agentmail-1",
     "query": "list api keys agentmail agentmail ai",
-    "expect_intent": "ai.agentmail",
+    "expect_intent": "comms.agent_inbox",
     "expect_endpoint": {
       "origin": "https://mpp.api.agentmail.to",
       "method": "POST",
       "path": "/v0/domains"
-    }
+    },
+    "expect_intent_legacy": "ai.agentmail"
   },
   {
     "id": "ai-agentmail-2",
     "query": "list api keys agentmail agentmail ai via micropayment",
-    "expect_intent": "ai.agentmail",
+    "expect_intent": "comms.agent_inbox",
     "expect_endpoint": {
       "origin": "https://mpp.api.agentmail.to",
       "method": "POST",
       "path": "/v0/domains"
-    }
+    },
+    "expect_intent_legacy": "ai.agentmail"
   },
   {
     "id": "ai-agentmail-3",
     "query": "I need to list api keys agentmail agentmail ai",
-    "expect_intent": "ai.agentmail",
+    "expect_intent": "comms.agent_inbox",
     "expect_endpoint": {
       "origin": "https://mpp.api.agentmail.to",
       "method": "POST",
       "path": "/v0/domains"
-    }
+    },
+    "expect_intent_legacy": "ai.agentmail"
   },
   {
     "id": "web-browserbase-1",
     "query": "terminate session browserbase browserbase web",
-    "expect_intent": "web.browserbase",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.browserbase.com",
       "method": "POST",
       "path": "/fetch"
-    }
+    },
+    "expect_intent_legacy": "web.browserbase"
   },
   {
     "id": "web-browserbase-2",
     "query": "terminate session browserbase browserbase web via micropayment",
-    "expect_intent": "web.browserbase",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.browserbase.com",
       "method": "POST",
       "path": "/fetch"
-    }
+    },
+    "expect_intent_legacy": "web.browserbase"
   },
   {
     "id": "web-browserbase-3",
     "query": "I need to terminate session browserbase browserbase web",
-    "expect_intent": "web.browserbase",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.browserbase.com",
       "method": "POST",
       "path": "/fetch"
-    }
+    },
+    "expect_intent_legacy": "web.browserbase"
   },
   {
     "id": "compute-buildwithlocus-1",
@@ -4167,7 +4594,9 @@
       "origin": "https://mpp.buildwithlocus.com",
       "method": "POST",
       "path": "/v1/billing/mpp-top-up"
-    }
+    },
+    "expect_intent_legacy": "compute.buildwithlocus",
+    "out_of_scope": true
   },
   {
     "id": "compute-buildwithlocus-2",
@@ -4177,7 +4606,9 @@
       "origin": "https://mpp.buildwithlocus.com",
       "method": "POST",
       "path": "/v1/billing/mpp-top-up"
-    }
+    },
+    "expect_intent_legacy": "compute.buildwithlocus",
+    "out_of_scope": true
   },
   {
     "id": "compute-buildwithlocus-3",
@@ -4187,487 +4618,537 @@
       "origin": "https://mpp.buildwithlocus.com",
       "method": "POST",
       "path": "/v1/billing/mpp-top-up"
-    }
+    },
+    "expect_intent_legacy": "compute.buildwithlocus",
+    "out_of_scope": true
   },
   {
     "id": "blockchain-conduit-1",
     "query": "JSON-RPC calls - $0.00005 per call",
-    "expect_intent": "blockchain.conduit",
+    "expect_intent": "compute.blockchain_rpc",
     "expect_endpoint": {
       "origin": "https://mpp.conduit.xyz",
       "method": "POST",
       "path": "/:network/"
-    }
+    },
+    "expect_intent_legacy": "blockchain.conduit"
   },
   {
     "id": "blockchain-conduit-2",
     "query": "JSON-RPC calls - $0.00005 per call via micropayment",
-    "expect_intent": "blockchain.conduit",
+    "expect_intent": "compute.blockchain_rpc",
     "expect_endpoint": {
       "origin": "https://mpp.conduit.xyz",
       "method": "POST",
       "path": "/:network/"
-    }
+    },
+    "expect_intent_legacy": "blockchain.conduit"
   },
   {
     "id": "blockchain-conduit-3",
     "query": "I need to JSON-RPC calls - $0.00005 per call",
-    "expect_intent": "blockchain.conduit",
+    "expect_intent": "compute.blockchain_rpc",
     "expect_endpoint": {
       "origin": "https://mpp.conduit.xyz",
       "method": "POST",
       "path": "/:network/"
-    }
+    },
+    "expect_intent_legacy": "blockchain.conduit"
   },
   {
     "id": "web-doma-1",
     "query": "Register a domain — price varies by TLD and domain name",
-    "expect_intent": "web.doma",
+    "expect_intent": "cloud.domains",
     "expect_endpoint": {
       "origin": "https://mpp.doma.xyz",
       "method": "POST",
       "path": "/register"
-    }
+    },
+    "expect_intent_legacy": "web.doma"
   },
   {
     "id": "web-doma-2",
     "query": "Register a domain — price varies by TLD and domain name via micropayment",
-    "expect_intent": "web.doma",
+    "expect_intent": "cloud.domains",
     "expect_endpoint": {
       "origin": "https://mpp.doma.xyz",
       "method": "POST",
       "path": "/register"
-    }
+    },
+    "expect_intent_legacy": "web.doma"
   },
   {
     "id": "web-doma-3",
     "query": "I need to Register a domain — price varies by TLD and domain name",
-    "expect_intent": "web.doma",
+    "expect_intent": "cloud.domains",
     "expect_endpoint": {
       "origin": "https://mpp.doma.xyz",
       "method": "POST",
       "path": "/register"
-    }
+    },
+    "expect_intent_legacy": "web.doma"
   },
   {
     "id": "ai-orth-agentmail-1",
     "query": "Create a new email inbox. Inboxes cost $2/month. Inboxes with no API activity for 30+ days are automatically deleted",
-    "expect_intent": "ai.orth_agentmail",
+    "expect_intent": "comms.agent_inbox",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/agentmail",
       "method": "POST",
       "path": "/v0/inboxes"
-    }
+    },
+    "expect_intent_legacy": "ai.orth_agentmail"
   },
   {
     "id": "ai-orth-agentmail-2",
     "query": "create a new email inbox",
-    "expect_intent": "ai.orth_agentmail",
+    "expect_intent": "comms.agent_inbox",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/agentmail",
       "method": "POST",
       "path": "/v0/inboxes"
-    }
+    },
+    "expect_intent_legacy": "ai.orth_agentmail"
   },
   {
     "id": "ai-orth-agentmail-3",
     "query": "create a new email inbox via micropayment",
-    "expect_intent": "ai.orth_agentmail",
+    "expect_intent": "comms.agent_inbox",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/agentmail",
       "method": "POST",
       "path": "/v0/inboxes"
-    }
+    },
+    "expect_intent_legacy": "ai.orth_agentmail"
   },
   {
     "id": "social-orth-agentphone-1",
     "query": "Start agent signup. Sends a 6-digit OTP to the human's email. Returns a verification_id. No auth required.",
-    "expect_intent": "social.orth_agentphone",
+    "expect_intent": "comms.voice_call",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/agentphone",
       "method": "POST",
       "path": "/v1/agents"
-    }
+    },
+    "expect_intent_legacy": "social.orth_agentphone"
   },
   {
     "id": "social-orth-agentphone-2",
     "query": "I need to Start agent signup. Sends a 6-digit OTP to the human's email. Returns a verification_id. No auth required.",
-    "expect_intent": "social.orth_agentphone",
+    "expect_intent": "comms.voice_call",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/agentphone",
       "method": "POST",
       "path": "/v1/agents"
-    }
+    },
+    "expect_intent_legacy": "social.orth_agentphone"
   },
   {
     "id": "social-orth-agentphone-3",
     "query": "sends a 6-digit otp to the human's email",
-    "expect_intent": "social.orth_agentphone",
+    "expect_intent": "comms.voice_call",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/agentphone",
       "method": "POST",
       "path": "/v1/agents"
-    }
+    },
+    "expect_intent_legacy": "social.orth_agentphone"
   },
   {
     "id": "search-orth-andi-1",
     "query": "Andi Search API",
-    "expect_intent": "search.orth_andi",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/andi",
       "method": "GET",
       "path": "/v1/search"
-    }
+    },
+    "expect_intent_legacy": "search.orth_andi"
   },
   {
     "id": "search-orth-andi-2",
     "query": "Andi Search API via micropayment",
-    "expect_intent": "search.orth_andi",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/andi",
       "method": "GET",
       "path": "/v1/search"
-    }
+    },
+    "expect_intent_legacy": "search.orth_andi"
   },
   {
     "id": "search-orth-andi-3",
     "query": "I need to Andi Search API",
-    "expect_intent": "search.orth_andi",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/andi",
       "method": "GET",
       "path": "/v1/search"
-    }
+    },
+    "expect_intent_legacy": "search.orth_andi"
   },
   {
     "id": "data-orth-apollo-1",
     "query": "Search Apollo database for companies matching filters. Returns up to 100 results per page.",
-    "expect_intent": "data.orth_apollo",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/apollo",
       "method": "POST",
       "path": "/api/v1/mixed_companies/search"
-    }
+    },
+    "expect_intent_legacy": "data.orth_apollo"
   },
   {
     "id": "data-orth-apollo-2",
     "query": "Search Apollo database for companies matching filters. Returns up to 100 results per page. via micropayment",
-    "expect_intent": "data.orth_apollo",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/apollo",
       "method": "POST",
       "path": "/api/v1/mixed_companies/search"
-    }
+    },
+    "expect_intent_legacy": "data.orth_apollo"
   },
   {
     "id": "data-orth-apollo-3",
     "query": "I need to Search Apollo database for companies matching filters. Returns up to 100 results per page.",
-    "expect_intent": "data.orth_apollo",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/apollo",
       "method": "POST",
       "path": "/api/v1/mixed_companies/search"
-    }
+    },
+    "expect_intent_legacy": "data.orth_apollo"
   },
   {
     "id": "data-orth-aviato-1",
     "query": "Get companies acquired by the specified company.",
-    "expect_intent": "data.orth_aviato",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/aviato",
       "method": "GET",
       "path": "/company/acquisitions"
-    }
+    },
+    "expect_intent_legacy": "data.orth_aviato"
   },
   {
     "id": "data-orth-aviato-2",
     "query": "Get companies acquired by the specified company. via micropayment",
-    "expect_intent": "data.orth_aviato",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/aviato",
       "method": "GET",
       "path": "/company/acquisitions"
-    }
+    },
+    "expect_intent_legacy": "data.orth_aviato"
   },
   {
     "id": "data-orth-aviato-3",
     "query": "I need to Get companies acquired by the specified company.",
-    "expect_intent": "data.orth_aviato",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/aviato",
       "method": "GET",
       "path": "/company/acquisitions"
-    }
+    },
+    "expect_intent_legacy": "data.orth_aviato"
   },
   {
     "id": "ai-orth-baseten-1",
     "query": "Send a conversation to a model and get a completion back. Works exactly like the OpenAI chat completions endpoint. Pass",
-    "expect_intent": "ai.orth_baseten",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/baseten",
       "method": "POST",
       "path": "/v1/chat/completions"
-    }
+    },
+    "expect_intent_legacy": "ai.orth_baseten"
   },
   {
     "id": "ai-orth-baseten-2",
     "query": "send a conversation to a model and get a completion back",
-    "expect_intent": "ai.orth_baseten",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/baseten",
       "method": "POST",
       "path": "/v1/chat/completions"
-    }
+    },
+    "expect_intent_legacy": "ai.orth_baseten"
   },
   {
     "id": "ai-orth-baseten-3",
     "query": "send a conversation to a model and get a completion back via micropayment",
-    "expect_intent": "ai.orth_baseten",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/baseten",
       "method": "POST",
       "path": "/v1/chat/completions"
-    }
+    },
+    "expect_intent_legacy": "ai.orth_baseten"
   },
   {
     "id": "data-orth-brand-dev-1",
     "query": "Beta feature: Extract product information from a brand’s website. Brand.dev will analyze the website and return a list",
-    "expect_intent": "data.orth_brand_dev",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/brand-dev",
       "method": "GET",
       "path": "/v1/brand/fonts"
-    }
+    },
+    "expect_intent_legacy": "data.orth_brand_dev"
   },
   {
     "id": "data-orth-brand-dev-2",
     "query": "beta feature: extract product information from a brand’s website",
-    "expect_intent": "data.orth_brand_dev",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/brand-dev",
       "method": "GET",
       "path": "/v1/brand/fonts"
-    }
+    },
+    "expect_intent_legacy": "data.orth_brand_dev"
   },
   {
     "id": "data-orth-brand-dev-3",
     "query": "beta feature: extract product information from a brand’s website via micropayment",
-    "expect_intent": "data.orth_brand_dev",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/brand-dev",
       "method": "GET",
       "path": "/v1/brand/fonts"
-    }
+    },
+    "expect_intent_legacy": "data.orth_brand_dev"
   },
   {
     "id": "data-orth-bytemine-1",
     "query": "Enrich a company by name, website, LinkedIn URL, or company_id. Returns full profile with description, industries",
-    "expect_intent": "data.orth_bytemine",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/bytemine",
       "method": "POST",
       "path": "/b2b-enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_bytemine"
   },
   {
     "id": "data-orth-bytemine-2",
     "query": "enrich a company by name",
-    "expect_intent": "data.orth_bytemine",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/bytemine",
       "method": "POST",
       "path": "/b2b-enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_bytemine"
   },
   {
     "id": "data-orth-bytemine-3",
     "query": "enrich a company by name via micropayment",
-    "expect_intent": "data.orth_bytemine",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/bytemine",
       "method": "POST",
       "path": "/b2b-enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_bytemine"
   },
   {
     "id": "data-orth-captaindata-1",
     "query": "List employees of a given company. Returns paginated results. The company_uid path parameter is the LinkedIn company ID",
-    "expect_intent": "data.orth_captaindata",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/captaindata",
       "method": "GET",
       "path": "/companies/enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_captaindata"
   },
   {
     "id": "data-orth-captaindata-2",
     "query": "list employees of a given company",
-    "expect_intent": "data.orth_captaindata",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/captaindata",
       "method": "GET",
       "path": "/companies/enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_captaindata"
   },
   {
     "id": "data-orth-captaindata-3",
     "query": "list employees of a given company via micropayment",
-    "expect_intent": "data.orth_captaindata",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/captaindata",
       "method": "GET",
       "path": "/companies/enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_captaindata"
   },
   {
     "id": "data-orth-company-enrich-1",
     "query": "Company Enrich",
-    "expect_intent": "data.orth_company_enrich",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/company-enrich",
       "method": "GET",
       "path": "/companies"
-    }
+    },
+    "expect_intent_legacy": "data.orth_company_enrich"
   },
   {
     "id": "data-orth-company-enrich-2",
     "query": "Company Enrich via micropayment",
-    "expect_intent": "data.orth_company_enrich",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/company-enrich",
       "method": "GET",
       "path": "/companies"
-    }
+    },
+    "expect_intent_legacy": "data.orth_company_enrich"
   },
   {
     "id": "data-orth-company-enrich-3",
     "query": "I need to Company Enrich",
-    "expect_intent": "data.orth_company_enrich",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/company-enrich",
       "method": "GET",
       "path": "/companies"
-    }
+    },
+    "expect_intent_legacy": "data.orth_company_enrich"
   },
   {
     "id": "data-orth-contactout-1",
     "query": "Get company information from domain names.",
-    "expect_intent": "data.orth_contactout",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/contactout",
       "method": "GET",
       "path": "/v1/email/enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_contactout"
   },
   {
     "id": "data-orth-contactout-2",
     "query": "Get company information from domain names. via micropayment",
-    "expect_intent": "data.orth_contactout",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/contactout",
       "method": "GET",
       "path": "/v1/email/enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_contactout"
   },
   {
     "id": "data-orth-contactout-3",
     "query": "I need to Get company information from domain names.",
-    "expect_intent": "data.orth_contactout",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/contactout",
       "method": "GET",
       "path": "/v1/email/enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_contactout"
   },
   {
     "id": "web-orth-context-dev-1",
     "query": "Beta feature: Given a single URL, determines if it is a product detail page, classifies the platform/product type, and",
-    "expect_intent": "web.orth_context_dev",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/context-dev",
       "method": "GET",
       "path": "/brand/fonts"
-    }
+    },
+    "expect_intent_legacy": "web.orth_context_dev"
   },
   {
     "id": "web-orth-context-dev-2",
     "query": "beta feature: given a single url",
-    "expect_intent": "web.orth_context_dev",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/context-dev",
       "method": "GET",
       "path": "/brand/fonts"
-    }
+    },
+    "expect_intent_legacy": "web.orth_context_dev"
   },
   {
     "id": "web-orth-context-dev-3",
     "query": "beta feature: given a single url via micropayment",
-    "expect_intent": "web.orth_context_dev",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/context-dev",
       "method": "GET",
       "path": "/brand/fonts"
-    }
+    },
+    "expect_intent_legacy": "web.orth_context_dev"
   },
   {
     "id": "data-orth-coresignal-1",
     "query": "Get a full company profile by its Coresignal numeric ID. Use IDs returned by the 'Base Company Search (Filter)' or",
-    "expect_intent": "data.orth_coresignal",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/coresignal",
       "method": "GET",
       "path": "/v2/company_clean/enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_coresignal"
   },
   {
     "id": "data-orth-coresignal-2",
     "query": "get a full company profile by its coresignal numeric id",
-    "expect_intent": "data.orth_coresignal",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/coresignal",
       "method": "GET",
       "path": "/v2/company_clean/enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_coresignal"
   },
   {
     "id": "data-orth-coresignal-3",
     "query": "get a full company profile by its coresignal numeric id via micropayment",
-    "expect_intent": "data.orth_coresignal",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/coresignal",
       "method": "GET",
       "path": "/v2/company_clean/enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_coresignal"
   },
   {
     "id": "data-orth-crustdata-1",
     "query": "Get Gartner Peer Insights review data for companies. Filter by review rating, company ID, and other metrics. Returns a",
-    "expect_intent": "data.orth_crustdata",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/crustdata",
       "method": "POST",
       "path": "/data_lab/job_listings/Table/"
-    }
+    },
+    "expect_intent_legacy": "data.orth_crustdata"
   },
   {
     "id": "data-orth-crustdata-2",
     "query": "get gartner peer insights review data for companies",
-    "expect_intent": "data.orth_crustdata",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/crustdata",
       "method": "POST",
       "path": "/data_lab/job_listings/Table/"
-    }
+    },
+    "expect_intent_legacy": "data.orth_crustdata"
   },
   {
     "id": "data-orth-crustdata-3",
     "query": "get gartner peer insights review data for companies via micropayment",
-    "expect_intent": "data.orth_crustdata",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/crustdata",
       "method": "POST",
       "path": "/data_lab/job_listings/Table/"
-    }
+    },
+    "expect_intent_legacy": "data.orth_crustdata"
   },
   {
     "id": "data-orth-didit-1",
@@ -4677,957 +5158,1054 @@
       "origin": "https://mpp.orthogonal.com/didit",
       "method": "POST",
       "path": "/v3/aml"
-    }
+    },
+    "expect_intent_legacy": "data.orth_didit",
+    "out_of_scope": true
   },
   {
     "id": "data-orth-edges-1",
     "query": "Extract the list of affiliated companies (subsidiaries, parent companies) linked to a LinkedIn company page.",
-    "expect_intent": "data.orth_edges",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/edges",
       "method": "POST",
       "path": "/actions/linkedin-extract-company-affiliates/run/live"
-    }
+    },
+    "expect_intent_legacy": "data.orth_edges"
   },
   {
     "id": "data-orth-edges-2",
     "query": "I need to Extract the list of affiliated companies (subsidiaries, parent companies) linked to a LinkedIn company page.",
-    "expect_intent": "data.orth_edges",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/edges",
       "method": "POST",
       "path": "/actions/linkedin-extract-company-affiliates/run/live"
-    }
+    },
+    "expect_intent_legacy": "data.orth_edges"
   },
   {
     "id": "data-orth-edges-3",
     "query": "extract the list of affiliated companies (subsidiaries",
-    "expect_intent": "data.orth_edges",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/edges",
       "method": "POST",
       "path": "/actions/linkedin-extract-company-affiliates/run/live"
-    }
+    },
+    "expect_intent_legacy": "data.orth_edges"
   },
   {
     "id": "data-orth-fantastic-jobs-1",
     "query": "Returns new jobs from 54 ATS platforms (company career pages). Refreshed hourly. Supports 30+ filters including title",
-    "expect_intent": "data.orth_fantastic_jobs",
+    "expect_intent": "data.job_search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/fantastic-jobs",
       "method": "GET",
       "path": "/v1/active-ats"
-    }
+    },
+    "expect_intent_legacy": "data.orth_fantastic_jobs"
   },
   {
     "id": "data-orth-fantastic-jobs-2",
     "query": "returns new jobs from 54 ats platforms (company career pages)",
-    "expect_intent": "data.orth_fantastic_jobs",
+    "expect_intent": "data.job_search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/fantastic-jobs",
       "method": "GET",
       "path": "/v1/active-ats"
-    }
+    },
+    "expect_intent_legacy": "data.orth_fantastic_jobs"
   },
   {
     "id": "data-orth-fantastic-jobs-3",
     "query": "returns new jobs from 54 ats platforms (company career pages) via micropayment",
-    "expect_intent": "data.orth_fantastic_jobs",
+    "expect_intent": "data.job_search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/fantastic-jobs",
       "method": "GET",
       "path": "/v1/active-ats"
-    }
+    },
+    "expect_intent_legacy": "data.orth_fantastic_jobs"
   },
   {
     "id": "data-orth-fiber-1",
     "query": "Get total count of companies and people matching search filters in one call.",
-    "expect_intent": "data.orth_fiber",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/fiber",
       "method": "POST",
       "path": "/v1/company-count"
-    }
+    },
+    "expect_intent_legacy": "data.orth_fiber"
   },
   {
     "id": "data-orth-fiber-2",
     "query": "Get total count of companies and people matching search filters in one call. via micropayment",
-    "expect_intent": "data.orth_fiber",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/fiber",
       "method": "POST",
       "path": "/v1/company-count"
-    }
+    },
+    "expect_intent_legacy": "data.orth_fiber"
   },
   {
     "id": "data-orth-fiber-3",
     "query": "I need to Get total count of companies and people matching search filters in one call.",
-    "expect_intent": "data.orth_fiber",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/fiber",
       "method": "POST",
       "path": "/v1/company-count"
-    }
+    },
+    "expect_intent_legacy": "data.orth_fiber"
   },
   {
     "id": "data-orth-fundable-1",
     "query": "Search for companies using filters, includes latest funding round",
-    "expect_intent": "data.orth_fundable",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/fundable",
       "method": "GET",
       "path": "/company"
-    }
+    },
+    "expect_intent_legacy": "data.orth_fundable"
   },
   {
     "id": "data-orth-fundable-2",
     "query": "Search for companies using filters, includes latest funding round via micropayment",
-    "expect_intent": "data.orth_fundable",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/fundable",
       "method": "GET",
       "path": "/company"
-    }
+    },
+    "expect_intent_legacy": "data.orth_fundable"
   },
   {
     "id": "data-orth-fundable-3",
     "query": "I need to Search for companies using filters, includes latest funding round",
-    "expect_intent": "data.orth_fundable",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/fundable",
       "method": "GET",
       "path": "/company"
-    }
+    },
+    "expect_intent_legacy": "data.orth_fundable"
   },
   {
     "id": "data-orth-happenstance-1",
     "query": "Start a new person research request. Include as many details as possible about the person in the description field",
-    "expect_intent": "data.orth_happenstance",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/happenstance",
       "method": "POST",
       "path": "/v1/research"
-    }
+    },
+    "expect_intent_legacy": "data.orth_happenstance"
   },
   {
     "id": "data-orth-happenstance-2",
     "query": "start a new person research request",
-    "expect_intent": "data.orth_happenstance",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/happenstance",
       "method": "POST",
       "path": "/v1/research"
-    }
+    },
+    "expect_intent_legacy": "data.orth_happenstance"
   },
   {
     "id": "data-orth-happenstance-3",
     "query": "start a new person research request via micropayment",
-    "expect_intent": "data.orth_happenstance",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/happenstance",
       "method": "POST",
       "path": "/v1/research"
-    }
+    },
+    "expect_intent_legacy": "data.orth_happenstance"
   },
   {
     "id": "social-orth-influencers-club-1",
     "query": "Compare audience overlap between 2-10 creators on a given platform. Returns per-creator overlap and unique audience",
-    "expect_intent": "social.orth_influencers_club",
+    "expect_intent": "social.influencer_search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/influencers-club",
       "method": "POST",
       "path": "/public/v1/discovery/"
-    }
+    },
+    "expect_intent_legacy": "social.orth_influencers_club"
   },
   {
     "id": "social-orth-influencers-club-2",
     "query": "compare audience overlap between 2-10 creators on a given platform",
-    "expect_intent": "social.orth_influencers_club",
+    "expect_intent": "social.influencer_search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/influencers-club",
       "method": "POST",
       "path": "/public/v1/discovery/"
-    }
+    },
+    "expect_intent_legacy": "social.orth_influencers_club"
   },
   {
     "id": "social-orth-influencers-club-3",
     "query": "compare audience overlap between 2-10 creators on a given platform via micropayment",
-    "expect_intent": "social.orth_influencers_club",
+    "expect_intent": "social.influencer_search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/influencers-club",
       "method": "POST",
       "path": "/public/v1/discovery/"
-    }
+    },
+    "expect_intent_legacy": "social.orth_influencers_club"
   },
   {
     "id": "search-orth-linkup-1",
     "query": "The /fetch endpoint allows you to fetch a single webpage from a given URL.",
-    "expect_intent": "search.orth_linkup",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/linkup",
       "method": "POST",
       "path": "/fetch"
-    }
+    },
+    "expect_intent_legacy": "search.orth_linkup"
   },
   {
     "id": "search-orth-linkup-2",
     "query": "The /fetch endpoint allows you to fetch a single webpage from a given URL. via micropayment",
-    "expect_intent": "search.orth_linkup",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/linkup",
       "method": "POST",
       "path": "/fetch"
-    }
+    },
+    "expect_intent_legacy": "search.orth_linkup"
   },
   {
     "id": "search-orth-linkup-3",
     "query": "I need to The /fetch endpoint allows you to fetch a single webpage from a given URL.",
-    "expect_intent": "search.orth_linkup",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/linkup",
       "method": "POST",
       "path": "/fetch"
-    }
+    },
+    "expect_intent_legacy": "search.orth_linkup"
   },
   {
     "id": "web-orth-notte-1",
     "query": "Start an AI agent to autonomously complete a browser task.",
-    "expect_intent": "web.orth_notte",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/notte",
       "method": "POST",
       "path": "/scrape"
-    }
+    },
+    "expect_intent_legacy": "web.orth_notte"
   },
   {
     "id": "web-orth-notte-2",
     "query": "Start an AI agent to autonomously complete a browser task. via micropayment",
-    "expect_intent": "web.orth_notte",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/notte",
       "method": "POST",
       "path": "/scrape"
-    }
+    },
+    "expect_intent_legacy": "web.orth_notte"
   },
   {
     "id": "web-orth-notte-3",
     "query": "I need to Start an AI agent to autonomously complete a browser task.",
-    "expect_intent": "web.orth_notte",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/notte",
       "method": "POST",
       "path": "/scrape"
-    }
+    },
+    "expect_intent_legacy": "web.orth_notte"
   },
   {
     "id": "data-orth-nyne-1",
     "query": "Start async check if a company sells a specific product/service.",
-    "expect_intent": "data.orth_nyne",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/nyne",
       "method": "POST",
       "path": "/company/checkseller"
-    }
+    },
+    "expect_intent_legacy": "data.orth_nyne"
   },
   {
     "id": "data-orth-nyne-2",
     "query": "Start async check if a company sells a specific product/service. via micropayment",
-    "expect_intent": "data.orth_nyne",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/nyne",
       "method": "POST",
       "path": "/company/checkseller"
-    }
+    },
+    "expect_intent_legacy": "data.orth_nyne"
   },
   {
     "id": "data-orth-nyne-3",
     "query": "I need to Start async check if a company sells a specific product/service.",
-    "expect_intent": "data.orth_nyne",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/nyne",
       "method": "POST",
       "path": "/company/checkseller"
-    }
+    },
+    "expect_intent_legacy": "data.orth_nyne"
   },
   {
     "id": "data-orth-ocean-io-1",
     "query": "Match a company with Ocean.io database and enrich it with additional information (industry, size, revenue",
-    "expect_intent": "data.orth_ocean_io",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/ocean-io",
       "method": "POST",
       "path": "/v2/enrich/company"
-    }
+    },
+    "expect_intent_legacy": "data.orth_ocean_io"
   },
   {
     "id": "data-orth-ocean-io-2",
     "query": "I need to Match a company with Ocean.io database and enrich it with additional information (industry, size, revenue",
-    "expect_intent": "data.orth_ocean_io",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/ocean-io",
       "method": "POST",
       "path": "/v2/enrich/company"
-    }
+    },
+    "expect_intent_legacy": "data.orth_ocean_io"
   },
   {
     "id": "data-orth-ocean-io-3",
     "query": "agent wants to Match a company with Ocean.io database and enrich it with additional information (industry, size, revenue",
-    "expect_intent": "data.orth_ocean_io",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/ocean-io",
       "method": "POST",
       "path": "/v2/enrich/company"
-    }
+    },
+    "expect_intent_legacy": "data.orth_ocean_io"
   },
   {
     "id": "web-orth-olostep-1",
     "query": "The AI will perform actions like searching and browsing web pages to find the answer to the provided task. Execution",
-    "expect_intent": "web.orth_olostep",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/olostep",
       "method": "POST",
       "path": "/v1/answers"
-    }
+    },
+    "expect_intent_legacy": "web.orth_olostep"
   },
   {
     "id": "web-orth-olostep-2",
     "query": "execution olostep api orth olostep web",
-    "expect_intent": "web.orth_olostep",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/olostep",
       "method": "POST",
       "path": "/v1/answers"
-    }
+    },
+    "expect_intent_legacy": "web.orth_olostep"
   },
   {
     "id": "web-orth-olostep-3",
     "query": "execution olostep api orth olostep web via micropayment",
-    "expect_intent": "web.orth_olostep",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/olostep",
       "method": "POST",
       "path": "/v1/answers"
-    }
+    },
+    "expect_intent_legacy": "web.orth_olostep"
   },
   {
     "id": "data-orth-openfunnel-1",
     "query": "Create Account Audience Endpoint",
-    "expect_intent": "data.orth_openfunnel",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/openfunnel",
       "method": "POST",
       "path": "/api/v1/enrich/deep-enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_openfunnel"
   },
   {
     "id": "data-orth-openfunnel-2",
     "query": "Create Account Audience Endpoint via micropayment",
-    "expect_intent": "data.orth_openfunnel",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/openfunnel",
       "method": "POST",
       "path": "/api/v1/enrich/deep-enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_openfunnel"
   },
   {
     "id": "data-orth-openfunnel-3",
     "query": "I need to Create Account Audience Endpoint",
-    "expect_intent": "data.orth_openfunnel",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/openfunnel",
       "method": "POST",
       "path": "/api/v1/enrich/deep-enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_openfunnel"
   },
   {
     "id": "data-orth-openmart-1",
     "query": "Fetch full business records by openmart_id or google_place_id. Up to 100 IDs.",
-    "expect_intent": "data.orth_openmart",
+    "expect_intent": "maps.places",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/openmart",
       "method": "POST",
       "path": "/api/v1/enrich_company"
-    }
+    },
+    "expect_intent_legacy": "data.orth_openmart"
   },
   {
     "id": "data-orth-openmart-2",
     "query": "Fetch full business records by openmart_id or google_place_id. Up to 100 IDs. via micropayment",
-    "expect_intent": "data.orth_openmart",
+    "expect_intent": "maps.places",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/openmart",
       "method": "POST",
       "path": "/api/v1/enrich_company"
-    }
+    },
+    "expect_intent_legacy": "data.orth_openmart"
   },
   {
     "id": "data-orth-openmart-3",
     "query": "I need to Fetch full business records by openmart_id or google_place_id. Up to 100 IDs.",
-    "expect_intent": "data.orth_openmart",
+    "expect_intent": "maps.places",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/openmart",
       "method": "POST",
       "path": "/api/v1/enrich_company"
-    }
+    },
+    "expect_intent_legacy": "data.orth_openmart"
   },
   {
     "id": "data-orth-peopledatalabs-1",
     "query": "Enrich a company by name, website, ticker, or LinkedIn URL. Returns full company profile with industry, size, location",
-    "expect_intent": "data.orth_peopledatalabs",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/peopledatalabs",
       "method": "GET",
       "path": "/v5/company/enrich"
-    }
+    },
+    "expect_intent_legacy": "data.orth_peopledatalabs"
   },
   {
     "id": "data-orth-precip-1",
     "query": "Precip AI - Hyperlocal Weather Data API",
-    "expect_intent": "data.orth_precip",
+    "expect_intent": "data.weather_forecast",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/precip",
       "method": "GET",
       "path": "/embed/location"
-    }
+    },
+    "expect_intent_legacy": "data.orth_precip"
   },
   {
     "id": "data-orth-precip-2",
     "query": "Precip AI - Hyperlocal Weather Data API via micropayment",
-    "expect_intent": "data.orth_precip",
+    "expect_intent": "data.weather_forecast",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/precip",
       "method": "GET",
       "path": "/embed/location"
-    }
+    },
+    "expect_intent_legacy": "data.orth_precip"
   },
   {
     "id": "data-orth-precip-3",
     "query": "I need to Precip AI - Hyperlocal Weather Data API",
-    "expect_intent": "data.orth_precip",
+    "expect_intent": "data.weather_forecast",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/precip",
       "method": "GET",
       "path": "/embed/location"
-    }
+    },
+    "expect_intent_legacy": "data.orth_precip"
   },
   {
     "id": "data-orth-predictleads-1",
     "query": "Get business connections for a specific company",
-    "expect_intent": "data.orth_predictleads",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/predictleads",
       "method": "GET",
       "path": "/v3/technologies"
-    }
+    },
+    "expect_intent_legacy": "data.orth_predictleads"
   },
   {
     "id": "data-orth-predictleads-2",
     "query": "Get business connections for a specific company via micropayment",
-    "expect_intent": "data.orth_predictleads",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/predictleads",
       "method": "GET",
       "path": "/v3/technologies"
-    }
+    },
+    "expect_intent_legacy": "data.orth_predictleads"
   },
   {
     "id": "data-orth-predictleads-3",
     "query": "I need to Get business connections for a specific company",
-    "expect_intent": "data.orth_predictleads",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/predictleads",
       "method": "GET",
       "path": "/v3/technologies"
-    }
+    },
+    "expect_intent_legacy": "data.orth_predictleads"
   },
   {
     "id": "web-orth-riveter-1",
     "query": "Copy link Define the structure of your output directly in the API request. This endpoint allows you to define both your",
-    "expect_intent": "web.orth_riveter",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/riveter",
       "method": "POST",
       "path": "/v1/run"
-    }
+    },
+    "expect_intent_legacy": "web.orth_riveter"
   },
   {
     "id": "web-orth-riveter-2",
     "query": "copy link define the structure of your output directly in the api request",
-    "expect_intent": "web.orth_riveter",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/riveter",
       "method": "POST",
       "path": "/v1/run"
-    }
+    },
+    "expect_intent_legacy": "web.orth_riveter"
   },
   {
     "id": "web-orth-riveter-3",
     "query": "copy link define the structure of your output directly in the api request via micropayment",
-    "expect_intent": "web.orth_riveter",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/riveter",
       "method": "POST",
       "path": "/v1/run"
-    }
+    },
+    "expect_intent_legacy": "web.orth_riveter"
   },
   {
     "id": "social-orth-scrapecreators-1",
     "query": "Scrape Creators",
-    "expect_intent": "social.orth_scrapecreators",
+    "expect_intent": "media.social_data",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/scrapecreators",
       "method": "GET",
       "path": "/v1/detect-age-gender"
-    }
+    },
+    "expect_intent_legacy": "social.orth_scrapecreators"
   },
   {
     "id": "social-orth-scrapecreators-2",
     "query": "Scrape Creators via micropayment",
-    "expect_intent": "social.orth_scrapecreators",
+    "expect_intent": "media.social_data",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/scrapecreators",
       "method": "GET",
       "path": "/v1/detect-age-gender"
-    }
+    },
+    "expect_intent_legacy": "social.orth_scrapecreators"
   },
   {
     "id": "social-orth-scrapecreators-3",
     "query": "I need to Scrape Creators",
-    "expect_intent": "social.orth_scrapecreators",
+    "expect_intent": "media.social_data",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/scrapecreators",
       "method": "GET",
       "path": "/v1/detect-age-gender"
-    }
+    },
+    "expect_intent_legacy": "social.orth_scrapecreators"
   },
   {
     "id": "web-orth-scrapegraphai-1",
     "query": "Start a website crawl from a seed URL with configurable depth and page limits.",
-    "expect_intent": "web.orth_scrapegraphai",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/scrapegraphai",
       "method": "POST",
       "path": "/api/crawl"
-    }
+    },
+    "expect_intent_legacy": "web.orth_scrapegraphai"
   },
   {
     "id": "web-orth-scrapegraphai-2",
     "query": "Start a website crawl from a seed URL with configurable depth and page limits. via micropayment",
-    "expect_intent": "web.orth_scrapegraphai",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/scrapegraphai",
       "method": "POST",
       "path": "/api/crawl"
-    }
+    },
+    "expect_intent_legacy": "web.orth_scrapegraphai"
   },
   {
     "id": "web-orth-scrapegraphai-3",
     "query": "I need to Start a website crawl from a seed URL with configurable depth and page limits.",
-    "expect_intent": "web.orth_scrapegraphai",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/scrapegraphai",
       "method": "POST",
       "path": "/api/crawl"
-    }
+    },
+    "expect_intent_legacy": "web.orth_scrapegraphai"
   },
   {
     "id": "search-orth-seltz-1",
     "query": "Search the web and return matching documents with URLs and content.",
-    "expect_intent": "search.orth_seltz",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/seltz",
       "method": "POST",
       "path": "/v1/search"
-    }
+    },
+    "expect_intent_legacy": "search.orth_seltz"
   },
   {
     "id": "search-orth-seltz-2",
     "query": "Search the web and return matching documents with URLs and content. via micropayment",
-    "expect_intent": "search.orth_seltz",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/seltz",
       "method": "POST",
       "path": "/v1/search"
-    }
+    },
+    "expect_intent_legacy": "search.orth_seltz"
   },
   {
     "id": "search-orth-seltz-3",
     "query": "I need to Search the web and return matching documents with URLs and content.",
-    "expect_intent": "search.orth_seltz",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/seltz",
       "method": "POST",
       "path": "/v1/search"
-    }
+    },
+    "expect_intent_legacy": "search.orth_seltz"
   },
   {
     "id": "web-orth-serper-scrape-1",
     "query": "Serper Scrape",
-    "expect_intent": "web.orth_serper_scrape",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/serper-scrape",
       "method": "POST",
       "path": "/"
-    }
+    },
+    "expect_intent_legacy": "web.orth_serper_scrape"
   },
   {
     "id": "web-orth-serper-scrape-2",
     "query": "Serper Scrape via micropayment",
-    "expect_intent": "web.orth_serper_scrape",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/serper-scrape",
       "method": "POST",
       "path": "/"
-    }
+    },
+    "expect_intent_legacy": "web.orth_serper_scrape"
   },
   {
     "id": "web-orth-serper-scrape-3",
     "query": "I need to Serper Scrape",
-    "expect_intent": "web.orth_serper_scrape",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/serper-scrape",
       "method": "POST",
       "path": "/"
-    }
+    },
+    "expect_intent_legacy": "web.orth_serper_scrape"
   },
   {
     "id": "search-orth-serper-1",
     "query": "Google Autocomplete - returns search query suggestions based on a prefix. Use for keyword research, SEO, understanding",
-    "expect_intent": "search.orth_serper",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/serper",
       "method": "POST",
       "path": "/autocomplete"
-    }
+    },
+    "expect_intent_legacy": "search.orth_serper"
   },
   {
     "id": "search-orth-serper-2",
     "query": "google autocomplete - returns search query suggestions based on a prefix",
-    "expect_intent": "search.orth_serper",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/serper",
       "method": "POST",
       "path": "/autocomplete"
-    }
+    },
+    "expect_intent_legacy": "search.orth_serper"
   },
   {
     "id": "search-orth-serper-3",
     "query": "google autocomplete - returns search query suggestions based on a prefix via micropayment",
-    "expect_intent": "search.orth_serper",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/serper",
       "method": "POST",
       "path": "/autocomplete"
-    }
+    },
+    "expect_intent_legacy": "search.orth_serper"
   },
   {
     "id": "data-orth-sixtyfour-1",
     "query": "Enrich company data with additional information and find associated people.",
-    "expect_intent": "data.orth_sixtyfour",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/sixtyfour",
       "method": "POST",
       "path": "/enrich-company"
-    }
+    },
+    "expect_intent_legacy": "data.orth_sixtyfour"
   },
   {
     "id": "data-orth-sixtyfour-2",
     "query": "Enrich company data with additional information and find associated people. via micropayment",
-    "expect_intent": "data.orth_sixtyfour",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/sixtyfour",
       "method": "POST",
       "path": "/enrich-company"
-    }
+    },
+    "expect_intent_legacy": "data.orth_sixtyfour"
   },
   {
     "id": "data-orth-sixtyfour-3",
     "query": "I need to Enrich company data with additional information and find associated people.",
-    "expect_intent": "data.orth_sixtyfour",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/sixtyfour",
       "method": "POST",
       "path": "/enrich-company"
-    }
+    },
+    "expect_intent_legacy": "data.orth_sixtyfour"
   },
   {
     "id": "search-orth-tako-1",
     "query": "Analyze a Tako Knowledge Card and get AI-generated insights. Returns plain-text observations about trends, growth",
-    "expect_intent": "search.orth_tako",
+    "expect_intent": "data.compute_answer",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/tako",
       "method": "POST",
       "path": "/v1/knowledge_search"
-    }
+    },
+    "expect_intent_legacy": "search.orth_tako"
   },
   {
     "id": "search-orth-tako-2",
     "query": "analyze a tako knowledge card and get ai-generated insights",
-    "expect_intent": "search.orth_tako",
+    "expect_intent": "data.compute_answer",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/tako",
       "method": "POST",
       "path": "/v1/knowledge_search"
-    }
+    },
+    "expect_intent_legacy": "search.orth_tako"
   },
   {
     "id": "search-orth-tako-3",
     "query": "analyze a tako knowledge card and get ai-generated insights via micropayment",
-    "expect_intent": "search.orth_tako",
+    "expect_intent": "data.compute_answer",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/tako",
       "method": "POST",
       "path": "/v1/knowledge_search"
-    }
+    },
+    "expect_intent_legacy": "search.orth_tako"
   },
   {
     "id": "search-orth-tavily-1",
     "query": "Tavily Crawl is a graph-based website traversal tool that can explore hundreds of paths in parallel with built-in",
-    "expect_intent": "search.orth_tavily",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/tavily",
       "method": "POST",
       "path": "/research"
-    }
+    },
+    "expect_intent_legacy": "search.orth_tavily"
   },
   {
     "id": "data-orth-tomba-1",
     "query": "Find the email address of a blog post author from the article URL.",
-    "expect_intent": "data.orth_tomba",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/tomba",
       "method": "GET",
       "path": "/v1/author-finder"
-    }
+    },
+    "expect_intent_legacy": "data.orth_tomba"
   },
   {
     "id": "data-orth-tomba-2",
     "query": "Find the email address of a blog post author from the article URL. via micropayment",
-    "expect_intent": "data.orth_tomba",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/tomba",
       "method": "GET",
       "path": "/v1/author-finder"
-    }
+    },
+    "expect_intent_legacy": "data.orth_tomba"
   },
   {
     "id": "data-orth-tomba-3",
     "query": "I need to Find the email address of a blog post author from the article URL.",
-    "expect_intent": "data.orth_tomba",
+    "expect_intent": "data.company_enrich",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/tomba",
       "method": "GET",
       "path": "/v1/author-finder"
-    }
+    },
+    "expect_intent_legacy": "data.orth_tomba"
   },
   {
     "id": "data-orth-voygr-1",
     "query": "Check whether a business exists at the given address and whether it is open or closed. Returns existence_status",
-    "expect_intent": "data.orth_voygr",
+    "expect_intent": "maps.places",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/voygr",
       "method": "POST",
       "path": "/v1/business-status"
-    }
+    },
+    "expect_intent_legacy": "data.orth_voygr"
   },
   {
     "id": "data-orth-voygr-2",
     "query": "returns existence_status voygr orth voygr data",
-    "expect_intent": "data.orth_voygr",
+    "expect_intent": "maps.places",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/voygr",
       "method": "POST",
       "path": "/v1/business-status"
-    }
+    },
+    "expect_intent_legacy": "data.orth_voygr"
   },
   {
     "id": "data-orth-voygr-3",
     "query": "returns existence_status voygr orth voygr data via micropayment",
-    "expect_intent": "data.orth_voygr",
+    "expect_intent": "maps.places",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/voygr",
       "method": "POST",
       "path": "/v1/business-status"
-    }
+    },
+    "expect_intent_legacy": "data.orth_voygr"
   },
   {
     "id": "storage-pinata-1",
     "query": "Upload file to IPFS — dynamic pricing based on file size ($0.10/GB/month, min $0.01)",
-    "expect_intent": "storage.pinata",
+    "expect_intent": "storage.hosting",
     "expect_endpoint": {
       "origin": "https://mpp.pinata.cloud",
       "method": "POST",
       "path": "/v1/pin/public"
-    }
+    },
+    "expect_intent_legacy": "storage.pinata"
   },
   {
     "id": "storage-pinata-2",
     "query": "Upload file to IPFS — dynamic pricing based on file size ($0.10/GB/month, min $0.01) via micropayment",
-    "expect_intent": "storage.pinata",
+    "expect_intent": "storage.hosting",
     "expect_endpoint": {
       "origin": "https://mpp.pinata.cloud",
       "method": "POST",
       "path": "/v1/pin/public"
-    }
+    },
+    "expect_intent_legacy": "storage.pinata"
   },
   {
     "id": "storage-pinata-3",
     "query": "I need to Upload file to IPFS — dynamic pricing based on file size ($0.10/GB/month, min $0.01)",
-    "expect_intent": "storage.pinata",
+    "expect_intent": "storage.hosting",
     "expect_endpoint": {
       "origin": "https://mpp.pinata.cloud",
       "method": "POST",
       "path": "/v1/pin/public"
-    }
+    },
+    "expect_intent_legacy": "storage.pinata"
   },
   {
     "id": "blockchain-quicknode-1",
     "query": "JSON-RPC calls - $0.001 per call",
-    "expect_intent": "blockchain.quicknode",
+    "expect_intent": "compute.blockchain_rpc",
     "expect_endpoint": {
       "origin": "https://mpp.quicknode.com",
       "method": "POST",
       "path": "/:network"
-    }
+    },
+    "expect_intent_legacy": "blockchain.quicknode"
   },
   {
     "id": "blockchain-quicknode-2",
     "query": "JSON-RPC calls - $0.001 per call via micropayment",
-    "expect_intent": "blockchain.quicknode",
+    "expect_intent": "compute.blockchain_rpc",
     "expect_endpoint": {
       "origin": "https://mpp.quicknode.com",
       "method": "POST",
       "path": "/:network"
-    }
+    },
+    "expect_intent_legacy": "blockchain.quicknode"
   },
   {
     "id": "blockchain-quicknode-3",
     "query": "I need to JSON-RPC calls - $0.001 per call",
-    "expect_intent": "blockchain.quicknode",
+    "expect_intent": "compute.blockchain_rpc",
     "expect_endpoint": {
       "origin": "https://mpp.quicknode.com",
       "method": "POST",
       "path": "/:network"
-    }
+    },
+    "expect_intent_legacy": "blockchain.quicknode"
   },
   {
     "id": "ai-openai-1",
     "query": "text-to-speech openai openai ai",
-    "expect_intent": "ai.openai",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://openai.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/embeddings"
-    }
+    },
+    "expect_intent_legacy": "ai.openai"
   },
   {
     "id": "ai-openai-2",
     "query": "text-to-speech openai openai ai via micropayment",
-    "expect_intent": "ai.openai",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://openai.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/embeddings"
-    }
+    },
+    "expect_intent_legacy": "ai.openai"
   },
   {
     "id": "ai-openai-3",
     "query": "I need to text-to-speech openai openai ai",
-    "expect_intent": "ai.openai",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://openai.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/embeddings"
-    }
+    },
+    "expect_intent_legacy": "ai.openai"
   },
   {
     "id": "ai-openrouter-1",
     "query": "Chat completions (GPT-4, Claude, Llama, etc.) - price varies by model",
-    "expect_intent": "ai.openrouter",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://openrouter.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/chat/completions"
-    }
+    },
+    "expect_intent_legacy": "ai.openrouter"
   },
   {
     "id": "ai-openrouter-2",
     "query": "Chat completions (GPT-4, Claude, Llama, etc.) - price varies by model via micropayment",
-    "expect_intent": "ai.openrouter",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://openrouter.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/chat/completions"
-    }
+    },
+    "expect_intent_legacy": "ai.openrouter"
   },
   {
     "id": "ai-openrouter-3",
     "query": "I need to Chat completions (GPT-4, Claude, Llama, etc.) - price varies by model",
-    "expect_intent": "ai.openrouter",
+    "expect_intent": "ai.llm_complete",
     "expect_endpoint": {
       "origin": "https://openrouter.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/chat/completions"
-    }
+    },
+    "expect_intent_legacy": "ai.openrouter"
   },
   {
     "id": "data-openweather-1",
     "query": "air quality openweather openweather data",
-    "expect_intent": "data.openweather",
+    "expect_intent": "data.weather_forecast",
     "expect_endpoint": {
       "origin": "https://openweather.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/openweather/air-quality"
-    }
+    },
+    "expect_intent_legacy": "data.openweather"
   },
   {
     "id": "data-openweather-2",
     "query": "air quality openweather openweather data via micropayment",
-    "expect_intent": "data.openweather",
+    "expect_intent": "data.weather_forecast",
     "expect_endpoint": {
       "origin": "https://openweather.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/openweather/air-quality"
-    }
+    },
+    "expect_intent_legacy": "data.openweather"
   },
   {
     "id": "data-openweather-3",
     "query": "I need to air quality openweather openweather data",
-    "expect_intent": "data.openweather",
+    "expect_intent": "data.weather_forecast",
     "expect_endpoint": {
       "origin": "https://openweather.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/openweather/air-quality"
-    }
+    },
+    "expect_intent_legacy": "data.openweather"
   },
   {
     "id": "web-oxylabs-1",
     "query": "Scrape a public URL with optional geo-targeting and JS rendering",
-    "expect_intent": "web.oxylabs",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://oxylabs.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/proxy"
-    }
+    },
+    "expect_intent_legacy": "web.oxylabs"
   },
   {
     "id": "web-oxylabs-2",
     "query": "Scrape a public URL with optional geo-targeting and JS rendering via micropayment",
-    "expect_intent": "web.oxylabs",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://oxylabs.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/proxy"
-    }
+    },
+    "expect_intent_legacy": "web.oxylabs"
   },
   {
     "id": "web-oxylabs-3",
     "query": "I need to Scrape a public URL with optional geo-targeting and JS rendering",
-    "expect_intent": "web.oxylabs",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://oxylabs.mpp.tempo.xyz",
       "method": "POST",
       "path": "/v1/proxy"
-    }
+    },
+    "expect_intent_legacy": "web.oxylabs"
   },
   {
     "id": "ai-papercut-1",
@@ -5637,7 +6215,9 @@
       "origin": "https://papercut.lol",
       "method": "POST",
       "path": "/api/send"
-    }
+    },
+    "expect_intent_legacy": "ai.papercut",
+    "out_of_scope": true
   },
   {
     "id": "ai-papercut-2",
@@ -5647,7 +6227,9 @@
       "origin": "https://papercut.lol",
       "method": "POST",
       "path": "/api/send"
-    }
+    },
+    "expect_intent_legacy": "ai.papercut",
+    "out_of_scope": true
   },
   {
     "id": "ai-papercut-3",
@@ -5657,67 +6239,75 @@
       "origin": "https://papercut.lol",
       "method": "POST",
       "path": "/api/send"
-    }
+    },
+    "expect_intent_legacy": "ai.papercut",
+    "out_of_scope": true
   },
   {
     "id": "search-parallel-1",
     "query": "Extract page content",
-    "expect_intent": "search.parallel",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://parallelmpp.dev",
       "method": "POST",
       "path": "/api/extract"
-    }
+    },
+    "expect_intent_legacy": "search.parallel"
   },
   {
     "id": "search-parallel-2",
     "query": "Extract page content via micropayment",
-    "expect_intent": "search.parallel",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://parallelmpp.dev",
       "method": "POST",
       "path": "/api/extract"
-    }
+    },
+    "expect_intent_legacy": "search.parallel"
   },
   {
     "id": "search-parallel-3",
     "query": "I need to Extract page content",
-    "expect_intent": "search.parallel",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://parallelmpp.dev",
       "method": "POST",
       "path": "/api/extract"
-    }
+    },
+    "expect_intent_legacy": "search.parallel"
   },
   {
     "id": "ai-perplexity-1",
     "query": "sonar chat perplexity perplexity ai",
-    "expect_intent": "ai.perplexity",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://perplexity.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/perplexity/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.perplexity"
   },
   {
     "id": "ai-perplexity-2",
     "query": "sonar chat perplexity perplexity ai via micropayment",
-    "expect_intent": "ai.perplexity",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://perplexity.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/perplexity/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.perplexity"
   },
   {
     "id": "ai-perplexity-3",
     "query": "I need to sonar chat perplexity perplexity ai",
-    "expect_intent": "ai.perplexity",
+    "expect_intent": "ai.web_research",
     "expect_endpoint": {
       "origin": "https://perplexity.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/perplexity/chat"
-    }
+    },
+    "expect_intent_legacy": "ai.perplexity"
   },
   {
     "id": "web-postalform-1",
@@ -5727,7 +6317,9 @@
       "origin": "https://postalform.com",
       "method": "POST",
       "path": "/api/machine/mpp/orders"
-    }
+    },
+    "expect_intent_legacy": "web.postalform",
+    "out_of_scope": true
   },
   {
     "id": "web-postalform-2",
@@ -5737,7 +6329,9 @@
       "origin": "https://postalform.com",
       "method": "POST",
       "path": "/api/machine/mpp/orders"
-    }
+    },
+    "expect_intent_legacy": "web.postalform",
+    "out_of_scope": true
   },
   {
     "id": "web-postalform-3",
@@ -5747,307 +6341,339 @@
       "origin": "https://postalform.com",
       "method": "POST",
       "path": "/api/machine/mpp/orders"
-    }
+    },
+    "expect_intent_legacy": "web.postalform",
+    "out_of_scope": true
   },
   {
     "id": "data-rentcast-1",
     "query": "market statistics rentcast rentcast data",
-    "expect_intent": "data.rentcast",
+    "expect_intent": "realestate.property_lookup",
     "expect_endpoint": {
       "origin": "https://rentcast.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/rentcast/markets"
-    }
+    },
+    "expect_intent_legacy": "data.rentcast"
   },
   {
     "id": "data-rentcast-2",
     "query": "market statistics rentcast rentcast data via micropayment",
-    "expect_intent": "data.rentcast",
+    "expect_intent": "realestate.property_lookup",
     "expect_endpoint": {
       "origin": "https://rentcast.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/rentcast/markets"
-    }
+    },
+    "expect_intent_legacy": "data.rentcast"
   },
   {
     "id": "data-rentcast-3",
     "query": "I need to market statistics rentcast rentcast data",
-    "expect_intent": "data.rentcast",
+    "expect_intent": "realestate.property_lookup",
     "expect_endpoint": {
       "origin": "https://rentcast.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/rentcast/markets"
-    }
+    },
+    "expect_intent_legacy": "data.rentcast"
   },
   {
     "id": "ai-replicate-1",
     "query": "get model replicate replicate ai",
-    "expect_intent": "ai.replicate",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://replicate.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/replicate/list-models"
-    }
+    },
+    "expect_intent_legacy": "ai.replicate"
   },
   {
     "id": "ai-replicate-2",
     "query": "get model replicate replicate ai via micropayment",
-    "expect_intent": "ai.replicate",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://replicate.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/replicate/list-models"
-    }
+    },
+    "expect_intent_legacy": "ai.replicate"
   },
   {
     "id": "ai-replicate-3",
     "query": "I need to get model replicate replicate ai",
-    "expect_intent": "ai.replicate",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://replicate.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/replicate/list-models"
-    }
+    },
+    "expect_intent_legacy": "ai.replicate"
   },
   {
     "id": "compute-screenshotone-1",
     "query": "take screenshot screenshotone screenshotone compute",
-    "expect_intent": "compute.screenshotone",
+    "expect_intent": "web.screenshot",
     "expect_endpoint": {
       "origin": "https://screenshotone.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/screenshotone/take"
-    }
+    },
+    "expect_intent_legacy": "compute.screenshotone"
   },
   {
     "id": "compute-screenshotone-2",
     "query": "take screenshot screenshotone screenshotone compute via micropayment",
-    "expect_intent": "compute.screenshotone",
+    "expect_intent": "web.screenshot",
     "expect_endpoint": {
       "origin": "https://screenshotone.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/screenshotone/take"
-    }
+    },
+    "expect_intent_legacy": "compute.screenshotone"
   },
   {
     "id": "compute-screenshotone-3",
     "query": "I need to take screenshot screenshotone screenshotone compute",
-    "expect_intent": "compute.screenshotone",
+    "expect_intent": "web.screenshot",
     "expect_endpoint": {
       "origin": "https://screenshotone.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/screenshotone/take"
-    }
+    },
+    "expect_intent_legacy": "compute.screenshotone"
   },
   {
     "id": "search-serpapi-1",
     "query": "Google Flights search",
-    "expect_intent": "search.serpapi",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://serpapi.mpp.tempo.xyz",
       "method": "GET",
       "path": "/search"
-    }
+    },
+    "expect_intent_legacy": "search.serpapi"
   },
   {
     "id": "search-serpapi-2",
     "query": "Google Flights search via micropayment",
-    "expect_intent": "search.serpapi",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://serpapi.mpp.tempo.xyz",
       "method": "GET",
       "path": "/search"
-    }
+    },
+    "expect_intent_legacy": "search.serpapi"
   },
   {
     "id": "search-serpapi-3",
     "query": "I need to Google Flights search",
-    "expect_intent": "search.serpapi",
+    "expect_intent": "search.web",
     "expect_endpoint": {
       "origin": "https://serpapi.mpp.tempo.xyz",
       "method": "GET",
       "path": "/search"
-    }
+    },
+    "expect_intent_legacy": "search.serpapi"
   },
   {
     "id": "data-spyfu-1",
     "query": "ad history research spyfu spyfu data",
-    "expect_intent": "data.spyfu",
+    "expect_intent": "marketing.competitive_landscape",
     "expect_endpoint": {
       "origin": "https://spyfu.mpp.tempo.xyz",
       "method": "GET",
       "path": "/apis/cloud_ad_history_api/v2/*"
-    }
+    },
+    "expect_intent_legacy": "data.spyfu"
   },
   {
     "id": "data-spyfu-2",
     "query": "ad history research spyfu spyfu data via micropayment",
-    "expect_intent": "data.spyfu",
+    "expect_intent": "marketing.competitive_landscape",
     "expect_endpoint": {
       "origin": "https://spyfu.mpp.tempo.xyz",
       "method": "GET",
       "path": "/apis/cloud_ad_history_api/v2/*"
-    }
+    },
+    "expect_intent_legacy": "data.spyfu"
   },
   {
     "id": "data-spyfu-3",
     "query": "I need to ad history research spyfu spyfu data",
-    "expect_intent": "data.spyfu",
+    "expect_intent": "marketing.competitive_landscape",
     "expect_endpoint": {
       "origin": "https://spyfu.mpp.tempo.xyz",
       "method": "GET",
       "path": "/apis/cloud_ad_history_api/v2/*"
-    }
+    },
+    "expect_intent_legacy": "data.spyfu"
   },
   {
     "id": "ai-stability-ai-1",
     "query": "audio inpaint stability ai stability ai ai",
-    "expect_intent": "ai.stability_ai",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://stability-ai.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/stability-ai/audio-inpaint"
-    }
+    },
+    "expect_intent_legacy": "ai.stability_ai"
   },
   {
     "id": "ai-stability-ai-2",
     "query": "audio inpaint stability ai stability ai ai via micropayment",
-    "expect_intent": "ai.stability_ai",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://stability-ai.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/stability-ai/audio-inpaint"
-    }
+    },
+    "expect_intent_legacy": "ai.stability_ai"
   },
   {
     "id": "ai-stability-ai-3",
     "query": "I need to audio inpaint stability ai stability ai ai",
-    "expect_intent": "ai.stability_ai",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://stability-ai.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/stability-ai/audio-inpaint"
-    }
+    },
+    "expect_intent_legacy": "ai.stability_ai"
   },
   {
     "id": "data-stableenrich-1",
     "query": "Scrape full LinkedIn profile data",
-    "expect_intent": "data.stableenrich",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://stableenrich.dev",
       "method": "POST",
       "path": "/api/clado/linkedin-scrape"
-    }
+    },
+    "expect_intent_legacy": "data.stableenrich"
   },
   {
     "id": "data-stableenrich-2",
     "query": "Scrape full LinkedIn profile data via micropayment",
-    "expect_intent": "data.stableenrich",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://stableenrich.dev",
       "method": "POST",
       "path": "/api/clado/linkedin-scrape"
-    }
+    },
+    "expect_intent_legacy": "data.stableenrich"
   },
   {
     "id": "data-stableenrich-3",
     "query": "I need to Scrape full LinkedIn profile data",
-    "expect_intent": "data.stableenrich",
+    "expect_intent": "data.person_search",
     "expect_endpoint": {
       "origin": "https://stableenrich.dev",
       "method": "POST",
       "path": "/api/clado/linkedin-scrape"
-    }
+    },
+    "expect_intent_legacy": "data.stableenrich"
   },
   {
     "id": "ai-stablestudio-1",
     "query": "Flux 2 Pro image editing",
-    "expect_intent": "ai.stablestudio",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://stablestudio.dev",
       "method": "POST",
       "path": "/api/generate/nano-banana/edit"
-    }
+    },
+    "expect_intent_legacy": "ai.stablestudio"
   },
   {
     "id": "ai-stablestudio-2",
     "query": "Flux 2 Pro image editing via micropayment",
-    "expect_intent": "ai.stablestudio",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://stablestudio.dev",
       "method": "POST",
       "path": "/api/generate/nano-banana/edit"
-    }
+    },
+    "expect_intent_legacy": "ai.stablestudio"
   },
   {
     "id": "ai-stablestudio-3",
     "query": "I need to Flux 2 Pro image editing",
-    "expect_intent": "ai.stablestudio",
+    "expect_intent": "ai.image_generate",
     "expect_endpoint": {
       "origin": "https://stablestudio.dev",
       "method": "POST",
       "path": "/api/generate/nano-banana/edit"
-    }
+    },
+    "expect_intent_legacy": "ai.stablestudio"
   },
   {
     "id": "data-stabletravel-1",
     "query": "Search activities within a geographic square",
-    "expect_intent": "data.stabletravel",
+    "expect_intent": "travel.place_reviews",
     "expect_endpoint": {
       "origin": "https://stabletravel.dev",
       "method": "GET",
       "path": "/api/activities/by-square"
-    }
+    },
+    "expect_intent_legacy": "data.stabletravel"
   },
   {
     "id": "data-stabletravel-2",
     "query": "Search activities within a geographic square via micropayment",
-    "expect_intent": "data.stabletravel",
+    "expect_intent": "travel.place_reviews",
     "expect_endpoint": {
       "origin": "https://stabletravel.dev",
       "method": "GET",
       "path": "/api/activities/by-square"
-    }
+    },
+    "expect_intent_legacy": "data.stabletravel"
   },
   {
     "id": "data-stabletravel-3",
     "query": "I need to Search activities within a geographic square",
-    "expect_intent": "data.stabletravel",
+    "expect_intent": "travel.place_reviews",
     "expect_endpoint": {
       "origin": "https://stabletravel.dev",
       "method": "GET",
       "path": "/api/activities/by-square"
-    }
+    },
+    "expect_intent_legacy": "data.stabletravel"
   },
   {
     "id": "storage-storage-1",
     "query": "list objects object storage storage storage",
-    "expect_intent": "storage.storage",
+    "expect_intent": "storage.hosting",
     "expect_endpoint": {
       "origin": "https://storage.mpp.tempo.xyz",
       "method": "GET",
       "path": "/"
-    }
+    },
+    "expect_intent_legacy": "storage.storage"
   },
   {
     "id": "storage-storage-2",
     "query": "list objects object storage storage storage via micropayment",
-    "expect_intent": "storage.storage",
+    "expect_intent": "storage.hosting",
     "expect_endpoint": {
       "origin": "https://storage.mpp.tempo.xyz",
       "method": "GET",
       "path": "/"
-    }
+    },
+    "expect_intent_legacy": "storage.storage"
   },
   {
     "id": "storage-storage-3",
     "query": "I need to list objects object storage storage storage",
-    "expect_intent": "storage.storage",
+    "expect_intent": "storage.hosting",
     "expect_endpoint": {
       "origin": "https://storage.mpp.tempo.xyz",
       "method": "GET",
       "path": "/"
-    }
+    },
+    "expect_intent_legacy": "storage.storage"
   },
   {
     "id": "ai-suno-1",
@@ -6057,7 +6683,9 @@
       "origin": "https://suno.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/suno/generate-lyrics"
-    }
+    },
+    "expect_intent_legacy": "ai.suno",
+    "out_of_scope": true
   },
   {
     "id": "ai-suno-2",
@@ -6067,7 +6695,9 @@
       "origin": "https://suno.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/suno/generate-lyrics"
-    }
+    },
+    "expect_intent_legacy": "ai.suno",
+    "out_of_scope": true
   },
   {
     "id": "ai-suno-3",
@@ -6077,97 +6707,108 @@
       "origin": "https://suno.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/suno/generate-lyrics"
-    }
+    },
+    "expect_intent_legacy": "ai.suno",
+    "out_of_scope": true
   },
   {
     "id": "data-tako-1",
     "query": "Edit a chart using a natural language prompt",
-    "expect_intent": "data.tako",
+    "expect_intent": "data.compute_answer",
     "expect_endpoint": {
       "origin": "https://tako.com",
       "method": "POST",
       "path": "/api/mpp/v1/visualize"
-    }
+    },
+    "expect_intent_legacy": "data.tako"
   },
   {
     "id": "data-tako-2",
     "query": "Edit a chart using a natural language prompt via micropayment",
-    "expect_intent": "data.tako",
+    "expect_intent": "data.compute_answer",
     "expect_endpoint": {
       "origin": "https://tako.com",
       "method": "POST",
       "path": "/api/mpp/v1/visualize"
-    }
+    },
+    "expect_intent_legacy": "data.tako"
   },
   {
     "id": "data-tako-3",
     "query": "I need to Edit a chart using a natural language prompt",
-    "expect_intent": "data.tako",
+    "expect_intent": "data.compute_answer",
     "expect_endpoint": {
       "origin": "https://tako.com",
       "method": "POST",
       "path": "/api/mpp/v1/visualize"
-    }
+    },
+    "expect_intent_legacy": "data.tako"
   },
   {
     "id": "search-tavily-1",
     "query": "crawl tavily tavily search",
-    "expect_intent": "search.tavily",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://tavily.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/tavily/crawl"
-    }
+    },
+    "expect_intent_legacy": "search.tavily"
   },
   {
     "id": "search-tavily-2",
     "query": "crawl tavily tavily search via micropayment",
-    "expect_intent": "search.tavily",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://tavily.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/tavily/crawl"
-    }
+    },
+    "expect_intent_legacy": "search.tavily"
   },
   {
     "id": "search-tavily-3",
     "query": "I need to crawl tavily tavily search",
-    "expect_intent": "search.tavily",
+    "expect_intent": "data.web_scrape",
     "expect_endpoint": {
       "origin": "https://tavily.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/tavily/crawl"
-    }
+    },
+    "expect_intent_legacy": "search.tavily"
   },
   {
     "id": "web-twocaptcha-1",
     "query": "Submit a captcha task for solving",
-    "expect_intent": "web.twocaptcha",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://twocaptcha.mpp.tempo.xyz",
       "method": "POST",
       "path": "/createTask"
-    }
+    },
+    "expect_intent_legacy": "web.twocaptcha"
   },
   {
     "id": "web-twocaptcha-2",
     "query": "Submit a captcha task for solving via micropayment",
-    "expect_intent": "web.twocaptcha",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://twocaptcha.mpp.tempo.xyz",
       "method": "POST",
       "path": "/createTask"
-    }
+    },
+    "expect_intent_legacy": "web.twocaptcha"
   },
   {
     "id": "web-twocaptcha-3",
     "query": "I need to Submit a captcha task for solving",
-    "expect_intent": "web.twocaptcha",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://twocaptcha.mpp.tempo.xyz",
       "method": "POST",
       "path": "/createTask"
-    }
+    },
+    "expect_intent_legacy": "web.twocaptcha"
   },
   {
     "id": "comms-send-fax-1",
@@ -6382,32 +7023,35 @@
   {
     "id": "compute-captcha-solve-1",
     "query": "Solve a CAPTCHA challenge",
-    "expect_intent": "compute.captcha_solve",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://twocaptcha.mpp.tempo.xyz",
       "method": "POST",
       "path": "/createTask"
-    }
+    },
+    "expect_intent_legacy": "compute.captcha_solve"
   },
   {
     "id": "compute-captcha-solve-2",
     "query": "Solve a CAPTCHA challenge via micropayment",
-    "expect_intent": "compute.captcha_solve",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://twocaptcha.mpp.tempo.xyz",
       "method": "POST",
       "path": "/createTask"
-    }
+    },
+    "expect_intent_legacy": "compute.captcha_solve"
   },
   {
     "id": "compute-captcha-solve-3",
     "query": "I need to Solve a CAPTCHA challenge",
-    "expect_intent": "compute.captcha_solve",
+    "expect_intent": "devtools.captcha_solve",
     "expect_endpoint": {
       "origin": "https://twocaptcha.mpp.tempo.xyz",
       "method": "POST",
       "path": "/createTask"
-    }
+    },
+    "expect_intent_legacy": "compute.captcha_solve"
   },
   {
     "id": "travel-place-reviews-1",

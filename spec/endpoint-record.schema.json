@@ -36,6 +36,16 @@
     "inputs": { "type": "array", "items": { "type": "string" } },
     "facets": { "$ref": "#/$defs/EndpointFacets" },
     "payment": { "$ref": "#/$defs/Payment" },
+    "service": { "$ref": "#/$defs/ServiceInfo" },
+    "responses": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "has200": { "type": "boolean" },
+        "has402": { "type": "boolean" }
+      }
+    },
+    "schema_missing": { "type": "boolean" },
     "guidance_available": { "type": "boolean" },
     "openapi_url": { "type": "string", "format": "uri" },
     "search_text": { "type": "string" },
@@ -105,9 +115,39 @@
       "properties": {
         "price_usd": { "type": "number", "minimum": 0 },
         "paid": { "type": "boolean" },
+        "currency": { "type": "string" },
         "rails": {
           "type": "array",
           "items": { "$ref": "#/$defs/PaymentRail" }
+        },
+        "offers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/PaymentOffer" }
+        }
+      }
+    },
+    "PaymentOffer": {
+      "type": "object",
+      "required": ["intent", "method", "amount"],
+      "properties": {
+        "intent": { "type": "string", "enum": ["charge", "session"] },
+        "method": { "type": "string" },
+        "amount": { "type": ["string", "null"] },
+        "currency": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "ServiceInfo": {
+      "type": "object",
+      "properties": {
+        "categories": { "type": "array", "items": { "type": "string" } },
+        "docs": {
+          "type": "object",
+          "properties": {
+            "apiReference": { "type": "string" },
+            "homepage": { "type": "string" },
+            "llms": { "type": "string" }
+          }
         }
       }
     }

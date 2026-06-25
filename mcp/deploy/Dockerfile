@@ -6,9 +6,13 @@
 #
 # Debian-based Node, NOT Alpine: the native @lancedb/lancedb and onnxruntime
 # (via @xenova/transformers) binaries need glibc. Build the index first on your
-# machine:  pnpm install && pnpm build && pnpm embed && pnpm build:endpoint-index
-# (the last step quantizes the f32 endpoint-vector cache into the ~86MB int8
-#  dist/endpoint-index.i8.* the gated endpoint arm loads — see src/endpoint-arm.ts).
+# machine (GOOGLE_API_KEY required — gemini powers the semantic binder + embeddings):
+#   GOOGLE_API_KEY=... pnpm install && pnpm build && pnpm embed && pnpm build:endpoint-index
+# `pnpm build` = tsc → `cli.js ingest` (federated discovery + per-origin /openapi.json
+#   enrichment + quality gate → dist/index.json) → `enrich-facets` (semantic binder binds
+#   endpoints→intents + materializes). `pnpm embed` builds the LanceDB capability vectors;
+#   `build:endpoint-index` quantizes the f32 endpoint-vector cache into the ~86MB int8
+#   dist/endpoint-index.i8.* the gated endpoint arm loads (src/endpoint-arm.ts).
 FROM node:22-slim
 
 # libgomp1: required by onnxruntime-node. ca-certificates: HTTPS model download.

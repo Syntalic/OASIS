@@ -25,15 +25,11 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { EMBED_BACKEND, EMBED_DIM } from "./embed/embedder.js";
+import { endpointEmbedText } from "./embed/endpoint-text.js";
 import type { EndpointRecord } from "./types.js";
 
 /** Same well-known meta files the binder skips — never paid task endpoints. */
 const META_FILE = /(robots\.txt|llms\.txt|sitemap|\.well-known|openapi\.json|swagger\.json|\/status$|favicon)/i;
-
-/** MUST match bind-endpoints.endpointEmbedText so cached vectors are reused by hash. */
-function endpointEmbedText(ep: EndpointRecord): string {
-  return [ep.summary, ep.description, ep.path, ...(ep.inputs ?? [])].filter(Boolean).join(" ");
-}
 
 const hashText = (t: string): string => createHash("sha256").update(t).digest("hex");
 

@@ -16,18 +16,13 @@ import type { CapabilityIntent, CuratedIntentSource, EndpointRecord } from "../t
 import { EMBED_BACKEND, embedTexts } from "./embedder.js";
 import { embedEndpointsCached } from "./endpoint-cache.js";
 import { capabilityEmbedText } from "./lance-index.js";
+import { endpointEmbedText } from "./endpoint-text.js";
 
 const CURATED = new Set<string>(CURATED_INTENT_IDS);
 
 /** Well-known meta files served by many hosts — not paid task endpoints. (The sparse
  *  floor would catch most anyway, but this is an explicit, free structural skip.) */
 const META_FILE = /(robots\.txt|llms\.txt|sitemap|\.well-known|openapi\.json|swagger\.json|\/status$|favicon)/i;
-
-/** Endpoint text to embed/tokenize — task signal only (summary/description/path/inputs),
- *  never origin/provider (which would leak vendor names into the match). */
-function endpointEmbedText(ep: EndpointRecord): string {
-  return [ep.summary, ep.description, ep.path, ...(ep.inputs ?? [])].filter(Boolean).join(" ");
-}
 
 /** Dot product == cosine: the embedder returns L2-normalized vectors. */
 function cosine(a: ArrayLike<number>, b: ArrayLike<number>): number {
@@ -82,6 +77,13 @@ export interface BindOptions {
   /** Minimum SPARSE (TF-IDF) similarity to the chosen intent — gates endpoints with no
    *  shared task vocabulary (payment-boilerplate / degenerate metadata). */
   sparseFloor?: number;
+  /** SPARSE similarity strong enough to PROMOTE an intent into the candidate set even when its
+   *  dense cosine is below `floor`. Rescues mechanics-heavy endpoints whose raw text dilutes
+   *  the dense vector below the floor for the right intent while a high-IDF capability term
+   *  (e.g. "reddit") still matches that intent's alias/label. Must sit well above `sparseFloor`
+   *  (a gating floor) so only discriminative matches promote. NEEDS CALIBRATION against the
+   *  orphan audit + eval before the default is trusted. */
+  strongSparseFloor?: number;
   /** Max intents a single endpoint may bind to. */
   topKPerEndpoint?: number;
   /** Per-intent DENSE floor overrides — lower the floor for sparse intents the global
@@ -104,6 +106,9 @@ export interface BindResult {
   /** Endpoints left unbound by the sparse-vocabulary floor (no task terms shared with
    *  any dense-near intent — boilerplate/degenerate metadata). */
   gatedSparse: number;
+  /** Endpoints bound ONLY because a strong sparse match promoted an intent the dense floor
+   *  rejected — the orphan-rescue path. Observability for the promotion threshold. */
+  promotedSparse: number;
 }
 
 /** Reciprocal-rank-fusion constant — merges the dense and sparse rankings. */
@@ -121,6 +126,11 @@ export async function bindEndpointsByEmbedding(
   const isGoogle = EMBED_BACKEND.startsWith("google");
   const floor = opts.floor ?? (isGoogle ? 0.78 : 0.45);
   const sparseFloor = opts.sparseFloor ?? 0.035;
+  // Promotion floor — calibrated on a full gemini run (31,810-endpoint corpus, 4-floor sweep):
+  // 0.12 is the knee that captures real Apify-class binds (the founding Apify reddit-scraper-lite
+  // case sits at sparse 0.1364, so 0.15 would strand it) while the precision cost is dominated by
+  // boilerplate providers now dropped at the gate (content-free summaries). See docs/proposals/ingestion-overhaul.md.
+  const strongSparseFloor = opts.strongSparseFloor ?? 0.12;
   const topK = opts.topKPerEndpoint ?? (isGoogle ? 1 : 2);
   const floorOverrides = opts.floorOverrides ?? {};
   const floorFor = (id: string): number => floorOverrides[id] ?? floor;
@@ -167,6 +177,7 @@ export async function bindEndpointsByEmbedding(
   let bound = 0;
   let gatedMeta = 0;
   let gatedSparse = 0;
+  let promotedSparse = 0;
   for (let i = 0; i < endpoints.length; i++) {
     const ep = endpoints[i];
     if (META_FILE.test(ep.path ?? "")) {
@@ -181,28 +192,43 @@ export async function bindEndpointsByEmbedding(
       dense: cosine(ev, intentVecs[j]),
       sparse: sparseCosine(esp, intentSparse[j]),
     }));
-    // Fuse the dense and sparse rankings with RRF, choose among dense-floor-passers.
+    // Fuse the dense and sparse rankings with RRF. Candidates = dense-floor passers PLUS any
+    // intent with a STRONG sparse match (the orphan-rescue promotion). Dense passers are kept
+    // ahead of promotions, so promotion is strictly ADDITIVE: it can only fill top-K slots a
+    // dense passer didn't claim — an endpoint that already had a dense binding keeps exactly
+    // it. So this rescues orphans (e.g. the Apify Reddit actor → media.social_data) without
+    // displacing a correct binding.
     const dRank = new Map<string, number>();
     [...scored].sort((a, b) => b.dense - a.dense).forEach((x, r) => dRank.set(x.id, r));
     const sRank = new Map<string, number>();
     [...scored].sort((a, b) => b.sparse - a.sparse).forEach((x, r) => sRank.set(x.id, r));
+    const denseOk = (x: { id: string; dense: number }): boolean => x.dense >= floorFor(x.id);
+    const promotedBySparse = (x: { id: string; dense: number; sparse: number }): boolean =>
+      !denseOk(x) && x.sparse >= strongSparseFloor;
     const passers = scored
-      .filter((x) => x.dense >= floorFor(x.id))
+      .filter((x) => denseOk(x) || promotedBySparse(x))
       .map((x) => ({
         id: x.id,
         sparse: x.sparse,
+        promoted: promotedBySparse(x),
         rrf: 1 / (RRF_K + (dRank.get(x.id) ?? 0)) + 1 / (RRF_K + (sRank.get(x.id) ?? 0)),
       }))
       .sort((a, b) => b.rrf - a.rrf);
-    // Keep the top-K fused candidates that share real task vocabulary (sparse floor).
-    const matches = passers.slice(0, topK).filter((x) => x.sparse >= sparseFloor);
+    // Dense passers first, then promotions — this is what keeps promotion additive (above).
+    const ranked = [
+      ...passers.filter((p) => !p.promoted),
+      ...passers.filter((p) => p.promoted),
+    ];
+    // Keep the top-K candidates that share real task vocabulary (sparse floor).
+    const matches = ranked.slice(0, topK).filter((x) => x.sparse >= sparseFloor);
     if (!matches.length && passers.length) gatedSparse += 1;
     // Always overwrite: clear stale bindings even when nothing matches.
     ep.capabilities = matches.map((m) => m.id);
     if (matches.length) {
       bound += 1;
+      if (matches.some((m) => m.promoted)) promotedSparse += 1;
       for (const m of matches) perIntent.set(m.id, (perIntent.get(m.id) ?? 0) + 1);
     }
   }
-  return { bound, perIntent, embedded, reused, gatedMeta, gatedSparse };
+  return { bound, perIntent, embedded, reused, gatedMeta, gatedSparse, promotedSparse };
 }

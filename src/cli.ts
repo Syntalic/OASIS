@@ -4,6 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { buildIndex, defaultPaySkillsPath } from "./build.js";
+import { runIngest } from "./ingest/discover.js";
 import { curatedCapabilitiesForSearch } from "./curated-search.js";
 import { endpointId } from "./id.js";
 import { defaultLanceDir, buildLanceIndex } from "./embed/lance-index.js";
@@ -298,6 +299,26 @@ program
       return;
     }
     console.log(`${results.length} binding file(s) valid`);
+  });
+
+program
+  .command("ingest")
+  .description("Federated discovery + enrichment + gate → dist/index.json (pre-binding)")
+  .option("-o, --output <dir>", "Output directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--snapshot <file>", "Rebuild from a saved merged-record snapshot (skip the network crawl) — re-gates + writes the bundle")
+  .option("--bazaar-max-pages <n>", "Limit Bazaar pages (debug)")
+  .option("--enrich-limit <n>", "Limit origins enriched (debug)")
+  .option("--concurrency <n>", "Enrichment concurrency", "16")
+  .action(async (opts) => {
+    const bundle = await runIngest({
+      outputDir: opts.output,
+      builtAt: new Date().toISOString(),
+      snapshotPath: opts.snapshot,
+      bazaarMaxPages: opts.bazaarMaxPages ? Number(opts.bazaarMaxPages) : undefined,
+      enrichLimit: opts.enrichLimit ? Number(opts.enrichLimit) : undefined,
+      enrichConcurrency: Number(opts.concurrency),
+    });
+    console.log(`ingest → ${opts.output}/index.json: ${bundle.stats.endpoints} endpoints, ${bundle.stats.origins} origins`);
   });
 
 program
