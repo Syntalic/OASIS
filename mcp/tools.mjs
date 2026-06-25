@@ -290,6 +290,21 @@ async function oasisNext({
   }
 
   const source = source_intent_id ? capById.get(source_intent_id) : undefined;
+
+  // Topical relevance of the finding → intents: reuse oasis_find's hybrid search over the SAME
+  // intent vectors, so oasis_next ranks bridges by relevance to the finding, not just by type.
+  let topicalScores;
+  const topicalText = finding || query;
+  if (topicalText) {
+    const hits = await searchHybridWithFallback(topicalText, bundle, lanceDir, 200);
+    topicalScores = new Map();
+    for (const h of hits) {
+      if (h.kind === "capability" && !topicalScores.has(h.capability_id)) {
+        topicalScores.set(h.capability_id, h.score);
+      }
+    }
+  }
+
   const result = suggestFollowUps(
     {
       source_intent_id,
@@ -298,7 +313,7 @@ async function oasisNext({
       finding,
     },
     runtime,
-    { limit, capabilities: curatedCaps, endpoints: bundle.endpoints },
+    { limit, capabilities: curatedCaps, endpoints: bundle.endpoints, topicalScores },
   );
 
   const out = {
