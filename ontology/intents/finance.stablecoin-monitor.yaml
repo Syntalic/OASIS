@@ -1,0 +1,25 @@
+id: finance.stablecoin_monitor
+label: Monitor stablecoin pegs and supply flows
+description: Stablecoin price-peg monitoring, depeg alerts, and supply-flow telemetry across chains. Use when an agent watches USDC, USDT, DAI, or similar stables for peg deviation — not generic crypto spot prices (finance.crypto_spot_price) or wallet balances (finance.token_balance).
+aliases:
+  - stablecoin depeg alert
+  - stablecoin peg monitor
+  - USDC peg deviation monitor
+  - stablecoin supply flow tracking
+  - watch stablecoin price vs peg
+  - stablecoin health monitor API
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: MarketQuote
+    role: payload
+    cardinality: many
+facets:
+  domain: finance
+  action: monitor
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: finance.crypto_spot_price
+    note: stablecoin_monitor focuses on peg stability and supply flows; crypto_spot_price is general token quotes

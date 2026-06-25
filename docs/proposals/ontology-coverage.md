@@ -50,7 +50,24 @@ Guardrails (per `oasis-discovery-architecture-philosophy`):
 | **Widen `data.gov_civic`** | EPA TRI, county environmental context (folded instead of minting `data.environmental`) |
 | **Registry** | `src/intent-match.ts` curated set 56 → **60** |
 
-**Deferred:** `convert.units` still dominated by `agent402.tools` in the orphan corpus — intent added for bind coverage; confirm ≥3 independent providers on next crawl before treating the category as fully validated.
+**Round 2 (69 intents):** `shop.tcg_catalog`, `compute.financial_calculator`, `data.book_lookup`, `data.drug_label`, `finance.stablecoin_monitor`, `media.movie_lookup`, `data.vat_validate`, `data.holidays_lookup`, `data.iban_validate` + widened `compute.convert_units`.
+
+**Round 3 (73 intents):** `data.news_headlines`, `devtools.pdf_manipulate`, `media.anime_lookup`, `data.sports_scores` + widened `ai.llm_complete`, `finance.onchain_analytics`, `data.company_enrich`.
+
+### Bind-rate results (fresh ingest 2026-06-25, 23,927 endpoints)
+
+| Stage | Intents | Bound | Rate |
+|-------|---------|-------|------|
+| After round 1 enrich | 60 | 15,182 | **63.5%** |
+| After round 2 enrich | 69 | 16,083 | **67.2%** (+901) |
+| After round 3 enrich | 73 | 16,394 | **68.5%** (+311) |
+| **Total gain** | +17 | **+2,212** | **+5.0 pp** |
+
+Top binders added: `shop.tcg_catalog` (~1,290), `compute.convert_units` (~887), `compute.financial_calculator` (~367), `finance.stablecoin_monitor` (~206), `data.vat_validate` (~187).
+
+**Still orphaned (~7,533):** `orbisapi.com` proxy micro-APIs (~948), thin-summary `agent402` utilities (~721/origin), payment/checkout stubs, and swarm template hosts — mostly one-off deployed agents or boilerplate summaries below sparse floor.
+
+Audit artifact: `dist/orphan-audit.json` · compare script: `scripts/bind-compare.mjs` · audit script: `scripts/orphan-audit.mjs`
 
 ---
 

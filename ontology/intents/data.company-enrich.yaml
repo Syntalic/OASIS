@@ -15,6 +15,10 @@ aliases:
   - business info from URL
   - company profile from domain
   - what company owns this domain
+  - organizational depth chart
+  - company employee depth chart
+  - ATS organization catalog
+  - corporate org structure lookup
 consumes:
   - entity: Domain
     role: identifier

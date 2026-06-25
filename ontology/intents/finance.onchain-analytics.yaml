@@ -11,6 +11,10 @@ aliases:
   - what wallets are accumulating
   - on-chain signal discovery
   - crypto wallet intelligence
+  - DeFi protocol risk assessment
+  - liquidation risk monitoring
+  - DeFi position monitoring
+  - on-chain fund flow dashboard
 consumes:
   - entity: WalletAddress
     role: identifier

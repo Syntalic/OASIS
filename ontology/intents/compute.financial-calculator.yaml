@@ -1,0 +1,23 @@
+id: compute.financial_calculator
+label: Run personal finance and loan calculators
+description: Deterministic finance calculators — loan and mortgage payments, compound interest, emergency-fund targets, debt payoff comparisons, retirement and savings projections, and similar numeric personal-finance math. Use when an agent computes a financial scenario, not when it fetches live market quotes (finance.stock_quote) or actionable trade signals (finance.trading_signals).
+aliases:
+  - loan payment calculator
+  - mortgage payment calculator
+  - compound interest calculator
+  - emergency fund calculator
+  - debt payoff comparison
+  - personal finance calculator
+  - retirement savings projection
+  - future value calculator
+  - amortization schedule calculator
+  - financial planning calculator API
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+facets:
+  domain: compute
+  action: execute

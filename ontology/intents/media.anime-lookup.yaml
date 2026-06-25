@@ -1,0 +1,18 @@
+id: media.anime_lookup
+label: Look up anime characters and series details
+description: Anime and manga metadata lookup — character search, series details, and related catalog records. Use when an agent resolves anime identity or enriches entertainment research.
+aliases:
+  - anime character search
+  - anime series detail lookup
+  - manga character database
+  - lookup anime metadata
+  - anime catalog API
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+facets:
+  domain: media
+  action: lookup
