@@ -4,20 +4,20 @@ description: Retrieve profiles, posts, comments, and engagement from major socia
 aliases:
   - social media data
   - fetch post comments
-  - photo-social network comments API
-  - social network post comments
-  - short-form video post data
-  - forum thread content
-  - hot posts in community forum feed
-  - trending community forum posts
-  - fetch community forum posts
-  - forum post comments thread
-  - microblog user timeline posts
-  - microblog user timeline API
-  - community notes fact-check lookup
-  - short-form video posts and hashtags
-  - social marketplace listing lookup
-  - social ad transparency library lookup
+  - instagram comments API
+  - facebook post comments
+  - tiktok post data
+  - reddit thread content
+  - reddit hot posts subreddit feed
+  - reddit trending posts
+  - fetch reddit subreddit posts
+  - reddit post comments thread
+  - X user timeline posts
+  - Twitter user timeline API
+  - X Community Notes lookup
+  - TikTok scraper posts and hashtags
+  - Facebook marketplace listing lookup
+  - Facebook ad library details
   - social listening API
   - creator content lookup
   - sentiment from social posts

@@ -65,6 +65,8 @@ Guardrails (per `oasis-discovery-architecture-philosophy`):
 
 Top binders added: `shop.tcg_catalog` (~1,290), `compute.convert_units` (~887), `compute.financial_calculator` (~367), `finance.stablecoin_monitor` (~206), `data.vat_validate` (~187).
 
+**Naming rule:** major platforms and category references (Reddit, Twitter, DeFiLlama, …) are fine in aliases; endpoint- or niche-service-specific names are not.
+
 **Round 4 (80 intents):** `finance.defi_analytics`, `data.nft_metadata`, `devtools.webhook_tools`, `finance.crypto_market_intel`, `data.airdrop_tracker`, `data.agriculture_stats`, `data.lei_lookup` (`media.anime_lookup` already in round 3).
 
 **Still orphaned (~7,533 pre-R4):** `orbisapi.com` proxy micro-APIs (~948), thin-summary `agent402` utilities (~721/origin), payment/checkout stubs, and swarm template hosts — mostly one-off deployed agents or boilerplate summaries below sparse floor.
