@@ -15,7 +15,7 @@ consumes:
   - entity: Document
     role: identifier
 produces:
-  - entity: StructuredRecord
+  - entity: Document
     role: payload
     format: json
 facets:

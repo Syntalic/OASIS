@@ -14,4 +14,4 @@ aliases:
 consumes:
   - { entity: Contact, role: identifier, format: email }
 produces:
-  - { entity: StructuredRecord, role: payload }
+  - { entity: Contact, role: payload }

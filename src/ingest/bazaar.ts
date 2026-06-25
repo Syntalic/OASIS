@@ -3,10 +3,10 @@
 // `accepts` (price), description/tags, and real usage telemetry (`quality`). We use it as a
 // discovery-layer source — origins + a pre-enrichment record (so price/description survive
 // even when the origin serves no /openapi.json). The runtime 402 is authoritative.
-import { endpointId } from "../id.js";
-import { baseUnitsToUsd } from "../money.js";
-import { canonicalOrigin } from "../origin-aliases.js";
-import type { EndpointRecord, HttpMethod, PaymentOffer, PaymentRail } from "../types.js";
+import { endpointId } from "../core/id.js";
+import { baseUnitsToUsd } from "../core/money.js";
+import { canonicalOrigin } from "./origin-aliases.js";
+import type { EndpointRecord, HttpMethod, PaymentOffer, PaymentRail } from "../core/types.js";
 
 const BAZAAR_URL = "https://api.cdp.coinbase.com/platform/v2/x402/discovery/resources";
 const HTTP = new Set<HttpMethod>(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]);

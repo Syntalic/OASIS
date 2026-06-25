@@ -1,18 +1,16 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { CURATED_INTENT_IDS } from "../intent-match.js";
+import { CURATED_INTENT_IDS } from "../search/intent-match.js";
 import {
   evaluateResolveAccuracy,
   loadCuratedSources,
   runResolveBenchmark,
 } from "./resolve-benchmark.js";
-import type { IndexBundle } from "../types.js";
+import type { IndexBundle } from "../core/types.js";
+import { oasisDistIndex, SKIP_NO_INDEX, skipIfPinned } from "../core/test-helpers.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const distIndex = path.join(__dirname, "..", "..", "dist", "index.json");
+const distIndex = oasisDistIndex();
 
 async function distIndexExists(): Promise<boolean> {
   try {
@@ -44,8 +42,9 @@ describe("resolve benchmark", () => {
   });
 
   it("all curated intents materialize to at least one indexed endpoint", async (t) => {
+    if (skipIfPinned(t)) return;
     if (!(await distIndexExists())) {
-      t.skip("dist/index.json missing — run pnpm run build first");
+      t.skip(SKIP_NO_INDEX);
       return;
     }
 
@@ -62,8 +61,9 @@ describe("resolve benchmark", () => {
   });
 
   it("runResolveBenchmark matches evaluateResolveAccuracy", async (t) => {
+    if (skipIfPinned(t)) return;
     if (!(await distIndexExists())) {
-      t.skip("dist/index.json missing — run pnpm run build first");
+      t.skip(SKIP_NO_INDEX);
       return;
     }
 

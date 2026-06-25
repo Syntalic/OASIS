@@ -13,10 +13,10 @@ aliases:
   - turn a latitude longitude into a formatted address
   - geocode a place name to a map point
 consumes:
-  - entity: PostalAddress
+  - entity: Place
     role: identifier
 produces:
-  - entity: GeoCoordinates
+  - entity: Place
     role: payload
 facets:
   domain: maps

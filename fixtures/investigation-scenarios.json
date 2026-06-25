@@ -1,0 +1,77 @@
+{
+  "scenarios": [
+    {
+      "id": "la_sales_investigation",
+      "user_query": "Why are LA electronics sales down? Investigate.",
+      "steps": [
+        {
+          "simulate_intent_id": "analyst.inflation_tracker",
+          "simulate_finding": "LA consumer electronics sales down 12% YoY",
+          "simulate_entities": [
+            { "entity": "Place", "value": "Los Angeles, CA", "kind": "identity" },
+            { "entity": "ProductCategory", "value": "consumer electronics", "kind": "identity" },
+            { "entity": "EconomicIndicator", "value": "-12% YoY", "kind": "observation" }
+          ],
+          "simulate_entities_for_investigative": [
+            { "entity": "Place", "value": "Los Angeles, CA" },
+            { "entity": "ProductCategory", "value": "consumer electronics" }
+          ]
+        }
+      ],
+      "good_follow_ups": [
+        { "intent_id": "data.weather_forecast", "reason": "weather drives foot traffic" },
+        { "intent_id": "marketing.competitive_landscape", "reason": "competitive pricing pressure" },
+        { "intent_id": "data.gov_civic", "reason": "local policy / civic events" }
+      ],
+      "bad_follow_ups": [
+        { "intent_id": "ai.image_generate", "reason": "not investigatively relevant" },
+        { "intent_id": "comms.send_fax", "reason": "not callable from held entities" }
+      ]
+    },
+    {
+      "id": "competitor_company_intel",
+      "user_query": "Dig into competitor Acme Corp rising share",
+      "steps": [
+        {
+          "simulate_intent_id": "marketing.competitive_landscape",
+          "simulate_finding": "Acme Corp gained 8% share",
+          "simulate_entities": [
+            { "entity": "Company", "value": "Acme Corp", "kind": "identity" }
+          ],
+          "simulate_entities_for_investigative": [
+            { "entity": "Company", "value": "Acme Corp" }
+          ]
+        }
+      ],
+      "good_follow_ups": [
+        { "intent_id": "media.social_data", "reason": "social intel on competitor" },
+        { "intent_id": "data.person_search", "reason": "leadership / people angle" }
+      ],
+      "bad_follow_ups": [
+        { "intent_id": "data.weather_forecast", "reason": "no Place held" }
+      ]
+    },
+    {
+      "id": "domain_brand_intel",
+      "user_query": "Investigate acme.com domain and brand footprint",
+      "steps": [
+        {
+          "simulate_intent_id": "data.whois_lookup",
+          "simulate_finding": "acme.com registered 2010",
+          "simulate_entities": [
+            { "entity": "Domain", "value": "acme.com", "kind": "identity" }
+          ],
+          "simulate_entities_for_investigative": [
+            { "entity": "Domain", "value": "acme.com" }
+          ]
+        }
+      ],
+      "good_follow_ups": [
+        { "intent_id": "cloud.domains", "reason": "domain management cross-domain" }
+      ],
+      "bad_follow_ups": [
+        { "intent_id": "travel.place_reviews", "reason": "no Place held" }
+      ]
+    }
+  ]
+}

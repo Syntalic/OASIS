@@ -17,7 +17,7 @@ aliases:
   - pollution exposure county lookup
   - environmental geospatial context
 consumes:
-  - entity: PostalAddress
+  - entity: Place
     role: identifier
 produces:
   - entity: GovernmentService

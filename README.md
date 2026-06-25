@@ -34,6 +34,10 @@ standard; self-host the same image (see [`mcp/deploy/`](mcp/deploy/)) or run it 
     "args": ["/absolute/path/OASIS/mcp/server.mjs"] } } }
 ```
 
+**Teach your agent the tools** — drop in the OASIS skill so it calls `oasis_find` first and
+chains follow-ups with `oasis_next`. Copy [`mcp/skills/oasis.md`](mcp/skills/oasis.md) into
+your agent's skill directory (Claude Code: `~/.claude/skills/oasis/SKILL.md`).
+
 The server also exposes the lower-level `search` / `resolve` primitives and the
 `oasis_taxonomy` / `oasis_validate` contribution tools. See [`mcp/`](mcp/).
 

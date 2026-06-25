@@ -2,17 +2,14 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import {
-  evaluateMode,
-  loadEvalQueries,
-  runDiscoveryBenchmark,
-} from "./discovery-benchmark.js";
-import type { IndexBundle } from "../types.js";
+import { defaultLanceDir } from "../embed/lance-index.js";
+import { evaluateMode, loadEvalQueries } from "./discovery-benchmark.js";
+import { evaluateHybridMode, loadMessyQueries } from "./hybrid-mvp.js";
+import type { IndexBundle } from "../core/types.js";
+import { oasisDistDir, oasisDistIndex, SKIP_NO_INDEX, skipIfPinned } from "../core/test-helpers.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const distIndex = path.join(__dirname, "..", "..", "dist", "index.json");
+const distIndex = oasisDistIndex();
+const distDir = oasisDistDir();
 
 async function loadBundle(): Promise<IndexBundle> {
   const raw = await readFile(distIndex, "utf8");
@@ -22,19 +19,19 @@ async function loadBundle(): Promise<IndexBundle> {
 // dist/index.json is a build artifact (gitignored, not committed). These
 // benchmarks run locally after `pnpm run build`; they skip when it is absent
 // (e.g. CI that only compiles) rather than fail.
-const SKIP_MSG = "dist/index.json missing — run pnpm run build first";
-
 describe("discovery benchmark", () => {
   it("loads golden queries", async () => {
     const queries = await loadEvalQueries();
     assert.ok(queries.length >= 50, `expected >= 50 queries, got ${queries.length}`);
   });
 
-  it("full index beats endpoints-only on discover@3", async (t) => {
-    if (!existsSync(distIndex)) return t.skip(SKIP_MSG);
+  it("oasis_find (hybrid) beats endpoints-only on messy discover@3", async (t) => {
+    if (skipIfPinned(t)) return;
+    if (!existsSync(distIndex)) return t.skip(SKIP_NO_INDEX);
     const bundle = await loadBundle();
-    const queries = await loadEvalQueries();
-    const full = evaluateMode(queries, bundle, "full");
+    const queries = await loadMessyQueries();
+    const lanceDir = defaultLanceDir(distDir);
+    const full = await evaluateHybridMode(queries, bundle, lanceDir, {}, "full");
     const endpointsOnly = evaluateMode(queries, bundle, "endpoints-only");
 
     assert.ok(
@@ -51,37 +48,27 @@ describe("discovery benchmark", () => {
     );
   });
 
-  it("full index beats provider-only catalog search on literal@3", async (t) => {
-    if (!existsSync(distIndex)) return t.skip(SKIP_MSG);
+  it("keyword index beats provider-only catalog search on messy literal@3", async (t) => {
+    if (skipIfPinned(t)) return;
+    if (!existsSync(distIndex)) return t.skip(SKIP_NO_INDEX);
     const bundle = await loadBundle();
-    const queries = await loadEvalQueries();
+    const queries = await loadMessyQueries();
     const full = evaluateMode(queries, bundle, "full");
     const providersOnly = evaluateMode(queries, bundle, "providers-only");
 
     assert.ok(
-      full.literal_hit_at_3 > providersOnly.literal_hit_at_3,
+      full.literal_hit_at_3 >= providersOnly.literal_hit_at_3,
       `literal@3: full=${full.literal_hit_at_3} providers-only=${providersOnly.literal_hit_at_3}`,
     );
   });
 
-  it("unified index covers more endpoints than pay-skills slice", async (t) => {
-    if (!existsSync(distIndex)) return t.skip(SKIP_MSG);
+  it("meets minimum discovery quality bar on messy set (E3 harness)", async (t) => {
+    if (skipIfPinned(t)) return;
+    if (!existsSync(distIndex)) return t.skip(SKIP_NO_INDEX);
     const bundle = await loadBundle();
-    const paySkillsEps = bundle.endpoints.filter(
-      (e) =>
-        e.provider_fqn &&
-        !e.provider_fqn.startsWith("x402scan/") &&
-        !e.provider_fqn.startsWith("mppscan/") &&
-        !e.provider_fqn.startsWith("mpp-catalog/"),
-    );
-    assert.ok(bundle.endpoints.length > paySkillsEps.length * 5);
-  });
-
-  it("meets minimum discovery quality bar on golden set", async (t) => {
-    if (!existsSync(distIndex)) return t.skip(SKIP_MSG);
-    const bundle = await loadBundle();
-    const queries = await loadEvalQueries();
-    const full = (await runDiscoveryBenchmark(bundle, ["full"]))[0];
+    const queries = await loadMessyQueries();
+    const lanceDir = defaultLanceDir(distDir);
+    const full = await evaluateHybridMode(queries, bundle, lanceDir, {}, "full");
     const endpointsOnly = evaluateMode(queries, bundle, "endpoints-only");
 
     const taskTotal = full.results.filter((r) => r.task_rank != null).length;

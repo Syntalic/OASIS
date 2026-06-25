@@ -18,7 +18,7 @@ import {
   loadMessyQueries,
 } from "./hybrid-mvp.js";
 import { rankExternalHits } from "./url-match.js";
-import type { IndexBundle } from "../types.js";
+import type { IndexBundle } from "../core/types.js";
 
 export type DiscoveryMethod = BenchmarkMode;
 
@@ -34,9 +34,6 @@ export interface CompareOptions {
 
 const DEFAULT_METHODS: DiscoveryMethod[] = [
   "endpoints-only",
-  "pay-skills-only",
-  "x402scan-only",
-  "mpp-only",
   "mpp-catalog-live",
   "cdp-bazaar",
   "full",
@@ -49,9 +46,6 @@ export const VALID_METHODS: ReadonlySet<DiscoveryMethod> =
     "full",
     "endpoints-only",
     "providers-only",
-    "pay-skills-only",
-    "x402scan-only",
-    "mpp-only",
     "cdp-bazaar",
     "mpp-catalog-live",
     "full-hybrid",

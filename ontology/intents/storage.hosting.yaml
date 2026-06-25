@@ -19,4 +19,4 @@ aliases:
 consumes:
   - { entity: Document, role: identifier }
 produces:
-  - { entity: StructuredRecord, role: payload }
+  - { entity: Webpage, role: payload }

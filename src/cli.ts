@@ -3,19 +3,18 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
-import { buildIndex, defaultPaySkillsPath } from "./build.js";
 import { runIngest } from "./ingest/discover.js";
-import { curatedCapabilitiesForSearch } from "./curated-search.js";
-import { endpointId } from "./id.js";
+import { curatedCapabilitiesForSearch } from "./search/curated-search.js";
+import { endpointId } from "./core/id.js";
 import { defaultLanceDir, buildLanceIndex } from "./embed/lance-index.js";
 import {
   DEFAULT_KEYWORD_WEIGHT,
   DEFAULT_VECTOR_WEIGHT,
   searchHybridWithFallback,
-} from "./search-hybrid.js";
-import { searchIndex } from "./search.js";
-import { relatedOptions, type RelatedOption } from "./related.js";
-import type { CapabilityIntent, EndpointRecord, IndexBundle } from "./types.js";
+} from "./search/search-hybrid.js";
+import { searchIndex } from "./search/search.js";
+import { relatedOptions, type RelatedOption } from "./search/related.js";
+import type { CapabilityIntent, EndpointRecord, IndexBundle } from "./core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..");
@@ -69,59 +68,6 @@ program
   .name("capindex")
   .description("Vendor-neutral index for x402 and MPP paid API endpoints")
   .version("0.1.0");
-
-program
-  .command("build")
-  .description("Build index from pay-skills and/or OpenAPI sources")
-  .option(
-    "--pay-skills <dir>",
-    "Path to pay-skills repo (providers/ directory parent)",
-  )
-  .option("--openapi <file>", "Single OpenAPI JSON file to ingest")
-  .option("--origin <url>", "Origin URL when ingesting a standalone OpenAPI file")
-  .option("-o, --output <dir>", "Output directory", path.join(PACKAGE_ROOT, "dist"))
-  .option("--no-x402scan", "Skip x402scan sitemap ingest")
-  .option("--no-mppscan", "Skip mppscan sitemap + mpp.dev catalog ingest")
-  .option("--skip-pay-skills", "Skip pay-skills ingest")
-  .option(
-    "--max-scan-servers <n>",
-    "Limit x402scan/mppscan server pages fetched (debug)",
-  )
-  .action(async (opts) => {
-    const bundle = await buildIndex({
-      paySkillsDir: opts.paySkills,
-      openapiFile: opts.openapi,
-      origin: opts.origin,
-      outputDir: opts.output,
-      x402scan: opts.x402scan,
-      mppscan: opts.mppscan,
-      skipPaySkills: Boolean(opts.skipPaySkills),
-      maxScanServers: opts.maxScanServers
-        ? Number(opts.maxScanServers)
-        : undefined,
-    });
-
-    if (!bundle.stats.endpoints) {
-      console.error(
-        "No endpoints indexed. Pass --pay-skills <dir> or --openapi <file>.",
-      );
-      process.exitCode = 1;
-      return;
-    }
-
-    console.log(`Built index v${bundle.index_version}`);
-    console.log(`  providers: ${bundle.stats.providers}`);
-    console.log(`  origins:   ${bundle.stats.origins}`);
-    console.log(`  endpoints: ${bundle.stats.endpoints}`);
-    console.log(`  intents:   ${bundle.stats.capabilities}`);
-    if (bundle.stats.capability_links != null) {
-      console.log(`  linked:    ${bundle.stats.capability_links} endpoints with capability tags`);
-    }
-    if (bundle.stats.stub_endpoints != null) {
-      console.log(`  stubs:     ${bundle.stats.stub_endpoints} thin endpoint records`);
-    }
-    console.log(`  output:    ${opts.output}`);
-  });
 
 program
   .command("search <query>")
@@ -218,7 +164,7 @@ program
   .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
   .action(async (opts) => {
     const bundle = await loadBundle(opts.dist);
-    const { validateBundle } = await import("./validate.js");
+    const { validateBundle } = await import("./ontology/validate.js");
     const issues = await validateBundle(bundle);
     if (issues.length > 0) {
       for (const issue of issues) console.error(issue);
@@ -232,7 +178,7 @@ program
   .command("validate-source [file]")
   .description("Validate a contributor task-intent YAML (or all ontology/intents) against the taxonomy")
   .action(async (file?: string) => {
-    const { validateSourceFile, validateAllSources } = await import("./validate-source.js");
+    const { validateSourceFile, validateAllSources } = await import("./ontology/validate-source.js");
     const results = file
       ? [{ file, result: await validateSourceFile(file) }]
       : await validateAllSources();
@@ -257,7 +203,7 @@ program
   .description("Dump the controlled vocabulary (capabilities + facet enums + entity vocab) to bind into")
   .option("--json", "Full JSON (default: summary)")
   .action(async (opts) => {
-    const { getTaxonomy } = await import("./taxonomy.js");
+    const { getTaxonomy } = await import("./ontology/taxonomy.js");
     const tax = await getTaxonomy();
     if (opts.json) {
       console.log(JSON.stringify(tax, null, 2));
@@ -275,7 +221,7 @@ program
   .description("Validate authored endpoint→capability binding(s) (ontology/bindings) against the taxonomy")
   .option("-d, --dist <dir>", "Dist dir for endpoint-match warnings", path.join(PACKAGE_ROOT, "dist"))
   .action(async (file: string | undefined, opts) => {
-    const { validateBindingFile, validateAllBindings } = await import("./binding.js");
+    const { validateBindingFile, validateAllBindings } = await import("./bind/binding.js");
     let endpoints;
     try {
       endpoints = (await loadBundle(opts.dist)).endpoints;
@@ -377,25 +323,6 @@ program
     }
     const { METRICS_LEGEND } = await import("./eval/metrics.js");
     console.log(`\nLegend:\n${METRICS_LEGEND}\n`);
-    const full = reports.find((r) => r.mode === "full");
-    const paySkills = reports.find((r) => r.mode === "pay-skills-only");
-    if (full && paySkills) {
-      const cov = bundle.endpoints.length;
-      const ps = bundle.endpoints.filter(
-        (e) =>
-          e.provider_fqn &&
-          !e.provider_fqn.startsWith("x402scan/") &&
-          !e.provider_fqn.startsWith("mppscan/") &&
-          !e.provider_fqn.startsWith("mpp-catalog/"),
-      ).length;
-      console.log(`Coverage: ${cov} unified endpoints vs ${ps} pay-skills-only`);
-      console.log(
-        `Full index discover@3: ${full.discover_hit_at_3}/${full.task_queries}`,
-      );
-      console.log(
-        `pay-skills-only discover@3: ${paySkills.discover_hit_at_3}/${paySkills.task_queries}`,
-      );
-    }
   });
 
 program
@@ -539,6 +466,7 @@ program
   )
   .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
   .option("--json", "Output JSON report")
+  .option("--out <file>", "Write JSON report to file (E3 baseline capture)")
   .option("--live", "Also hit a live external registry API (cross-corpus floor, not apples-to-apples)")
   .action(async (opts) => {
     const bundle = await loadBundle(opts.dist);
@@ -549,11 +477,18 @@ program
       distDir: opts.dist,
       live: Boolean(opts.live),
     });
+    if (opts.out) {
+      const { writeFile } = await import("node:fs/promises");
+      await writeFile(opts.out, `${JSON.stringify(reports, null, 2)}\n`, "utf8");
+      console.log(`wrote ${opts.out}`);
+    }
     if (opts.json) {
       console.log(JSON.stringify(reports, null, 2));
       return;
     }
-    console.log(formatMethodTable(reports));
+    if (!opts.out) {
+      console.log(formatMethodTable(reports));
+    }
   });
 
 program
@@ -655,5 +590,63 @@ function formatResolve(payload: {
   }
   return lines.filter(Boolean).join("\n");
 }
+
+program
+  .command("eval:bridges")
+  .description("E1 bridge validation on built entity-index (v1 identity lateral gates)")
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--json", "Output JSON report")
+  .action(async (opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const { loadEntityIndex } = await import("./entity/entity-index.js");
+    const { loadBridgeScenarios, runBridgeValidation } = await import(
+      "./eval/bridge-validation.js"
+    );
+    const { curatedCapabilitiesForSearch } = await import("./search/curated-search.js");
+    const entityIndex = await loadEntityIndex(opts.dist);
+    const scenarios = await loadBridgeScenarios();
+    const capabilities = curatedCapabilitiesForSearch(bundle);
+    const report = runBridgeValidation(capabilities, entityIndex, scenarios);
+    if (opts.json) {
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      console.log(`E1 bridge validation: ${report.passed}/${report.passed + report.failed} passed`);
+      for (const r of report.results) {
+        console.log(`  ${r.passed ? "✓" : "✗"} ${r.id}${r.missing.length ? ` missing: ${r.missing.join(", ")}` : ""}`);
+      }
+    }
+    if (report.failed > 0) process.exit(1);
+  });
+
+program
+  .command("eval:usefulness")
+  .description("E2 usefulness eval — investigative leads from real suggestFollowUps path")
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .option("--json", "Output JSON report")
+  .action(async (opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const { runUsefulnessEval } = await import("./eval/usefulness-eval.js");
+    const report = await runUsefulnessEval(bundle, opts.dist);
+    if (opts.json) {
+      console.log(JSON.stringify(report, null, 2));
+    } else {
+      console.log("E2 usefulness eval:");
+      console.log(`  callable_precision: ${report.callable_precision.toFixed(3)}`);
+      console.log(`  lateral_relevance_precision: ${report.lateral_relevance_precision.toFixed(3)}`);
+      console.log(`  identity_recall: ${report.identity_recall.toFixed(3)}`);
+      console.log(`  good_recall@6: ${report.good_recall_at_6.toFixed(3)}`);
+      console.log(`  bad_rate@8: ${report.bad_rate_at_8.toFixed(3)}`);
+      console.log(`  domain_diversity: ${report.domain_diversity.toFixed(2)}`);
+      console.log(
+        `  baseline catalog_aware good_recall@6: ${report.baseline_catalog_aware.good_recall_at_6.toFixed(3)}`,
+      );
+      console.log(
+        `  baseline catalog_aware lateral_precision: ${report.baseline_catalog_aware.lateral_relevance_precision.toFixed(3)}`,
+      );
+      console.log(`  beats_baseline: ${report.beats_baseline}`);
+      console.log(`  passed: ${report.passed}`);
+    }
+    if (!report.passed) process.exit(1);
+  });
 
 program.parse();

@@ -12,6 +12,9 @@ aliases:
   - local weather conditions
   - forecast for a city
 consumes:
-  - { entity: Location, role: identifier }
+  - { entity: Place, role: identifier }
 produces:
-  - { entity: StructuredRecord, role: payload }
+  - { entity: WeatherReport, role: payload }
+facets:
+  domain: data
+  action: lookup

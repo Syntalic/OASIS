@@ -18,6 +18,11 @@ Exposes, backed by the OASIS index:
   primary tool: cheapest + most accurate (see the A/B below). Use this first.
 - `oasis_search(query)` — lower-level hybrid discovery → ranked capability intents
 - `oasis_resolve(intent_id, query)` — query-aware endpoints for an intent + typed related options
+- **`oasis_next(finding, entities[], intent_id)`** — cross-domain investigative follow-ups from held identity entities (v1 lateral only)
+
+## Skills
+
+Copy `mcp/skills/oasis.md` to your agent's skills directory — it teaches `oasis_find` first, then the `oasis_next` follow-up loop (find → call → reflect → next → synthesize).
 
 *Contribution (add a service):*
 - `oasis_taxonomy()` — the controlled vocab to bind INTO (capabilities + facet/entity enums)

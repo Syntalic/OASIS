@@ -7,8 +7,8 @@ import {
   DEFAULT_VECTOR_WEIGHT,
   searchHybridWithFallback,
   type HybridFusionOptions,
-} from "../search-hybrid.js";
-import { curatedCapabilitiesForSearch } from "../curated-search.js";
+} from "../search/search-hybrid.js";
+import { curatedCapabilitiesForSearch } from "../search/curated-search.js";
 import {
   buildReport,
   discoverRank,
@@ -23,9 +23,9 @@ import {
   type QueryResult,
   type SearchMode,
 } from "./discovery-benchmark.js";
-import { selectRank } from "../select-policy.js";
-import { endpointId } from "../id.js";
-import type { IndexBundle } from "../types.js";
+import { selectRank } from "../bind/select-policy.js";
+import { endpointId } from "../core/id.js";
+import type { IndexBundle } from "../core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");
@@ -44,6 +44,7 @@ export async function evaluateHybridMode(
   lanceDir: string | null,
   fusion: HybridFusionOptions = {},
   reportMode: BenchmarkMode = "full",
+  limit = reportMode === "full" || reportMode === "full-hybrid" ? 20 : 10,
 ): Promise<BenchmarkReport> {
   const mode: BenchmarkMode = reportMode;
   const results: QueryResult[] = [];
@@ -57,7 +58,7 @@ export async function evaluateHybridMode(
       q.query,
       bundle,
       lanceDir,
-      10,
+      limit,
       fusion,
     );
     const expectedId = expectedEndpointId(q.expect_endpoint);
@@ -81,10 +82,14 @@ export async function evaluateHybridMode(
       if (intent) select = selectRank(intent, expectedId, bundle.endpoints);
     }
 
-    if (q.expect_intent) taskRanks.push(intentRank);
+    if (q.expect_intent) {
+      taskRanks.push(intentRank);
+      discoverRanks.push(discover);
+    }
     if (expectedId) {
       literalRanks.push(endpointRank);
-      discoverRanks.push(discover);
+    }
+    if (expectedId && q.expect_intent) {
       selectRanks.push(select);
     }
 

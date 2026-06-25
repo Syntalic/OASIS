@@ -13,17 +13,21 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { applyBindings, loadBindings } from "./binding.js";
-import { deriveEndpointFacets } from "./build.js";
+import { applyBindings, loadBindings } from "./bind/binding.js";
+import { deriveEndpointFacets } from "./bind/facets.js";
+import { dedupeMirrors } from "./bind/dedup-endpoints.js";
 import { bindEndpointsByEmbedding } from "./embed/bind-endpoints.js";
-import { materializeCuratedIntents } from "./materialize-satisfies.js";
-import { loadOntologySources } from "./ontology.js";
+import { gradeEndpoint } from "./bind/quality-gate.js";
+import { buildEntityFlow } from "./entity/entity-flow.js";
+import { buildEntityIndexFromVocab, loadEntityVocabAndSubtypes } from "./entity/entity-index.js";
+import { materializeCuratedIntents } from "./bind/materialize-satisfies.js";
+import { loadOntologySources } from "./ontology/ontology.js";
 import type {
   CapabilityIntent,
   EndpointRecord,
   Facets,
   IndexBundle,
-} from "./types.js";
+} from "./core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..");
@@ -64,7 +68,16 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
   const raw = await readFile(indexPath, "utf8");
   const bundle = JSON.parse(raw) as IndexBundle;
 
-  const endpoints = bundle.endpoints.map(deriveEndpointFacets);
+  const ingested = bundle.endpoints.map(deriveEndpointFacets);
+  // Re-gate + de-mirror before binding: re-applies the current quality gate (e.g. ephemeral preview
+  // deploys) and collapses mirror hosts that ingest admitted as distinct records. Lets gate/dedup
+  // rules iterate without a re-crawl; idempotent on an already-clean corpus.
+  const gated = ingested.filter((e) => gradeEndpoint(e).verdict === "pass");
+  const demirror = dedupeMirrors(gated);
+  const endpoints = demirror.kept;
+  console.error(
+    `  re-gate + de-mirror: ${ingested.length} ingested → ${gated.length} gated → ${endpoints.length} (−${demirror.dropped} mirrors)`,
+  );
 
   // Recompute endpoint→capability binding SEMANTICALLY (replaces the regex
   // INTENT_MATCHERS): embed every endpoint + every curated intent and bind by
@@ -74,8 +87,18 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
   // (fast, offline); runtime query→intent routing uses gemini independently.
   const ontologyDir = path.join(PACKAGE_ROOT, "ontology", "intents");
   const sources = await loadOntologySources(ontologyDir);
+  // Binder floors are tunable via env (for offline calibration, e.g. the Optuna harness in
+  // eval/optuna). Unset → the calibrated defaults in bind-endpoints.ts.
+  const envNum = (k: string): number | undefined => {
+    const v = process.env[k];
+    return v != null && v !== "" ? Number(v) : undefined;
+  };
   const bindResult = await bindEndpointsByEmbedding(endpoints, sources, {
     cacheDir: path.join(distDir, "cache"),
+    floor: envNum("OASIS_BIND_FLOOR"),
+    sparseFloor: envNum("OASIS_BIND_SPARSE_FLOOR"),
+    strongSparseFloor: envNum("OASIS_BIND_STRONG_SPARSE"),
+    denseMargin: envNum("OASIS_BIND_DENSE_MARGIN"),
     // Lower the DENSE floor for sparse intents the global 0.78 floor starves; the
     // sparse-vocabulary floor still guards against binding noise to them.
     floorOverrides: {
@@ -87,7 +110,7 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
     },
   });
   console.error(
-    `  hybrid binding: ${bindResult.bound}/${endpoints.length} endpoints → ${bindResult.perIntent.size} curated intents (embedded ${bindResult.embedded}, reused ${bindResult.reused}); ${bindResult.promotedSparse} promoted by strong-sparse; gated ${bindResult.gatedMeta} meta-files + ${bindResult.gatedSparse} below sparse-vocab floor`,
+    `  hybrid binding: ${bindResult.bound}/${endpoints.length} endpoints → ${bindResult.perIntent.size} curated intents (embedded ${bindResult.embedded}, reused ${bindResult.reused}); ${bindResult.promotedSparse} promoted by strong-sparse; gated ${bindResult.gatedMeta} meta-files + ${bindResult.gatedSparse} below sparse-vocab floor + ${bindResult.gatedMargin} orphaned by margin`,
   );
 
   // Authored endpoint→capability bindings override the semantic binder.
@@ -148,6 +171,16 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
       2,
     ),
   );
+
+  // Entity-flow artifacts for oasis_next — the SAME builders the legacy `capindex build` uses
+  // (build.ts). The production ingest+enrich pipeline must emit these or oasis_next has no
+  // entity-flow.json and degrades to NOT_READY. Built from the materialized curated capabilities.
+  const { vocab, subtypes } = await loadEntityVocabAndSubtypes();
+  const entityIndex = buildEntityIndexFromVocab(vocab, subtypes, capabilities);
+  const entityFlow = buildEntityFlow(capabilities, entityIndex);
+  await writeFile(path.join(distDir, "entity-index.json"), JSON.stringify(entityIndex, null, 2));
+  await writeFile(path.join(distDir, "entity-flow.json"), JSON.stringify(entityFlow, null, 2));
+  console.error(`  entity-flow: ${(entityIndex.bridge_eligible ?? []).length} bridges → entity-index.json + entity-flow.json`);
 
   return {
     endpoints: endpoints.length,

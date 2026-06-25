@@ -1,6 +1,6 @@
-import type { EndpointRecord, HttpMethod, PaymentInfo } from "../types.js";
-import { endpointId } from "../id.js";
-import { canonicalOrigin } from "../origin-aliases.js";
+import type { EndpointRecord, HttpMethod, PaymentInfo } from "../core/types.js";
+import { endpointId } from "../core/id.js";
+import { canonicalOrigin } from "./origin-aliases.js";
 
 const MPP_CATALOG_URL = "https://mpp.dev/api/services";
 

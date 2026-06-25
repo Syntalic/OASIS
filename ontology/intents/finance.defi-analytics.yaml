@@ -15,7 +15,7 @@ consumes:
   - entity: Query
     role: identifier
 produces:
-  - entity: StructuredRecord
+  - entity: MarketQuote
     role: payload
     cardinality: many
 facets:

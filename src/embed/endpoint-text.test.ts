@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import type { EndpointRecord } from "../types.js";
+import type { EndpointRecord } from "../core/types.js";
 import { endpointEmbedText, normalizeEndpointText } from "./endpoint-text.js";
 
 test("strips pricing and payment-rail boilerplate", () => {

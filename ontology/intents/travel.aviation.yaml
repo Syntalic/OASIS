@@ -13,10 +13,10 @@ aliases:
   - flight departure arrival times
   - airline route lookup
 consumes:
-  - entity: Query
+  - entity: Place
     role: identifier
 produces:
-  - entity: StructuredRecord
+  - entity: SearchResults
     role: payload
     cardinality: many
 facets:

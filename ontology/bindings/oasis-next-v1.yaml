@@ -1,0 +1,73 @@
+provider: OASIS Next v1 bridge intents
+note: Authoritative bindings for E2 investigative leads — civic, person search, domain management.
+bindings:
+  - origin: https://civicinfo.google.gateway-402.com
+    method: GET
+    path: /civicinfo/v2/voterinfo
+    capabilities:
+      - data.gov_civic
+  - origin: https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8
+    method: POST
+    path: /person/search
+    capabilities:
+      - data.person_search
+  - origin: https://stabledomains.dev
+    method: POST
+    path: /api/check
+    capabilities:
+      - cloud.domains
+  - origin: https://stabledomains.dev
+    method: GET
+    path: /api/domain/dns
+    capabilities:
+      - cloud.domains
+  - origin: https://2s.io
+    method: GET
+    path: /api/geocode/address
+    capabilities:
+      - maps.geocode
+  - origin: https://embeddings.alibaba.gateway-402.com
+    method: POST
+    path: /compatible-mode/v1/embeddings
+    capabilities:
+      - ai.embeddings
+  - origin: https://agentfax.val.run
+    method: POST
+    path: /v1/fax
+    capabilities:
+      - comms.send_fax
+  - origin: https://ai.verifik.co
+    method: POST
+    path: /api/communication/sms
+    capabilities:
+      - comms.send_sms
+  - origin: https://2captcha.x402.paysponge.com
+    method: POST
+    path: /createTask
+    capabilities:
+      - devtools.captcha_solve
+  - origin: https://agent-memory-api-bix5.onrender.com
+    method: GET
+    path: /api/context/package
+    capabilities:
+      - agent.memory
+  - origin: https://tripadvisor.x402.paysponge.com
+    method: GET
+    path: /api/v1/location/:locationId/reviews
+    capabilities:
+      - travel.place_reviews
+  - origin: https://api.syntalic.com
+    method: GET
+    path: /v1/marketing/competitive-landscape
+    capabilities:
+      - marketing.competitive_landscape
+  - origin: https://airquality.google.gateway-402.com
+    method: POST
+    path: /v1/forecast:lookup
+    capabilities:
+      - data.weather_forecast
+  - origin: https://airquality.google.gateway-402.com
+    method: POST
+    path: /v1/currentConditions:lookup
+    capabilities:
+      - data.weather_forecast

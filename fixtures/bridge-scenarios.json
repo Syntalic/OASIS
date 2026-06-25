@@ -1,0 +1,91 @@
+{
+  "spec_version": "0.1.0",
+  "scenarios": [
+    {
+      "id": "place_la_weather",
+      "description": "Agent holds a Place — weather capability should be reachable cross-domain",
+      "held_entities": [{ "entity": "Place", "value": "Los Angeles, CA" }],
+      "source_domain": "analyst",
+      "expect_intents": [
+        "data.weather_forecast",
+        "data.gov_civic",
+        "travel.place_reviews",
+        "realestate.property_lookup"
+      ],
+      "min_hits": 3,
+      "must_cross_domain": true
+    },
+    {
+      "id": "company_competitor_social",
+      "description": "Agent holds Company — social and people-search reachable",
+      "held_entities": [{ "entity": "Company", "value": "Acme Corp" }],
+      "source_domain": "marketing",
+      "expect_intents": ["media.social_data", "data.person_search", "data.job_search"],
+      "min_hits": 2,
+      "must_cross_domain": true
+    },
+    {
+      "id": "product_category_competitive",
+      "description": "Agent holds a ProductCategory — competitive + inflation intel reachable cross-domain",
+      "held_entities": [{ "entity": "ProductCategory", "value": "consumer electronics" }],
+      "source_domain": "shop",
+      "expect_intents": ["marketing.competitive_landscape", "analyst.inflation_tracker"],
+      "min_hits": 2,
+      "must_cross_domain": true
+    },
+    {
+      "id": "person_social_lookup",
+      "description": "Agent holds a Person — social + people-search reachable cross-domain",
+      "held_entities": [{ "entity": "Person", "value": "Jane Roe" }],
+      "source_domain": "comms",
+      "expect_intents": ["data.person_search", "media.social_data", "social.influencer_search"],
+      "min_hits": 2,
+      "must_cross_domain": true
+    },
+    {
+      "id": "domain_whois_dns",
+      "description": "Agent holds a Domain — registration + DNS intel reachable cross-domain",
+      "held_entities": [{ "entity": "Domain", "value": "acme.com" }],
+      "source_domain": "marketing",
+      "expect_intents": ["data.whois_lookup", "cloud.domains"],
+      "min_hits": 2,
+      "must_cross_domain": true
+    },
+    {
+      "id": "crypto_asset_onchain",
+      "description": "DEFERRED v2",
+      "v1": false,
+      "held_entities": [{ "entity": "CryptoAsset", "value": "SOL" }],
+      "source_domain": "finance",
+      "expect_intents": ["finance.onchain_analytics", "compute.blockchain_rpc"],
+      "min_hits": 2
+    },
+    {
+      "id": "place_forward_geocode",
+      "description": "Forward mode — DEFERRED v2",
+      "v1": false,
+      "held_entities": [{ "entity": "Place", "role": "payload" }],
+      "source_intent_id": "maps.places",
+      "expect_intents": ["travel.place_reviews"],
+      "min_hits": 1,
+      "mode": "forward"
+    },
+    {
+      "id": "query_no_lateral",
+      "description": "Query must NOT bridge laterally",
+      "held_entities": [{ "entity": "Query" }],
+      "source_domain": "search",
+      "expect_intents": [],
+      "max_lateral": 0
+    },
+    {
+      "id": "observation_no_lateral",
+      "description": "Observations do NOT seed lateral investigation",
+      "held_entities": [{ "entity": "WeatherReport", "value": "rainy, 58°F" }],
+      "source_domain": "data",
+      "expect_intents": [],
+      "max_lateral": 0,
+      "mode": "lateral"
+    }
+  ]
+}

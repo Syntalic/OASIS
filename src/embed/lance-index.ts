@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import * as lancedb from "@lancedb/lancedb";
 import { loadCuratedIntentIds } from "./curated-intents.js";
 import { embedTexts } from "./embedder.js";
-import type { CapabilityIntent, IndexBundle } from "../types.js";
+import type { CapabilityIntent, IndexBundle } from "../core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");

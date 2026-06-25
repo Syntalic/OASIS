@@ -8,7 +8,7 @@ import {
   loadMultiLabelQueries,
   runMultiLabelBenchmark,
 } from "./multi-label-benchmark.js";
-import type { IndexBundle } from "../types.js";
+import type { IndexBundle } from "../core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distIndex = path.join(__dirname, "..", "..", "dist", "index.json");

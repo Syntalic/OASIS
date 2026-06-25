@@ -1,9 +1,9 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { searchIndex, inferQueryFacets } from "../search.js";
-import { curatedCapabilitiesForSearch } from "../curated-search.js";
-import type { CapabilityIntent, IndexBundle } from "../types.js";
+import { searchIndex, inferQueryFacets } from "../search/search.js";
+import { curatedCapabilitiesForSearch } from "../search/curated-search.js";
+import type { CapabilityIntent, IndexBundle } from "../core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const QUERIES_PATH = path.join(

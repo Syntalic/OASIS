@@ -22,10 +22,12 @@ aliases:
   - creator content lookup
   - sentiment from social posts
 consumes:
-  - entity: Query
+  - entity: Company
+    role: identifier
+  - entity: Person
     role: identifier
 produces:
-  - entity: StructuredRecord
+  - entity: SocialProfile
     role: payload
     format: json
     cardinality: many

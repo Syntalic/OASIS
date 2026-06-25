@@ -1,7 +1,7 @@
-import type { EndpointRecord, HttpMethod, PaymentInfo } from "../types.js";
-import { endpointId } from "../id.js";
-import { canonicalOrigin, canonicalResourceUrl } from "../origin-aliases.js";
-import { fetchOpenApiForOrigin, isStubEndpoint } from "../openapi-fetch.js";
+import type { EndpointRecord, HttpMethod, PaymentInfo } from "../core/types.js";
+import { endpointId } from "../core/id.js";
+import { canonicalOrigin, canonicalResourceUrl } from "./origin-aliases.js";
+import { fetchOpenApiForOrigin, isStubEndpoint } from "./openapi-fetch.js";
 
 const RESOURCE_PATTERNS = [
   /https:\/\/[a-zA-Z0-9._-]+\.[a-z]{2,}\/v\d+\/[a-zA-Z0-9_./-]+/g,

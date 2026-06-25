@@ -19,7 +19,7 @@ consumes:
   - entity: WalletAddress
     role: identifier
 produces:
-  - entity: StructuredRecord
+  - entity: TradingSignal
     role: payload
     format: json
 facets:

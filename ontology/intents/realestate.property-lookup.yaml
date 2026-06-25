@@ -16,6 +16,9 @@ aliases:
   - property search by zip code
   - list houses in a neighborhood
 consumes:
-  - { entity: Location, role: identifier }
+  - { entity: Place, role: identifier }
 produces:
-  - { entity: StructuredRecord, role: payload }
+  - { entity: Place, role: payload }
+facets:
+  domain: realestate
+  action: search

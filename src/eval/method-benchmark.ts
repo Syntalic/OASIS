@@ -24,15 +24,15 @@
 // cache, so no endpoints are re-embedded.
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { curatedCapabilitiesForSearch } from "../curated-search.js";
+import { curatedCapabilitiesForSearch } from "../search/curated-search.js";
 import { embedText } from "../embed/embedder.js";
 import { embedEndpointsCached } from "../embed/endpoint-cache.js";
 import { defaultLanceDir } from "../embed/lance-index.js";
-import { endpointId } from "../id.js";
-import { searchHybridWithFallback } from "../search-hybrid.js";
-import { searchIndex } from "../search.js";
-import { resolveEndpointsForQuery } from "../select-policy.js";
-import type { EndpointRecord, IndexBundle } from "../types.js";
+import { endpointId } from "../core/id.js";
+import { searchHybridWithFallback } from "../search/search-hybrid.js";
+import { searchIndex } from "../search/search.js";
+import { resolveEndpointsForQuery } from "../bind/select-policy.js";
+import type { EndpointRecord, IndexBundle } from "../core/types.js";
 import { expectedEndpointId, type EvalQuery } from "./discovery-benchmark.js";
 import { searchCdpBazaar as searchLiveRegistry } from "./external/cdp-bazaar.js";
 import { loadMessyQueries } from "./hybrid-mvp.js";

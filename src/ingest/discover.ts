@@ -4,12 +4,12 @@
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { endpointId } from "../id.js";
-import { baseUnitsToUsd, parseAmountHint } from "../money.js";
-import { parseOpenApi } from "../openapi-parser.js";
-import { canonicalOrigin } from "../origin-aliases.js";
-import { gradeEndpoint } from "../quality-gate.js";
-import type { EndpointRecord, HttpMethod, IndexBundle } from "../types.js";
+import { endpointId } from "../core/id.js";
+import { baseUnitsToUsd, parseAmountHint } from "../core/money.js";
+import { parseOpenApi } from "./openapi-parser.js";
+import { canonicalOrigin } from "./origin-aliases.js";
+import { gradeEndpoint } from "../bind/quality-gate.js";
+import type { EndpointRecord, HttpMethod, IndexBundle } from "../core/types.js";
 import { bazaarToEndpoint, fetchBazaar } from "./bazaar.js";
 import { fetchPayShProviders, payShOrigin } from "./paysh.js";
 

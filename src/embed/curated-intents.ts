@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { CURATED_INTENT_IDS } from "../intent-match.js";
+import { CURATED_INTENT_IDS } from "../search/intent-match.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");
