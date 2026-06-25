@@ -1,0 +1,31 @@
+id: travel.aviation
+label: Search flights, airports, and aviation data
+description: Flight status tracking, airport directory lookups, route search, and aviation schedules. Use when an agent plans travel logistics or tracks flights — not general POI or restaurant search (maps.places) or hotel review lookup (travel.place_reviews).
+aliases:
+  - flight tracking API
+  - track a flight status
+  - airport list lookup
+  - search flights by route
+  - aviation schedules API
+  - flight status by flight number
+  - airport filter search
+  - Google Flights search
+  - flight departure arrival times
+  - airline route lookup
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+    cardinality: many
+facets:
+  domain: travel
+  action: lookup
+links:
+  - type: sibling_of
+    to: maps.places
+    note: aviation is flights and airports; maps.places is local businesses and POIs
+  - type: sibling_of
+    to: travel.place_reviews
+    note: aviation is transport logistics; place_reviews is traveler venue feedback

@@ -10,6 +10,11 @@ aliases:
   - jurisdiction lookup for an address
   - federal data for a place
   - sitting representatives for a location
+  - EPA toxic release inventory data
+  - environmental data for US county
+  - national environmental context county
+  - pollution exposure county lookup
+  - environmental geospatial context
 consumes:
   - entity: PostalAddress
     role: identifier

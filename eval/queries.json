@@ -2798,7 +2798,7 @@
   {
     "id": "data-abstract-timezone-1",
     "query": "Convert Time",
-    "expect_intent": "data.abstract_timezone",
+    "expect_intent": "compute.convert_units",
     "expect_endpoint": {
       "origin": "https://abstract-timezone.mpp.paywithlocus.com",
       "method": "POST",
@@ -2810,7 +2810,7 @@
   {
     "id": "data-abstract-timezone-2",
     "query": "Convert Time via micropayment",
-    "expect_intent": "data.abstract_timezone",
+    "expect_intent": "compute.convert_units",
     "expect_endpoint": {
       "origin": "https://abstract-timezone.mpp.paywithlocus.com",
       "method": "POST",
@@ -2822,7 +2822,7 @@
   {
     "id": "data-abstract-timezone-3",
     "query": "I need to Convert Time",
-    "expect_intent": "data.abstract_timezone",
+    "expect_intent": "compute.convert_units",
     "expect_endpoint": {
       "origin": "https://abstract-timezone.mpp.paywithlocus.com",
       "method": "POST",
@@ -3278,7 +3278,7 @@
   {
     "id": "data-aviationstack-1",
     "query": "Aircraft types lookup",
-    "expect_intent": "data.aviationstack",
+    "expect_intent": "travel.aviation",
     "expect_endpoint": {
       "origin": "https://aviationstack.mpp.tempo.xyz",
       "method": "GET",
@@ -3290,7 +3290,7 @@
   {
     "id": "data-aviationstack-2",
     "query": "Aircraft types lookup via micropayment",
-    "expect_intent": "data.aviationstack",
+    "expect_intent": "travel.aviation",
     "expect_endpoint": {
       "origin": "https://aviationstack.mpp.tempo.xyz",
       "method": "GET",
@@ -3302,7 +3302,7 @@
   {
     "id": "data-aviationstack-3",
     "query": "I need to Aircraft types lookup",
-    "expect_intent": "data.aviationstack",
+    "expect_intent": "travel.aviation",
     "expect_endpoint": {
       "origin": "https://aviationstack.mpp.tempo.xyz",
       "method": "GET",
@@ -3914,7 +3914,7 @@
   {
     "id": "data-flightapi-1",
     "query": "Track a flight",
-    "expect_intent": "data.flightapi",
+    "expect_intent": "travel.aviation",
     "expect_endpoint": {
       "origin": "https://flightapi.mpp.tempo.xyz",
       "method": "GET",
@@ -3926,7 +3926,7 @@
   {
     "id": "data-flightapi-2",
     "query": "Track a flight via micropayment",
-    "expect_intent": "data.flightapi",
+    "expect_intent": "travel.aviation",
     "expect_endpoint": {
       "origin": "https://flightapi.mpp.tempo.xyz",
       "method": "GET",
@@ -3938,7 +3938,7 @@
   {
     "id": "data-flightapi-3",
     "query": "I need to Track a flight",
-    "expect_intent": "data.flightapi",
+    "expect_intent": "travel.aviation",
     "expect_endpoint": {
       "origin": "https://flightapi.mpp.tempo.xyz",
       "method": "GET",
@@ -3983,7 +3983,7 @@
   {
     "id": "data-goflightlabs-1",
     "query": "airports by filter goflightlabs goflightlabs data",
-    "expect_intent": "data.goflightlabs",
+    "expect_intent": "travel.aviation",
     "expect_endpoint": {
       "origin": "https://goflightlabs.mpp.tempo.xyz",
       "method": "GET",
@@ -3995,7 +3995,7 @@
   {
     "id": "data-goflightlabs-2",
     "query": "airports by filter goflightlabs goflightlabs data via micropayment",
-    "expect_intent": "data.goflightlabs",
+    "expect_intent": "travel.aviation",
     "expect_endpoint": {
       "origin": "https://goflightlabs.mpp.tempo.xyz",
       "method": "GET",
@@ -4007,7 +4007,7 @@
   {
     "id": "data-goflightlabs-3",
     "query": "I need to airports by filter goflightlabs goflightlabs data",
-    "expect_intent": "data.goflightlabs",
+    "expect_intent": "travel.aviation",
     "expect_endpoint": {
       "origin": "https://goflightlabs.mpp.tempo.xyz",
       "method": "GET",
@@ -5153,14 +5153,13 @@
   {
     "id": "data-orth-didit-1",
     "query": "The AML Screening API allows you to screen individuals or companies against global watchlists and high-risk databases",
-    "expect_intent": "data.orth_didit",
+    "expect_intent": "data.gov_records",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/didit",
       "method": "POST",
       "path": "/v3/aml"
     },
-    "expect_intent_legacy": "data.orth_didit",
-    "out_of_scope": true
+    "expect_intent_legacy": "data.orth_didit"
   },
   {
     "id": "data-orth-edges-1",

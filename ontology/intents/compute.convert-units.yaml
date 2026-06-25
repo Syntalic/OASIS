@@ -1,0 +1,29 @@
+id: compute.convert_units
+label: Convert units, measurements, and encodings
+description: Transform numeric values between measurement units, data-size units, time units, timezone offsets, and binary or hex encodings. Use when an agent normalizes quantities (centimeters to inches, gigabytes to bytes, minutes to hours, hex to decimal) — not currency exchange (data.exchange_rates) or natural-language translation (data.translate_text).
+aliases:
+  - unit conversion
+  - convert measurement units
+  - cm to inches conversion
+  - GB to bytes converter
+  - convert data size units
+  - hex to decimal conversion
+  - binary encoding conversion
+  - convert time units
+  - timezone time conversion
+  - minutes to hours converter
+  - length weight volume conversion
+  - furlongs to meters
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+facets:
+  domain: compute
+  action: transform
+links:
+  - type: sibling_of
+    to: data.exchange_rates
+    note: convert_units is physical, data-size, and time units; exchange_rates is currency pairs

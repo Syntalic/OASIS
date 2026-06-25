@@ -1,6 +1,6 @@
 # Ontology Coverage — Candidate Intents (next round)
 
-**Status:** jotting / backlog. Not committed work.
+**Status:** partially addressed (2026-06-24) — 4 new intents + anchor widening on 5 existing. Re-run orphan audit after next index rebuild.
 
 The semantic binder matches endpoints to a curated set of **56 vendor-neutral intents**. On the cleaned 21,728-endpoint corpus, **9,496 are orphans** (match none of the 56) → bind rate 56.3%. Most orphans are *correctly* unbound: their capability simply has no intent yet. This doc lists the highest-evidence gaps so we can grow the ontology **deliberately**.
 
@@ -33,6 +33,24 @@ Guardrails (per `oasis-discovery-architecture-philosophy`):
 ## C. Likely leave orphaned (served by the endpoint-arm fallback)
 
 - One-off calculators (IRA contribution calculator, demand forecaster) — compute, not a discoverable data/service capability. Borderline; the gated endpoint-arm already serves these by direct similarity.
+
+---
+
+## Implemented (2026-06-24)
+
+| Change | Files |
+|--------|-------|
+| **NEW `compute.convert_units`** | `ontology/intents/compute.convert-units.yaml` — measurement, data-size, time, hex encodings (+ absorbs `data.abstract_timezone` eval remap) |
+| **NEW `data.gov_records`** | `ontology/intents/data.gov-records.yaml` — KYC/KYB, electoral, AML (+ absorbs `data.orth_didit`) |
+| **NEW `finance.market_data`** | `ontology/intents/finance.market-data.yaml` — COT, positioning, market briefs |
+| **NEW `travel.aviation`** | `ontology/intents/travel.aviation.yaml` — flights, airports (+ absorbs `data.flightapi`, `data.goflightlabs`, `data.aviationstack`) |
+| **Widen `media.social_data`** | reddit hot/trending/subreddit, X timeline, Community Notes aliases |
+| **Widen `finance.trading_signals`** | forex scan, strategy/arena signal aliases |
+| **Widen `ai.web_research`** | ecosystem/climate/news-monitoring aliases |
+| **Widen `data.gov_civic`** | EPA TRI, county environmental context (folded instead of minting `data.environmental`) |
+| **Registry** | `src/intent-match.ts` curated set 56 → **60** |
+
+**Deferred:** `convert.units` still dominated by `agent402.tools` in the orphan corpus — intent added for bind coverage; confirm ≥3 independent providers on next crawl before treating the category as fully validated.
 
 ---
 
