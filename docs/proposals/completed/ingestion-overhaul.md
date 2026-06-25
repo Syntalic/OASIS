@@ -1,6 +1,6 @@
-# OASIS Ingestion & Discovery Overhaul — Status
+# OASIS Ingestion & Discovery Overhaul — ✅ Shipped
 
-**Branch:** `feat/bind-at-ingestion-gate` (worktree `~/dev/open-source/OASIS-bind-at-ingestion-gate`). All changes are **uncommitted WIP**.
+**Status:** COMPLETE — shipped in [PR #8](https://github.com/Syntalic/OASIS/pull/8) (merged to `main`) and deployed to `oasis-mcp`. This is the completion record. Items marked **[x]** shipped as part of the overhaul; the remaining **[ ]** items are **deferred follow-ups** (future enhancements), cross-linked to their own proposals where one exists.
 
 ## Why
 A Reddit-discovery failure root-caused to three nested problems:
@@ -47,7 +47,10 @@ x402 (Coinbase / AgentCash / Merit) and MPP (Tempo) are **one co-authored standa
 
 ---
 
-## REMAINING ⏳
+## Productionization, landing & deferred follow-ups
+
+> Everything below marked **[x]** shipped in PR #8. The **[ ]** items are deferred future
+> work — they were never part of the core overhaul's scope.
 
 ### 1. Productionize ingestion
 - [x] `cli.js ingest` command (`src/ingest/discover.ts`) — federated discovery + per-origin enrichment + gate → `dist/index.json` (+ endpoints.json)
@@ -72,13 +75,13 @@ x402 (Coinbase / AgentCash / Merit) and MPP (Tempo) are **one co-authored standa
 - [ ] **Token-decimals registry** — small USDC seed + default 6; refine for exotic tokens
 
 ### 4. Ranking + benchmark
-- [ ] **Composite ranking score** from the substrate (completeness + flags + well-known + Bazaar telemetry)
+- [ ] **Composite ranking score** from the substrate (completeness + flags + well-known + Bazaar telemetry) — tracked in [../ranking-signals.md](../ranking-signals.md) + [../onchain-usage-ranking.md](../onchain-usage-ranking.md)
 - [x] **Before/after benchmark run** (`scratchpad/benchmark*.mjs`, golden `eval/queries.json`). On the 61 aligned+answerable queries: intent-coverage **77% → 82%** (floor-driven); golden-endpoint orphan rate **29.5% → 25.8%** (net **−12 recovered, 0 regressions**). New index strictly-not-worse + modestly better → safe to ship.
 - [x] **Re-labeled the golden eval set to the 56-ontology.** `eval/queries.json` remapped (legacy 211-intent taxonomy → current 56): **402 remapped, 121 already-current, 121 out-of-scope** (documented capability gaps). Legacy labels preserved as `expect_intent_legacy`; mapping saved to `eval/intent-remap.json`. Usable in-scope queries **121 → 523**; aligned+answerable **61 → 268**. Re-run: coverage **55.6% → 56.7%** (+3, 0 regressions). The gate is now reliable.
 - [ ] **Benchmark guard** — treat "answered only via `endpoint-arm`" as a soft failure + emit the orphan-count metric (the `via`-signal regression guard) — wire it in once the eval set is relabeled
 
 ### 5. Land it
-- [x] Committed (`6202526`, 29 files) on `feat/bind-at-ingestion-gate`; deployed. PR/push not yet done (local commit only).
+- [x] Committed (`6202526` + docs `4a3e12e`), pushed, **[PR #8](https://github.com/Syntalic/OASIS/pull/8) merged to `main`** (CI green), deployed to `oasis-mcp` (image v10).
 
 ---
 
