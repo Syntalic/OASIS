@@ -4,7 +4,7 @@ import { CURATED_INTENT_IDS } from "./intent-match.js";
 
 describe("intent-match", () => {
   it("defines a unique set of curated intent ids", () => {
-    assert.equal(CURATED_INTENT_IDS.length, 73);
+    assert.equal(CURATED_INTENT_IDS.length, 80);
     // Uniqueness is the real invariant — the Set size must equal the array length.
     assert.equal(new Set(CURATED_INTENT_IDS).size, CURATED_INTENT_IDS.length);
   });

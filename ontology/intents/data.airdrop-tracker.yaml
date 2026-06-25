@@ -1,0 +1,21 @@
+id: data.airdrop_tracker
+label: Track crypto airdrops and eligibility
+description: Upcoming and recent airdrop calendars — eligibility criteria, deadlines, estimated value, and farming requirements across ecosystems. Use when an agent monitors airdrop opportunities.
+aliases:
+  - airdrop tracker API
+  - upcoming crypto airdrops list
+  - airdrop eligibility criteria
+  - recent airdrops by ecosystem
+  - airdrop farming deadlines
+  - track Base ecosystem airdrops
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+    cardinality: many
+facets:
+  domain: data
+  action: monitor
+  freshness: recent

@@ -1,0 +1,25 @@
+id: data.nft_metadata
+label: Look up NFT collection and token metadata
+description: NFT collection stats, holder counts, traits, floor prices, events, and individual token metadata. Use when an agent researches NFT collections or assets, not fungible token balances (finance.token_balance) or social posts (media.social_data).
+aliases:
+  - NFT collection metadata
+  - NFT collection stats and holders
+  - NFT floor price and traits
+  - NFT token metadata lookup
+  - collection holder distribution API
+  - NFT market stats by collection
+  - get NFT traits and rarity
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+    cardinality: many
+facets:
+  domain: data
+  action: lookup
+links:
+  - type: sibling_of
+    to: finance.crypto_spot_price
+    note: nft_metadata is non-fungible collection assets; crypto_spot_price is fungible token quotes
