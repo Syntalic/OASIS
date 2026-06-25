@@ -22,7 +22,7 @@ Exposes, backed by the OASIS index:
 
 ## Skills
 
-Copy `mcp/skills/oasis-investigate.md` to your agent's skills directory for the investigate loop (find → call → reflect → next → synthesize).
+Copy `mcp/skills/oasis.md` to your agent's skills directory — it teaches `oasis_find` first, then the `oasis_next` follow-up loop (find → call → reflect → next → synthesize).
 
 *Contribution (add a service):*
 - `oasis_taxonomy()` — the controlled vocab to bind INTO (capabilities + facet/entity enums)
