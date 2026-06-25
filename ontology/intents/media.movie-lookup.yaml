@@ -1,0 +1,18 @@
+id: media.movie_lookup
+label: Look up movie and film database records
+description: Movie and film metadata lookup — titles, cast, ratings, and database records from movie catalogs. Use when an agent resolves film identity or enriches entertainment context.
+aliases:
+  - movie database API
+  - film metadata lookup
+  - movie title search
+  - movie catalog lookup
+  - lookup film cast and ratings
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+facets:
+  domain: media
+  action: lookup

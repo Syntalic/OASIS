@@ -1,0 +1,26 @@
+id: data.news_headlines
+label: Fetch latest news headlines by topic
+description: Current news headlines and topical news feeds across tech, business, science, crypto, sports, and world news. Use when an agent needs headline summaries, not long-form cited research (ai.web_research).
+aliases:
+  - latest news headlines
+  - news headlines by topic
+  - topical news feed API
+  - tech news headlines
+  - business news headlines
+  - crypto news headlines
+  - current events headline feed
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+    cardinality: many
+facets:
+  domain: data
+  action: lookup
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: ai.web_research
+    note: news_headlines is headline feeds; web_research is cited deep research answers

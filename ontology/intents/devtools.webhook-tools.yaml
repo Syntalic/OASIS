@@ -1,0 +1,20 @@
+id: devtools.webhook_tools
+label: Build, test, and sign webhook payloads
+description: Webhook utilities — construct payloads, sign with HMAC, send test events, validate delivery, and dispatch decision-linked HTTP callbacks. Use when an agent integrates or debugs webhook flows.
+aliases:
+  - webhook payload builder
+  - sign webhook with HMAC
+  - send test webhook event
+  - webhook delivery test API
+  - guided webhook execution
+  - webhook signature validation
+  - dispatch HTTP webhook callback
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+facets:
+  domain: devtools
+  action: execute

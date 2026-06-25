@@ -1,0 +1,36 @@
+id: finance.market_data
+label: Get market reference data and positioning reports
+description: Raw market reference datasets and positioning reports — CFTC Commitments of Traders, commitments-of-traders positioning, daily market briefs, sector positioning, and macro positioning context. Use when an agent needs reference market structure, not actionable trade calls (finance.trading_signals) or a single ticker quote (finance.stock_quote).
+aliases:
+  - commitments of traders report
+  - CFTC commitments of traders
+  - market positioning data
+  - daily market brief
+  - futures positioning report
+  - sector market snapshot
+  - institutional positioning data
+  - market reference data feed
+  - trading positioning statistics
+  - cot report lookup
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: EconomicIndicator
+    role: payload
+    cardinality: many
+facets:
+  domain: finance
+  action: lookup
+  modality:
+    - timeseries
+links:
+  - type: sibling_of
+    to: finance.trading_signals
+    note: market_data is raw positioning and reference feeds; trading_signals are actionable calls
+  - type: sibling_of
+    to: finance.stock_quote
+    note: market_data is cross-market reference; stock_quote is a single equity price
+  - type: sibling_of
+    to: finance.economic_data
+    note: adjacent macro datasets; economic_data is government indicators, market_data is positioning and briefs

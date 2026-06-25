@@ -1,6 +1,6 @@
 # Ontology Coverage — Candidate Intents (next round)
 
-**Status:** jotting / backlog. Not committed work.
+**Status:** partially addressed (2026-06-24) — 4 new intents + anchor widening on 5 existing. Re-run orphan audit after next index rebuild.
 
 The semantic binder matches endpoints to a curated set of **56 vendor-neutral intents**. On the cleaned 21,728-endpoint corpus, **9,496 are orphans** (match none of the 56) → bind rate 56.3%. Most orphans are *correctly* unbound: their capability simply has no intent yet. This doc lists the highest-evidence gaps so we can grow the ontology **deliberately**.
 
@@ -33,6 +33,45 @@ Guardrails (per `oasis-discovery-architecture-philosophy`):
 ## C. Likely leave orphaned (served by the endpoint-arm fallback)
 
 - One-off calculators (IRA contribution calculator, demand forecaster) — compute, not a discoverable data/service capability. Borderline; the gated endpoint-arm already serves these by direct similarity.
+
+---
+
+## Implemented (2026-06-24)
+
+| Change | Files |
+|--------|-------|
+| **NEW `compute.convert_units`** | `ontology/intents/compute.convert-units.yaml` — measurement, data-size, time, hex encodings (+ absorbs `data.abstract_timezone` eval remap) |
+| **NEW `data.gov_records`** | `ontology/intents/data.gov-records.yaml` — KYC/KYB, electoral, AML (+ absorbs `data.orth_didit`) |
+| **NEW `finance.market_data`** | `ontology/intents/finance.market-data.yaml` — COT, positioning, market briefs |
+| **NEW `travel.aviation`** | `ontology/intents/travel.aviation.yaml` — flights, airports (+ absorbs `data.flightapi`, `data.goflightlabs`, `data.aviationstack`) |
+| **Widen `media.social_data`** | reddit hot/trending/subreddit, X timeline, Community Notes aliases |
+| **Widen `finance.trading_signals`** | forex scan, strategy/arena signal aliases |
+| **Widen `ai.web_research`** | ecosystem/climate/news-monitoring aliases |
+| **Widen `data.gov_civic`** | EPA TRI, county environmental context (folded instead of minting `data.environmental`) |
+| **Registry** | `src/intent-match.ts` curated set 56 → **60** |
+
+**Round 2 (69 intents):** `shop.tcg_catalog`, `compute.financial_calculator`, `data.book_lookup`, `data.drug_label`, `finance.stablecoin_monitor`, `media.movie_lookup`, `data.vat_validate`, `data.holidays_lookup`, `data.iban_validate` + widened `compute.convert_units`.
+
+**Round 3 (73 intents):** `data.news_headlines`, `devtools.pdf_manipulate`, `media.anime_lookup`, `data.sports_scores` + widened `ai.llm_complete`, `finance.onchain_analytics`, `data.company_enrich`.
+
+### Bind-rate results (fresh ingest 2026-06-25, 23,927 endpoints)
+
+| Stage | Intents | Bound | Rate |
+|-------|---------|-------|------|
+| After round 1 enrich | 60 | 15,182 | **63.5%** |
+| After round 2 enrich | 69 | 16,083 | **67.2%** (+901) |
+| After round 3 enrich | 73 | 16,394 | **68.5%** (+311) |
+| **Total gain** | +17 | **+2,212** | **+5.0 pp** |
+
+Top binders added: `shop.tcg_catalog` (~1,290), `compute.convert_units` (~887), `compute.financial_calculator` (~367), `finance.stablecoin_monitor` (~206), `data.vat_validate` (~187).
+
+**Naming rule:** intents stay vendor-neutral — do **not** name specific API endpoints or niche services (Open Library, GLEIF, Google Flights, openFDA, …). **Do** include major platforms, government agencies (FDA, EPA, USDA, CFTC, …), well-known brands/franchises (Pokemon, Magic, …), model providers (DeepSeek, Gemini, Grok), and common tickers (USDC, USDT, DAI). Prefer **adding** these alongside neutral aliases rather than replacing them.
+
+**Round 4 (80 intents):** `finance.defi_analytics`, `data.nft_metadata`, `devtools.webhook_tools`, `finance.crypto_market_intel`, `data.airdrop_tracker`, `data.agriculture_stats`, `data.lei_lookup` (`media.anime_lookup` already in round 3).
+
+**Still orphaned (~7,533 pre-R4):** `orbisapi.com` proxy micro-APIs (~948), thin-summary `agent402` utilities (~721/origin), payment/checkout stubs, and swarm template hosts — mostly one-off deployed agents or boilerplate summaries below sparse floor.
+
+Audit artifact: `dist/orphan-audit.json` · compare script: `scripts/bind-compare.mjs` · audit script: `scripts/orphan-audit.mjs`
 
 ---
 

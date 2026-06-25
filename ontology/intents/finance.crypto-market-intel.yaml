@@ -1,0 +1,30 @@
+id: finance.crypto_market_intel
+label: Get crypto market intelligence and trading context
+description: Crypto market intelligence beyond a single quote — trending altcoins, trade history, bridge and withdraw flows, cross-chain token context, and agent-oriented trading snapshots. Use when an agent monitors market narrative or portfolio activity, not raw protocol TVL (finance.defi_analytics) or actionable trade signals (finance.trading_signals).
+aliases:
+  - trending altcoins list
+  - crypto trade history lookup
+  - bridge tokens cross-chain
+  - withdraw tokens from wallet
+  - crypto transaction history API
+  - altcoin trending scanner
+  - cross-chain bridge intelligence
+  - crypto market snapshot for agents
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+    cardinality: many
+facets:
+  domain: finance
+  action: lookup
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: finance.crypto_spot_price
+    note: crypto_market_intel is contextual market activity; crypto_spot_price is a point-in-time quote
+  - type: sibling_of
+    to: finance.trading_signals
+    note: crypto_market_intel is intelligence feeds; trading_signals are explicit buy/sell calls

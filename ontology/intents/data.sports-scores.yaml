@@ -1,0 +1,21 @@
+id: data.sports_scores
+label: Get live and historical sports scores and schedules
+description: Sports scores, schedules, standings, and match results across leagues. Use when an agent answers sports outcome questions or monitors fixtures.
+aliases:
+  - live sports scores API
+  - sports schedules and standings
+  - match results lookup
+  - game score by team
+  - sports fixture schedule
+  - league standings data
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+    cardinality: many
+facets:
+  domain: data
+  action: lookup
+  freshness: realtime

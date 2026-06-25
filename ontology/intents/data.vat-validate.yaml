@@ -1,0 +1,19 @@
+id: data.vat_validate
+label: Validate VAT and tax identification numbers
+description: VAT number validation and tax-ID verification for businesses across jurisdictions. Use when an agent checks whether a VAT or tax registration number is valid before invoicing or compliance checks.
+aliases:
+  - VAT number validation
+  - validate VAT ID
+  - tax identification number check
+  - VAT registration lookup
+  - EU VAT validation API
+  - business tax ID verification
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+facets:
+  domain: data
+  action: validate

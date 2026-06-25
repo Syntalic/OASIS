@@ -1,0 +1,20 @@
+id: data.holidays_lookup
+label: Look up public holidays by country and date
+description: Public and bank holiday calendars by country, region, and date range. Use when an agent schedules across locales or checks whether a date is a holiday.
+aliases:
+  - public holidays by country
+  - bank holiday calendar lookup
+  - holiday calendar API
+  - is this date a public holiday
+  - national holidays lookup
+  - holiday schedule by country
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+    cardinality: many
+facets:
+  domain: data
+  action: lookup

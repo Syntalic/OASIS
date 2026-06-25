@@ -1,0 +1,30 @@
+id: data.gov_records
+label: Verify identity and public government records
+description: Official identity verification, KYC and KYB checks, electoral registry validation, and public-record lookups against government databases. Use when an agent confirms a person or company against authoritative registries — not open-web people search (data.person_search) or firmographics from a domain (data.company_enrich).
+aliases:
+  - KYC verification API
+  - KYB business verification
+  - identity verification against government registry
+  - electoral registry verification
+  - public records verification
+  - AML screening watchlist check
+  - government identity validation
+  - national electoral registry check
+  - verify national identity document
+  - official registry lookup
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: StructuredRecord
+    role: payload
+facets:
+  domain: data
+  action: validate
+links:
+  - type: sibling_of
+    to: data.person_search
+    note: gov_records verifies against official registries; person_search discovers public profiles
+  - type: sibling_of
+    to: data.company_enrich
+    note: gov_records verifies legal identity; company_enrich returns firmographics from a domain

@@ -1,0 +1,19 @@
+id: devtools.pdf_manipulate
+label: Manipulate PDF documents
+description: PDF document utilities — add watermarks, compress files, merge or split pages, and similar file transforms. Use when an agent processes PDF assets, not OCR text extraction (data.ocr).
+aliases:
+  - watermark PDF document
+  - compress PDF file
+  - PDF compressor API
+  - add watermark to PDF
+  - reduce PDF file size
+  - PDF manipulation utility
+consumes:
+  - entity: Document
+    role: identifier
+produces:
+  - entity: Document
+    role: payload
+facets:
+  domain: devtools
+  action: transform

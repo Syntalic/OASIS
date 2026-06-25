@@ -11,6 +11,11 @@ aliases:
   - research with citations
   - current events lookup with sources
   - cited web research API
+  - ecosystem news monitoring
+  - climate news monitoring
+  - blockchain ecosystem news
+  - niche news feed monitoring
+  - topical news digest with sources
 consumes:
   - entity: Query
     role: identifier
