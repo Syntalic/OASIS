@@ -20,8 +20,8 @@ flowchart LR
   end
 
   subgraph oasis["OASIS index (dist/)"]
-    CAP["capabilities.json<br/>47 curated intents"]
-    EP["endpoints.json<br/>~30k paid endpoints"]
+    CAP["capabilities.json<br/>56 curated intents"]
+    EP["endpoints.json<br/>~22k gated endpoints"]
     IDX["index.json<br/>full bundle"]
   end
 
@@ -59,68 +59,53 @@ flowchart LR
 
 ## Index build pipeline
 
-The reference CLI (`capindex build`) ingests public catalogs, normalizes them into a flat endpoint index, and wires curated task intents from the ontology.
+The production build is `pnpm build` = **`capindex ingest`** (federate registries → enrich each origin's `/openapi.json` → quality gate → `dist/index.json`) followed by **`enrich-facets`** (semantic endpoint→intent binding + `satisfies[]` materialization). The legacy single-pass `capindex build` (heuristic binding) is kept as a fallback (`build:index`).
 
 ```mermaid
 flowchart TB
-  subgraph sources["Ingestion sources"]
-    PS["pay-skills<br/>local OpenAPI + PAY.md"]
-    X4["x402scan<br/>sitemap → openapi.json"]
-    MS["mppscan<br/>sitemap → openapi.json"]
-    MC["mpp.dev catalog<br/>/api/services"]
-    OA["--openapi file<br/>single-spec ingest"]
+  subgraph discovery["Discovery — federate registries (ingest/discover.ts)"]
+    BZ["CDP x402 Bazaar<br/>/x402/discovery/resources"]
+    MC["mpp.dev<br/>/api/services"]
+    PSH["pay.sh<br/>/api/catalog"]
+    X4["x402scan origins"]
   end
 
-  subgraph parse["Parse & normalize"]
-    OP["openapi-parser.ts<br/>paths, summaries, payment extensions"]
-    AL["origin-aliases.ts<br/>canonical origin URLs"]
-    ID["id.ts<br/>sha256(origin|method|path)"]
-    DD["dedupeEndpoints()<br/>merge rails + metadata"]
+  subgraph enrich["Per-origin enrichment"]
+    OJ["fetch {origin}/openapi.json"]
+    OP["openapi-parser.ts<br/>paths, summaries,<br/>x-payment-info.offers · x-service-info · 402"]
+    ID["origin-aliases.ts + id.ts<br/>sha256(origin|method|path)"]
   end
 
-  subgraph ontology["Ontology layer"]
-    YAML["ontology/intents/*.yaml<br/>curated task definitions"]
-    LINK["linkCapabilitiesToEndpoints()<br/>bind endpoints → capabilities (primary)"]
-    MAT["materialize-satisfies.ts<br/>satisfies[] from endpoint.capabilities<br/>(intent-match.ts regex = fallback)"]
-    EXP["ontology-expand.ts<br/>provider-derived links"]
+  subgraph gate["Quality gate (quality-gate.ts)"]
+    G["pass / drop<br/>drop: stub · meta · content-free · thin (under 5 fields)"]
+    CS["+ completeness score + ranking flags"]
   end
 
-  subgraph score["Selection policy (select-policy.ts)"]
-    SE["score-endpoint.ts<br/>neutral quality prior"]
-    SP["task-fit ranking<br/>intent-id + vocab + query"]
+  subgraph bind["Semantic bind (enrich-facets.ts)"]
+    EM["embed endpoints + curated intents<br/>gemini-embedding-001"]
+    BE["bind-endpoints.ts<br/>dense floor + strong-sparse promotion"]
+    MAT["materialize-satisfies.ts<br/>satisfies[] per intent"]
   end
 
   subgraph out["dist/ artifacts"]
-    EJ["endpoints.json"]
-    CJ["capabilities.json"]
-    PJ["providers.json"]
-    IJ["index.json"]
+    IJ["index.json<br/>(+ endpoints / capabilities)"]
   end
 
-  PS --> OP
-  X4 --> OP
-  MS --> OP
-  MC --> OP
-  OA --> OP
-  OP --> AL --> ID --> DD
-
-  YAML --> LINK
-  DD --> LINK
-  LINK --> MAT --> EXP
-  SE --> SP --> MAT
-
-  DD --> EJ
-  EXP --> CJ
-  DD --> PJ
-  EJ --> IJ
-  CJ --> IJ
-  PJ --> IJ
+  BZ --> OJ
+  MC --> OJ
+  PSH --> OJ
+  X4 --> OJ
+  OJ --> OP --> ID --> G
+  G --> CS
+  CS --> EM --> BE --> MAT --> IJ
 ```
 
 **Key design choices**
 
 - **Origin-centric IDs** — `sha256(origin|method|path)`; no vendor-specific ID logic.
-- **Ingest, don't own** — pull from pay-skills, x402scan, mppscan, mpp.dev; publish neutral `dist/`.
+- **Ingest, don't own** — federate public registries (CDP x402 Bazaar, mpp.dev, pay.sh, x402scan), enrich each origin's `/openapi.json`, publish a neutral `dist/`.
+- **One discovery standard** — parse the `draft-payment-discovery-00` shape (`x-payment-info.offers`, `x-service-info`, a required `402`); x402 and MPP are the same standard, validated against the Appendix C/D JSON Schemas in `spec/`.
+- **Quality gate at ingestion** — drop stubs, meta paths, content-free boilerplate, and too-thin records before they enter the index; keep a completeness score + ranking flags. What authors should do to pass it: [docs/authoring-openapi-specs.md](docs/authoring-openapi-specs.md).
 - **OpenAPI is source of truth** — index holds summaries and payment facets, not full schemas.
 - **Payment rails as siblings** — x402 and MPP live under `payment.rails[]` on each endpoint.
 
@@ -144,7 +129,7 @@ flowchart TB
   subgraph vector["Vector search (optional, --hybrid)"]
     EMB["embed/embedder.ts<br/>text embeddings"]
     LANCE["embed/lance-index.ts<br/>LanceDB table"]
-    VEC["Vector nearest-neighbors<br/>47 curated intents"]
+    VEC["Vector nearest-neighbors<br/>56 curated intents"]
   end
 
   subgraph fusion["Hybrid fusion (search-hybrid.ts)"]
@@ -176,13 +161,14 @@ Capability hits carry a `capability_id`; resolve expands `satisfies[]` into conc
 
 ## Ontology → endpoint wiring
 
-Curated intents are provider-agnostic task definitions. Endpoints are bound to capabilities
-primarily by `linkCapabilitiesToEndpoints()` (a facet/semantic binding over the whole index,
-written onto each endpoint as `endpoint.capabilities[]`). `materialize-satisfies.ts` derives
-each intent's `satisfies[]` from that binding — the legacy per-intent regex matchers in
-`intent-match.ts` are a **fallback**, used only on the first build pass before the binding is
-populated. A full build re-materializes `satisfies[]` after the binding is set; the offline
-`enrich-facets` pass does the same without re-ingesting.
+Curated intents are provider-agnostic task definitions. Endpoints are bound to capabilities by
+the **semantic binder** (`embed/bind-endpoints.ts`): every endpoint and every curated intent is
+embedded (`gemini-embedding-001`) and bound by dense similarity above a floor, with a
+**strong-sparse promotion** path that rescues endpoints the dense floor misses but whose sparse
+(lexical) signal is strong. This binding runs in the production build via **`enrich-facets`**,
+written onto each endpoint as `endpoint.capabilities[]`; `materialize-satisfies.ts` then derives
+each intent's `satisfies[]`. The legacy facet/regex matchers (`linkCapabilitiesToEndpoints()`,
+`intent-match.ts`) remain only as a fallback for the heuristic `build:index` path.
 
 ```mermaid
 flowchart LR
@@ -245,7 +231,7 @@ flowchart LR
     D3["discover@3"]
     D1["discover@1"]
     MRR["discover MRR"]
-    RES["resolve accuracy<br/>47/47 intents"]
+    RES["resolve accuracy<br/>56/56 intents"]
   end
 
   MQ --> modes

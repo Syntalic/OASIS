@@ -117,7 +117,7 @@ best-of-many ranking, and token growth. Thesis + evidence: **[docs/scaling.md](d
 
 ```bash
 git clone https://github.com/Syntalic/OASIS.git && cd OASIS && pnpm install
-pnpm run build    # full ingest (~30k endpoints; needs network)
+pnpm run build    # federated ingest → quality gate → semantic bind (~22k gated endpoints; needs network; GOOGLE_API_KEY for gemini binding)
 pnpm run embed    # vector index (56 curated intents, gemini-embedding-001)
 pnpm test
 ```
@@ -146,12 +146,16 @@ validation gate (`validate-source`). Bind into existing capabilities where one f
 new ones sparingly (flagged for review). Full guide:
 **[docs/contributing-capabilities.md](docs/contributing-capabilities.md)**.
 
+Publishing the paid endpoints themselves? **[docs/authoring-openapi-specs.md](docs/authoring-openapi-specs.md)**
+covers how to write summaries + payment metadata that pass the quality gate and rank well.
+
 ## Docs
 
 - **[docs/OASIS-explainer.pdf](docs/OASIS-explainer.pdf)** — visual explainer deck (PDF overview of OASIS)
 - **[docs/eval_results.md](docs/eval_results.md)** — full benchmarks: accuracy, token cost, generalization, the agent probe
 - **[docs/scaling.md](docs/scaling.md)** — the endpoint-atomic direction, why it scales, the per-service binding artifact
-- **[docs/contributing-capabilities.md](docs/contributing-capabilities.md)** — how to add a service
+- **[docs/contributing-capabilities.md](docs/contributing-capabilities.md)** — how to add a service (bind endpoints into the task ontology)
+- **[docs/authoring-openapi-specs.md](docs/authoring-openapi-specs.md)** — authoring a discoverable OpenAPI spec (what the quality gate + ranker expect from summaries + payment metadata)
 - **[docs/proposals/onchain-usage-ranking.md](docs/proposals/onchain-usage-ranking.md)** — proposed (**help wanted**): quality-aware ranking from on-chain usage (volume/trend/buyers)
 - [ARCHITECTURE.md](ARCHITECTURE.md) · [GOVERNANCE.md](GOVERNANCE.md) · [spec/traversal.md](spec/traversal.md)
 

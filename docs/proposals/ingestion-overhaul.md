@@ -62,7 +62,7 @@ x402 (Coinbase / AgentCash / Merit) and MPP (Tempo) are **one co-authored standa
 - [x] **Calibrated `strongSparseFloor` → 0.12** on a full gemini run (31,810-corpus, 4-floor sweep 0.18/0.15/0.12/0.10). 0.12 is the knee that captures the founding **Apify reddit-scraper-lite** case (sparse **0.1364** → 0.15 strands it). Precision read on the 0.18→0.12 delta showed the noise was **49% concentrated in boilerplate providers** → fixed at the gate (above), not by raising the floor. On the cleaned 21,728 corpus: **bound 56.3%** (was 40.7% dirty), `media.social_data` preserved, **Apify binds correctly**.
 - [x] **Rebuilt the shippable artifacts from the snapshot (no crawl, no re-embed).** `ingest --snapshot` → `dist/index.json` (21,728 PASS, 1,118 origins) → `enrich-facets` (bind @ 0.12, **warm gemini cache → 9.8s**, bound **12,270/21,728**) → `embed --scope curated` (56 capability vectors) → `build:endpoint-index`. Validated: `search "scrape reddit posts and comments"` → `media.social_data` → Reddit endpoints. **Not deployed.**
 - [x] **`build:endpoint-index` now filters to live endpoints** — the content-addressed f32 cache outlives the corpus, so it carried vectors for gate-dropped junk. Now ships only vectors `index.json` references: **28,949 → 18,871 vectors, 88.9MB → 58MB** (harmless before — the arm only searches live endpoints — but dead weight).
-- [ ] **Deploy** — `fly deploy --config mcp/deploy/fly.toml --build-secret GOOGLE_API_KEY=$GOOGLE_API_KEY`. Outward-facing; awaiting explicit go.
+- [x] **Deployed to oasis-mcp (Fly, sjc)** — `fly deploy --build-secret GOOGLE_API_KEY=…`, image v10. Live server loads the new index (`endpoint arm ready (21,679 endpoints)`), health passing, `/mcp` up. Verified: live `oasis_find("scrape reddit posts and comments")` → 6 relevant Reddit endpoints. **Caveat:** all results came `via: endpoint-arm` — the intent layer still isn't the path for this query (see below).
 
 ### 3. Capture gaps (discussed earlier, still open)
 - [ ] **Typed request schema** (inputs are names-only — no types/descriptions/`required[]`) + **response 200/402 schemas** (only presence captured)
@@ -78,7 +78,7 @@ x402 (Coinbase / AgentCash / Merit) and MPP (Tempo) are **one co-authored standa
 - [ ] **Benchmark guard** — treat "answered only via `endpoint-arm`" as a soft failure + emit the orphan-count metric (the `via`-signal regression guard) — wire it in once the eval set is relabeled
 
 ### 5. Land it
-- [ ] Commit / PR the worktree
+- [x] Committed (`6202526`, 29 files) on `feat/bind-at-ingestion-gate`; deployed. PR/push not yet done (local commit only).
 
 ---
 
