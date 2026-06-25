@@ -10,3 +10,7 @@ node_modules/
 # Consume the prebuilt index via GitHub Releases, or build locally.
 dist/
 dist-pinned/
+
+# Optuna run output + python cache
+eval/optuna/best_floors.json
+__pycache__/
