@@ -1,13 +1,13 @@
 id: shop.tcg_catalog
 label: Look up trading card game sets and cards
-description: Trading card game catalog metadata — card sets, individual cards, bulk card lookups, and pricing across Pokemon, Magic, Yu-Gi-Oh, Lorcana, One Piece, and other TCGs. Use when an agent researches collectible card inventory, not general retail product deals (shop.find_deals).
+description: Trading card game catalog metadata — card sets, individual cards, bulk card lookups, and pricing across collectible card games. Use when an agent researches collectible card inventory, not general retail product deals (shop.find_deals).
 aliases:
   - trading card game catalog
   - TCG card lookup
-  - Pokemon card set metadata
-  - Magic The Gathering card lookup
-  - Yu-Gi-Oh card database
-  - Lorcana card set search
+  - collectible card set metadata
+  - trading card expansion lookup
+  - collectible card database search
+  - card game set catalog search
   - bulk TCG card metadata
   - collectible card game API
   - card set expansion lookup

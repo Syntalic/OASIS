@@ -3,9 +3,7 @@ label: LLM text completion or chat
 description: Paid chat or completion APIs for general-purpose language models. Use when an agent needs generative text, reasoning, or tool-use responses from a language model — not task-specific text tools like document extraction (data.document_extract), translation (data.translate_text), or embeddings (ai.embeddings).
 aliases:
   - list available LLM models
-  - list DeepSeek models API
-  - list Gemini models API
-  - list Grok models API
+  - list hosted language models API
   - chat completion
   - LLM API
   - LLM text completion

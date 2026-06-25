@@ -1,9 +1,9 @@
 id: data.drug_label
-label: Look up FDA drug labels and medication information
-description: Regulatory drug-label lookup — FDA-approved indications, dosage, warnings, adverse reactions, and manufacturer details by brand or generic name. Use when an agent needs authoritative medication information, not open-web health articles (ai.web_research).
+label: Look up regulatory drug labels and medication information
+description: Regulatory drug-label lookup — approved indications, dosage, warnings, adverse reactions, and manufacturer details by brand or generic name from official pharmaceutical registries. Use when an agent needs authoritative medication information, not open-web health articles (ai.web_research).
 aliases:
-  - FDA drug label lookup
-  - openFDA drug label
+  - regulatory drug label lookup
+  - official drug label database
   - medication label by generic name
   - prescription drug information API
   - drug indications and dosage lookup

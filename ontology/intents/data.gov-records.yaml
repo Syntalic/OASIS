@@ -9,8 +9,8 @@ aliases:
   - public records verification
   - AML screening watchlist check
   - government identity validation
-  - registraduría electoral check
-  - verify Colombian cédula
+  - national electoral registry check
+  - verify national identity document
   - official registry lookup
 consumes:
   - entity: Query

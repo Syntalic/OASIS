@@ -7,7 +7,7 @@ aliases:
   - airdrop eligibility criteria
   - recent airdrops by ecosystem
   - airdrop farming deadlines
-  - track Base ecosystem airdrops
+  - track blockchain ecosystem airdrops
 consumes:
   - entity: Query
     role: identifier

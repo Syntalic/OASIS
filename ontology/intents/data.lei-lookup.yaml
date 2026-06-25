@@ -1,10 +1,10 @@
 id: data.lei_lookup
 label: Look up legal entity identifiers and corporate hierarchy
-description: LEI (Legal Entity Identifier) lookup — entity records, corporate ownership graphs, parent-subsidiary hierarchy, and ISIN-to-LEI mapping from GLEIF and related registries. Use when an agent verifies legal entity identity, not firmographics from a website domain (data.company_enrich).
+description: LEI (Legal Entity Identifier) lookup — entity records, corporate ownership graphs, parent-subsidiary hierarchy, and ISIN-to-LEI mapping from official legal-entity registries. Use when an agent verifies legal entity identity, not firmographics from a website domain (data.company_enrich).
 aliases:
   - LEI lookup API
   - legal entity identifier search
-  - GLEIF corporate hierarchy
+  - global legal entity registry hierarchy
   - parent subsidiary ownership graph
   - ISIN to LEI mapping
   - legal entity ownership graph
