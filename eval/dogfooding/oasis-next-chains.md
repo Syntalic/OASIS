@@ -1,6 +1,6 @@
-# OASIS Next — dogfood chains (topical-relevance ranking)
+# OASIS Next — dogfood chains (topical-relevance ranking, fresh full-build index)
 
-Local MCP, production index. Ranking: **score = structural(port-match) × topical(finding↔intent)**
+Local MCP, fresh production build. Ranking: **score = structural(port-match) × topical(finding↔intent)**
 + small domain/quality nudges; same-domain bridges allowed; a relevance floor prunes tangential ones.
 Each scenario: **find** → **reflect** (identities held) → **oasis_next** (relevance-ranked follow-ups).
 
@@ -59,7 +59,7 @@ _3 leads_
 
 | bridge | → intent | endpoint | price | why |
 |---|---|---|---|---|
-| ProductCategory | shop.find_deals | POST https://web.x402node.dev/api/shopping-search | $0.02 | Find discounted products in a category can investigate ProductCategory you hold (consumer electronics) |
+| ProductCategory | shop.find_deals | POST https://convrgent.ai/api/kyb/winloss | $— | Find discounted products in a category can investigate ProductCategory you hold (consumer electronics) |
 | ProductCategory | marketing.competitive_landscape | POST https://x402-market-intel-mcp.mtree.workers.dev/v1/x402/micro_price_optimizer | $0.08 | Competitive pricing landscape for a category can investigate ProductCategory you hold (consumer electronics) |
 | Place | realestate.property_lookup | POST https://x402.agentutility.ai/property-tax-assessment | $0.01 | Search homes and rentals for sale can investigate Place you hold (Los Angeles, CA) |
 
@@ -95,10 +95,10 @@ _4 leads_
 
 **find** — `"top-rated hotels and reviews in Tokyo"`
 
-- POST https://stableapify.dev/api/actors/compass/Google-Maps-Reviews-Scraper/call  $0.01 [x402] _via:travel.place_reviews_
+- POST https://apify-dlfd68ww7-merit-systems.vercel.app/api/actors/compass/Google-Maps-Reviews-Scraper/call  $0.01 [x402] _via:travel.place_reviews_
+- POST https://apify-pjhpk2l0p-merit-systems.vercel.app/api/actors/compass/Google-Maps-Reviews-Scraper/call  $0.01 [x402] _via:travel.place_reviews_
 - POST https://x402.agentutility.ai/ecommerce-review-sentiment  $0.01 [x402] _via:travel.place_reviews_
 - POST https://api.getanyapi.com/v1/run/maps.reviews  $— [x402,mpp] _via:travel.place_reviews_
-- POST https://mpp.orthogonal.com/reviews  $0.002 [mpp] _via:travel.place_reviews_
 
 **reflect — identities held:** `Place="Tokyo, Japan"`
 

@@ -70,3 +70,17 @@ classes) · coverage intents for real capabilities · uncap + relevance-aware re
   **weather**. This was the worst scenario before; now it's the best.
 - Remaining (follow-up typing pass): other `Query`-only consumers (9 warnings left) where a typed identity
   applies — e.g. `data.gov-records → Person`, `data.lei-lookup → Company`. Not dogfood-blocking.
+
+## 4. Open follow-ups (confirmed by the fresh full-build dogfood)
+The major fixes all hold on a fresh production build. Two minor, non-blocking residuals remain:
+- **Within-intent representative ranking** (the highest-value one). The bridge resolves the right *intent*
+  but `selectEndpointsForIntent` (`rankEndpointsNeutral`, query-blind) picks an off endpoint:
+  `data.job_search → 2s.io/api/gov/usajobs` (gov, not corporate), `realestate.property_lookup →
+  property-tax-assessment`, `shop.find_deals → kyb/winloss`. Fix: rank an intent's `satisfies[]` by
+  relevance (to the finding / the intent's own label) so the surfaced endpoint is the good one.
+- **Preview-host gate gap.** `quality-gate.ts` `PREVIEW_HOST` catches `*-git-<branch>-*.vercel.app` but
+  NOT the deploy-hash form `*-<hash>-<team>.vercel.app` (e.g. `apify-dlfd68ww7-merit-systems.vercel.app`
+  leaked into a find). Extend the regex to the hash form; re-bind to apply.
+- **Optuna calibration was flat** (40 trials, all `good_recall@6=0.667 / bad_rate@8=0`): the floors don't
+  move `eval:usefulness` (7-valued, too coarse), so the hand-set defaults incl. `denseMargin=0.02` are
+  fine *for what this eval sees*. Real lever = a sharper held-out eval, then re-run `eval/optuna`.
