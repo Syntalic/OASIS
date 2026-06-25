@@ -29,10 +29,7 @@ export interface EvalQuery {
 export type SearchMode =
   | "full"
   | "endpoints-only"
-  | "providers-only"
-  | "pay-skills-only"
-  | "x402scan-only"
-  | "mpp-only";
+  | "providers-only";
 
 export type BenchmarkMode =
   | SearchMode
@@ -148,35 +145,12 @@ function runSearch(
   mode: SearchMode,
   limit = 10,
 ): SearchHit[] {
-  let endpoints = bundle.endpoints;
+  const endpoints = bundle.endpoints;
   const capabilities =
     mode === "full" ? curatedCapabilitiesForSearch(bundle) : [];
 
-  if (mode === "pay-skills-only") {
-    endpoints = endpoints.filter(
-      (e) =>
-        e.provider_fqn &&
-        !e.provider_fqn.startsWith("x402scan/") &&
-        !e.provider_fqn.startsWith("mppscan/") &&
-        !e.provider_fqn.startsWith("mpp-catalog/"),
-    );
-  } else if (mode === "x402scan-only") {
-    endpoints = endpoints.filter((e) =>
-      e.provider_fqn?.startsWith("x402scan/"),
-    );
-  } else if (mode === "mpp-only") {
-    endpoints = endpoints.filter(
-      (e) =>
-        e.provider_fqn?.startsWith("mppscan/") ||
-        e.provider_fqn?.startsWith("mpp-catalog/"),
-    );
-  }
-
   switch (mode) {
     case "endpoints-only":
-    case "pay-skills-only":
-    case "x402scan-only":
-    case "mpp-only":
       return searchIndex(query, endpoints, [], limit);
     case "providers-only":
       return searchProvidersOnly(query, bundle, limit);
@@ -369,7 +343,6 @@ export async function runDiscoveryBenchmark(
     "full",
     "endpoints-only",
     "providers-only",
-    "pay-skills-only",
   ],
 ): Promise<BenchmarkReport[]> {
   const queries = await loadEvalQueries();

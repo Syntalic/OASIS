@@ -323,25 +323,6 @@ program
     }
     const { METRICS_LEGEND } = await import("./eval/metrics.js");
     console.log(`\nLegend:\n${METRICS_LEGEND}\n`);
-    const full = reports.find((r) => r.mode === "full");
-    const paySkills = reports.find((r) => r.mode === "pay-skills-only");
-    if (full && paySkills) {
-      const cov = bundle.endpoints.length;
-      const ps = bundle.endpoints.filter(
-        (e) =>
-          e.provider_fqn &&
-          !e.provider_fqn.startsWith("x402scan/") &&
-          !e.provider_fqn.startsWith("mppscan/") &&
-          !e.provider_fqn.startsWith("mpp-catalog/"),
-      ).length;
-      console.log(`Coverage: ${cov} unified endpoints vs ${ps} pay-skills-only`);
-      console.log(
-        `Full index discover@3: ${full.discover_hit_at_3}/${full.task_queries}`,
-      );
-      console.log(
-        `pay-skills-only discover@3: ${paySkills.discover_hit_at_3}/${paySkills.task_queries}`,
-      );
-    }
   });
 
 program

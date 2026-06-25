@@ -62,20 +62,6 @@ describe("discovery benchmark", () => {
     );
   });
 
-  it("unified index covers more endpoints than pay-skills slice", async (t) => {
-    if (skipIfPinned(t)) return;
-    if (!existsSync(distIndex)) return t.skip(SKIP_NO_INDEX);
-    const bundle = await loadBundle();
-    const paySkillsEps = bundle.endpoints.filter(
-      (e) =>
-        e.provider_fqn &&
-        !e.provider_fqn.startsWith("x402scan/") &&
-        !e.provider_fqn.startsWith("mppscan/") &&
-        !e.provider_fqn.startsWith("mpp-catalog/"),
-    );
-    assert.ok(bundle.endpoints.length > paySkillsEps.length * 5);
-  });
-
   it("meets minimum discovery quality bar on messy set (E3 harness)", async (t) => {
     if (skipIfPinned(t)) return;
     if (!existsSync(distIndex)) return t.skip(SKIP_NO_INDEX);
