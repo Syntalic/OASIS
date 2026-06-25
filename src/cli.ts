@@ -3,7 +3,6 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
-import { buildIndex, defaultPaySkillsPath } from "./build.js";
 import { runIngest } from "./ingest/discover.js";
 import { curatedCapabilitiesForSearch } from "./curated-search.js";
 import { endpointId } from "./id.js";
@@ -69,59 +68,6 @@ program
   .name("capindex")
   .description("Vendor-neutral index for x402 and MPP paid API endpoints")
   .version("0.1.0");
-
-program
-  .command("build")
-  .description("Build index from pay-skills and/or OpenAPI sources")
-  .option(
-    "--pay-skills <dir>",
-    "Path to pay-skills repo (providers/ directory parent)",
-  )
-  .option("--openapi <file>", "Single OpenAPI JSON file to ingest")
-  .option("--origin <url>", "Origin URL when ingesting a standalone OpenAPI file")
-  .option("-o, --output <dir>", "Output directory", path.join(PACKAGE_ROOT, "dist"))
-  .option("--no-x402scan", "Skip x402scan sitemap ingest")
-  .option("--no-mppscan", "Skip mppscan sitemap + mpp.dev catalog ingest")
-  .option("--skip-pay-skills", "Skip pay-skills ingest")
-  .option(
-    "--max-scan-servers <n>",
-    "Limit x402scan/mppscan server pages fetched (debug)",
-  )
-  .action(async (opts) => {
-    const bundle = await buildIndex({
-      paySkillsDir: opts.paySkills,
-      openapiFile: opts.openapi,
-      origin: opts.origin,
-      outputDir: opts.output,
-      x402scan: opts.x402scan,
-      mppscan: opts.mppscan,
-      skipPaySkills: Boolean(opts.skipPaySkills),
-      maxScanServers: opts.maxScanServers
-        ? Number(opts.maxScanServers)
-        : undefined,
-    });
-
-    if (!bundle.stats.endpoints) {
-      console.error(
-        "No endpoints indexed. Pass --pay-skills <dir> or --openapi <file>.",
-      );
-      process.exitCode = 1;
-      return;
-    }
-
-    console.log(`Built index v${bundle.index_version}`);
-    console.log(`  providers: ${bundle.stats.providers}`);
-    console.log(`  origins:   ${bundle.stats.origins}`);
-    console.log(`  endpoints: ${bundle.stats.endpoints}`);
-    console.log(`  intents:   ${bundle.stats.capabilities}`);
-    if (bundle.stats.capability_links != null) {
-      console.log(`  linked:    ${bundle.stats.capability_links} endpoints with capability tags`);
-    }
-    if (bundle.stats.stub_endpoints != null) {
-      console.log(`  stubs:     ${bundle.stats.stub_endpoints} thin endpoint records`);
-    }
-    console.log(`  output:    ${opts.output}`);
-  });
 
 program
   .command("search <query>")

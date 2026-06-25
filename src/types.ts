@@ -193,19 +193,6 @@ export interface CapabilityIntent extends CuratedIntentSource {
   satisfies: SatisfiesRef[];
 }
 
-export interface PaySkillsProvider {
-  fqn: string;
-  name: string;
-  title: string;
-  description: string;
-  use_case: string;
-  category: string;
-  service_url: string;
-  openapi_path: string;
-  capabilities?: string[];
-  spend_patterns?: string[];
-}
-
 export interface ProviderRecord {
   fqn: string;
   title: string;

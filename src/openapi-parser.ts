@@ -1,7 +1,6 @@
 import type {
   EndpointRecord,
   HttpMethod,
-  PaySkillsProvider,
   PaymentInfo,
   PaymentRail,
 } from "./types.js";
@@ -260,7 +259,6 @@ export function parseOpenApi(
   doc: OpenApiDoc,
   options: {
     origin?: string;
-    provider?: PaySkillsProvider;
     builtAt: string;
     capabilityIds?: string[];
   },
@@ -269,7 +267,6 @@ export function parseOpenApi(
     normalizeOrigin(
       options.origin ??
         doc.servers?.[0]?.url ??
-        options.provider?.service_url ??
         "https://unknown.invalid",
     ),
   );
@@ -327,13 +324,7 @@ export function parseOpenApi(
       const schemaMissing = paid && writeMethod && !op.requestBody;
 
       const tags = op.tags as string[] | undefined;
-      const provider = options.provider;
       const searchText = buildSearchText([
-        provider?.title,
-        provider?.description,
-        provider?.use_case,
-        provider?.category,
-        provider?.fqn,
         doc.info?.title,
         doc.info?.description,
         summary,
@@ -353,9 +344,6 @@ export function parseOpenApi(
         summary,
         description: op.description as string | undefined,
         tags,
-        provider_fqn: provider?.fqn,
-        provider_title: provider?.title,
-        category: provider?.category,
         capabilities: options.capabilityIds,
         inputs: extractInputs(op, doc),
         payment,

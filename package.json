@@ -20,7 +20,6 @@
   "packageManager": "pnpm@11.7.0",
   "scripts": {
     "build:ts": "tsc",
-    "build:index": "node dist/cli.js build",
     "build:endpoint-index": "node scripts/build-endpoint-index.mjs",
     "ingest": "node dist/cli.js ingest",
     "enrich": "node dist/enrich-facets.js dist",
