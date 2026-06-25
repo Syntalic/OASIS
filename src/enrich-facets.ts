@@ -13,21 +13,21 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { applyBindings, loadBindings } from "./binding.js";
-import { deriveEndpointFacets } from "./build.js";
-import { dedupeMirrors } from "./dedup-endpoints.js";
+import { applyBindings, loadBindings } from "./bind/binding.js";
+import { deriveEndpointFacets } from "./bind/facets.js";
+import { dedupeMirrors } from "./bind/dedup-endpoints.js";
 import { bindEndpointsByEmbedding } from "./embed/bind-endpoints.js";
-import { gradeEndpoint } from "./quality-gate.js";
-import { buildEntityFlow } from "./entity-flow.js";
-import { buildEntityIndexFromVocab, loadEntityVocabAndSubtypes } from "./entity-index.js";
-import { materializeCuratedIntents } from "./materialize-satisfies.js";
-import { loadOntologySources } from "./ontology.js";
+import { gradeEndpoint } from "./bind/quality-gate.js";
+import { buildEntityFlow } from "./entity/entity-flow.js";
+import { buildEntityIndexFromVocab, loadEntityVocabAndSubtypes } from "./entity/entity-index.js";
+import { materializeCuratedIntents } from "./bind/materialize-satisfies.js";
+import { loadOntologySources } from "./ontology/ontology.js";
 import type {
   CapabilityIntent,
   EndpointRecord,
   Facets,
   IndexBundle,
-} from "./types.js";
+} from "./core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..");

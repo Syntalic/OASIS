@@ -1,8 +1,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { endpointId } from "../id.js";
-import type { CapabilityIntent, EndpointRecord, IndexBundle } from "../types.js";
+import { endpointId } from "../core/id.js";
+import type { CapabilityIntent, EndpointRecord, IndexBundle } from "../core/types.js";
 import type { EvalQuery } from "./discovery-benchmark.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

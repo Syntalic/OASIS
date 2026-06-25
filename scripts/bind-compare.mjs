@@ -16,7 +16,7 @@ const distDir = path.resolve(process.argv[2] ?? path.join(ROOT, "dist"));
 const { bindEndpointsByEmbedding } = await import(
   `file://${path.join(ROOT, "dist/embed/bind-endpoints.js")}`
 );
-const { loadOntologySources } = await import(`file://${path.join(ROOT, "dist/ontology.js")}`);
+const { loadOntologySources } = await import(`file://${path.join(ROOT, "dist/ontology/ontology.js")}`);
 const { endpointEmbedText } = await import(`file://${path.join(ROOT, "dist/embed/endpoint-text.js")}`);
 
 async function extractMainOntology(tmpRoot) {

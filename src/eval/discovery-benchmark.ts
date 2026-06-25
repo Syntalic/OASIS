@@ -1,16 +1,16 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { curatedCapabilitiesForSearch } from "../curated-search.js";
-import { endpointId } from "../id.js";
-import { selectRank } from "../select-policy.js";
-import { searchIndex } from "../search.js";
+import { curatedCapabilitiesForSearch } from "../search/curated-search.js";
+import { endpointId } from "../core/id.js";
+import { selectRank } from "../bind/select-policy.js";
+import { searchIndex } from "../search/search.js";
 import type {
   CapabilityIntent,
   EndpointRecord,
   IndexBundle,
   SearchHit,
-} from "../types.js";
+} from "../core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");

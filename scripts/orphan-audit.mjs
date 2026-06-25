@@ -39,7 +39,7 @@ function host(origin) {
 }
 
 async function loadIntentTerms() {
-  const { loadOntologySources } = await import(`file://${path.join(ROOT, "dist/ontology.js")}`);
+  const { loadOntologySources } = await import(`file://${path.join(ROOT, "dist/ontology/ontology.js")}`);
   const sources = await loadOntologySources(path.join(ROOT, "ontology", "intents"));
   const terms = new Set();
   for (const s of sources) {

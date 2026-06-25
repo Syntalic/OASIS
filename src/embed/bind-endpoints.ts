@@ -11,8 +11,8 @@
 // so it works on both the gemini and MiniLM paths.
 //
 // Endpoint dense vectors are reused across runs via the build-time cache.
-import { CURATED_INTENT_IDS } from "../intent-match.js";
-import type { CapabilityIntent, CuratedIntentSource, EndpointRecord } from "../types.js";
+import { CURATED_INTENT_IDS } from "../search/intent-match.js";
+import type { CapabilityIntent, CuratedIntentSource, EndpointRecord } from "../core/types.js";
 import { EMBED_BACKEND, embedTexts } from "./embedder.js";
 import { embedEndpointsCached } from "./endpoint-cache.js";
 import { capabilityEmbedText } from "./lance-index.js";

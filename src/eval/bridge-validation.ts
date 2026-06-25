@@ -1,9 +1,9 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { entityMatches } from "../entity-match.js";
-import type { EntityIndex } from "../entity-index.js";
-import type { CapabilityIntent, FacetDomain } from "../types.js";
+import { entityMatches } from "../entity/entity-match.js";
+import type { EntityIndex } from "../entity/entity-index.js";
+import type { CapabilityIntent, FacetDomain } from "../core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");

@@ -1,6 +1,6 @@
 import { ingestMppCatalog } from "../../ingest/mpp-catalog.js";
-import { searchIndex } from "../../search.js";
-import type { EndpointRecord, SearchHit } from "../../types.js";
+import { searchIndex } from "../../search/search.js";
+import type { EndpointRecord, SearchHit } from "../../core/types.js";
 
 let cachedEndpoints: EndpointRecord[] | null = null;
 let cachedAt = 0;

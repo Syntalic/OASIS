@@ -4,8 +4,8 @@ import { readFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { evaluateMode } from "./discovery-benchmark.js";
 import { runCompareBenchmark } from "./compare-benchmark.js";
-import type { IndexBundle } from "../types.js";
-import { oasisDistIndex, SKIP_NO_INDEX, skipIfPinned } from "../test-helpers.js";
+import type { IndexBundle } from "../core/types.js";
+import { oasisDistIndex, SKIP_NO_INDEX, skipIfPinned } from "../core/test-helpers.js";
 
 const distIndex = oasisDistIndex();
 

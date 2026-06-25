@@ -2,12 +2,12 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defaultLanceDir } from "../embed/lance-index.js";
-import { curatedCapabilitiesForSearch } from "../curated-search.js";
-import { entityMatches } from "../entity-match.js";
-import { loadEntityIndex } from "../entity-index.js";
-import { loadEntityFlowRuntime, suggestFollowUps } from "../entity-flow-traverse.js";
-import { searchHybridWithFallback } from "../search-hybrid.js";
-import type { CapabilityIntent, IndexBundle } from "../types.js";
+import { curatedCapabilitiesForSearch } from "../search/curated-search.js";
+import { entityMatches } from "../entity/entity-match.js";
+import { loadEntityIndex } from "../entity/entity-index.js";
+import { loadEntityFlowRuntime, suggestFollowUps } from "../entity/entity-flow-traverse.js";
+import { searchHybridWithFallback } from "../search/search-hybrid.js";
+import type { CapabilityIntent, IndexBundle } from "../core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");

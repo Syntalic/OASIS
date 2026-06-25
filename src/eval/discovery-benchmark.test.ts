@@ -5,8 +5,8 @@ import { existsSync } from "node:fs";
 import { defaultLanceDir } from "../embed/lance-index.js";
 import { evaluateMode, loadEvalQueries } from "./discovery-benchmark.js";
 import { evaluateHybridMode, loadMessyQueries } from "./hybrid-mvp.js";
-import type { IndexBundle } from "../types.js";
-import { oasisDistDir, oasisDistIndex, SKIP_NO_INDEX, skipIfPinned } from "../test-helpers.js";
+import type { IndexBundle } from "../core/types.js";
+import { oasisDistDir, oasisDistIndex, SKIP_NO_INDEX, skipIfPinned } from "../core/test-helpers.js";
 
 const distIndex = oasisDistIndex();
 const distDir = oasisDistDir();

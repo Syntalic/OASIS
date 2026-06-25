@@ -2,7 +2,7 @@
 // pay.sh/api/catalog is a PROVIDER directory (not endpoint-level): each provider gives a
 // service_url (origin) + rich metadata + a USD price range. We use it as a discovery-layer
 // origin source; endpoints come from hopping each service_url to /openapi.json (enrichment).
-import { canonicalOrigin } from "../origin-aliases.js";
+import { canonicalOrigin } from "./origin-aliases.js";
 
 const PAYSH_CATALOG = "https://pay.sh/api/catalog";
 

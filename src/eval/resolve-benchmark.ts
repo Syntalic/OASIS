@@ -1,10 +1,10 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { curatedCapabilitiesForSearch } from "../curated-search.js";
-import { CURATED_INTENT_IDS } from "../intent-match.js";
-import { endpointId } from "../id.js";
-import { loadOntologySources } from "../ontology.js";
-import type { CapabilityIntent, IndexBundle } from "../types.js";
+import { curatedCapabilitiesForSearch } from "../search/curated-search.js";
+import { CURATED_INTENT_IDS } from "../search/intent-match.js";
+import { endpointId } from "../core/id.js";
+import { loadOntologySources } from "../ontology/ontology.js";
+import type { CapabilityIntent, IndexBundle } from "../core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");

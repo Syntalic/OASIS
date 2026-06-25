@@ -1,14 +1,14 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
-import { CURATED_INTENT_IDS } from "../intent-match.js";
+import { CURATED_INTENT_IDS } from "../search/intent-match.js";
 import {
   evaluateResolveAccuracy,
   loadCuratedSources,
   runResolveBenchmark,
 } from "./resolve-benchmark.js";
-import type { IndexBundle } from "../types.js";
-import { oasisDistIndex, SKIP_NO_INDEX, skipIfPinned } from "../test-helpers.js";
+import type { IndexBundle } from "../core/types.js";
+import { oasisDistIndex, SKIP_NO_INDEX, skipIfPinned } from "../core/test-helpers.js";
 
 const distIndex = oasisDistIndex();
 

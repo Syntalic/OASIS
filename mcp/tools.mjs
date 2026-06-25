@@ -4,18 +4,18 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { searchHybridWithFallback } from "../dist/search-hybrid.js";
-import { resolveEndpointsForQuery } from "../dist/select-policy.js";
-import { loadEndpointArm } from "../dist/endpoint-arm.js";
+import { searchHybridWithFallback } from "../dist/search/search-hybrid.js";
+import { resolveEndpointsForQuery } from "../dist/bind/select-policy.js";
+import { loadEndpointArm } from "../dist/bind/endpoint-arm.js";
 import { embedText } from "../dist/embed/embedder.js";
-import { relatedOptions } from "../dist/related.js";
-import { loadEntityFlowRuntime, suggestFollowUps } from "../dist/entity-flow-traverse.js";
-import { extractEntities } from "../dist/entity-extract.js";
-import { curatedCapabilitiesForSearch } from "../dist/curated-search.js";
+import { relatedOptions } from "../dist/search/related.js";
+import { loadEntityFlowRuntime, suggestFollowUps } from "../dist/entity/entity-flow-traverse.js";
+import { extractEntities } from "../dist/entity/entity-extract.js";
+import { curatedCapabilitiesForSearch } from "../dist/search/curated-search.js";
 import { defaultLanceDir } from "../dist/embed/lance-index.js";
-import { getTaxonomy } from "../dist/taxonomy.js";
-import { validateSourceIntent } from "../dist/validate-source.js";
-import { validateBinding } from "../dist/binding.js";
+import { getTaxonomy } from "../dist/ontology/taxonomy.js";
+import { validateSourceIntent } from "../dist/ontology/validate-source.js";
+import { validateBinding } from "../dist/bind/binding.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "..", "dist");

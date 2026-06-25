@@ -1,5 +1,5 @@
-import { endpointId } from "../id.js";
-import { canonicalOrigin } from "../origin-aliases.js";
+import { endpointId } from "../core/id.js";
+import { canonicalOrigin } from "../ingest/origin-aliases.js";
 import type { EvalQuery } from "./discovery-benchmark.js";
 
 export interface ParsedEndpointRef {

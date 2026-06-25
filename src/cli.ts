@@ -4,17 +4,17 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { runIngest } from "./ingest/discover.js";
-import { curatedCapabilitiesForSearch } from "./curated-search.js";
-import { endpointId } from "./id.js";
+import { curatedCapabilitiesForSearch } from "./search/curated-search.js";
+import { endpointId } from "./core/id.js";
 import { defaultLanceDir, buildLanceIndex } from "./embed/lance-index.js";
 import {
   DEFAULT_KEYWORD_WEIGHT,
   DEFAULT_VECTOR_WEIGHT,
   searchHybridWithFallback,
-} from "./search-hybrid.js";
-import { searchIndex } from "./search.js";
-import { relatedOptions, type RelatedOption } from "./related.js";
-import type { CapabilityIntent, EndpointRecord, IndexBundle } from "./types.js";
+} from "./search/search-hybrid.js";
+import { searchIndex } from "./search/search.js";
+import { relatedOptions, type RelatedOption } from "./search/related.js";
+import type { CapabilityIntent, EndpointRecord, IndexBundle } from "./core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..");
@@ -164,7 +164,7 @@ program
   .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
   .action(async (opts) => {
     const bundle = await loadBundle(opts.dist);
-    const { validateBundle } = await import("./validate.js");
+    const { validateBundle } = await import("./ontology/validate.js");
     const issues = await validateBundle(bundle);
     if (issues.length > 0) {
       for (const issue of issues) console.error(issue);
@@ -178,7 +178,7 @@ program
   .command("validate-source [file]")
   .description("Validate a contributor task-intent YAML (or all ontology/intents) against the taxonomy")
   .action(async (file?: string) => {
-    const { validateSourceFile, validateAllSources } = await import("./validate-source.js");
+    const { validateSourceFile, validateAllSources } = await import("./ontology/validate-source.js");
     const results = file
       ? [{ file, result: await validateSourceFile(file) }]
       : await validateAllSources();
@@ -203,7 +203,7 @@ program
   .description("Dump the controlled vocabulary (capabilities + facet enums + entity vocab) to bind into")
   .option("--json", "Full JSON (default: summary)")
   .action(async (opts) => {
-    const { getTaxonomy } = await import("./taxonomy.js");
+    const { getTaxonomy } = await import("./ontology/taxonomy.js");
     const tax = await getTaxonomy();
     if (opts.json) {
       console.log(JSON.stringify(tax, null, 2));
@@ -221,7 +221,7 @@ program
   .description("Validate authored endpoint→capability binding(s) (ontology/bindings) against the taxonomy")
   .option("-d, --dist <dir>", "Dist dir for endpoint-match warnings", path.join(PACKAGE_ROOT, "dist"))
   .action(async (file: string | undefined, opts) => {
-    const { validateBindingFile, validateAllBindings } = await import("./binding.js");
+    const { validateBindingFile, validateAllBindings } = await import("./bind/binding.js");
     let endpoints;
     try {
       endpoints = (await loadBundle(opts.dist)).endpoints;
@@ -598,11 +598,11 @@ program
   .option("--json", "Output JSON report")
   .action(async (opts) => {
     const bundle = await loadBundle(opts.dist);
-    const { loadEntityIndex } = await import("./entity-index.js");
+    const { loadEntityIndex } = await import("./entity/entity-index.js");
     const { loadBridgeScenarios, runBridgeValidation } = await import(
       "./eval/bridge-validation.js"
     );
-    const { curatedCapabilitiesForSearch } = await import("./curated-search.js");
+    const { curatedCapabilitiesForSearch } = await import("./search/curated-search.js");
     const entityIndex = await loadEntityIndex(opts.dist);
     const scenarios = await loadBridgeScenarios();
     const capabilities = curatedCapabilitiesForSearch(bundle);

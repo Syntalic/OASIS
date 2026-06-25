@@ -7,7 +7,7 @@
 // hash join (cache misses, an unreachable arm). Changing the text here invalidates the
 // cache: delete dist/cache/endpoint-vecs.* then re-run `pnpm build` + `pnpm run
 // build:endpoint-index`.
-import type { EndpointRecord } from "../types.js";
+import type { EndpointRecord } from "../core/types.js";
 
 /**
  * Billing/wrapper boilerplate the embedder should NOT see. For mechanics-heavy endpoints

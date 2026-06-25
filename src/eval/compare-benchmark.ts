@@ -18,7 +18,7 @@ import {
   loadMessyQueries,
 } from "./hybrid-mvp.js";
 import { rankExternalHits } from "./url-match.js";
-import type { IndexBundle } from "../types.js";
+import type { IndexBundle } from "../core/types.js";
 
 export type DiscoveryMethod = BenchmarkMode;
 
