@@ -165,10 +165,6 @@ export interface EndpointRecord {
   /** Ingest-time local keyphrases (spaCy noun-chunks/POS, lemmatized) — powers the serve-time
    *  keyword-relevance match (string ops only; no live model). See scripts/keyx/enrich_keyphrases.py. */
   keyphrases?: string[];
-  /** Ingest-time enrichment text harvested from the source spec — response-schema property
-   *  names/descriptions, parameter descriptions, x-guidance, .well-known/x402 categories. Fields
-   *  the publisher wrote that the flat record dropped; folded into the lexical/embed task signal. */
-  enrichment?: string;
   /** # of distinct curated intents this endpoint's host is bound to — a catch-all/precision
    *  signal. A host bound to 50+ intents (2s.io, agentutility) is a generic multi-tool whose
    *  broad endpoints flood specialist buckets; used to down-weight it so specialists win rank-1. */

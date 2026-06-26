@@ -22,12 +22,12 @@ const DIST = path.join(__dirname, "..", "dist");
 
 const bundle = JSON.parse(readFileSync(path.join(DIST, "index.json"), "utf8"));
 // OASIS_GATE=1 — spec-completeness quality bar: drop endpoints with NO real published surface
-// (no declared 200, no captured inputs, no spec enrichment) — the thin aggregator-only rows that
+// (no declared 200, no captured inputs) — the thin aggregator-only rows that
 // pollute rank-1 (e.g. billboard "Get Price"). Env-gated to A/B the precision/distinct tradeoff.
 if (process.env.OASIS_GATE === "1") {
   const before = bundle.endpoints.length;
   const specComplete = (e) =>
-    (e.responses && e.responses.has200) || (e.inputs && e.inputs.length) || e.enrichment;
+    (e.responses && e.responses.has200) || (e.inputs && e.inputs.length);
   bundle.endpoints = bundle.endpoints.filter(specComplete);
   console.error(`[oasis] GATE on: ${before} → ${bundle.endpoints.length} endpoints (dropped ${before - bundle.endpoints.length} thin)`);
 }
@@ -64,10 +64,10 @@ const ARM_BEATS_DELTA = Number(process.env.OASIS_ARM_BEATS ?? "0.08");
 const SEMRANK_ON = Number(process.env.OASIS_SEMRANK_WEIGHT ?? "60") > 0;
 // The endpoint arm ranks by pure query↔endpoint cosine, BYPASSING select-policy — so its
 // rank-1 can be a catch-all (agentutility, breadth 53) or a thin row (billboard "Get Price").
-// Apply the SAME quality signals here: drop thin (no 200/inputs/enrichment) when gated, and a
+// Apply the SAME quality signals here: drop thin (no 200/inputs) when gated, and a
 // cosine-scale breadth penalty so specialists beat mega-host catch-alls. Env-gated for A/B.
 const ARM_BREADTH = Number(process.env.OASIS_ARM_BREADTH ?? "0");
-const armThin = (ep) => !((ep.responses && ep.responses.has200) || (ep.inputs && ep.inputs.length) || ep.enrichment);
+const armThin = (ep) => !((ep.responses && ep.responses.has200) || (ep.inputs && ep.inputs.length));
 function armRerank(hits) {
   // Always drop thin/no-spec rows from the arm — it ranks by pure cosine and otherwise surfaces
   // contentless endpoints (billboard "Get Price", "Send feedback to a human") above real specialists.
@@ -450,7 +450,7 @@ const FIND_SCHEMA = {
   type: "object",
   properties: {
     query: { type: "string", description: "The task in natural language." },
-    limit: { type: "number", description: "Max endpoints (default 8)." },
+    limit: { type: "number", description: "Max endpoints (default 12)." },
   },
   required: ["query"],
 };

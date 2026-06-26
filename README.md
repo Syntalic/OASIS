@@ -50,7 +50,7 @@ own corpus — token cost, accuracy, scale.
 ### 🎯 Real-task results
 
 On **40 natural-language tasks** a person would actually type ("what's bitcoin going for right
-now?"), `oasis_find` returns its top 8 endpoints, each hand-scored for whether it *directly performs
+now?"), `oasis_find` returns its top endpoints, each hand-scored for whether it *directly performs
 the task*. Per task it surfaces **~5.6 useful, distinct providers** (unique hosts that do the task) at
 **71% precision**, almost never comes up empty, and spends only **~97 response tokens per useful
 result** — a tight, pre-ranked, de-duplicated list rather than a long one.

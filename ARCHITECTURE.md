@@ -203,7 +203,30 @@ flowchart LR
 2. Rank by **task fit** (`resolveEndpointsForQuery`): intent-id tokens (`weather_forecast`
    → weather/forecast) dominate, matched against each endpoint's own summary/path, plus the
    label/alias vocabulary and the user query; the neutral quality prior only breaks ties.
-3. Return origin, path, `payment.rails`, `price_usd`, `openapi_url`.
+3. Two precision signals layer on top (`select-policy.ts`):
+   - **Catch-all (breadth) penalty** — a host bound to many intents (`host_breadth`; e.g.
+     `2s.io` ~54, `agentutility` ~53) is a generic multi-tool whose broad endpoints crowd
+     specialist buckets. It is down-weighted **only when it has zero id-token match** to the
+     routed intent, so a catch-all that genuinely does the task (its image endpoint in
+     `image_generate`) keeps full score while its off-task endpoint (domain-availability in
+     `whois_lookup`) is demoted. `host_breadth` is computed at build (`enrich-facets.ts`).
+   - **Semantic rescue** — a small query↔endpoint cosine term (reusing the live query
+     embedding against the precomputed endpoint vectors) lifts a **specialist** buried by a
+     synonym gap; gated to low-breadth hosts so it can't ride a catch-all into a specialist bucket.
+4. Return origin, path, `payment.rails`, `price_usd`, `openapi_url`.
+
+**Endpoint arm + consensus** (`bind/endpoint-arm.ts`, `oasis_find`): when the router is a
+near-tie (the right endpoints may be mis-routed or mis-bound), a direct query→endpoint cosine
+search over the whole corpus supplements concentration. It is **confidence-gated** (only on a
+thin routing margin), always **drops thin/no-spec rows** (no declared 200, no inputs), and —
+the **consensus rule** — keeps resolve's rank-1 when the arm corroborates it (its host appears in
+the arm hits): resolve's id-token fit beats the arm's pure cosine for distinctions the cosine
+clusters over (price-*history* vs current-price), while a true routing mis-pick (resolve's #1
+absent from the arm) is still fully rescued.
+
+> The serve-time ranking constants (breadth/semrank weights, arm gate) are tuned defaults and
+> env-overridable (`OASIS_BREADTH_PENALTY`, `OASIS_SEMRANK_WEIGHT`/`_FLOOR`, `OASIS_MARGIN_GATE`,
+> …). `oasis_find` returns up to **12** ranked endpoints by default.
 
 ---
 

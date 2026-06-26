@@ -67,12 +67,8 @@ function queryTokens(query: string): string[] {
 // in the origin/provider title, so a reverse-geocode endpoint at host "openweather"
 // or a market-cap endpoint at "crypto.*" spuriously matched the id tokens
 // weather/crypto. Summary + path + inputs is the clean task signal.
-// OASIS_ENRICH=1 also folds in the ingest-time `enrichment` (response-schema/param-desc/
-// x-guidance the flat record dropped) — the within-bucket rank-1 lever. Env-gated for A/B.
-const USE_ENRICH = process.env.OASIS_ENRICH === "1";
 function endpointText(ep: EndpointRecord): string {
-  const enr = USE_ENRICH && ep.enrichment ? ` ${ep.enrichment}` : "";
-  return `${ep.summary ?? ""} ${ep.description ?? ""} ${ep.path} ${(ep.inputs ?? []).join(" ")}${enr}`.toLowerCase();
+  return `${ep.summary ?? ""} ${ep.description ?? ""} ${ep.path} ${(ep.inputs ?? []).join(" ")}`.toLowerCase();
 }
 
 /** Fraction of the given content tokens present in the endpoint's text. */
