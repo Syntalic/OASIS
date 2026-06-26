@@ -162,6 +162,9 @@ export interface EndpointRecord {
   guidance_available?: boolean;
   openapi_url?: string;
   search_text: string;
+  /** Ingest-time local keyphrases (spaCy noun-chunks/POS, lemmatized) — powers the serve-time
+   *  keyword-relevance match (string ops only; no live model). See scripts/keyx/enrich_keyphrases.py. */
+  keyphrases?: string[];
   built_at: string;
 }
 

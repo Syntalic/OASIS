@@ -130,6 +130,21 @@ export const DEFAULT_NEUTRAL_SCALE = 0.15;
 // docs/proposals/onchain-usage-ranking.md. Until it lands, resolve ranks on task fit +
 // structural quality, with only a guard against absurd prices.
 
+/** Keyword-relevance against PRE-COMPUTED endpoint keyphrases (ingest-time spaCy; serve = string
+ *  match only). Counts query content-tokens present in the endpoint's keyphrase vocabulary — this
+ *  surfaces on-task endpoints described by model/brand name (DALL-E, FLUX) that the id-token term
+ *  misses, and de-weights bucket noise (QR/solar) whose keyphrases don't overlap the query.
+ *  Env-gated (default 0 = off) so it's a safe, A/B-able addition. */
+export const DEFAULT_KEYPHRASE_WEIGHT = Number(process.env.OASIS_KEYPHRASE_WEIGHT ?? "0");
+function keyphraseOverlap(ep: EndpointRecord, qTokens: string[]): number {
+  const kp = ep.keyphrases;
+  if (!kp || !kp.length || !qTokens.length) return 0;
+  const vocab = new Set(kp.join(" ").split(/\s+/));
+  let c = 0;
+  for (const t of qTokens) if (vocab.has(t)) c++;
+  return c;
+}
+
 /** Weak INTERIM quality proxy — documented + a real input schema. Structural (harder to
  *  game than self-description), but a placeholder until popularity lands. */
 export const DEFAULT_QUALITY_WEIGHT = 4;
@@ -174,6 +189,7 @@ export function resolveEndpointsForQuery(
   neutralScale = DEFAULT_NEUTRAL_SCALE,
   qualityWeight = DEFAULT_QUALITY_WEIGHT,
   priceOutlierPenalty = DEFAULT_PRICE_OUTLIER_PENALTY,
+  keyphraseWeight = DEFAULT_KEYPHRASE_WEIGHT,
 ): EndpointRecord[] {
   const candidates = satisfiesRefsToEndpoints(intent.satisfies, endpoints);
   const qTokens = queryTokens(query);
@@ -192,6 +208,7 @@ export function resolveEndpointsForQuery(
         idWeight * matchCount(ep, idTokens) +
         vocabWeight * lexicalScore(ep, vocabTokens) +
         queryWeight * lexicalScore(ep, qTokens) +
+        keyphraseWeight * keyphraseOverlap(ep, qTokens) +
         qualityScore(ep, qualityWeight) +
         priceOutlierGuard(ep, median, priceOutlierPenalty),
     }))
