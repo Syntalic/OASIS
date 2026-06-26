@@ -67,8 +67,12 @@ function queryTokens(query: string): string[] {
 // in the origin/provider title, so a reverse-geocode endpoint at host "openweather"
 // or a market-cap endpoint at "crypto.*" spuriously matched the id tokens
 // weather/crypto. Summary + path + inputs is the clean task signal.
+// OASIS_ENRICH=1 also folds in the ingest-time `enrichment` (response-schema/param-desc/
+// x-guidance the flat record dropped) — the within-bucket rank-1 lever. Env-gated for A/B.
+const USE_ENRICH = process.env.OASIS_ENRICH === "1";
 function endpointText(ep: EndpointRecord): string {
-  return `${ep.summary ?? ""} ${ep.description ?? ""} ${ep.path} ${(ep.inputs ?? []).join(" ")}`.toLowerCase();
+  const enr = USE_ENRICH && ep.enrichment ? ` ${ep.enrichment}` : "";
+  return `${ep.summary ?? ""} ${ep.description ?? ""} ${ep.path} ${(ep.inputs ?? []).join(" ")}${enr}`.toLowerCase();
 }
 
 /** Fraction of the given content tokens present in the endpoint's text. */
@@ -145,6 +149,42 @@ function keyphraseOverlap(ep: EndpointRecord, qTokens: string[]): number {
   return c;
 }
 
+/**
+ * CONDITIONAL semantic rerank — the within-bucket fix for the rank-1 gap (correct-P@3 is 100%
+ * but correct-P@1 lags: the right endpoint is in the bucket, lexical ranking just buries it on
+ * a synonym gap the keyphrase/id terms can't bridge). `semanticOf` returns the query↔endpoint
+ * cosine from the PRECOMPUTED endpoint vectors (ingest-time gemini), scored against the SAME
+ * live query embedding already computed for routing — so this adds NO new live model, honoring
+ * "all NLP at ingest, only the query embedding live".
+ *
+ * The FLOOR is the conditional gate, not a blend: cosine below it contributes 0, so only an
+ * endpoint the query is *confidently* about gets promoted. That's what separates this from the
+ * naive query↔endpoint fusion that regressed every time (−27 queries): a flat additive cosine
+ * term lifts every mid-similarity sibling equally and dilutes the lexical wins; the floor makes
+ * the term fire sparsely, as a rescue, leaving confident lexical buckets untouched. Env-gated
+ * (weight default 0 = off) for clean A/B. Floor calibrated like the sparse-floor (embed-once,
+ * rebind-many): high enough to ignore bucket noise, low enough to catch the real synonym cases.
+ */
+// Defaults calibrated on the dogfooding battery: weight 60 / floor 0.58 gets the synonym-gap
+// rescues (sendemail, markdown, domain_register) without boosting mis-bound noise into rank-1.
+export const DEFAULT_SEMRANK_WEIGHT = Number(process.env.OASIS_SEMRANK_WEIGHT ?? "60");
+export const DEFAULT_SEMRANK_FLOOR = Number(process.env.OASIS_SEMRANK_FLOOR ?? "0.58");
+function semanticRescue(cos: number): number {
+  return DEFAULT_SEMRANK_WEIGHT * Math.max(0, cos - DEFAULT_SEMRANK_FLOOR);
+}
+
+/** Catch-all penalty: down-weight endpoints whose host is bound to many intents. A host at
+ *  50+ intents (2s.io 54, agentutility 53) is a generic multi-tool whose broad endpoints win
+ *  rank-1 over specialist providers on lexical/semantic coincidence (the dominant rank-1 failure
+ *  mode: 5/7 misses are a mega-host beating the correct specialist at rank 2-3). Linear above a
+ *  threshold so specialists (breadth ~1-10) are untouched. Env-gated for A/B. */
+export const DEFAULT_BREADTH_PENALTY = Number(process.env.OASIS_BREADTH_PENALTY ?? "2.0");
+const BREADTH_THRESHOLD = Number(process.env.OASIS_BREADTH_THRESHOLD ?? "12");
+function breadthPenalty(ep: EndpointRecord): number {
+  const b = ep.host_breadth ?? 0;
+  return b > BREADTH_THRESHOLD ? -DEFAULT_BREADTH_PENALTY * (b - BREADTH_THRESHOLD) : 0;
+}
+
 /** Weak INTERIM quality proxy — documented + a real input schema. Structural (harder to
  *  game than self-description), but a placeholder until popularity lands. */
 export const DEFAULT_QUALITY_WEIGHT = 4;
@@ -183,6 +223,9 @@ export function resolveEndpointsForQuery(
   endpoints: EndpointRecord[],
   query: string,
   max = 10,
+  // Returns the query↔endpoint cosine for the conditional semantic rescue (see semanticRescue).
+  // Undefined (no vectors available, e.g. oasisResolve) → the term is simply absent.
+  semanticOf?: (ep: EndpointRecord) => number,
   queryWeight = DEFAULT_QUERY_WEIGHT,
   vocabWeight = DEFAULT_VOCAB_WEIGHT,
   idWeight = DEFAULT_ID_WEIGHT,
@@ -198,20 +241,34 @@ export function resolveEndpointsForQuery(
   const median = priceMedian(candidates);
 
   return [...candidates]
-    .map((ep) => ({
-      ep,
-      // Task fit (id/vocab/query) GATES; among comparably on-task endpoints, weak
-      // structural quality breaks ties, with an outlier guard against absurd prices.
-      // (A popularity/usage term belongs here — see docs/proposals/onchain-usage-ranking.md.)
-      score:
-        neutralScale * scoreEndpointNeutral(ep, intent) +
-        idWeight * matchCount(ep, idTokens) +
-        vocabWeight * lexicalScore(ep, vocabTokens) +
-        queryWeight * lexicalScore(ep, qTokens) +
-        keyphraseWeight * keyphraseOverlap(ep, qTokens) +
-        qualityScore(ep, qualityWeight) +
-        priceOutlierGuard(ep, median, priceOutlierPenalty),
-    }))
+    .map((ep) => {
+      const idHits = matchCount(ep, idTokens);
+      return {
+        ep,
+        // Task fit (id/vocab/query) GATES; among comparably on-task endpoints, weak
+        // structural quality breaks ties, with an outlier guard against absurd prices.
+        // (A popularity/usage term belongs here — see docs/proposals/onchain-usage-ranking.md.)
+        // The breadth (catch-all) penalty fires ONLY when the endpoint has ZERO id-token match —
+        // i.e. a mega-host generic crowding a specialist bucket (agentutility "Domain availability"
+        // in whois). A catch-all that DOES match the intent id (agentutility's crypto endpoint in
+        // crypto_spot_price) keeps full score — so we demote noise without demoting the cases where
+        // the multi-tool is genuinely the right answer (the net-zero failure of a blanket penalty).
+        score:
+          neutralScale * scoreEndpointNeutral(ep, intent) +
+          idWeight * idHits +
+          vocabWeight * lexicalScore(ep, vocabTokens) +
+          queryWeight * lexicalScore(ep, qTokens) +
+          keyphraseWeight * keyphraseOverlap(ep, qTokens) +
+          // Semantic rescue lifts SPECIALISTS buried by a lexical/synonym gap — not mega-host
+          // catch-alls (whose high cosine to everything would let them ride the rescue into a
+          // specialist's bucket, e.g. agentutility boosted into social_data). Gate it on low
+          // breadth so the rescue can't promote a catch-all.
+          (semanticOf && (ep.host_breadth ?? 0) <= BREADTH_THRESHOLD ? semanticRescue(semanticOf(ep)) : 0) +
+          (idHits === 0 ? breadthPenalty(ep) : 0) +
+          qualityScore(ep, qualityWeight) +
+          priceOutlierGuard(ep, median, priceOutlierPenalty),
+      };
+    })
     .sort((a, b) => b.score - a.score)
     .slice(0, max)
     .map((x) => x.ep);

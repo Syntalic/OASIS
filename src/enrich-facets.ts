@@ -141,6 +141,20 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
 
   const capabilities: CapabilityIntent[] = [...curated, ...preserved];
 
+  // Per-host intent breadth — # of distinct curated intents a host is bound to. A high value
+  // flags a generic multi-tool catch-all (2s.io ~54, agentutility ~53); the serve ranker uses it
+  // to down-weight such hosts when they have no task-fit to the routed intent (see select-policy
+  // breadthPenalty). Computed here so it ships in the index rather than being patched post-build.
+  const hostOf = (origin: string) => origin.replace(/^https?:\/\//, "").split("/")[0];
+  const hostIntents = new Map<string, Set<string>>();
+  for (const cap of capabilities) {
+    for (const ref of cap.satisfies ?? []) {
+      const h = hostOf(ref.origin);
+      (hostIntents.get(h) ?? hostIntents.set(h, new Set()).get(h)!).add(cap.id);
+    }
+  }
+  for (const ep of endpoints) ep.host_breadth = hostIntents.get(hostOf(ep.origin))?.size ?? 0;
+
   const next: IndexBundle = { ...bundle, endpoints, capabilities };
 
   await writeFile(indexPath, JSON.stringify(next, null, 2));
