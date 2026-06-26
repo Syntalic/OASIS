@@ -1,0 +1,71 @@
+name: Index Snapshot & Deploy
+
+# MANUAL trigger only. The index is a non-deterministic network crawl, so it must be pinned
+# intentionally (a validated rebuild) — never on every push. This job:
+#   1. builds the index (crawl → enrich → embed → quantize),
+#   2. pins it as a GitHub Release + commits the dist-snapshot.lock.json pointer (publish.sh),
+#   3. (optionally) deploys that exact pinned index to Fly — so deployed ≡ pinned ≡ released.
+#
+# Requires repo secrets: GOOGLE_API_KEY (gemini binder/embeddings), FLY_API_TOKEN (deploy).
+# workflow_dispatch only shows a "Run" button once this file is on the DEFAULT branch (main).
+
+on:
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: "Deploy the pinned index to Fly after pinning"
+        type: boolean
+        default: true
+
+concurrency:
+  group: index-snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write # create the release + push the lockfile commit
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build index (crawl → enrich → embed → quantize)
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          pnpm run build              # tsc → ingest (crawl) → enrich-facets (bind + host_breadth)
+          pnpm run embed              # LanceDB curated-capability vectors
+          pnpm run build:endpoint-index   # quantized int8 endpoint-arm index
+
+      - name: Pin snapshot (GitHub Release + lockfile) and commit the pointer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          bash scripts/snapshot/publish.sh
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dist-snapshot.lock.json
+          git commit -m "chore: pin index snapshot (CI) [skip ci]"
+          git push
+
+      - name: Deploy pinned index to Fly
+        if: ${{ inputs.deploy }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: |
+          curl -L https://fly.io/install.sh | sh
+          export PATH="$HOME/.fly/bin:$PATH"
+          # The dist just built+pinned in this runner is the build context; the Dockerfile
+          # COPYs it and re-embeds the curated lance in-image (needs the build-secret).
+          flyctl deploy --config mcp/deploy/fly.toml --remote-only \
+            --build-secret GOOGLE_API_KEY="$GOOGLE_API_KEY"
