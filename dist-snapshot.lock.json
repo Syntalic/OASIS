@@ -1,0 +1,7 @@
+{
+  "release_tag": "oasis-index-20260626-5e7582a",
+  "asset": "index.json.gz",
+  "sha256": "5988d7e005539096bca0fa4630c7dca26fd0993fd048469ebd6f0607d35f3ec3",
+  "built_from_commit": "5e7582a459fce6fac106846a0c945f5cedde928f",
+  "pinned_at": "20260626"
+}
