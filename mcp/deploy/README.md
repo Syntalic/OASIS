@@ -52,3 +52,15 @@ Client config once live:
 { "mcpServers": { "oasis": { "url": "https://mcp.oasisindex.org/mcp",
     "headers": { "Authorization": "Bearer <token>" } } } }
 ```
+
+## Reproducible index (deploy from a pinned snapshot)
+
+The image ships a pre-built `dist/` (`COPY dist ./dist`). To deploy a **reproducible** index rather than
+whatever crawl is on the build machine, materialize `dist/` from the pinned snapshot first:
+
+```bash
+scripts/snapshot/restore.sh   # rebuilds dist/ from dist-snapshot.lock.json (deterministic, no crawl)
+fly deploy                     # now COPYs the pinned index
+```
+
+See `docs/index-snapshots.md`. Pin a new snapshot with `scripts/snapshot/publish.sh` after an authoritative build.
