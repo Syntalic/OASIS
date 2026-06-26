@@ -1,3 +1,4 @@
+import nlp from "compromise";
 import type { CapabilityIntent, IndexBundle } from "../core/types.js";
 import { V1_BRIDGE_IDENTITIES } from "./entity-match.js";
 
@@ -20,16 +21,58 @@ const DOMAIN_RE = /\b([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}\b/i;
 
 const FORBIDDEN = new Set(["Query", "StructuredRecord", "NamedEntity", "Org"]);
 
+/**
+ * Extract held identities from a finding for oasis_next. Hybrid, all LOCAL/serve-light (pure JS,
+ * no live model download): compromise.js NER for Person/Place/Company (matches spaCy ~6/9 on the
+ * battery) + the domain/`City, ST` regexes + a domain→Company derivation. Replaces the prior
+ * regex-only path (1/9). See reports/oasis-implementation-plan.md (Phase 1).
+ */
 export function extractEntitiesFromFinding(finding: string): HeldEntity[] {
   const out: HeldEntity[] = [];
-  const place = finding.match(PLACE_RE);
-  if (place) {
-    out.push({ entity: "Place", value: `${place[1]}, ${place[2]}`, kind: "identity" });
-  }
+  const seen = new Set<string>();
+  const add = (entity: string, value: string) => {
+    const v = value.trim().replace(/[?.,!]+$/, "");
+    if (!v) return;
+    const k = `${entity}:${v.toLowerCase()}`;
+    if (seen.has(k)) return;
+    seen.add(k);
+    out.push({ entity, value: v, kind: "identity" });
+  };
+
+  // Domain (regex — most reliable; compromise doesn't do domains).
   const domain = finding.match(DOMAIN_RE);
   if (domain) {
-    out.push({ entity: "Domain", value: domain[0].toLowerCase(), kind: "identity" });
+    add("Domain", domain[0].toLowerCase());
+    // A domain usually names a Company too ("stripe.com" → Stripe) — derive it so a Company-bridge
+    // is reachable even when compromise doesn't tag the org.
+    const root = domain[0].toLowerCase().replace(/^www\./, "").split(".")[0];
+    if (root && root.length > 1) add("Company", root[0].toUpperCase() + root.slice(1));
   }
+
+  // compromise.js NER (pure JS) for Person / Place / Company.
+  try {
+    const doc = nlp(finding);
+    for (const p of doc.people().out("array") as string[]) add("Person", p);
+    for (const p of doc.places().out("array") as string[]) add("Place", p);
+    for (const o of doc.organizations().out("array") as string[]) add("Company", o);
+    // Last-resort: if NO Company was found, the salient proper noun (not a Person/Place) is
+    // usually the org/brand the query is about (e.g. "Apple" in a stock query). Conservative —
+    // fires once, only when needed — to avoid spurious Company entities. A brand/product gazetteer
+    // would improve precision + ProductCategory typing (Phase-1 follow-up).
+    if (!out.some((e) => e.entity === "Company")) {
+      const claimed = new Set(out.map((e) => (e.value ?? "").toLowerCase()));
+      const pn = (doc.match("#ProperNoun+").not("#Person").not("#Place").out("array") as string[])
+        .find((x) => x.length > 1 && !claimed.has(x.toLowerCase()));
+      if (pn) add("Company", pn);
+    }
+  } catch {
+    /* compromise is best-effort; the regexes below still run */
+  }
+
+  // `City, ST` regex as a Place supplement.
+  const place = finding.match(PLACE_RE);
+  if (place) add("Place", `${place[1]}, ${place[2]}`);
+
   return out;
 }
 
