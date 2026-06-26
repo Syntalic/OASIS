@@ -2,6 +2,8 @@
 
 **Status:** parked — revisit after the binding pipeline is productionized. The per-record substrate already exists (`_completeness`, `_flags`, `_wellknown`); this doc captures how to turn it into a composite ranking score.
 
+> **Shipped since (separate from this composite proposal):** a **catch-all / breadth penalty** (`host_breadth` — down-weight a host bound to many intents when it has no id-token match to the routed intent) and a **breadth-gated semantic rescue**, plus the endpoint-arm **consensus** rule. These are *relevance/precision* signals in `select-policy.ts` / `mcp/tools.mjs` (see ARCHITECTURE.md → Resolve path), not the completeness/trust/demand composite below — which is still parked.
+
 ## Goal
 Rank `oasis_find`/`resolve` results by quality + trust + demand, not just relevance.
 

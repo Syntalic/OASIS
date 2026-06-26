@@ -33,6 +33,34 @@ Tools: **`oasis_find`** (start here), `oasis_next`, `oasis_search`, `oasis_resol
 `oasis_taxonomy`, `oasis_validate`. Hosted instance: `https://mcp.oasisindex.org/mcp`.
 Drop-in agent skill: [`mcp/skills/oasis.md`](mcp/skills/oasis.md).
 
+## Release & deploy (run LOCALLY — no CI workflow, no secrets in this public repo)
+
+The index is a non-deterministic network crawl, so a snapshot is pinned **intentionally** (a
+validated rebuild), not on every push. There is **no GitHub Action** for this and **no env keys
+in the repo** — `GOOGLE_API_KEY` lives only in your local `.env` (gitignored; never commit it),
+and Fly auth comes from your local `fly auth`. Load the key per shell with `set -a; . ./.env; set +a`.
+
+```bash
+# 1. Build the index (gemini — needs GOOGLE_API_KEY from .env)
+set -a; . ./.env; set +a
+pnpm run build                 # tsc → ingest (crawl) → enrich-facets (bind + host_breadth)
+pnpm run embed                 # LanceDB curated-capability vectors
+pnpm run build:endpoint-index  # quantized int8 endpoint-arm index
+
+# 2. (optional) validate before shipping — CI gate + your eval harness
+
+# 3. Pin the snapshot: GitHub Release + the in-git pointer, then commit it
+scripts/snapshot/publish.sh    # creates Release oasis-index-<date>-<sha> + writes dist-snapshot.lock.json
+git add dist-snapshot.lock.json && git commit -m "chore: pin index snapshot <tag>" && git push
+
+# 4. Deploy that index to Fly (build context = repo root; ships the prebuilt dist)
+fly deploy --config mcp/deploy/fly.toml --build-secret GOOGLE_API_KEY="$GOOGLE_API_KEY"
+```
+
+Reproduce a pinned index anywhere (worktree-deletion-proof): `scripts/snapshot/restore.sh`
+(reads `dist-snapshot.lock.json` → downloads the Release asset → deterministic no-crawl rebuild).
+Details: [docs/index-snapshots.md](docs/index-snapshots.md), [mcp/deploy/README.md](mcp/deploy/README.md).
+
 ## CLI
 
 `pnpm exec capindex <search|resolve|validate|ingest|embed|build> …` (see README → CLI).

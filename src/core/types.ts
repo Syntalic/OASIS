@@ -162,6 +162,13 @@ export interface EndpointRecord {
   guidance_available?: boolean;
   openapi_url?: string;
   search_text: string;
+  /** Ingest-time local keyphrases (spaCy noun-chunks/POS, lemmatized) — powers the serve-time
+   *  keyword-relevance match (string ops only; no live model). See scripts/keyx/enrich_keyphrases.py. */
+  keyphrases?: string[];
+  /** # of distinct curated intents this endpoint's host is bound to — a catch-all/precision
+   *  signal. A host bound to 50+ intents (2s.io, agentutility) is a generic multi-tool whose
+   *  broad endpoints flood specialist buckets; used to down-weight it so specialists win rank-1. */
+  host_breadth?: number;
   built_at: string;
 }
 

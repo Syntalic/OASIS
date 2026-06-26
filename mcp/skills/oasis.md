@@ -27,7 +27,7 @@ One call returns a ranked, de-duplicated list of paid endpoints, each with `meth
 `price_usd`, and `rails`:
 
 ```json
-{ "query": "convert 100 USD to EUR", "limit": 8 }
+{ "query": "convert 100 USD to EUR", "limit": 12 }
 ```
 
 - **Query in plain language** — the task a person would type ("what's bitcoin going for",

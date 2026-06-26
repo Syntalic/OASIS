@@ -6,7 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { searchHybridWithFallback } from "../dist/search/search-hybrid.js";
 import { resolveEndpointsForQuery } from "../dist/bind/select-policy.js";
-import { loadEndpointArm } from "../dist/bind/endpoint-arm.js";
+import { loadEndpointArm, endpointKey } from "../dist/bind/endpoint-arm.js";
 import { embedText } from "../dist/embed/embedder.js";
 import { relatedOptions } from "../dist/search/related.js";
 import { loadEntityFlowRuntime, suggestFollowUps } from "../dist/entity/entity-flow-traverse.js";
@@ -21,6 +21,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "..", "dist");
 
 const bundle = JSON.parse(readFileSync(path.join(DIST, "index.json"), "utf8"));
+// OASIS_GATE=1 — spec-completeness quality bar: drop endpoints with NO real published surface
+// (no declared 200, no captured inputs) — the thin aggregator-only rows that
+// pollute rank-1 (e.g. billboard "Get Price"). Env-gated to A/B the precision/distinct tradeoff.
+if (process.env.OASIS_GATE === "1") {
+  const before = bundle.endpoints.length;
+  const specComplete = (e) =>
+    (e.responses && e.responses.has200) || (e.inputs && e.inputs.length);
+  bundle.endpoints = bundle.endpoints.filter(specComplete);
+  console.error(`[oasis] GATE on: ${before} → ${bundle.endpoints.length} endpoints (dropped ${before - bundle.endpoints.length} thin)`);
+}
 const lanceDir = defaultLanceDir(DIST);
 const curatedCaps = curatedCapabilitiesForSearch(bundle);
 const capById = new Map(curatedCaps.map((c) => [c.id, c]));
@@ -49,6 +59,26 @@ const endpointArm = loadEndpointArm(DIST, bundle.endpoints);
 const MARGIN_GATE = Number(process.env.OASIS_MARGIN_GATE ?? "0.011");
 const ARM_CONSIDER_MARGIN = Number(process.env.OASIS_ARM_CONSIDER ?? "0.05");
 const ARM_BEATS_DELTA = Number(process.env.OASIS_ARM_BEATS ?? "0.08");
+// Conditional semantic rerank of the concentrated top bucket (see select-policy semanticRescue).
+// On = weight>0 AND the endpoint vectors loaded. Reuses the live query embedding (memoized below).
+const SEMRANK_ON = Number(process.env.OASIS_SEMRANK_WEIGHT ?? "60") > 0;
+// The endpoint arm ranks by pure query↔endpoint cosine, BYPASSING select-policy — so its
+// rank-1 can be a catch-all (agentutility, breadth 53) or a thin row (billboard "Get Price").
+// Apply the SAME quality signals here: drop thin (no 200/inputs) when gated, and a
+// cosine-scale breadth penalty so specialists beat mega-host catch-alls. Env-gated for A/B.
+const ARM_BREADTH = Number(process.env.OASIS_ARM_BREADTH ?? "0");
+const armThin = (ep) => !((ep.responses && ep.responses.has200) || (ep.inputs && ep.inputs.length));
+function armRerank(hits) {
+  // Always drop thin/no-spec rows from the arm — it ranks by pure cosine and otherwise surfaces
+  // contentless endpoints (billboard "Get Price", "Send feedback to a human") above real specialists.
+  let h = hits.filter((a) => !armThin(a.ep));
+  if (ARM_BREADTH > 0) {
+    h = [...h]
+      .map((a) => ({ ...a, score: a.score - ARM_BREADTH * Math.max(0, (a.ep.host_breadth ?? 0) - 12) }))
+      .sort((x, y) => y.score - x.score);
+  }
+  return h;
+}
 if (endpointArm.ready) {
   console.error(`[oasis] endpoint arm ready (${endpointArm.size} endpoints, ${endpointArm.source}); gate: margin<${MARGIN_GATE} or (margin<${ARM_CONSIDER_MARGIN} & arm beats conc by ${ARM_BEATS_DELTA})`);
 }
@@ -120,8 +150,19 @@ function oasisResolve({ intent_id, query, limit = 8 }) {
 // vectors give recall on oblique queries) is expanded into a single FLAT, ranked
 // endpoint list with payment metadata inline — the agent makes ONE call and reads one
 // compact list, no capability/resolve round-trip and no separate related[] payload.
-async function oasisFind({ query, limit = 8 }) {
+async function oasisFind({ query, limit = 12 }) {
   const hits = await searchHybridWithFallback(query, bundle, lanceDir, 12);
+  // The query embedding is the ONE live model call (memoized) — shared by the semantic
+  // rerank, the gated arm, and condfuse so no path embeds the query twice.
+  let _qv = null;
+  const getQueryVec = async () => (_qv ??= await embedText(query));
+  // Conditional semantic rescue for the concentrated top bucket: precompute the cosine lookup
+  // once (sync, over in-memory endpoint vectors) so resolveEndpointsForQuery can call it per ep.
+  let semanticOf;
+  if (SEMRANK_ON && endpointArm.ready) {
+    const sv = await getQueryVec();
+    semanticOf = (ep) => endpointArm.cosineToEndpoint(sv, endpointKey(ep)) ?? 0;
+  }
   const out = [];
   const seen = new Set();
   const add = (method, origin, path, summary, price_usd, rails, via) => {
@@ -145,7 +186,8 @@ async function oasisFind({ query, limit = 8 }) {
     if (out.length >= limit) return;
     const intent = capById.get(h.capability_id);
     if (!intent) return;
-    const pool = resolveEndpointsForQuery(intent, bundle.endpoints, query, i === 0 ? limit * 3 : 4);
+    // Semantic rescue applies to the concentrated top bucket only — where the rank-1 gap lives.
+    const pool = resolveEndpointsForQuery(intent, bundle.endpoints, query, i === 0 ? limit * 3 : 4, i === 0 ? semanticOf : undefined);
     const addEp = (e) =>
       add(e.method, e.origin, e.path, e.summary, e.payment?.price_usd, (e.payment?.rails ?? []).map((r) => r.protocol), h.capability_id);
     if (i === 0) {
@@ -164,8 +206,8 @@ async function oasisFind({ query, limit = 8 }) {
   // close-race tail). Degrades to pure concentration when the vector cache is absent.
   const margin = caps.length >= 2 ? caps[0].score - caps[1].score : 1;
   if (endpointArm.ready && out.length && margin < ARM_CONSIDER_MARGIN) {
-    const queryVec = await embedText(query);
-    const armHits = endpointArm.topK(queryVec, limit * 3);
+    const queryVec = await getQueryVec();
+    const armHits = armRerank(endpointArm.topK(queryVec, limit * 6));
     // Gate signal 2: does the arm's best beat concentration's #1 on query-cosine by a clear
     // margin? (cosineToEndpoint reuses the same in-memory vectors — no extra embed call.)
     const concCosine = endpointArm.cosineToEndpoint(queryVec, `${out[0].method} ${out[0].url}`);
@@ -176,17 +218,63 @@ async function oasisFind({ query, limit = 8 }) {
       const seenHost = new Set();
       for (const a of armHits) { if (picked.length >= limit) break; const ho = hostOf(a.ep.origin); if (seenHost.has(ho)) continue; seenHost.add(ho); picked.push(a); }
       for (const a of armHits) { if (picked.length >= limit) break; if (!picked.includes(a)) picked.push(a); }
-      return {
-        endpoints: picked.map((a) => ({
-          method: a.ep.method,
-          url: `${a.ep.origin}${a.ep.path}`,
-          summary: a.ep.summary,
-          price_usd: a.ep.payment?.price_usd,
-          rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol),
-          via: "endpoint-arm",
-        })),
-      };
+      const armList = picked.map((a) => ({
+        method: a.ep.method,
+        url: `${a.ep.origin}${a.ep.path}`,
+        summary: a.ep.summary,
+        price_usd: a.ep.payment?.price_usd,
+        rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol),
+        via: "endpoint-arm",
+      }));
+      // CONSENSUS: keep resolve's rank-1 when the arm corroborates it (its host is among the arm
+      // hits). Resolve's id-token fit beats the arm's pure cosine for distinctions the cosine
+      // clusters over (price-HISTORY vs current-price), while a true routing mispick — where
+      // resolve's #1 is NOT in the arm hits — still gets fully rescued by the arm.
+      const r1Host = hostOf(out[0].url);
+      if (armHits.some((a) => hostOf(a.ep.origin) === r1Host)) {
+        return { endpoints: [out[0], ...armList.filter((e) => hostOf(e.url) !== r1Host)].slice(0, limit) };
+      }
+      return { endpoints: armList };
     }
+  }
+  // EXPERIMENTAL conditional fusion (OASIS_CONDFUSE=1) — runs ONLY when the gated arm did NOT fire.
+  // Diversify a HOST-MONOPOLIZED intent bucket (e.g. image_gen = all one provider) by keeping one
+  // endpoint per distinct intent host, then backfilling from query→endpoint direct retrieval.
+  // Host-DIVERSE buckets (whois, web_scrape) are untouched; arm-served queries already returned above.
+  if (process.env.OASIS_CONDFUSE !== "0" && endpointArm.ready && out.length) {
+    const uHost = (u) => u.replace(/^https?:\/\//, "").split("/")[0];
+    if (new Set(out.map((e) => uHost(e.url))).size < limit) {
+      const qv = await getQueryVec();
+      const arm = armRerank(endpointArm.topK(qv, limit * 6));
+      const kept = []; const kh = new Set();
+      for (const e of out) { const h = uHost(e.url); if (kh.has(h)) continue; kh.add(h); kept.push(e); }
+      for (const a of arm) {
+        if (kept.length >= limit) break;
+        const url = `${a.ep.origin}${a.ep.path}`; const h = uHost(url); if (kh.has(h)) continue; kh.add(h);
+        kept.push({ method: a.ep.method, url, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: "fused-arm" });
+      }
+      return { endpoints: kept.slice(0, limit) };
+    }
+  }
+  // OASIS_ARMFILL=1 — distinct-relevant/q lever. Diagnosis: ~half the un-surfaced relevant hosts
+  // are ORPHANS (bound to no intent), unreachable by the resolve path; the arm searches the whole
+  // corpus by query-cosine (a relevance proxy) so it CAN surface them. Pin rank-1 from resolve
+  // (precision untouched), then fill slots 2..N with the arm's top distinct hosts — recall without
+  // touching the rank-1 win. Runs only when the gated arm did NOT already return.
+  if (process.env.OASIS_ARMFILL === "1" && endpointArm.ready && out.length) {
+    const uHost = (u) => u.replace(/^https?:\/\//, "").split("/")[0];
+    const qv = await getQueryVec();
+    const armHits = armRerank(endpointArm.topK(qv, limit * 10));
+    const keep = [out[0]];
+    const seen = new Set([uHost(out[0].url)]);
+    for (const a of armHits) {
+      if (keep.length >= limit) break;
+      const url = `${a.ep.origin}${a.ep.path}`; const h = uHost(url);
+      if (seen.has(h)) continue; seen.add(h);
+      keep.push({ method: a.ep.method, url, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: "arm-fill" });
+    }
+    for (const e of out) { if (keep.length >= limit) break; const h = uHost(e.url); if (seen.has(h)) continue; seen.add(h); keep.push(e); }
+    return { endpoints: keep.slice(0, limit) };
   }
   return { endpoints: out.slice(0, limit) };
 }
@@ -362,7 +450,7 @@ const FIND_SCHEMA = {
   type: "object",
   properties: {
     query: { type: "string", description: "The task in natural language." },
-    limit: { type: "number", description: "Max endpoints (default 8)." },
+    limit: { type: "number", description: "Max endpoints (default 12)." },
   },
   required: ["query"],
 };
