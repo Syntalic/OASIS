@@ -188,6 +188,25 @@ async function oasisFind({ query, limit = 8 }) {
       };
     }
   }
+  // EXPERIMENTAL conditional fusion (OASIS_CONDFUSE=1) — runs ONLY when the gated arm did NOT fire.
+  // Diversify a HOST-MONOPOLIZED intent bucket (e.g. image_gen = all one provider) by keeping one
+  // endpoint per distinct intent host, then backfilling from query→endpoint direct retrieval.
+  // Host-DIVERSE buckets (whois, web_scrape) are untouched; arm-served queries already returned above.
+  if (process.env.OASIS_CONDFUSE === "1" && endpointArm.ready && out.length) {
+    const uHost = (u) => u.replace(/^https?:\/\//, "").split("/")[0];
+    if (new Set(out.map((e) => uHost(e.url))).size < limit) {
+      const qv = await embedText(query);
+      const arm = endpointArm.topK(qv, limit * 4);
+      const kept = []; const kh = new Set();
+      for (const e of out) { const h = uHost(e.url); if (kh.has(h)) continue; kh.add(h); kept.push(e); }
+      for (const a of arm) {
+        if (kept.length >= limit) break;
+        const url = `${a.ep.origin}${a.ep.path}`; const h = uHost(url); if (kh.has(h)) continue; kh.add(h);
+        kept.push({ method: a.ep.method, url, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: "fused-arm" });
+      }
+      return { endpoints: kept.slice(0, limit) };
+    }
+  }
   return { endpoints: out.slice(0, limit) };
 }
 
