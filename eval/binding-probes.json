@@ -1,0 +1,68 @@
+{
+  "_comment": "Endpoint-level binding-precision probes. Unlike the host-level dogfooding gold, these judge whether the RIGHT endpoint class ranks on top (e.g. an actual /register endpoint, not a pricing/availability lookup on the same host). 'relevant' / 'relevant_path' = true match; 'decoy' = a near-miss in the same intent bucket that should NOT rank above the true matches. An endpoint counts relevant iff (relevant matches summary OR relevant_path matches the URL path) AND decoy does NOT match. type=collision → the gate should raise P@k; type=clean → regression guard, the gate must not lower P@k.",
+  "probes": [
+    {
+      "key": "domain_register",
+      "type": "collision",
+      "query": "register a domain name for my startup",
+      "expect": "an endpoint that actually registers/buys a new domain (not pricing, availability, name-gen, parse, DNS, or BYOD-connect)",
+      "relevant": "\\bregisters?\\b[^.]{0,30}\\bdomain\\b|\\bdomain\\b[^.]{0,30}\\bregisters?\\b|\\bbuy\\b[^.]{0,25}\\bdomain\\b",
+      "relevant_path": "/(register|buy)(?:$|[/?])",
+      "decoy": "pricing|availab|name[- ]?gen|parser?|\\bverif|renew|resume|transfer|nameserver|\\bdns\\b|sentiment|byod|\\bcheck\\b|generator"
+    },
+    {
+      "key": "place_reviews",
+      "type": "collision",
+      "query": "find restaurant reviews near my hotel",
+      "expect": "reviews of places/restaurants/hotels/local businesses (Tripadvisor, Yelp, Google Maps), not product/ecommerce reviews",
+      "relevant": "tripadvisor|yelp|foursquare|google[ -]?(maps[ -]?)?review|maps[^.]{0,20}review|place[^.]{0,20}review|business[^.]{0,20}review|hotel[^.]{0,20}(rating|review)|restaurant",
+      "relevant_path": "maps[./-]?review|tripadvisor|yelp",
+      "decoy": "ecommerce|e-commerce|product[ -]?review|amazon|wirecutter|\\basin\\b|\\bshop\\b|sentiment|\\becom\\b|tiktok"
+    },
+    {
+      "key": "weather_forecast",
+      "type": "clean",
+      "query": "what is the weather forecast for Paris tomorrow",
+      "expect": "weather / forecast lookups",
+      "relevant": "weather|forecast|temperature|precipitation|meteo|climate",
+      "relevant_path": "weather|forecast",
+      "decoy": "clothing|news|crypto"
+    },
+    {
+      "key": "crypto_spot_price",
+      "type": "clean",
+      "query": "what is the current price of bitcoin in usd",
+      "expect": "live/spot crypto price quote",
+      "relevant": "price|quote|spot|\\busd\\b|ticker|exchange rate|market data",
+      "relevant_path": "price|quote|ticker|spot",
+      "decoy": "history|historical|news|signal|prediction|forecast|airdrop|sentiment"
+    },
+    {
+      "key": "ocr_extract",
+      "type": "clean",
+      "query": "extract the text from this scanned receipt image",
+      "expect": "OCR / text extraction from an image or document",
+      "relevant": "\\bocr\\b|extract[^.]{0,20}text|text[^.]{0,20}extract|read[^.]{0,20}(image|document|receipt|pdf)|document[^.]{0,15}pars|recogni",
+      "relevant_path": "ocr|extract|parse",
+      "decoy": "translat|generate|synthesi|summari"
+    },
+    {
+      "key": "tts_speak",
+      "type": "clean",
+      "query": "convert this paragraph into spoken audio",
+      "expect": "text-to-speech / voice synthesis",
+      "relevant": "text.?to.?speech|\\btts\\b|speech synthesi|synthesi[^.]{0,15}(speech|voice|audio)|voice[^.]{0,15}(over|gen)|narrat|\\bspeak\\b",
+      "relevant_path": "tts|speech|speak|voice|narrat",
+      "decoy": "speech.?to.?text|transcri|translat|\\bstt\\b"
+    },
+    {
+      "key": "geocode_address",
+      "type": "clean",
+      "query": "get the latitude and longitude for this street address",
+      "expect": "forward geocoding (address -> coordinates)",
+      "relevant": "geocod|geocoding|lat[a-z]*[^.]{0,15}long|coordinate|address[^.]{0,20}(coordinate|lat|geo)",
+      "relevant_path": "geocod|coordinate",
+      "decoy": "reverse|\\bip\\b|distance|route|direction|elevation|timezone"
+    }
+  ]
+}
