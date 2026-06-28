@@ -123,9 +123,17 @@ export interface CapabilityLink {
 /** Derived per-endpoint facets caching the path/summary/inputs signal. */
 export interface EndpointFacets {
   domain?: FacetDomain;
+  /** Task verb, mirroring the intent-side FacetAction enum. NOT produced by the regex deriver
+   *  (deriveEndpointFacets) — only set from the authored label set, so its mere presence implies
+   *  a trusted (authored) classification the binding gates may act on. */
+  action?: FacetAction;
   primary_entity?: string;
   output_entity?: string;
   modality?: FacetModality[];
+  /** True when this endpoint's facets come from the authored override set rather than the noisy
+   *  regex deriver. The domain gate fires ONLY when this is set (regex domains are too noisy to
+   *  gate on corpus-wide — see docs/proposals/binding-precision.md). */
+  authored?: boolean;
 }
 
 /** Service-level metadata from the OpenAPI root x-service-info extension. */

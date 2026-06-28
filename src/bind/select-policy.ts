@@ -181,6 +181,53 @@ function breadthPenalty(ep: EndpointRecord): number {
   return b > BREADTH_THRESHOLD ? -DEFAULT_BREADTH_PENALTY * (b - BREADTH_THRESHOLD) : 0;
 }
 
+/* ---- Facet-compatibility gates (AUTHORED facets only; absence = pass) ----
+ * Regex-derived endpoint facets are too noisy / vocab-misaligned to gate on corpus-wide (median
+ * ~60-97% false mismatch — docs/proposals/binding-precision.md §metric). So these gates act ONLY on
+ * AUTHORED facets (the labeled override set): `action` is never emitted by the deriver, and the
+ * domain gate additionally requires `facets.authored`. Unlabeled endpoints are untouched. Env-gated
+ * (default 0 = off) for clean A/B. */
+export const DEFAULT_DOMAIN_PENALTY = Number(process.env.OASIS_DOMAIN_PENALTY ?? "0");
+export const DEFAULT_ACTION_PENALTY = Number(process.env.OASIS_ACTION_PENALTY ?? "0");
+
+/** Domains that legitimately serve one another (symmetric; deliberately tight). */
+const DOMAIN_COMPAT: Record<string, readonly string[]> = {
+  travel: ["maps"], maps: ["travel"], finance: ["crypto"], crypto: ["finance"],
+};
+const domainCompatible = (ed: string, id: string): boolean =>
+  ed === id || (DOMAIN_COMPAT[id] ?? []).includes(ed);
+
+/** intent action → endpoint actions that also satisfy it (permissive near-synonyms; identity ok). */
+const ACTION_COMPAT: Record<string, readonly string[]> = {
+  lookup: ["search"], search: ["lookup"],
+};
+const actionCompatible = (ea: string, ia: string): boolean =>
+  ea === ia || (ACTION_COMPAT[ia] ?? []).includes(ea);
+
+function domainPenalty(ep: EndpointRecord, intent: CapabilityIntent): number {
+  if (!DEFAULT_DOMAIN_PENALTY || !ep.facets?.authored) return 0;
+  const ed = ep.facets?.domain, id = intent.facets?.domain;
+  if (!ed || !id) return 0; // absence = pass
+  return domainCompatible(ed, id) ? 0 : -DEFAULT_DOMAIN_PENALTY;
+}
+function actionPenalty(ep: EndpointRecord, intent: CapabilityIntent): number {
+  if (!DEFAULT_ACTION_PENALTY) return 0;
+  const ea = ep.facets?.action, ia = intent.facets?.action;
+  if (!ea || !ia) return 0; // action is authored-only → presence implies a trusted label
+  return actionCompatible(ea, ia) ? 0 : -DEFAULT_ACTION_PENALTY;
+}
+
+/** Entity gate: an endpoint whose produced entity contradicts what the intent produces is off-task
+ *  even when action+domain agree (e.g. an `agentmail` Mailbox vs a registrable `Domain` under
+ *  cloud.domains). Authored output_entity only; absence = pass. */
+export const DEFAULT_ENTITY_PENALTY = Number(process.env.OASIS_ENTITY_PENALTY ?? "0");
+function entityPenalty(ep: EndpointRecord, intent: CapabilityIntent): number {
+  if (!DEFAULT_ENTITY_PENALTY || !ep.facets?.authored) return 0;
+  const produced = intent.produces?.[0]?.entity, out = ep.facets?.output_entity;
+  if (!produced || !out) return 0;
+  return produced === out ? 0 : -DEFAULT_ENTITY_PENALTY;
+}
+
 /** Weak INTERIM quality proxy — documented + a real input schema. Structural (harder to
  *  game than self-description), but a placeholder until popularity lands. */
 export const DEFAULT_QUALITY_WEIGHT = 4;
@@ -261,6 +308,9 @@ export function resolveEndpointsForQuery(
           // breadth so the rescue can't promote a catch-all.
           (semanticOf && (ep.host_breadth ?? 0) <= BREADTH_THRESHOLD ? semanticRescue(semanticOf(ep)) : 0) +
           (idHits === 0 ? breadthPenalty(ep) : 0) +
+          domainPenalty(ep, intent) +
+          actionPenalty(ep, intent) +
+          entityPenalty(ep, intent) +
           qualityScore(ep, qualityWeight) +
           priceOutlierGuard(ep, median, priceOutlierPenalty),
       };
