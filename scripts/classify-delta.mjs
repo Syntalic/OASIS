@@ -114,7 +114,11 @@ Endpoints: ${JSON.stringify(items)}`;
 async function runLlm() {
   const key = process.env.GOOGLE_API_KEY;
   if (!key) throw new Error("GOOGLE_API_KEY required for --llm (load via: set -a; . ./.env; set +a)");
-  const model = process.env.OASIS_CLASSIFY_MODEL ?? "gemini-flash-lite-latest";
+  // Default = gemini-3.5-flash: the bake-off accuracy winner (78%/76% action/domain vs the human-vetted
+  // slice; the lite tier was 75%/72%, the 27-31B Gemmas couldn't emit structured output at usable speed).
+  // Per-release deltas are small, so its ~10x slower speed is moot. For a large BULK run set
+  // OASIS_CLASSIFY_MODEL=gemini-flash-lite-latest (~10x faster, ~3pts less accurate, schema-constrained).
+  const model = process.env.OASIS_CLASSIFY_MODEL ?? "gemini-3.5-flash";
   const limit = arg("--limit") ? Number(arg("--limit")) : Infinity;
   const targets = [...deltaNew.filter((e) => e.capabilities?.length), ...deltaChanged].slice(0, limit);
   console.log(`classifying ${targets.length} delta endpoint(s) with ${model} (batched)…`);
