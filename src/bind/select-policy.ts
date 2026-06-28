@@ -5,7 +5,7 @@ import {
   DEFAULT_QUERY_WEIGHT, DEFAULT_VOCAB_WEIGHT, DEFAULT_ID_WEIGHT, DEFAULT_NEUTRAL_SCALE,
   DEFAULT_KEYPHRASE_WEIGHT, DEFAULT_SEMRANK_WEIGHT, DEFAULT_SEMRANK_FLOOR,
   DEFAULT_BREADTH_PENALTY, BREADTH_THRESHOLD,
-  DEFAULT_DOMAIN_PENALTY, DEFAULT_ACTION_PENALTY, DEFAULT_ENTITY_PENALTY,
+  DEFAULT_DOMAIN_PENALTY, DEFAULT_ACTION_PENALTY, DEFAULT_ENTITY_PENALTY, GATED_INTENTS,
   DEFAULT_QUALITY_WEIGHT, DEFAULT_PRICE_OUTLIER_PENALTY,
 } from "../tuning.js";
 
@@ -191,14 +191,21 @@ const ACTION_COMPAT: Record<string, readonly string[]> = {
 const actionCompatible = (ea: string, ia: string): boolean =>
   ea === ia || (ACTION_COMPAT[ia] ?? []).includes(ea);
 
+/** Per-intent scope for the facet gates. With OASIS_GATED_INTENTS set, the gates fire ONLY for those
+ *  intent ids (the validated collision buckets); empty = every intent (global, the calibration
+ *  default). This is how the gate ships its proven wins without the collateral it causes on intents
+ *  whose facets don't cleanly separate good from decoy. */
+const intentGated = (intent: CapabilityIntent): boolean =>
+  GATED_INTENTS.size === 0 || GATED_INTENTS.has(intent.id);
+
 function domainPenalty(ep: EndpointRecord, intent: CapabilityIntent): number {
-  if (!DEFAULT_DOMAIN_PENALTY || !ep.facets?.authored) return 0;
+  if (!DEFAULT_DOMAIN_PENALTY || !intentGated(intent) || !ep.facets?.authored) return 0;
   const ed = ep.facets?.domain, id = intent.facets?.domain;
   if (!ed || !id) return 0; // absence = pass
   return domainCompatible(ed, id) ? 0 : -DEFAULT_DOMAIN_PENALTY;
 }
 function actionPenalty(ep: EndpointRecord, intent: CapabilityIntent): number {
-  if (!DEFAULT_ACTION_PENALTY) return 0;
+  if (!DEFAULT_ACTION_PENALTY || !intentGated(intent)) return 0;
   const ea = ep.facets?.action, ia = intent.facets?.action;
   if (!ea || !ia) return 0; // action is authored-only → presence implies a trusted label
   return actionCompatible(ea, ia) ? 0 : -DEFAULT_ACTION_PENALTY;
@@ -208,7 +215,7 @@ function actionPenalty(ep: EndpointRecord, intent: CapabilityIntent): number {
  *  even when action+domain agree (e.g. an `agentmail` Mailbox vs a registrable `Domain` under
  *  cloud.domains). Authored output_entity only; absence = pass. */
 function entityPenalty(ep: EndpointRecord, intent: CapabilityIntent): number {
-  if (!DEFAULT_ENTITY_PENALTY || !ep.facets?.authored) return 0;
+  if (!DEFAULT_ENTITY_PENALTY || !intentGated(intent) || !ep.facets?.authored) return 0;
   const produced = intent.produces?.[0]?.entity, out = ep.facets?.output_entity;
   if (!produced || !out) return 0;
   return produced === out ? 0 : -DEFAULT_ENTITY_PENALTY;

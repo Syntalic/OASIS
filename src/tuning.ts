@@ -38,6 +38,15 @@ export const DEFAULT_DOMAIN_PENALTY = Number(process.env.OASIS_DOMAIN_PENALTY ??
 export const DEFAULT_ACTION_PENALTY = Number(process.env.OASIS_ACTION_PENALTY ?? "0");
 export const DEFAULT_ENTITY_PENALTY = Number(process.env.OASIS_ENTITY_PENALTY ?? "0");
 
+/** Per-intent scope for the facet gates (comma-separated intent ids in OASIS_GATED_INTENTS). Empty =
+ *  global, gate every intent (the calibration default — preserves the A/B harness); set = the gates
+ *  fire ONLY for these validated intents. This ships the gate's proven wins (cloud.domains,
+ *  travel.place_reviews) without the collateral the global gate causes on intents whose facets don't
+ *  cleanly separate good from decoy (storage.file_hosting, comms.send_email). See select-policy.ts. */
+export const GATED_INTENTS = new Set(
+  (process.env.OASIS_GATED_INTENTS ?? "").split(",").map((s) => s.trim()).filter(Boolean),
+);
+
 /** Weak interim structural quality weight (documented + has a real input schema). */
 export const DEFAULT_QUALITY_WEIGHT = 4;
 /** Price-outlier guard — deprioritize endpoints far above the candidate median. Price is a guard
