@@ -17,6 +17,9 @@ import { EMBED_BACKEND, embedTexts } from "./embedder.js";
 import { embedEndpointsCached } from "./endpoint-cache.js";
 import { capabilityEmbedText } from "./lance-index.js";
 import { endpointEmbedText } from "./endpoint-text.js";
+import {
+  BIND_FLOOR_GEMINI, BIND_FLOOR_LOCAL, BIND_SPARSE_FLOOR, BIND_STRONG_SPARSE_FLOOR, BIND_DENSE_MARGIN,
+} from "../tuning.js";
 
 const CURATED = new Set<string>(CURATED_INTENT_IDS);
 
@@ -132,16 +135,16 @@ export async function bindEndpointsByEmbedding(
   opts: BindOptions = {},
 ): Promise<BindResult> {
   const isGoogle = EMBED_BACKEND.startsWith("google");
-  const floor = opts.floor ?? (isGoogle ? 0.78 : 0.45);
-  const sparseFloor = opts.sparseFloor ?? 0.035;
+  const floor = opts.floor ?? (isGoogle ? BIND_FLOOR_GEMINI : BIND_FLOOR_LOCAL);
+  const sparseFloor = opts.sparseFloor ?? BIND_SPARSE_FLOOR;
   // Promotion floor — calibrated on a full gemini run (31,810-endpoint corpus, 4-floor sweep):
   // 0.12 is the knee that captures real Apify-class binds (the founding Apify reddit-scraper-lite
   // case sits at sparse 0.1364, so 0.15 would strand it) while the precision cost is dominated by
   // boilerplate providers now dropped at the gate (content-free summaries). See docs/proposals/completed/ingestion-overhaul.md.
-  const strongSparseFloor = opts.strongSparseFloor ?? 0.12;
+  const strongSparseFloor = opts.strongSparseFloor ?? BIND_STRONG_SPARSE_FLOOR;
   // Discrimination margin — orphan ambiguous near-ties (the spill). Calibrate via the gatedMargin
   // count + the coverage eval before trusting the default.
-  const denseMargin = opts.denseMargin ?? 0.02;
+  const denseMargin = opts.denseMargin ?? BIND_DENSE_MARGIN;
   const topK = opts.topKPerEndpoint ?? (isGoogle ? 1 : 2);
   const floorOverrides = opts.floorOverrides ?? {};
   const floorFor = (id: string): number => floorOverrides[id] ?? floor;

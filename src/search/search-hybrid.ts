@@ -5,11 +5,9 @@ import { openLanceTable } from "../embed/lance-index.js";
 import { searchIndex } from "./search.js";
 import type { CapabilityIntent, IndexBundle, SearchHit } from "../core/types.js";
 
-// Retained for the A/B eval harness (eval/hybrid-mvp) and the `search` CLI options;
-// the default retrieval path (searchHybridWithFallback → searchVectorOnly) does no
-// keyword/vector fusion, so these are vestigial knobs the live path ignores.
-export const DEFAULT_KEYWORD_WEIGHT = 1;
-export const DEFAULT_VECTOR_WEIGHT = 2;
+// Fusion weights live in src/tuning.ts (single source); re-exported for the established importers
+// (the `search` CLI + eval/hybrid-mvp). Vestigial in the live path, which does no keyword/vector fusion.
+export { DEFAULT_KEYWORD_WEIGHT, DEFAULT_VECTOR_WEIGHT } from "../tuning.js";
 
 export interface HybridFusionOptions {
   keywordWeight?: number;

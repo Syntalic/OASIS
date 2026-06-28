@@ -1,6 +1,13 @@
 import { endpointId } from "../core/id.js";
 import { rankEndpointsNeutral, scoreEndpointNeutral } from "./score-endpoint.js";
 import type { CapabilityIntent, EndpointRecord, SatisfiesRef } from "../core/types.js";
+import {
+  DEFAULT_QUERY_WEIGHT, DEFAULT_VOCAB_WEIGHT, DEFAULT_ID_WEIGHT, DEFAULT_NEUTRAL_SCALE,
+  DEFAULT_KEYPHRASE_WEIGHT, DEFAULT_SEMRANK_WEIGHT, DEFAULT_SEMRANK_FLOOR,
+  DEFAULT_BREADTH_PENALTY, BREADTH_THRESHOLD,
+  DEFAULT_DOMAIN_PENALTY, DEFAULT_ACTION_PENALTY, DEFAULT_ENTITY_PENALTY,
+  DEFAULT_QUALITY_WEIGHT, DEFAULT_PRICE_OUTLIER_PENALTY,
+} from "../tuning.js";
 
 export function satisfiesRefsToEndpoints(
   refs: SatisfiesRef[],
@@ -109,19 +116,8 @@ function intentVocabTokens(intent: CapabilityIntent): string[] {
   return queryTokens([intent.label, ...(intent.aliases ?? [])].join(" "));
 }
 
-/** Weight on the lexical query↔endpoint term (per-request disambiguation). */
-export const DEFAULT_QUERY_WEIGHT = 10;
-/** Weight on the intent label/alias vocabulary fraction (recall). */
-export const DEFAULT_VOCAB_WEIGHT = 12;
-/** Per-token weight on intent-id matches (the primary, dominant relevance signal). */
-export const DEFAULT_ID_WEIGHT = 25;
-/**
- * The neutral quality prior is a TIEBREAKER, not a ranker — scaled well below the
- * lexical task-fit terms. At full weight it ranked a "fake-data generator" (quality
- * score 26) above the real weather endpoint; task fit must win, quality only breaks
- * ties among comparably on-task endpoints.
- */
-export const DEFAULT_NEUTRAL_SCALE = 0.15;
+// Ranking weights, floors, and gate penalties are centralized in src/tuning.ts (imported above).
+// The neutral quality prior (DEFAULT_NEUTRAL_SCALE) is a TIEBREAKER, not a ranker.
 // NOTE: a popularity / usage signal (on-chain volume, revenue, recent uptick) is the
 // intended PRIMARY quality ranker — among endpoints that do the same task, prefer the
 // heavily-used and trending one. It is deliberately NOT implemented: per-endpoint usage
@@ -135,7 +131,6 @@ export const DEFAULT_NEUTRAL_SCALE = 0.15;
  *  surfaces on-task endpoints described by model/brand name (DALL-E, FLUX) that the id-token term
  *  misses, and de-weights bucket noise (QR/solar) whose keyphrases don't overlap the query.
  *  Env-gated (default 0 = off) so it's a safe, A/B-able addition. */
-export const DEFAULT_KEYPHRASE_WEIGHT = Number(process.env.OASIS_KEYPHRASE_WEIGHT ?? "0");
 function keyphraseOverlap(ep: EndpointRecord, qTokens: string[]): number {
   const kp = ep.keyphrases;
   if (!kp || !kp.length || !qTokens.length) return 0;
@@ -161,10 +156,6 @@ function keyphraseOverlap(ep: EndpointRecord, qTokens: string[]): number {
  * (weight default 0 = off) for clean A/B. Floor calibrated like the sparse-floor (embed-once,
  * rebind-many): high enough to ignore bucket noise, low enough to catch the real synonym cases.
  */
-// Defaults calibrated on the dogfooding battery: weight 60 / floor 0.58 gets the synonym-gap
-// rescues (sendemail, markdown, domain_register) without boosting mis-bound noise into rank-1.
-export const DEFAULT_SEMRANK_WEIGHT = Number(process.env.OASIS_SEMRANK_WEIGHT ?? "60");
-export const DEFAULT_SEMRANK_FLOOR = Number(process.env.OASIS_SEMRANK_FLOOR ?? "0.58");
 function semanticRescue(cos: number): number {
   return DEFAULT_SEMRANK_WEIGHT * Math.max(0, cos - DEFAULT_SEMRANK_FLOOR);
 }
@@ -174,8 +165,6 @@ function semanticRescue(cos: number): number {
  *  rank-1 over specialist providers on lexical/semantic coincidence (the dominant rank-1 failure
  *  mode: 5/7 misses are a mega-host beating the correct specialist at rank 2-3). Linear above a
  *  threshold so specialists (breadth ~1-10) are untouched. Env-gated for A/B. */
-export const DEFAULT_BREADTH_PENALTY = Number(process.env.OASIS_BREADTH_PENALTY ?? "2.0");
-const BREADTH_THRESHOLD = Number(process.env.OASIS_BREADTH_THRESHOLD ?? "12");
 function breadthPenalty(ep: EndpointRecord): number {
   const b = ep.host_breadth ?? 0;
   return b > BREADTH_THRESHOLD ? -DEFAULT_BREADTH_PENALTY * (b - BREADTH_THRESHOLD) : 0;
@@ -187,8 +176,6 @@ function breadthPenalty(ep: EndpointRecord): number {
  * AUTHORED facets (the labeled override set): `action` is never emitted by the deriver, and the
  * domain gate additionally requires `facets.authored`. Unlabeled endpoints are untouched. Env-gated
  * (default 0 = off) for clean A/B. */
-export const DEFAULT_DOMAIN_PENALTY = Number(process.env.OASIS_DOMAIN_PENALTY ?? "0");
-export const DEFAULT_ACTION_PENALTY = Number(process.env.OASIS_ACTION_PENALTY ?? "0");
 
 /** Domains that legitimately serve one another (symmetric; deliberately tight). */
 const DOMAIN_COMPAT: Record<string, readonly string[]> = {
@@ -220,7 +207,6 @@ function actionPenalty(ep: EndpointRecord, intent: CapabilityIntent): number {
 /** Entity gate: an endpoint whose produced entity contradicts what the intent produces is off-task
  *  even when action+domain agree (e.g. an `agentmail` Mailbox vs a registrable `Domain` under
  *  cloud.domains). Authored output_entity only; absence = pass. */
-export const DEFAULT_ENTITY_PENALTY = Number(process.env.OASIS_ENTITY_PENALTY ?? "0");
 function entityPenalty(ep: EndpointRecord, intent: CapabilityIntent): number {
   if (!DEFAULT_ENTITY_PENALTY || !ep.facets?.authored) return 0;
   const produced = intent.produces?.[0]?.entity, out = ep.facets?.output_entity;
@@ -230,7 +216,6 @@ function entityPenalty(ep: EndpointRecord, intent: CapabilityIntent): number {
 
 /** Weak INTERIM quality proxy — documented + a real input schema. Structural (harder to
  *  game than self-description), but a placeholder until popularity lands. */
-export const DEFAULT_QUALITY_WEIGHT = 4;
 function qualityScore(ep: EndpointRecord, weight: number): number {
   let q = 0;
   if (ep.guidance_available) q += 0.5;
@@ -240,7 +225,6 @@ function qualityScore(ep: EndpointRecord, weight: number): number {
 
 /** Price is NOT an optimization target — only a guard against the absurd. An endpoint
  *  priced far above the candidate median is pushed down; otherwise price is ignored. */
-export const DEFAULT_PRICE_OUTLIER_PENALTY = 8;
 function priceMedian(candidates: EndpointRecord[]): number | null {
   const ps = candidates
     .map((e) => e.payment?.price_usd)
