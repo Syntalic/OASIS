@@ -14,6 +14,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { applyBindings, loadBindings } from "./bind/binding.js";
+import { applyFacetOverrides, loadFacetOverrides } from "./bind/facet-overrides.js";
 import { deriveEndpointFacets } from "./bind/facets.js";
 import { dedupeMirrors } from "./bind/dedup-endpoints.js";
 import { bindEndpointsByEmbedding } from "./embed/bind-endpoints.js";
@@ -116,6 +117,11 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
   // Authored endpoint→capability bindings override the semantic binder.
   const appliedBindings = applyBindings(endpoints, await loadBindings());
   if (appliedBindings) console.error(`  applied ${appliedBindings} authored endpoint binding(s)`);
+
+  // Authored facet overrides (action/domain/entity) — vetted labels that beat the regex deriver and
+  // are the only facets the binding gates act on. Mirrors applyBindings, one axis over (facets, not caps).
+  const appliedFacets = applyFacetOverrides(endpoints, await loadFacetOverrides());
+  if (appliedFacets) console.error(`  applied ${appliedFacets} authored facet override(s)`);
 
   const facetByKey = new Map<string, EndpointRecord["facets"]>();
   for (const ep of endpoints) {
