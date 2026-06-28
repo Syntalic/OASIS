@@ -51,7 +51,10 @@ const rowFor = (e, extra = {}) => ({
   regex_domain: e.facets?.domain ?? "", content_hash: contentHash(e),
   action: "", domain_corrected: "", entity: "", ...extra,
 });
-const writeCsv = (file, objs) => writeFileSync(file, [COLS.join(","), ...objs.map((o) => COLS.map((c) => cell(o[c])).join(","))].join("\n") + "\n");
+// Durable labels file keeps only the loader-essential columns; the heavy context (summary,
+// description, inputs, bound_intents, method/path/origin) is regenerated from dist for --emit-csv.
+const SLIM_COLS = ["key", "regex_domain", "content_hash", "action", "domain_corrected", "entity"];
+const writeCsv = (file, objs, cols = COLS) => writeFileSync(file, [cols.join(","), ...objs.map((o) => cols.map((c) => cell(o[c])).join(","))].join("\n") + "\n");
 
 // --- load state ---
 const eps = JSON.parse(readFileSync(ENDPOINTS, "utf8")).endpoints;
@@ -83,7 +86,7 @@ function report() {
 function writeLabels(rows) {
   // refresh content_hash for any row whose endpoint still exists (baseline maintenance)
   for (const r of rows) { const e = byId.get(r.key); if (e) r.content_hash = contentHash(e); }
-  writeCsv(LABELS, rows);
+  writeCsv(LABELS, rows, SLIM_COLS); // durable labels file stays slim (loader-essential columns)
   console.log(`wrote ${rows.length} labels → ${LABELS}`);
 }
 
