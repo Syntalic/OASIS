@@ -1,0 +1,1442 @@
+[
+  {
+    "intent_id": "ai.image_generate",
+    "query": "text to image generator",
+    "style": "terse",
+    "qid": 1
+  },
+  {
+    "intent_id": "ai.image_generate",
+    "query": "I need a service that can create realistic images from my written descriptions.",
+    "style": "conversational",
+    "qid": 2
+  },
+  {
+    "intent_id": "ai.image_generate",
+    "query": "Can you generate a photo of a futuristic Starbucks cafe in Tokyo based on a detailed prompt?",
+    "style": "contextual",
+    "qid": 3
+  },
+  {
+    "intent_id": "ai.llm_complete",
+    "query": "ai text generator chat",
+    "style": "terse",
+    "qid": 4
+  },
+  {
+    "intent_id": "ai.llm_complete",
+    "query": "I want to integrate a conversational AI assistant that can answer user questions and write paragraphs.",
+    "style": "conversational",
+    "qid": 5
+  },
+  {
+    "intent_id": "ai.llm_complete",
+    "query": "I need a tool that can write a follow-up email in the style of Steve Jobs to a client who missed our meeting.",
+    "style": "contextual",
+    "qid": 6
+  },
+  {
+    "intent_id": "ai.speech_to_text",
+    "query": "audio transcription tool",
+    "style": "terse",
+    "qid": 7
+  },
+  {
+    "intent_id": "ai.speech_to_text",
+    "query": "How can I convert recorded audio files into written text transcripts?",
+    "style": "conversational",
+    "qid": 8
+  },
+  {
+    "intent_id": "ai.speech_to_text",
+    "query": "We need to transcribe 50 hours of Zoom meetings from our quarterly board review last Tuesday.",
+    "style": "contextual",
+    "qid": 9
+  },
+  {
+    "intent_id": "ai.text_to_speech",
+    "query": "text to speech voiceover",
+    "style": "terse",
+    "qid": 10
+  },
+  {
+    "intent_id": "ai.text_to_speech",
+    "query": "I am looking for a way to turn written articles into natural-sounding audio narration.",
+    "style": "conversational",
+    "qid": 11
+  },
+  {
+    "intent_id": "ai.text_to_speech",
+    "query": "Generate a high-quality audio file of our blog post using a British male voice named Arthur.",
+    "style": "contextual",
+    "qid": 12
+  },
+  {
+    "intent_id": "ai.embeddings",
+    "query": "semantic text vector generator",
+    "style": "terse",
+    "qid": 13
+  },
+  {
+    "intent_id": "ai.embeddings",
+    "query": "I need to convert my text documents into numerical vectors for semantic search.",
+    "style": "conversational",
+    "qid": 14
+  },
+  {
+    "intent_id": "ai.embeddings",
+    "query": "We want to vectorize our entire Shopify product catalog so customers can search by concept rather than exact keywords.",
+    "style": "contextual",
+    "qid": 15
+  },
+  {
+    "intent_id": "ai.web_research",
+    "query": "web search research citations",
+    "style": "terse",
+    "qid": 16
+  },
+  {
+    "intent_id": "ai.web_research",
+    "query": "Is there a tool that can research a topic on the internet and summarize the findings with source links?",
+    "style": "conversational",
+    "qid": 17
+  },
+  {
+    "intent_id": "ai.web_research",
+    "query": "I need to find the latest financial reports for Tesla's Q3 performance and compile a summary with verified links.",
+    "style": "contextual",
+    "qid": 18
+  },
+  {
+    "intent_id": "ai.document_extract",
+    "query": "pdf data extraction ocr",
+    "style": "terse",
+    "qid": 19
+  },
+  {
+    "intent_id": "ai.document_extract",
+    "query": "I want to automatically extract key information from scanned invoices and receipts into structured formats.",
+    "style": "conversational",
+    "qid": 20
+  },
+  {
+    "intent_id": "ai.document_extract",
+    "query": "We need to pull the total amount, tax, and vendor name from thousands of PDF receipts from Costco.",
+    "style": "contextual",
+    "qid": 21
+  },
+  {
+    "intent_id": "analyst.inflation_tracker",
+    "query": "category inflation price tracker",
+    "style": "terse",
+    "qid": 22
+  },
+  {
+    "intent_id": "analyst.inflation_tracker",
+    "query": "I need a service that monitors how prices are inflating across different product categories over time.",
+    "style": "conversational",
+    "qid": 23
+  },
+  {
+    "intent_id": "analyst.inflation_tracker",
+    "query": "How can I track the monthly inflation rate of dairy products and eggs in the United States since 2021?",
+    "style": "contextual",
+    "qid": 24
+  },
+  {
+    "intent_id": "cloud.domains",
+    "query": "domain name registration",
+    "style": "terse",
+    "qid": 25
+  },
+  {
+    "intent_id": "cloud.domains",
+    "query": "I want to find a service that lets me search for, buy, and manage website domains.",
+    "style": "conversational",
+    "qid": 26
+  },
+  {
+    "intent_id": "cloud.domains",
+    "query": "I need to register the domain name mynewstartup.io and set up automatic renewal for next year.",
+    "style": "contextual",
+    "qid": 27
+  },
+  {
+    "intent_id": "comms.agent_inbox",
+    "query": "ai email assistant inbox",
+    "style": "terse",
+    "qid": 28
+  },
+  {
+    "intent_id": "comms.agent_inbox",
+    "query": "I need a setup where an intelligent assistant can receive, read, and draft replies to incoming emails.",
+    "style": "conversational",
+    "qid": 29
+  },
+  {
+    "intent_id": "comms.agent_inbox",
+    "query": "We want to set up an inbox at support@mycompany.com where an AI agent automatically triages and drafts responses to customer complaints.",
+    "style": "contextual",
+    "qid": 30
+  },
+  {
+    "intent_id": "comms.send_email",
+    "query": "send transactional email",
+    "style": "terse",
+    "qid": 31
+  },
+  {
+    "intent_id": "comms.send_email",
+    "query": "I need a way to send outbound emails to my users automatically.",
+    "style": "conversational",
+    "qid": 32
+  },
+  {
+    "intent_id": "comms.send_email",
+    "query": "Send an automated confirmation email to customers who purchase the Nike Air Max.",
+    "style": "contextual",
+    "qid": 33
+  },
+  {
+    "intent_id": "comms.send_fax",
+    "query": "send online fax",
+    "style": "terse",
+    "qid": 34
+  },
+  {
+    "intent_id": "comms.send_fax",
+    "query": "Can you help me send a document to a fax machine online?",
+    "style": "conversational",
+    "qid": 35
+  },
+  {
+    "intent_id": "comms.send_fax",
+    "query": "I need to fax these medical records to the Mayo Clinic at 507-284-2511.",
+    "style": "contextual",
+    "qid": 36
+  },
+  {
+    "intent_id": "comms.voice_call",
+    "query": "robocall voice generator",
+    "style": "terse",
+    "qid": 37
+  },
+  {
+    "intent_id": "comms.voice_call",
+    "query": "I want to make automated phone calls using an artificial voice.",
+    "style": "conversational",
+    "qid": 38
+  },
+  {
+    "intent_id": "comms.voice_call",
+    "query": "Call my grandmother in Chicago to remind her to take her Pfizer medication at 3 PM.",
+    "style": "contextual",
+    "qid": 39
+  },
+  {
+    "intent_id": "compute.blockchain_rpc",
+    "query": "ethereum rpc node query",
+    "style": "terse",
+    "qid": 40
+  },
+  {
+    "intent_id": "compute.blockchain_rpc",
+    "query": "How do I interact with a blockchain node to fetch block data?",
+    "style": "conversational",
+    "qid": 41
+  },
+  {
+    "intent_id": "compute.blockchain_rpc",
+    "query": "I need to query the latest block height on the Arbitrum One mainnet.",
+    "style": "contextual",
+    "qid": 42
+  },
+  {
+    "intent_id": "compute.convert_units",
+    "query": "unit measurement converter",
+    "style": "terse",
+    "qid": 43
+  },
+  {
+    "intent_id": "compute.convert_units",
+    "query": "Could you convert some measurements from metric to imperial for me?",
+    "style": "conversational",
+    "qid": 44
+  },
+  {
+    "intent_id": "compute.convert_units",
+    "query": "Convert 150 miles per hour to kilometers per hour for my trip to Germany.",
+    "style": "contextual",
+    "qid": 45
+  },
+  {
+    "intent_id": "compute.financial_calculator",
+    "query": "amortization schedule calculator",
+    "style": "terse",
+    "qid": 46
+  },
+  {
+    "intent_id": "compute.financial_calculator",
+    "query": "I want to calculate the monthly payments on a home loan.",
+    "style": "conversational",
+    "qid": 47
+  },
+  {
+    "intent_id": "compute.financial_calculator",
+    "query": "Calculate the monthly mortgage payments for a $450,000 house in Austin with a 30-year fixed rate at 6.5%.",
+    "style": "contextual",
+    "qid": 48
+  },
+  {
+    "intent_id": "data.company_enrich",
+    "query": "domain to company data",
+    "style": "terse",
+    "qid": 49
+  },
+  {
+    "intent_id": "data.company_enrich",
+    "query": "I need to get detailed information about a company using just their website address.",
+    "style": "conversational",
+    "qid": 50
+  },
+  {
+    "intent_id": "data.company_enrich",
+    "query": "Find the employee count and funding history for stripe.com.",
+    "style": "contextual",
+    "qid": 51
+  },
+  {
+    "intent_id": "data.compute_answer",
+    "query": "factual query solver",
+    "style": "terse",
+    "qid": 52
+  },
+  {
+    "intent_id": "data.compute_answer",
+    "query": "Can you answer a complex math or factual question for me?",
+    "style": "conversational",
+    "qid": 53
+  },
+  {
+    "intent_id": "data.compute_answer",
+    "query": "What is the exact distance between the Earth and Mars in kilometers right now?",
+    "style": "contextual",
+    "qid": 54
+  },
+  {
+    "intent_id": "data.email_validate",
+    "query": "verify email deliverability",
+    "style": "terse",
+    "qid": 55
+  },
+  {
+    "intent_id": "data.email_validate",
+    "query": "I want to check if an email address is valid and can actually receive messages.",
+    "style": "conversational",
+    "qid": 56
+  },
+  {
+    "intent_id": "data.email_validate",
+    "query": "Check if test-user-123@gmail.com is a valid inbox or if it will bounce.",
+    "style": "contextual",
+    "qid": 57
+  },
+  {
+    "intent_id": "data.exchange_rates",
+    "query": "currency exchange lookup",
+    "style": "terse",
+    "qid": 58
+  },
+  {
+    "intent_id": "data.exchange_rates",
+    "query": "How can I get the latest currency conversion rates?",
+    "style": "conversational",
+    "qid": 59
+  },
+  {
+    "intent_id": "data.exchange_rates",
+    "query": "Convert 5000 Japanese Yen to Euros based on today's market rates.",
+    "style": "contextual",
+    "qid": 60
+  },
+  {
+    "intent_id": "data.agriculture_stats",
+    "query": "US crop yield statistics",
+    "style": "terse",
+    "qid": 61
+  },
+  {
+    "intent_id": "data.agriculture_stats",
+    "query": "Where can I find historical data on farming and livestock production in America?",
+    "style": "conversational",
+    "qid": 62
+  },
+  {
+    "intent_id": "data.agriculture_stats",
+    "query": "I need the 2023 corn and soybean harvest yields specifically for Lancaster County, Pennsylvania.",
+    "style": "contextual",
+    "qid": 63
+  },
+  {
+    "intent_id": "data.airdrop_tracker",
+    "query": "crypto airdrop eligibility tracker",
+    "style": "terse",
+    "qid": 64
+  },
+  {
+    "intent_id": "data.airdrop_tracker",
+    "query": "Is there a way to check which upcoming token distributions my wallet is eligible for?",
+    "style": "conversational",
+    "qid": 65
+  },
+  {
+    "intent_id": "data.airdrop_tracker",
+    "query": "Check if this Ethereum address is eligible for the upcoming Starknet or LayerZero token distribution.",
+    "style": "contextual",
+    "qid": 66
+  },
+  {
+    "intent_id": "data.gov_civic",
+    "query": "local government representatives by address",
+    "style": "terse",
+    "qid": 67
+  },
+  {
+    "intent_id": "data.gov_civic",
+    "query": "How do I look up who my local city council members and state representatives are?",
+    "style": "conversational",
+    "qid": 68
+  },
+  {
+    "intent_id": "data.gov_civic",
+    "query": "Find the congressional district and polling locations for an address in Fulton County, Georgia.",
+    "style": "contextual",
+    "qid": 69
+  },
+  {
+    "intent_id": "data.gov_records",
+    "query": "verify public identity records",
+    "style": "terse",
+    "qid": 70
+  },
+  {
+    "intent_id": "data.gov_records",
+    "query": "How can I verify if someone has a valid public record or check their official registration status?",
+    "style": "conversational",
+    "qid": 71
+  },
+  {
+    "intent_id": "data.gov_records",
+    "query": "I need to verify the business registration status of a company with the California Secretary of State.",
+    "style": "contextual",
+    "qid": 72
+  },
+  {
+    "intent_id": "data.lei_lookup",
+    "query": "LEI legal entity search",
+    "style": "terse",
+    "qid": 73
+  },
+  {
+    "intent_id": "data.lei_lookup",
+    "query": "How do I find the corporate parent structure and legal entity identifier for a business?",
+    "style": "conversational",
+    "qid": 74
+  },
+  {
+    "intent_id": "data.lei_lookup",
+    "query": "Show me the corporate hierarchy and ownership tree for LEI code 5493008438092.",
+    "style": "contextual",
+    "qid": 75
+  },
+  {
+    "intent_id": "data.book_lookup",
+    "query": "book metadata search ISBN",
+    "style": "terse",
+    "qid": 76
+  },
+  {
+    "intent_id": "data.book_lookup",
+    "query": "I want to look up the publisher, author, and publication date of a book.",
+    "style": "conversational",
+    "qid": 77
+  },
+  {
+    "intent_id": "data.book_lookup",
+    "query": "Retrieve the bibliographic record and cover art link for ISBN 9780141187761.",
+    "style": "contextual",
+    "qid": 78
+  },
+  {
+    "intent_id": "data.drug_label",
+    "query": "FDA drug label lookup",
+    "style": "terse",
+    "qid": 79
+  },
+  {
+    "intent_id": "data.drug_label",
+    "query": "Where can I find official information about active ingredients and warnings for a specific medicine?",
+    "style": "conversational",
+    "qid": 80
+  },
+  {
+    "intent_id": "data.drug_label",
+    "query": "Get the usage warnings and inactive ingredients list for Advil Liqui-Gels.",
+    "style": "contextual",
+    "qid": 81
+  },
+  {
+    "intent_id": "data.holidays_lookup",
+    "query": "public holidays country calendar",
+    "style": "terse",
+    "qid": 82
+  },
+  {
+    "intent_id": "data.holidays_lookup",
+    "query": "How can I get a list of all official national holidays for a specific country and year?",
+    "style": "conversational",
+    "qid": 83
+  },
+  {
+    "intent_id": "data.holidays_lookup",
+    "query": "What are the official bank holidays in Japan for the upcoming year 2025?",
+    "style": "contextual",
+    "qid": 84
+  },
+  {
+    "intent_id": "data.nft_metadata",
+    "query": "NFT collection token metadata",
+    "style": "terse",
+    "qid": 85
+  },
+  {
+    "intent_id": "data.nft_metadata",
+    "query": "How do I retrieve the traits, image URL, and description of a specific digital collectible?",
+    "style": "conversational",
+    "qid": 86
+  },
+  {
+    "intent_id": "data.nft_metadata",
+    "query": "Get the metadata and attributes for Bored Ape Yacht Club token number 8817.",
+    "style": "contextual",
+    "qid": 87
+  },
+  {
+    "intent_id": "data.news_headlines",
+    "query": "latest news headlines search",
+    "style": "terse",
+    "qid": 88
+  },
+  {
+    "intent_id": "data.news_headlines",
+    "query": "Where can I get a real-time feed of current news stories organized by category?",
+    "style": "conversational",
+    "qid": 89
+  },
+  {
+    "intent_id": "data.news_headlines",
+    "query": "Show me the latest breaking news stories about Microsoft and OpenAI from today.",
+    "style": "contextual",
+    "qid": 90
+  },
+  {
+    "intent_id": "data.sports_scores",
+    "query": "live football scores schedule",
+    "style": "terse",
+    "qid": 91
+  },
+  {
+    "intent_id": "data.sports_scores",
+    "query": "Where can I find real-time results and schedules for professional sports leagues?",
+    "style": "conversational",
+    "qid": 92
+  },
+  {
+    "intent_id": "data.sports_scores",
+    "query": "I need to get the historical game results for the Golden State Warriors 2018 season.",
+    "style": "contextual",
+    "qid": 93
+  },
+  {
+    "intent_id": "data.iban_validate",
+    "query": "validate iban bank account",
+    "style": "terse",
+    "qid": 94
+  },
+  {
+    "intent_id": "data.iban_validate",
+    "query": "Is there a way to check if a European bank account number is valid before sending a payment?",
+    "style": "conversational",
+    "qid": 95
+  },
+  {
+    "intent_id": "data.iban_validate",
+    "query": "I need to verify if Deutsche Bank IBAN DE89370400440532013000 is correctly formatted.",
+    "style": "contextual",
+    "qid": 96
+  },
+  {
+    "intent_id": "data.vat_validate",
+    "query": "vat number verification",
+    "style": "terse",
+    "qid": 97
+  },
+  {
+    "intent_id": "data.vat_validate",
+    "query": "How do I check if a business tax registration number is active and valid?",
+    "style": "conversational",
+    "qid": 98
+  },
+  {
+    "intent_id": "data.vat_validate",
+    "query": "I need to confirm the VAT status for a supplier registered in France with ID FR74395820123.",
+    "style": "contextual",
+    "qid": 99
+  },
+  {
+    "intent_id": "data.scientific_lookup",
+    "query": "protein gene chemical lookup",
+    "style": "terse",
+    "qid": 100
+  },
+  {
+    "intent_id": "data.scientific_lookup",
+    "query": "I need to retrieve biological properties and reference information for specific genes and molecules.",
+    "style": "conversational",
+    "qid": 101
+  },
+  {
+    "intent_id": "data.scientific_lookup",
+    "query": "Can you help me find the genetic sequence and associated proteins for the BRCA1 gene?",
+    "style": "contextual",
+    "qid": 102
+  },
+  {
+    "intent_id": "data.code_repository",
+    "query": "search github repository data",
+    "style": "terse",
+    "qid": 103
+  },
+  {
+    "intent_id": "data.code_repository",
+    "query": "How can I programmatically retrieve commit history and open issues from a public code repo?",
+    "style": "conversational",
+    "qid": 104
+  },
+  {
+    "intent_id": "data.code_repository",
+    "query": "I want to extract the star history and active contributors list for the kubernetes/kubernetes repository.",
+    "style": "contextual",
+    "qid": 105
+  },
+  {
+    "intent_id": "data.ip_lookup",
+    "query": "ip address geolocation info",
+    "style": "terse",
+    "qid": 106
+  },
+  {
+    "intent_id": "data.ip_lookup",
+    "query": "How can I find out which country and internet service provider an IP address belongs to?",
+    "style": "conversational",
+    "qid": 107
+  },
+  {
+    "intent_id": "data.ip_lookup",
+    "query": "I need to trace the physical location and carrier details for the visitor at 8.8.8.8.",
+    "style": "contextual",
+    "qid": 108
+  },
+  {
+    "intent_id": "data.job_search",
+    "query": "software engineer job postings",
+    "style": "terse",
+    "qid": 109
+  },
+  {
+    "intent_id": "data.job_search",
+    "query": "Where can I search for active employment listings and hiring feeds across multiple industries?",
+    "style": "conversational",
+    "qid": 110
+  },
+  {
+    "intent_id": "data.job_search",
+    "query": "I'm looking for mid-level Python developer roles currently open in Austin, Texas at tech startups.",
+    "style": "contextual",
+    "qid": 111
+  },
+  {
+    "intent_id": "data.person_search",
+    "query": "find people public profiles",
+    "style": "terse",
+    "qid": 112
+  },
+  {
+    "intent_id": "data.person_search",
+    "query": "How do I look up public professional profiles and contact details for individuals?",
+    "style": "conversational",
+    "qid": 113
+  },
+  {
+    "intent_id": "data.person_search",
+    "query": "I need to find the current job title and social profiles for a marketing director named Sarah Jenkins in Chicago.",
+    "style": "contextual",
+    "qid": 114
+  },
+  {
+    "intent_id": "data.ocr",
+    "query": "extract text from image",
+    "style": "terse",
+    "qid": 115
+  },
+  {
+    "intent_id": "data.ocr",
+    "query": "What's the best way to read the typed text from a scanned document or photograph?",
+    "style": "conversational",
+    "qid": 116
+  },
+  {
+    "intent_id": "data.ocr",
+    "query": "I need to scan these PDF receipts from Walmart and pull out the line-item prices and totals.",
+    "style": "contextual",
+    "qid": 117
+  },
+  {
+    "intent_id": "data.phone_validate",
+    "query": "phone number validation carrier",
+    "style": "terse",
+    "qid": 118
+  },
+  {
+    "intent_id": "data.phone_validate",
+    "query": "How can I check if a mobile number is active and identify which network operator it belongs to?",
+    "style": "conversational",
+    "qid": 119
+  },
+  {
+    "intent_id": "data.phone_validate",
+    "query": "I need to check if +44 7911 123456 is a valid UK mobile number and see if it's on Vodafone.",
+    "style": "contextual",
+    "qid": 120
+  },
+  {
+    "intent_id": "data.translate_text",
+    "query": "translate english to spanish",
+    "style": "terse",
+    "qid": 121
+  },
+  {
+    "intent_id": "data.translate_text",
+    "query": "I need a way to convert my English product descriptions into fluent French.",
+    "style": "conversational",
+    "qid": 122
+  },
+  {
+    "intent_id": "data.translate_text",
+    "query": "How do I translate our Tokyo office's Japanese onboarding manual into German?",
+    "style": "contextual",
+    "qid": 123
+  },
+  {
+    "intent_id": "data.weather_forecast",
+    "query": "weather forecast 5 day",
+    "style": "terse",
+    "qid": 124
+  },
+  {
+    "intent_id": "data.weather_forecast",
+    "query": "What is the upcoming weather forecast for the next week?",
+    "style": "conversational",
+    "qid": 125
+  },
+  {
+    "intent_id": "data.weather_forecast",
+    "query": "Will it rain in Seattle tomorrow morning during the outdoor Seahawks game?",
+    "style": "contextual",
+    "qid": 126
+  },
+  {
+    "intent_id": "data.web_scrape",
+    "query": "extract web page content",
+    "style": "terse",
+    "qid": 127
+  },
+  {
+    "intent_id": "data.web_scrape",
+    "query": "I want to retrieve the full HTML and text content from a given website URL.",
+    "style": "conversational",
+    "qid": 128
+  },
+  {
+    "intent_id": "data.web_scrape",
+    "query": "How can I pull the latest blog post titles and author names from TechCrunch automatically?",
+    "style": "contextual",
+    "qid": 129
+  },
+  {
+    "intent_id": "data.whois_lookup",
+    "query": "domain whois lookup",
+    "style": "terse",
+    "qid": 130
+  },
+  {
+    "intent_id": "data.whois_lookup",
+    "query": "How can I find out who owns a specific website domain and when it expires?",
+    "style": "conversational",
+    "qid": 131
+  },
+  {
+    "intent_id": "data.whois_lookup",
+    "query": "I need to check the registrar and creation date for github.com.",
+    "style": "contextual",
+    "qid": 132
+  },
+  {
+    "intent_id": "devtools.captcha_solve",
+    "query": "bypass captcha solver",
+    "style": "terse",
+    "qid": 133
+  },
+  {
+    "intent_id": "devtools.captcha_solve",
+    "query": "Is there a service that can automatically resolve reCAPTCHA puzzles for my automation script?",
+    "style": "conversational",
+    "qid": 134
+  },
+  {
+    "intent_id": "devtools.captcha_solve",
+    "query": "I need to programmatically solve the hCaptcha challenges on the Shopify checkout page.",
+    "style": "contextual",
+    "qid": 135
+  },
+  {
+    "intent_id": "devtools.pdf_manipulate",
+    "query": "merge pdf files",
+    "style": "terse",
+    "qid": 136
+  },
+  {
+    "intent_id": "devtools.pdf_manipulate",
+    "query": "I am looking for a tool to split a large PDF document into separate pages and compress them.",
+    "style": "conversational",
+    "qid": 137
+  },
+  {
+    "intent_id": "devtools.pdf_manipulate",
+    "query": "How do I programmatically insert our company logo onto the top right corner of 500 invoice PDFs?",
+    "style": "contextual",
+    "qid": 138
+  },
+  {
+    "intent_id": "devtools.webhook_tools",
+    "query": "test webhook payloads",
+    "style": "terse",
+    "qid": 139
+  },
+  {
+    "intent_id": "devtools.webhook_tools",
+    "query": "I need a system to generate and securely sign custom HTTP callbacks for testing.",
+    "style": "conversational",
+    "qid": 140
+  },
+  {
+    "intent_id": "devtools.webhook_tools",
+    "query": "How can I mock and validate the payload signatures sent by Stripe to my local server?",
+    "style": "contextual",
+    "qid": 141
+  },
+  {
+    "intent_id": "finance.crypto_market_intel",
+    "query": "crypto market sentiment analysis",
+    "style": "terse",
+    "qid": 142
+  },
+  {
+    "intent_id": "finance.crypto_market_intel",
+    "query": "Where can I get deep insights and historical context on cryptocurrency market trends?",
+    "style": "conversational",
+    "qid": 143
+  },
+  {
+    "intent_id": "finance.crypto_market_intel",
+    "query": "I want to track the social media sentiment and order book depth for Ethereum before the upcoming upgrade.",
+    "style": "contextual",
+    "qid": 144
+  },
+  {
+    "intent_id": "finance.crypto_spot_price",
+    "query": "bitcoin price live",
+    "style": "terse",
+    "qid": 145
+  },
+  {
+    "intent_id": "finance.crypto_spot_price",
+    "query": "What is the current exchange rate for popular cryptocurrencies in US dollars?",
+    "style": "conversational",
+    "qid": 146
+  },
+  {
+    "intent_id": "finance.crypto_spot_price",
+    "query": "I need to get the exact spot price of Solana in EUR right now.",
+    "style": "contextual",
+    "qid": 147
+  },
+  {
+    "intent_id": "finance.defi_analytics",
+    "query": "defi yield rates tracker",
+    "style": "terse",
+    "qid": 148
+  },
+  {
+    "intent_id": "finance.defi_analytics",
+    "query": "Where can I find historical yield data and total value locked for decentralized finance protocols?",
+    "style": "conversational",
+    "qid": 149
+  },
+  {
+    "intent_id": "finance.defi_analytics",
+    "query": "I want to compare the current lending APY for USDC on Aave versus Compound.",
+    "style": "contextual",
+    "qid": 150
+  },
+  {
+    "intent_id": "finance.onchain_analytics",
+    "query": "on-chain smart money tracker",
+    "style": "terse",
+    "qid": 151
+  },
+  {
+    "intent_id": "finance.onchain_analytics",
+    "query": "How can I track what the most profitable wallets are buying right now?",
+    "style": "conversational",
+    "qid": 152
+  },
+  {
+    "intent_id": "finance.onchain_analytics",
+    "query": "I want to monitor the Ethereum address starting with 0x71C and see its historical DEX trades.",
+    "style": "contextual",
+    "qid": 153
+  },
+  {
+    "intent_id": "finance.stock_quote",
+    "query": "real-time stock price lookup",
+    "style": "terse",
+    "qid": 154
+  },
+  {
+    "intent_id": "finance.stock_quote",
+    "query": "What is the current trading price and daily volume for this ticker?",
+    "style": "conversational",
+    "qid": 155
+  },
+  {
+    "intent_id": "finance.stock_quote",
+    "query": "Show me the latest bid-ask spread and share price for Apple on the NASDAQ.",
+    "style": "contextual",
+    "qid": 156
+  },
+  {
+    "intent_id": "finance.token_balance",
+    "query": "crypto wallet token balance",
+    "style": "terse",
+    "qid": 157
+  },
+  {
+    "intent_id": "finance.token_balance",
+    "query": "Can you show me all the digital assets held in this specific wallet address?",
+    "style": "conversational",
+    "qid": 158
+  },
+  {
+    "intent_id": "finance.token_balance",
+    "query": "Check how many USDC and Chainlink tokens are currently inside Vitalik's public wallet.",
+    "style": "contextual",
+    "qid": 159
+  },
+  {
+    "intent_id": "finance.prediction_markets",
+    "query": "betting odds prediction markets",
+    "style": "terse",
+    "qid": 160
+  },
+  {
+    "intent_id": "finance.prediction_markets",
+    "query": "Where can I find the current probability and betting volume for upcoming global events?",
+    "style": "conversational",
+    "qid": 161
+  },
+  {
+    "intent_id": "finance.prediction_markets",
+    "query": "What are the latest odds on Polymarket for the upcoming US presidential election?",
+    "style": "contextual",
+    "qid": 162
+  },
+  {
+    "intent_id": "finance.trading_signals",
+    "query": "crypto forex trading signals",
+    "style": "terse",
+    "qid": 163
+  },
+  {
+    "intent_id": "finance.trading_signals",
+    "query": "I need to get daily buy and sell indicators along with their historical success rates.",
+    "style": "conversational",
+    "qid": 164
+  },
+  {
+    "intent_id": "finance.trading_signals",
+    "query": "Show me the buy/sell technical indicators and performance metrics for the MACD crossover strategy on Bitcoin.",
+    "style": "contextual",
+    "qid": 165
+  },
+  {
+    "intent_id": "finance.economic_data",
+    "query": "macroeconomic indicators inflation rates",
+    "style": "terse",
+    "qid": 166
+  },
+  {
+    "intent_id": "finance.economic_data",
+    "query": "Where can I find historical global inflation rates and unemployment figures?",
+    "style": "conversational",
+    "qid": 167
+  },
+  {
+    "intent_id": "finance.economic_data",
+    "query": "Retrieve the latest CPI data and interest rate decisions released by the Federal Reserve.",
+    "style": "contextual",
+    "qid": 168
+  },
+  {
+    "intent_id": "finance.market_data",
+    "query": "market positioning reports COT",
+    "style": "terse",
+    "qid": 169
+  },
+  {
+    "intent_id": "finance.market_data",
+    "query": "How can I access institutional positioning reports and overall market sentiment data?",
+    "style": "conversational",
+    "qid": 170
+  },
+  {
+    "intent_id": "finance.market_data",
+    "query": "Get the latest Commitments of Traders report for Chicago Mercantile Exchange gold futures.",
+    "style": "contextual",
+    "qid": 171
+  },
+  {
+    "intent_id": "finance.stablecoin_monitor",
+    "query": "stablecoin peg tracking supply",
+    "style": "terse",
+    "qid": 172
+  },
+  {
+    "intent_id": "finance.stablecoin_monitor",
+    "query": "I need to monitor whether dollar-pegged digital currencies are losing their 1:1 ratio.",
+    "style": "conversational",
+    "qid": 173
+  },
+  {
+    "intent_id": "finance.stablecoin_monitor",
+    "query": "Track the daily minting volume and peg stability of Tether on the Tron network.",
+    "style": "contextual",
+    "qid": 174
+  },
+  {
+    "intent_id": "maps.places",
+    "query": "local business POI search",
+    "style": "terse",
+    "qid": 175
+  },
+  {
+    "intent_id": "maps.places",
+    "query": "Can you help me find nearby restaurants, gas stations, or parks based on where I am?",
+    "style": "conversational",
+    "qid": 176
+  },
+  {
+    "intent_id": "maps.places",
+    "query": "Find all the Starbucks coffee shops and Italian restaurants located within 2 miles of Central Park.",
+    "style": "contextual",
+    "qid": 177
+  },
+  {
+    "intent_id": "maps.geocode",
+    "query": "address to GPS coordinates converter",
+    "style": "terse",
+    "qid": 178
+  },
+  {
+    "intent_id": "maps.geocode",
+    "query": "How do I turn a written street address into precise latitude and longitude coordinates?",
+    "style": "conversational",
+    "qid": 179
+  },
+  {
+    "intent_id": "maps.geocode",
+    "query": "Convert 1600 Pennsylvania Avenue NW, Washington, DC into its exact geographic coordinates.",
+    "style": "contextual",
+    "qid": 180
+  },
+  {
+    "intent_id": "marketing.competitive_landscape",
+    "query": "competitor price tracking software",
+    "style": "terse",
+    "qid": 181
+  },
+  {
+    "intent_id": "marketing.competitive_landscape",
+    "query": "How can I track and analyze what my competitors are charging for their products in real-time?",
+    "style": "conversational",
+    "qid": 182
+  },
+  {
+    "intent_id": "marketing.competitive_landscape",
+    "query": "I need to monitor the average pricing strategies of organic skincare brands on Shopify compared to Sephora's listings.",
+    "style": "contextual",
+    "qid": 183
+  },
+  {
+    "intent_id": "media.social_data",
+    "query": "extract social media comments",
+    "style": "terse",
+    "qid": 184
+  },
+  {
+    "intent_id": "media.social_data",
+    "query": "I want to gather user posts and discussions from social platforms to analyze public sentiment.",
+    "style": "conversational",
+    "qid": 185
+  },
+  {
+    "intent_id": "media.social_data",
+    "query": "Show me recent Reddit comments and Twitter threads mentioning the new Apple Vision Pro release.",
+    "style": "contextual",
+    "qid": 186
+  },
+  {
+    "intent_id": "media.movie_lookup",
+    "query": "movie database search",
+    "style": "terse",
+    "qid": 187
+  },
+  {
+    "intent_id": "media.movie_lookup",
+    "query": "Where can I find detailed cast lists, release dates, and plot summaries for films?",
+    "style": "conversational",
+    "qid": 188
+  },
+  {
+    "intent_id": "media.movie_lookup",
+    "query": "I need to retrieve the full filmography, budget, and box office earnings for Christopher Nolan's Oppenheimer.",
+    "style": "contextual",
+    "qid": 189
+  },
+  {
+    "intent_id": "media.anime_lookup",
+    "query": "anime character database",
+    "style": "terse",
+    "qid": 190
+  },
+  {
+    "intent_id": "media.anime_lookup",
+    "query": "I'm looking for a way to search for details about different anime series and their characters.",
+    "style": "conversational",
+    "qid": 191
+  },
+  {
+    "intent_id": "media.anime_lookup",
+    "query": "Get the voice actor details, episode list, and studio information for Attack on Titan.",
+    "style": "contextual",
+    "qid": 192
+  },
+  {
+    "intent_id": "comms.send_sms",
+    "query": "send text message programmatically",
+    "style": "terse",
+    "qid": 193
+  },
+  {
+    "intent_id": "comms.send_sms",
+    "query": "What is the best way to automatically send text messages to our customers' mobile phones?",
+    "style": "conversational",
+    "qid": 194
+  },
+  {
+    "intent_id": "comms.send_sms",
+    "query": "We need to dispatch a booking confirmation SMS to a user in Chicago with the phone number +1-312-555-0143.",
+    "style": "contextual",
+    "qid": 195
+  },
+  {
+    "intent_id": "realestate.property_lookup",
+    "query": "property search listings",
+    "style": "terse",
+    "qid": 196
+  },
+  {
+    "intent_id": "realestate.property_lookup",
+    "query": "How can I find active real estate listings and rental homes in a specific area?",
+    "style": "conversational",
+    "qid": 197
+  },
+  {
+    "intent_id": "realestate.property_lookup",
+    "query": "Search for 3-bedroom single-family homes currently for sale in Austin, Texas under $500,000.",
+    "style": "contextual",
+    "qid": 198
+  },
+  {
+    "intent_id": "search.web",
+    "query": "web search engine results",
+    "style": "terse",
+    "qid": 199
+  },
+  {
+    "intent_id": "search.web",
+    "query": "I need a tool that lets me search the entire internet and returns organic web page results.",
+    "style": "conversational",
+    "qid": 200
+  },
+  {
+    "intent_id": "search.web",
+    "query": "Find the top ten organic search results for best hybrid SUVs of 2024 excluding paid ads.",
+    "style": "contextual",
+    "qid": 201
+  },
+  {
+    "intent_id": "shop.compare_price",
+    "query": "compare product prices online",
+    "style": "terse",
+    "qid": 202
+  },
+  {
+    "intent_id": "shop.compare_price",
+    "query": "Is there a service that lets me compare the price of a specific item across different retail stores?",
+    "style": "conversational",
+    "qid": 203
+  },
+  {
+    "intent_id": "shop.compare_price",
+    "query": "Compare the current retail price of the Sony WH-1000XM5 headphones across Best Buy, Amazon, and Target.",
+    "style": "contextual",
+    "qid": 204
+  },
+  {
+    "intent_id": "shop.find_deals",
+    "query": "discounted products finder",
+    "style": "terse",
+    "qid": 205
+  },
+  {
+    "intent_id": "shop.find_deals",
+    "query": "How can I find the latest sales and price drops on items in a specific shopping category?",
+    "style": "conversational",
+    "qid": 206
+  },
+  {
+    "intent_id": "shop.find_deals",
+    "query": "Show me all active discounts of 30% or more on men's running shoes from brands like Nike and Adidas.",
+    "style": "contextual",
+    "qid": 207
+  },
+  {
+    "intent_id": "shop.tcg_catalog",
+    "query": "tcg card lookup",
+    "style": "terse",
+    "qid": 208
+  },
+  {
+    "intent_id": "shop.tcg_catalog",
+    "query": "Where can I find a complete catalog of trading card game sets and individual card details?",
+    "style": "conversational",
+    "qid": 209
+  },
+  {
+    "intent_id": "shop.tcg_catalog",
+    "query": "Retrieve the market price and card text for the Base Set Charizard from the Pokemon TCG.",
+    "style": "contextual",
+    "qid": 210
+  },
+  {
+    "intent_id": "shop.price_drop_alert",
+    "query": "product price drop monitor",
+    "style": "terse",
+    "qid": 211
+  },
+  {
+    "intent_id": "shop.price_drop_alert",
+    "query": "Can you notify me when the price of this product goes down?",
+    "style": "conversational",
+    "qid": 212
+  },
+  {
+    "intent_id": "shop.price_drop_alert",
+    "query": "I want to track price cuts on the Sony WH-1000XM5 headphones on Amazon.",
+    "style": "contextual",
+    "qid": 213
+  },
+  {
+    "intent_id": "shop.track_price_history",
+    "query": "track price history charts",
+    "style": "terse",
+    "qid": 214
+  },
+  {
+    "intent_id": "shop.track_price_history",
+    "query": "I need to see how the price of this item has changed over the last year.",
+    "style": "conversational",
+    "qid": 215
+  },
+  {
+    "intent_id": "shop.track_price_history",
+    "query": "Show me the historical pricing trends for the Dyson V15 vacuum since Black Friday.",
+    "style": "contextual",
+    "qid": 216
+  },
+  {
+    "intent_id": "social.influencer_search",
+    "query": "find instagram influencers niche",
+    "style": "terse",
+    "qid": 217
+  },
+  {
+    "intent_id": "social.influencer_search",
+    "query": "How can I find popular Instagram creators who focus on vegan cooking?",
+    "style": "conversational",
+    "qid": 218
+  },
+  {
+    "intent_id": "social.influencer_search",
+    "query": "I need a list of fashion micro-influencers based in Miami with over 10k followers.",
+    "style": "contextual",
+    "qid": 219
+  },
+  {
+    "intent_id": "storage.hosting",
+    "query": "static site hosting",
+    "style": "terse",
+    "qid": 220
+  },
+  {
+    "intent_id": "storage.hosting",
+    "query": "Where can I deploy my HTML files and assets online easily?",
+    "style": "conversational",
+    "qid": 221
+  },
+  {
+    "intent_id": "storage.hosting",
+    "query": "I want to host a simple portfolio site built with Hugo and some image assets.",
+    "style": "contextual",
+    "qid": 222
+  },
+  {
+    "intent_id": "agent.memory",
+    "query": "AI agent memory storage",
+    "style": "terse",
+    "qid": 223
+  },
+  {
+    "intent_id": "agent.memory",
+    "query": "How do I store and retrieve conversational history and facts for my virtual assistant?",
+    "style": "conversational",
+    "qid": 224
+  },
+  {
+    "intent_id": "agent.memory",
+    "query": "Save the user's preference for dark mode and their nickname Spike so my bot remembers it next session.",
+    "style": "contextual",
+    "qid": 225
+  },
+  {
+    "intent_id": "agent.marketplace",
+    "query": "AI agent directory list",
+    "style": "terse",
+    "qid": 226
+  },
+  {
+    "intent_id": "agent.marketplace",
+    "query": "Where can I publish my custom AI bots and browse what others have built?",
+    "style": "conversational",
+    "qid": 227
+  },
+  {
+    "intent_id": "agent.marketplace",
+    "query": "I want to list my customer service bot on a platform where users can discover LangChain-based assistants.",
+    "style": "contextual",
+    "qid": 228
+  },
+  {
+    "intent_id": "travel.place_reviews",
+    "query": "travel destination reviews search",
+    "style": "terse",
+    "qid": 229
+  },
+  {
+    "intent_id": "travel.place_reviews",
+    "query": "Where can I find user reviews and ratings for tourist attractions?",
+    "style": "conversational",
+    "qid": 230
+  },
+  {
+    "intent_id": "travel.place_reviews",
+    "query": "Show me what people are saying about the cleanliness and service at the Ritz-Carlton in Paris.",
+    "style": "contextual",
+    "qid": 231
+  },
+  {
+    "intent_id": "travel.aviation",
+    "query": "flight search aviation data",
+    "style": "terse",
+    "qid": 232
+  },
+  {
+    "intent_id": "travel.aviation",
+    "query": "I need to look up airport details and search for available flights between two cities.",
+    "style": "conversational",
+    "qid": 233
+  },
+  {
+    "intent_id": "travel.aviation",
+    "query": "Find the scheduled departure times and gate info for Delta flight DL412 arriving at JFK.",
+    "style": "contextual",
+    "qid": 234
+  },
+  {
+    "intent_id": "web.markdown_extract",
+    "query": "url to markdown converter",
+    "style": "terse",
+    "qid": 235
+  },
+  {
+    "intent_id": "web.markdown_extract",
+    "query": "How do I extract the text from a webpage and format it as clean markdown?",
+    "style": "conversational",
+    "qid": 236
+  },
+  {
+    "intent_id": "web.markdown_extract",
+    "query": "Strip the ads and sidebars from this Wikipedia article on quantum computing and give me just the main text in markdown.",
+    "style": "contextual",
+    "qid": 237
+  },
+  {
+    "intent_id": "web.screenshot",
+    "query": "website screenshot capture",
+    "style": "terse",
+    "qid": 238
+  },
+  {
+    "intent_id": "web.screenshot",
+    "query": "I need a way to capture a full-page image of a website.",
+    "style": "conversational",
+    "qid": 239
+  },
+  {
+    "intent_id": "web.screenshot",
+    "query": "Take a high-resolution snapshot of the New York Times homepage exactly as it looks right now.",
+    "style": "contextual",
+    "qid": 240
+  }
+]

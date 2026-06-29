@@ -1,0 +1,23 @@
+[
+  {"query":"register a domain name for my startup","url":"https://palmyr.ai/domains/register","summary":"Register a domain for one year via Namecheap","gold":true},
+  {"query":"register a domain name for my startup","url":"https://palmyr.ai/domains/pricing","summary":"Per-TLD domain registration pricing. Free preflight before POST /domains/register.","gold":false},
+  {"query":"register a domain name for my startup","url":"https://the-stall.intuitek.ai/cap/domain-availability","summary":"Check domain name availability across multiple TLDs","gold":false},
+  {"query":"find restaurant reviews near my hotel","url":"https://stableninja.dev/api/yelp/business-reviews","summary":"Fetch Yelp reviews for a business ID.","gold":true},
+  {"query":"find restaurant reviews near my hotel","url":"https://stableproduct.dev/api/wirecutter/reviews","summary":"List Wirecutter review URLs from the public Wirecutter review sitemaps.","gold":false},
+  {"query":"find restaurant reviews near my hotel","url":"https://api.cn402.com/ecom/reviews","summary":"Get Amazon product reviews by ASIN or URL","gold":false},
+  {"query":"convert 100 US dollars to euros","url":"https://2s.io/api/convert/currency","summary":"Convert an amount between currencies at a live rate","gold":true},
+  {"query":"generate an image of a mountain landscape from a text prompt","url":"https://the-stall.intuitek.ai/cap/ai-image-gen","summary":"Generate an AI image from a text prompt using DALL-E 3.","gold":true},
+  {"query":"generate an image of a mountain landscape from a text prompt","url":"https://api.glianalabs.com/x402/veo-3-fast","summary":"veo-3-fast via x402 (text-to-video).","gold":false},
+  {"query":"generate an image of a mountain landscape from a text prompt","url":"https://ccc-tools-phi.vercel.app/api/qr","summary":"QR Code Generator","gold":false},
+  {"query":"current price of bitcoin in usd","url":"https://x402.valkyry.fr/token-price","summary":"Real-time crypto spot price for any asset","gold":true},
+  {"query":"extract the text from a scanned receipt image","url":"https://2s.io/api/ai/ocr","summary":"OCR + layout extraction.","gold":true},
+  {"query":"extract the text from a scanned receipt image","url":"https://x402.agentutility.ai/qr-code-decode","summary":"QR code decode","gold":false},
+  {"query":"send a text message to a customer's phone number","url":"https://palmyr.ai/phone/numbers/x/send","summary":"Send an SMS message from a phone number you own","gold":true},
+  {"query":"send a text message to a customer's phone number","url":"https://laso.finance/send-payment","summary":"Send a payment via Venmo or PayPal","gold":false},
+  {"query":"find a company's contact email address","url":"https://email-finder-x402.up.railway.app/api/find","summary":"Find a professional email address for a person given name and company domain","gold":true},
+  {"query":"find a company's contact email address","url":"https://stable-leadmagic.dev/api/email-validate","summary":"LeadMagic Email Validation — validate an email address for deliverability","gold":false},
+  {"query":"solve a recaptcha so my web scraper can continue","url":"https://twocaptcha.mpp.tempo.xyz/createTask","summary":"Submit a captcha task for solving","gold":true},
+  {"query":"solve a recaptcha so my web scraper can continue","url":"https://compute.siliq.io/solve","summary":"OR-Tools CP-SAT solver. Send constraints, get verified solutions.","gold":false},
+  {"query":"translate a paragraph from English to Japanese","url":"https://api.x402node.dev/text/translate","summary":"translate text, translation API, machine translation","gold":true},
+  {"query":"translate a paragraph from English to Japanese","url":"https://x402helper.xyz/api/holiday/jp","summary":"Returns Japanese public holiday data","gold":false}
+]
