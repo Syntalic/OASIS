@@ -17,19 +17,14 @@ import { edgeTypes } from "@/components/flow/edges";
 import { nodeTypes } from "@/components/flow/nodes";
 import { useFlow } from "@/hooks/use-flow";
 import { graphKeyAtom } from "@/stores/graph";
-import { selectedIdAtom } from "@/stores/selection";
 import { showMinimapAtom } from "@/stores/ui";
-
-/** width of the floating detail panel; selections pan clear of it */
-const PANEL_W = 360;
 
 export function FlowCanvas() {
   const { nodes, edges, colorMode, onNodesChange, onEdgesChange, onNodeClick, onPaneClick } =
     useFlow();
-  const selectedId = useAtomValue(selectedIdAtom);
   const graphKey = useAtomValue(graphKeyAtom);
   const showMinimap = useAtomValue(showMinimapAtom);
-  const { fitView, getNode, getZoom, setViewport } = useReactFlow();
+  const { fitView } = useReactFlow();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   // refit whenever the graph is rebuilt (new view / filter / layout)
@@ -39,45 +34,9 @@ export function FlowCanvas() {
     return () => clearTimeout(t);
   }, [graphKey, fitView]);
 
-  // pan the selected node into the area not covered by the detail panel
-  const panToNode = useCallback(
-    (id: string) => {
-      const el = wrapperRef.current;
-      const n = getNode(id);
-      if (!el || !n?.measured?.width || !n.measured.height) return false;
-      const zoom = getZoom();
-      const cx = n.position.x + n.measured.width / 2;
-      const cy = n.position.y + n.measured.height / 2;
-      setViewport(
-        { x: (el.clientWidth - PANEL_W) / 2 - cx * zoom, y: el.clientHeight / 2 - cy * zoom, zoom },
-        { duration: 500 },
-      );
-      return true;
-    },
-    [getNode, getZoom, setViewport],
-  );
-
-  useEffect(() => {
-    if (!selectedId) return;
-    let tries = 0;
-    let t: ReturnType<typeof setTimeout>;
-    const attempt = () => {
-      if (panToNode(selectedId) || tries++ > 12) return;
-      t = setTimeout(attempt, 60);
-    };
-    t = setTimeout(attempt, 80);
-    return () => clearTimeout(t);
-  }, [selectedId, panToNode]);
-
-  // recenter when the detail panel closes
-  const prev = useRef<string | null>(selectedId);
-  useEffect(() => {
-    const was = prev.current;
-    prev.current = selectedId;
-    if (was && !selectedId) fitView({ duration: 450, padding: 0.18 });
-  }, [selectedId, fitView]);
-
-  // refit on container resize (sidebar collapse, window resize)
+  // refit whenever the canvas resizes — sidebar collapse, window resize, and
+  // the detail panel docking/undocking (which reflows the canvas width). This is
+  // what keeps the graph filling the visible area with no dead space.
   useEffect(() => {
     const el = wrapperRef.current;
     if (!el) return;

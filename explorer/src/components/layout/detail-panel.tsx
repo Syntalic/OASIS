@@ -15,7 +15,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
 import {
   capById,
   domainById,
@@ -35,20 +34,11 @@ function hostOf(origin: string) {
 
 export function DetailPanel() {
   const [selectedId, setSelectedId] = useAtom(selectedIdAtom);
-  const open = selectedId !== null;
+  if (!selectedId) return null;
   return (
-    <aside
-      className={cn(
-        "pointer-events-none absolute top-0 right-0 z-20 h-full w-[360px] max-w-[88vw] p-3 transition-transform duration-300 ease-out",
-        open ? "translate-x-0" : "translate-x-[110%]",
-      )}
-    >
-      <div className="pointer-events-auto flex h-full flex-col overflow-hidden rounded-xl border bg-card/95 shadow-2xl backdrop-blur-md">
-        {selectedId && (
-          <Body id={selectedId} onClose={() => setSelectedId(null)} onNavigate={setSelectedId} />
-        )}
-      </div>
-    </aside>
+    <div className="flex h-full flex-col overflow-hidden bg-card">
+      <Body id={selectedId} onClose={() => setSelectedId(null)} onNavigate={setSelectedId} />
+    </div>
   );
 }
 
