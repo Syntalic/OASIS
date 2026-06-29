@@ -71,24 +71,32 @@ export function groupedLayout(nodes: Node[]): Map<string, Pos> {
     boxes.push({ key, box: { local, width, height } });
   }
 
-  // macro-grid of cluster boxes
-  const macroCols = Math.max(1, Math.ceil(Math.sqrt(boxes.length)));
-  const colW = Math.max(...boxes.map((b) => b.box.width)) + PAD * 2 + MACRO_GAP;
+  // macro-grid of cluster boxes — per-column widths and per-row heights so a
+  // single wide cluster (e.g. a 23-capability domain) doesn't force every
+  // column wide and blow the whole map out horizontally.
+  // bias toward fewer columns so the map fills vertically rather than sprawling
+  // into a wide, short band that fitView has to shrink
+  const macroCols = Math.max(1, Math.round(Math.sqrt(boxes.length * 0.6)));
   const numRows = Math.ceil(boxes.length / macroCols);
+  const colW = new Array(macroCols).fill(0) as number[];
   const rowH = new Array(numRows).fill(0) as number[];
   boxes.forEach((b, i) => {
+    const c = i % macroCols;
     const r = Math.floor(i / macroCols);
+    colW[c] = Math.max(colW[c], b.box.width + PAD * 2);
     rowH[r] = Math.max(rowH[r], b.box.height + PAD * 2);
   });
+  const colX = new Array(macroCols).fill(0) as number[];
+  for (let c = 1; c < macroCols; c++) colX[c] = colX[c - 1] + colW[c - 1] + MACRO_GAP;
   const rowY = new Array(numRows).fill(0) as number[];
   for (let r = 1; r < numRows; r++) rowY[r] = rowY[r - 1] + rowH[r - 1] + MACRO_GAP;
 
   const out = new Map<string, Pos>();
   boxes.forEach((b, i) => {
-    const mc = i % macroCols;
-    const mr = Math.floor(i / macroCols);
-    const ox = mc * colW + PAD;
-    const oy = rowY[mr] + PAD;
+    const c = i % macroCols;
+    const r = Math.floor(i / macroCols);
+    const ox = colX[c] + PAD;
+    const oy = rowY[r] + PAD;
     for (const [id, p] of b.box.local) out.set(id, { x: ox + p.x, y: oy + p.y });
   });
   return out;
