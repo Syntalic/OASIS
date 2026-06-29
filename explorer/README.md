@@ -1,65 +1,69 @@
-# OASIS Ontology Explorer
+# OASIS Atlas
 
-An interactive, animated map of the [OASIS](https://github.com/Syntalic/OASIS) task
-ontology — the vendor-neutral discovery layer for **paid** x402 / MPP HTTP APIs.
+An interactive, themeable map of the [OASIS](https://github.com/Syntalic/OASIS) task
+ontology — **domains → capabilities → entities → the paid x402/MPP endpoints** bound to
+them — rendered as a React Flow graph.
 
-It turns the OASIS index into a living graph of **domains → capabilities → entities →
-bound paid endpoints**, so you can *see* how a natural-language task threads through the
-ontology to the real APIs that satisfy it.
+Built with **Next.js (App Router)**, **React 19**, **@xyflow/react**, **shadcn/ui**,
+**jotai**, **dagre**, **react-resizable-panels**, and **next-themes**. The architecture
+follows [Repree](https://github.com/mitate-gengaku/Repree); the layout strategy is adapted
+from [OpenMetadata's OntologyExplorer](https://github.com/open-metadata/OpenMetadata).
 
-Built with **Next.js (App Router)**, **shadcn/ui**, **Tailwind CSS v4**,
-[**@xyflow/react**](https://reactflow.dev) for the canvas, and **d3-force** for a live,
-self-organizing layout.
+## Two modes
 
-## Two ways to explore
+- **Explore** — the whole ontology. Domains are glowing hubs; capabilities cluster under
+  them; the entity-flow layer shows how data passes between capabilities. Filter by domain.
+- **Ask** — type a task ("narrate an article as audio"); a local scorer ranks the matching
+  capabilities and the graph traces the question → capabilities → shared entities → real
+  paid endpoints.
 
-### 🧭 Explore
-The whole ontology at rest. Domains sit as colored hubs; their capabilities cluster
-around them; typed **entities** (`Text`, `Image`, `Company`, …) connect capabilities by
-data flow (one capability *produces* what another *consumes*). Filter to a single domain
-or toggle the entity-flow layer on and off.
+Click any node to **trace its connections** (everything connected lights up, the rest fades)
+and open a detail panel. The view pans the selection clear of the panel.
 
-### ✨ Ask a question
-Type a task in plain language — *"turn this article into narrated audio"* — and the graph
-re-forms around it: a central **question** node, the **ranked capabilities** that match
-(scored locally, no API key), the **entities** they share, and the **real paid endpoints**
-OASIS bound to them. Animated "marching-ants" edges trace the flow from your words to the
-APIs that can be paid and called.
+## Layout engines
 
-Throughout: **hover** any node to trace its connections, **click** for a detail panel
-(description, consumes/produces ports, aliases, providers, sample endpoints), and **drag**
-to rearrange — the force layout gracefully relaxes around your changes.
+A switcher in the canvas toolbar (top-left) picks the layout for the current view:
+
+- **Clusters** — domain-grouped grids (default for Explore).
+- **Layered** — dagre hierarchical flow, left→right (default feel for Ask).
+- **Radial** — concentric rings by graph distance from the focal node.
+
+Nodes are sized by **canvas-measured label width** before layout, so the engines never
+overlap them. Themes: **light / dark / system** (React Flow `colorMode` + next-themes).
 
 ## Develop
 
 ```bash
 pnpm install
 pnpm dev          # http://localhost:3000
-```
-
-Other scripts:
-
-```bash
 pnpm build        # production build
 pnpm lint         # eslint (strict; 0 warnings)
-pnpm data         # regenerate the dataset (see below)
+pnpm data         # regenerate the dataset from a built OASIS index
 ```
+
+## Architecture
+
+```
+src/
+  app/            layout (providers, fonts, theme), page, globals.css
+  stores/         jotai atoms — the single source of truth
+  types/          view-layer graph types
+  lib/            ontology data, domain palette, matcher
+  utils/          pure logic — text-measure, relation traversal, build-graph,
+                  layout/{grouped,layered,radial}
+  hooks/          use-graph (build+layout→atoms), use-flow (handlers+trace), use-theme-sync
+  features/       theme (provider + toggle)
+  components/
+    layout/       header, sidebar, detail-panel, app-shell
+    flow/         flow-canvas, nodes, edges, control-panel
+    ui/           shadcn primitives
+```
+
+`useGraph` is the only orchestrator: it derives the graph from the input atoms, runs the
+chosen layout, and writes positioned nodes/edges to the store. Everything else reads atoms.
 
 ## Data
 
-The UI reads a single slim, denormalized graph at [`src/data/ontology.json`](src/data/ontology.json)
-(~150 KB) distilled from the full OASIS index (`dist/index.json`, ~50 MB, gitignored). To
-refresh it after rebuilding the index in the OASIS repo (`pnpm run build` there):
-
-```bash
-pnpm data                                   # auto-discovers ../dist/index.json
-OASIS_INDEX=/path/to/dist/index.json pnpm data   # or point it explicitly
-```
-
-The dataset captures, per capability: facets (domain / action / modality / freshness),
-consumed & produced entities, total bound-endpoint count, top providers, and a few sample
-endpoints — plus entity producer/consumer adjacency and per-domain rollups.
-
-> The question-matching in **Ask** is a transparent, fully client-side token scorer over
-> labels, aliases, descriptions, facets and entities — a lightweight stand-in for the OASIS
-> semantic binder, so the visualization reacts instantly and offline.
+The UI reads a slim graph at `src/data/ontology.json`, distilled from the full OASIS index
+(`dist/index.json`). Refresh with `pnpm data` (auto-discovers `../dist/index.json`, or set
+`OASIS_INDEX=/path/to/index.json`).

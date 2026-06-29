@@ -4,64 +4,69 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* OASIS Ontology Explorer — dark-first control-room theme */
+/* ================================================================== */
+/* OASIS Atlas — "value flowing through a cool data field"            */
+/* Champagne-gold signal (the color of payment) over a calm field,    */
+/* in both light (daylight observatory) and dark (deep space) themes. */
+/* ================================================================== */
+
 :root {
-  --radius: 0.625rem;
+  --radius: 0.7rem;
 
-  /* Deep observatory ink — a cool navy base, never flat black, so the warm
-     signal color and the cool domain spectrum both sit on neutral ground. */
-  --background: oklch(0.155 0.016 264);
-  --foreground: oklch(0.96 0.006 250);
+  --background: oklch(0.985 0.004 95);
+  --foreground: oklch(0.23 0.02 265);
 
-  --card: oklch(0.198 0.018 263);
-  --card-foreground: oklch(0.96 0.006 250);
-  --popover: oklch(0.18 0.018 263);
-  --popover-foreground: oklch(0.96 0.006 250);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.23 0.02 265);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.23 0.02 265);
 
-  /* Signal = the color of value. OASIS routes tasks to *paid* endpoints, so the
-     chrome accent is a refined champagne-gold, not the default cyan. */
-  --primary: oklch(0.83 0.105 86);
-  --primary-foreground: oklch(0.22 0.03 85);
-  --secondary: oklch(0.27 0.02 264);
-  --secondary-foreground: oklch(0.96 0.006 250);
+  --primary: oklch(0.74 0.12 84);
+  --primary-foreground: oklch(0.26 0.04 84);
+  --secondary: oklch(0.96 0.006 95);
+  --secondary-foreground: oklch(0.3 0.02 265);
 
-  --muted: oklch(0.24 0.018 264);
-  --muted-foreground: oklch(0.69 0.022 258);
-  --accent: oklch(0.3 0.03 264);
-  --accent-foreground: oklch(0.97 0.006 250);
+  --muted: oklch(0.965 0.005 95);
+  --muted-foreground: oklch(0.52 0.02 262);
+  --accent: oklch(0.95 0.012 90);
+  --accent-foreground: oklch(0.28 0.03 84);
 
-  --destructive: oklch(0.62 0.21 18);
+  --destructive: oklch(0.58 0.21 18);
   --destructive-foreground: oklch(0.98 0 0);
 
-  --border: oklch(0.3 0.022 264);
-  --input: oklch(0.3 0.022 264);
-  --ring: oklch(0.83 0.105 86);
+  --border: oklch(0.9 0.008 95);
+  --input: oklch(0.9 0.008 95);
+  --ring: oklch(0.74 0.12 84);
 
-  /* warm signal, exposed for inline rgb/hex contexts (canvas, glows) */
-  --signal: 232 196 122;
+  --signal: 196 142 36; /* champagne-gold, rgb */
 }
 
-/* The app is always dark; alias :root tokens so shadcn .dark utilities match too. */
 .dark {
   --background: oklch(0.155 0.016 264);
   --foreground: oklch(0.96 0.006 250);
+
   --card: oklch(0.198 0.018 263);
   --card-foreground: oklch(0.96 0.006 250);
   --popover: oklch(0.18 0.018 263);
   --popover-foreground: oklch(0.96 0.006 250);
+
   --primary: oklch(0.83 0.105 86);
   --primary-foreground: oklch(0.22 0.03 85);
   --secondary: oklch(0.27 0.02 264);
   --secondary-foreground: oklch(0.96 0.006 250);
+
   --muted: oklch(0.24 0.018 264);
   --muted-foreground: oklch(0.69 0.022 258);
   --accent: oklch(0.3 0.03 264);
   --accent-foreground: oklch(0.97 0.006 250);
+
   --destructive: oklch(0.62 0.21 18);
   --destructive-foreground: oklch(0.98 0 0);
+
   --border: oklch(0.3 0.022 264);
   --input: oklch(0.3 0.022 264);
   --ring: oklch(0.83 0.105 86);
+
   --signal: 232 196 122;
 }
 
@@ -116,23 +121,14 @@ body {
   font-family: var(--font-display), var(--font-geist-sans), system-ui, sans-serif;
 }
 
-/* Observatory atmosphere — a faint warm core fading into cool deep space,
-   sits behind the graph so the canvas reads as a field, not flat black. */
+/* Observatory atmosphere behind the canvas — warm core fading into the field. */
 .oasis-atmosphere {
   background:
-    radial-gradient(
-      120% 90% at 50% 8%,
-      rgb(var(--signal) / 0.06) 0%,
-      transparent 42%
-    ),
-    radial-gradient(
-      90% 80% at 78% 100%,
-      oklch(0.28 0.05 264 / 0.5) 0%,
-      transparent 55%
-    );
+    radial-gradient(120% 90% at 50% 6%, rgb(var(--signal) / 0.06) 0%, transparent 44%),
+    radial-gradient(90% 80% at 80% 102%, color-mix(in oklab, var(--primary) 10%, transparent) 0%, transparent 55%);
 }
 
-/* ---- React Flow surface tuning ---- */
+/* ---- React Flow surface ---- */
 .react-flow {
   --xy-background-color: transparent;
 }
@@ -153,22 +149,7 @@ body {
 .react-flow__edge-path {
   transition: stroke 0.3s ease, stroke-opacity 0.3s ease;
 }
-.react-flow__controls {
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-}
-.react-flow__controls-button {
-  background: var(--card);
-  border-color: var(--border);
-  color: var(--muted-foreground);
-}
-.react-flow__controls-button:hover {
-  background: var(--accent);
-  color: var(--foreground);
-}
 
-/* Marching-ants flow on highlighted edges */
 @keyframes oasis-dash {
   to {
     stroke-dashoffset: -24;
@@ -189,7 +170,6 @@ body {
   }
 }
 
-/* Respect reduced-motion: keep the graph legible, drop the ambient movement. */
 @media (prefers-reduced-motion: reduce) {
   .react-flow__edge.oasis-flow .react-flow__edge-path {
     animation: none;
@@ -203,7 +183,6 @@ body {
   }
 }
 
-/* thin custom scrollbars */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;

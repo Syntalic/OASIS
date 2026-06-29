@@ -1,26 +1,22 @@
 "use client";
 
-import {
-  Search,
-  CornerDownLeft,
-  PanelLeftClose,
-  RotateCcw,
-  Layers3,
-  Sparkles,
-  Compass,
-  Crosshair,
-} from "lucide-react";
-import { domains, domainMeta, type MatchResult } from "@/lib/ontology";
-import { Input } from "@/components/ui/input";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { Compass, CornerDownLeft, Layers3, PanelLeftClose, Search, Sparkles } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { domainMeta, domains } from "@/lib/ontology";
+import { focusDomainAtom, showEntitiesAtom } from "@/stores/options";
+import { inputAtom, matchesAtom, modeAtom, queryAtom } from "@/stores/query";
+import { selectedIdAtom } from "@/stores/selection";
+import { sidebarCollapsedAtom } from "@/stores/ui";
+import type { Mode } from "@/types/graph";
 
-export type Mode = "explore" | "ask";
-
-export const SAMPLE_QUESTIONS_SHORT = [
+const SAMPLES = [
   "Narrate an article as audio",
   "Convert USD to euros",
   "Screenshot a webpage",
@@ -31,75 +27,66 @@ export const SAMPLE_QUESTIONS_SHORT = [
   "Extract data from a PDF",
 ];
 
-interface ControlSidebarProps {
-  mode: Mode;
-  collapsed: boolean;
-  onCollapse: () => void;
-  onResetView: () => void;
-  onAutoArrange: () => void;
+export function Sidebar() {
+  const [mode, setMode] = useAtom(modeAtom);
+  const setCollapsed = useSetAtom(sidebarCollapsedAtom);
 
-  // explore
-  showEntities: boolean;
-  setShowEntities: (b: boolean) => void;
-  focusDomain: string | null;
-  setFocusDomain: (d: string | null) => void;
-
-  // ask
-  input: string;
-  setInput: (s: string) => void;
-  onSubmit: () => void;
-  onPick: (s: string) => void;
-  query: string;
-  matches: MatchResult[];
-
-  // shared
-  selectedId: string | null;
-  onSelectResult: (id: string) => void;
-}
-
-export function ControlSidebar(props: ControlSidebarProps) {
-  const { mode, collapsed, onCollapse } = props;
-
-  // When collapsed the sidebar takes zero width — the floating expand button
-  // rendered over the canvas is the only affordance, so there's no dead rail.
-  if (collapsed) return null;
+  const onMode = (m: Mode) => setMode(m);
 
   return (
-    <aside className="flex w-[316px] shrink-0 flex-col overflow-hidden border-r border-border/70 bg-card/40">
-      <div className="flex items-center justify-between px-3 py-2.5">
-        <div className="font-display flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-          {mode === "ask" ? <Sparkles size={13} /> : <Compass size={13} />}
-          {mode === "ask" ? "Ask" : "Explore"}
+    <aside className="flex h-full min-h-0 flex-col bg-card/40">
+      <div className="flex items-center gap-2 p-2.5">
+        <div className="flex flex-1 items-center gap-0.5 rounded-lg border bg-background/60 p-0.5">
+          <ModeTab icon={<Compass size={14} />} label="Explore" active={mode === "explore"} onClick={() => onMode("explore")} />
+          <ModeTab icon={<Sparkles size={14} />} label="Ask" active={mode === "ask"} onClick={() => onMode("ask")} />
         </div>
-        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onCollapse} title="Collapse">
+        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" title="Collapse panel" onClick={() => setCollapsed(true)}>
           <PanelLeftClose size={15} />
         </Button>
       </div>
       <Separator />
-
-      {mode === "ask" ? <AskBody {...props} /> : <ExploreBody {...props} />}
-
-      <Separator />
-      <SidebarFooter mode={mode} onResetView={props.onResetView} onAutoArrange={props.onAutoArrange} />
+      {mode === "ask" ? <AskBody /> : <ExploreBody />}
     </aside>
+  );
+}
+
+function ModeTab({
+  icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition",
+        active ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground",
+      )}
+    >
+      {icon}
+      {label}
+    </button>
   );
 }
 
 /* ------------------------------------------------------------------ */
 
-function ExploreBody({
-  showEntities,
-  setShowEntities,
-  focusDomain,
-  setFocusDomain,
-}: ControlSidebarProps) {
+function ExploreBody() {
+  const [showEntities, setShowEntities] = useAtom(showEntitiesAtom);
+  const [focusDomain, setFocusDomain] = useAtom(focusDomainAtom);
+
   return (
     <ScrollArea className="min-h-0 flex-1">
       <div className="space-y-4 p-3">
-        <label className="flex items-center justify-between gap-2 rounded-lg border bg-secondary/30 px-3 py-2">
+        <label className="flex items-center justify-between gap-2 rounded-lg border bg-secondary/40 px-3 py-2">
           <span className="flex items-center gap-2 text-[12.5px] font-medium">
-            <Layers3 size={14} className="text-muted-foreground" />
-            Entity flow
+            <Layers3 size={14} className="text-muted-foreground" /> Entity flow
           </span>
           <Switch checked={showEntities} onCheckedChange={setShowEntities} />
         </label>
@@ -111,7 +98,7 @@ function ExploreBody({
           <div className="space-y-0.5">
             <DomainRow
               active={focusDomain === null}
-              color="#e2e8f0"
+              color="var(--muted-foreground)"
               label="All domains"
               count={domains.reduce((s, d) => s + d.capabilities.length, 0)}
               onClick={() => setFocusDomain(null)}
@@ -166,40 +153,41 @@ function DomainRow({
 
 /* ------------------------------------------------------------------ */
 
-function AskBody({
-  input,
-  setInput,
-  onSubmit,
-  onPick,
-  query,
-  matches,
-  selectedId,
-  onSelectResult,
-}: ControlSidebarProps) {
+function AskBody() {
+  const [input, setInput] = useAtom(inputAtom);
+  const setQuery = useSetAtom(queryAtom);
+  const query = useAtomValue(queryAtom);
+  const matches = useAtomValue(matchesAtom);
+  const [selectedId, setSelectedId] = useAtom(selectedIdAtom);
+
+  const run = (q: string) => {
+    setInput(q);
+    setQuery(q);
+  };
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="space-y-2.5 p-3">
-        <div className="flex items-center gap-1.5 rounded-lg border bg-secondary/30 pl-2.5">
+        <div className="flex items-center gap-1.5 rounded-lg border bg-secondary/40 pl-2.5">
           <Search size={15} className="shrink-0 text-muted-foreground" />
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && input.trim()) onSubmit();
+              if (e.key === "Enter" && input.trim()) run(input);
             }}
             placeholder="Describe a task…"
             className="h-9 border-0 bg-transparent px-1 text-sm shadow-none focus-visible:ring-0"
           />
         </div>
-        <Button size="sm" className="h-8 w-full gap-1.5" disabled={!input.trim()} onClick={onSubmit}>
-          Trace connections
-          <CornerDownLeft size={13} />
+        <Button size="sm" className="h-8 w-full gap-1.5" disabled={!input.trim()} onClick={() => run(input)}>
+          Trace connections <CornerDownLeft size={13} />
         </Button>
         <div className="flex flex-wrap gap-1">
-          {SAMPLE_QUESTIONS_SHORT.map((q) => (
+          {SAMPLES.map((q) => (
             <button
               key={q}
-              onClick={() => onPick(q)}
+              onClick={() => run(q)}
               className="rounded-full border px-2 py-0.5 text-[10.5px] text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
             >
               {q}
@@ -207,26 +195,24 @@ function AskBody({
           ))}
         </div>
       </div>
-
       <Separator />
-
       {query ? (
         <div className="flex min-h-0 flex-1 flex-col">
-          <div className="font-display px-3 pb-1 pt-2.5 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          <div className="font-display px-3 pt-2.5 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
             {matches.length} match{matches.length === 1 ? "" : "es"}
           </div>
           <ScrollArea className="min-h-0 flex-1">
             <div className="space-y-1 p-2 pt-0">
               {matches.map((m, i) => {
                 const meta = domainMeta(m.capability.domain);
-                const selected = selectedId === m.capability.id;
+                const sel = selectedId === m.capability.id;
                 return (
                   <button
                     key={m.capability.id}
-                    onClick={() => onSelectResult(m.capability.id)}
+                    onClick={() => setSelectedId(m.capability.id)}
                     className={cn(
                       "w-full rounded-lg border px-2.5 py-2 text-left transition",
-                      selected ? "border-primary/50 bg-accent" : "hover:bg-accent/50",
+                      sel ? "border-primary/50 bg-accent" : "hover:bg-accent/50",
                     )}
                   >
                     <div className="flex items-center gap-2">
@@ -242,10 +228,7 @@ function AskBody({
                     </div>
                     <div className="mt-1.5 flex items-center gap-2 pl-7">
                       <div className="h-1 flex-1 overflow-hidden rounded-full bg-muted">
-                        <div
-                          className="h-full rounded-full"
-                          style={{ width: `${Math.round(m.strength * 100)}%`, background: meta.color }}
-                        />
+                        <div className="h-full rounded-full" style={{ width: `${Math.round(m.strength * 100)}%`, background: meta.color }} />
                       </div>
                       <span className="shrink-0 font-mono text-[10px] tabular-nums text-muted-foreground">
                         {m.capability.endpointCount} APIs
@@ -264,57 +247,6 @@ function AskBody({
           </p>
         </div>
       )}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-
-function SidebarFooter({
-  mode,
-  onResetView,
-  onAutoArrange,
-}: {
-  mode: Mode;
-  onResetView: () => void;
-  onAutoArrange: () => void;
-}) {
-  const items =
-    mode === "ask"
-      ? [
-          { c: "var(--primary)", l: "Question" },
-          { c: "#a78bfa", l: "Capability" },
-          { c: "#94a3b8", l: "Entity" },
-          { c: "#34d399", l: "Paid endpoint" },
-        ]
-      : [
-          { c: "#38bdf8", l: "Domain" },
-          { c: "#a78bfa", l: "Capability" },
-          { c: "#94a3b8", l: "Entity" },
-        ];
-  return (
-    <div className="p-3">
-      <div className="mb-2 grid grid-cols-2 gap-x-3 gap-y-1.5">
-        {items.map((it) => (
-          <div key={it.l} className="flex items-center gap-2 text-[11px] text-muted-foreground">
-            <span className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ background: it.c }} />
-            {it.l}
-          </div>
-        ))}
-      </div>
-      <div className="flex gap-1.5">
-        <Button variant="outline" size="sm" className="h-7 flex-1 gap-1.5 text-[11px]" onClick={onResetView}>
-          <Crosshair size={12} />
-          Fit view
-        </Button>
-        <Button variant="outline" size="sm" className="h-7 flex-1 gap-1.5 text-[11px]" onClick={onAutoArrange}>
-          <RotateCcw size={12} />
-          Auto-arrange
-        </Button>
-      </div>
-      <p className="mt-2 text-center text-[10px] text-muted-foreground/70">
-        Hover to trace · click for details · drag to move
-      </p>
     </div>
   );
 }
