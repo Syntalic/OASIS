@@ -11,7 +11,31 @@ export type EdgeKind =
 
 export type Mode = "explore" | "ask";
 
+/** Which OASIS tool the Ask tab runs the question through. */
+export type AskTool = "capabilities" | "endpoints";
+
 export type LayoutEngine = "grouped" | "layered" | "radial";
+
+/** oasis_find result shapes. */
+export interface FindEndpoint {
+  method: string;
+  url: string;
+  summary?: string;
+  price_usd?: number;
+  rails?: string[];
+  via: string; // capability intent id
+}
+export interface NextStep {
+  intent_id: string;
+  do: string;
+  why: string;
+  endpoint?: string;
+  price_usd?: number;
+}
+export interface FindResult {
+  endpoints: FindEndpoint[];
+  nextSteps: NextStep[];
+}
 
 /** Per-relation styling, à la OpenMetadata's RELATION_META. */
 export const RELATION_META: Record<EdgeKind, { label: string }> = {
@@ -51,6 +75,9 @@ export interface CapabilityNodeData extends CommonNodeData {
   endpointCount: number;
   strength?: number;
   rank?: number;
+  /** a chain-to suggestion from oasis_find.next_steps */
+  nextStep?: boolean;
+  why?: string;
 }
 
 export interface EntityNodeData extends CommonNodeData {
@@ -72,6 +99,9 @@ export interface EndpointNodeData extends CommonNodeData {
   path: string;
   color: string;
   capId: string;
+  /** present for live oasis_find endpoints */
+  price?: number;
+  rails?: string[];
 }
 
 export type AnyNodeData =

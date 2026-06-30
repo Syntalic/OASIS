@@ -90,13 +90,23 @@ export const CapabilityNode = memo(function CapabilityNode({ data, selected }: N
               {c.action ?? "capability"}
             </span>
           </span>
-          {ranked ? (
+          {c.nextStep ? (
+            <span
+              className="rounded-full px-1.5 text-[9px] font-bold"
+              style={{ background: "color-mix(in oklab, #5eead4 22%, transparent)", color: "#5eead4" }}
+            >
+              NEXT
+            </span>
+          ) : ranked ? (
             <span className="rounded-full bg-primary/20 px-1.5 text-[10px] font-bold text-primary">#{c.rank}</span>
           ) : (
             <span className="font-mono text-[10px] tabular-nums text-muted-foreground">{c.endpointCount}★</span>
           )}
         </div>
         <div className="mt-1.5 text-[12.5px] font-medium leading-snug text-foreground">{c.label}</div>
+        {c.nextStep && c.why && (
+          <div className="mt-1 text-[10px] leading-snug text-muted-foreground italic">{c.why}</div>
+        )}
         {typeof c.strength === "number" && (
           <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-muted">
             <div className="h-full rounded-full" style={{ width: `${Math.round(c.strength * 100)}%`, background: c.color }} />
@@ -152,19 +162,31 @@ export const EndpointNode = memo(function EndpointNode({ data }: NodeProps) {
       <Handles />
       <div
         className={cn(
-          "flex w-[216px] items-center gap-1.5 rounded-lg border bg-background/85 px-2 py-1 font-mono backdrop-blur-sm transition-transform",
+          "w-[224px] rounded-lg border bg-background/85 px-2 py-1 font-mono backdrop-blur-sm transition-transform",
           e.highlight && "scale-105",
         )}
         style={{ borderColor: `color-mix(in oklab, ${e.color} 45%, var(--border))` }}
       >
-        <Plug size={11} style={{ color: e.color }} />
-        <span className="rounded px-1 text-[8px] font-bold" style={{ background: `color-mix(in oklab, ${e.color} 22%, transparent)`, color: e.color }}>
-          {e.method}
-        </span>
-        <span className="truncate text-[9.5px] text-foreground/80" title={`${e.host}${e.path}`}>
-          {e.host}
-          <span className="text-muted-foreground">{e.path}</span>
-        </span>
+        <div className="flex items-center gap-1.5">
+          <Plug size={11} style={{ color: e.color }} />
+          <span className="rounded px-1 text-[8px] font-bold" style={{ background: `color-mix(in oklab, ${e.color} 22%, transparent)`, color: e.color }}>
+            {e.method}
+          </span>
+          <span className="flex-1 truncate text-[9.5px] text-foreground/80" title={`${e.host}${e.path}`}>
+            {e.host}
+            <span className="text-muted-foreground">{e.path}</span>
+          </span>
+        </div>
+        {(e.price != null || (e.rails && e.rails.length > 0)) && (
+          <div className="mt-0.5 flex items-center justify-between pl-[19px] text-[8px]">
+            {e.price != null ? (
+              <span className="font-bold" style={{ color: e.color }}>${e.price}</span>
+            ) : (
+              <span />
+            )}
+            <span className="text-muted-foreground uppercase">{e.rails?.join(" · ")}</span>
+          </div>
+        )}
       </div>
     </div>
   );

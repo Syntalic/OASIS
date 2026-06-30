@@ -1,16 +1,19 @@
 "use client";
 
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import {
   ArrowDownToLine,
   ArrowUpFromLine,
   Boxes,
   ExternalLink,
   Layers,
+  Loader2,
   Plug,
   Sparkles,
   X,
+  Zap,
 } from "lucide-react";
+import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,6 +25,7 @@ import {
   entityByName,
   type Capability,
 } from "@/lib/ontology";
+import { queryAtom } from "@/stores/query";
 import { selectedIdAtom } from "@/stores/selection";
 
 function hostOf(origin: string) {
@@ -247,9 +251,122 @@ function capabilityView(cap: Capability, onNavigate: (id: string) => void) {
             ))}
           </div>
         </Section>
+        <ResolveSection capId={cap.id} color={meta.color} onNavigate={onNavigate} />
       </>
     ),
   };
+}
+
+interface ResolveData {
+  intent?: { id: string; label: string };
+  endpoints?: Array<{
+    method: string;
+    target: string;
+    summary?: string;
+    price_usd?: number;
+    inputs?: string[];
+    rails?: string[];
+  }>;
+  related?: Array<{ type?: string; intent_id?: string; label?: string }>;
+}
+
+/** Live drill-down: oasis_resolve for this capability — real ranked endpoints + typed pivots. */
+function ResolveSection({
+  capId,
+  color,
+  onNavigate,
+}: {
+  capId: string;
+  color: string;
+  onNavigate: (id: string) => void;
+}) {
+  const query = useAtomValue(queryAtom);
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<ResolveData | null>(null);
+  const [error, setError] = useState(false);
+
+  const run = async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const res = await fetch("/api/oasis", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          tool: "oasis_resolve",
+          args: { intent_id: capId, query: query || capId, limit: 6 },
+        }),
+      });
+      const json = (await res.json()) as { data?: ResolveData | null };
+      if (!json.data) setError(true);
+      else setData(json.data);
+    } catch {
+      setError(true);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <Section title="Live resolve (binder)">
+      {!data && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="h-7 w-full gap-1.5 text-[11px]"
+          disabled={loading}
+          onClick={run}
+        >
+          {loading ? (
+            <>
+              <Loader2 size={12} className="animate-spin" /> Resolving…
+            </>
+          ) : (
+            <>
+              <Zap size={12} /> Resolve live endpoints
+            </>
+          )}
+        </Button>
+      )}
+      {error && <p className="mt-1 text-[11px] text-muted-foreground">Couldn’t reach the binder.</p>}
+      {data && (
+        <div className="space-y-2">
+          <div className="space-y-1">
+            {(data.endpoints ?? []).map((e, i) => (
+              <div key={i} className="rounded-md border bg-background/60 px-2 py-1 font-mono text-[10px]">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold" style={{ color }}>{e.method}</span>
+                  <span className="flex-1 truncate text-foreground/80" title={e.target}>{hostOf(e.target)}</span>
+                  {e.price_usd != null && <span className="font-semibold" style={{ color }}>${e.price_usd}</span>}
+                </div>
+                {e.inputs && e.inputs.length > 0 && (
+                  <div className="mt-0.5 truncate text-[9px] text-muted-foreground">in: {e.inputs.join(", ")}</div>
+                )}
+              </div>
+            ))}
+          </div>
+          {data.related && data.related.length > 0 && (
+            <div>
+              <h4 className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Pivot to</h4>
+              <div className="flex flex-wrap gap-1">
+                {data.related
+                  .filter((r) => r.intent_id && r.label)
+                  .map((r, i) => (
+                    <button
+                      key={i}
+                      onClick={() => onNavigate(r.intent_id!)}
+                      className="rounded-full border px-2 py-0.5 text-[10px] text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+                      title={r.type}
+                    >
+                      {r.label}
+                    </button>
+                  ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </Section>
+  );
 }
 
 function entityView(name: string, onNavigate: (id: string) => void) {

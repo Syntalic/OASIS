@@ -2,6 +2,7 @@ import type { Edge, Node } from "@xyflow/react";
 
 import {
   capabilities,
+  capById,
   domains,
   domainMeta,
   entityByName,
@@ -14,6 +15,7 @@ import type {
   EdgeKind,
   EndpointNodeData,
   EntityNodeData,
+  FindResult,
   QueryNodeData,
 } from "@/types/graph";
 import { measureTextWidth, measureWrappedLines } from "@/utils/text-measure";
@@ -37,6 +39,13 @@ function hostOf(origin: string): string {
     return new URL(origin).host;
   } catch {
     return origin;
+  }
+}
+function pathOf(url: string): string {
+  try {
+    return new URL(url).pathname;
+  } catch {
+    return "";
   }
 }
 
@@ -241,6 +250,99 @@ export function buildAskGraph(
       edges.push(edge(`s:${id}`, c.id, id, "serves", meta.color, true));
     }
   });
+
+  return { nodes, edges };
+}
+
+/* ------------------------------------------------------------------ */
+/* Ask · Endpoints (oasis_find) — real endpoints + next-step chain      */
+/* ------------------------------------------------------------------ */
+
+const NEXT_COLOR = "#5eead4";
+
+export function buildAskEndpointsGraph(
+  query: string,
+  matches: MatchResult[],
+  find: FindResult,
+): { nodes: Node[]; edges: Edge[] } {
+  const nodes: Node[] = [];
+  const edges: Edge[] = [];
+
+  const queryId = "query:root";
+  const qData: QueryNodeData = { kind: "query", text: query, count: find.endpoints.length, size: [264, 92] };
+  nodes.push({ id: queryId, type: "query", position: { x: 0, y: 0 }, data: qData as unknown as Record<string, unknown> });
+
+  const capIds = new Set<string>();
+  matches.forEach((m, i) => {
+    const c = m.capability;
+    const meta = domainMeta(c.domain);
+    capIds.add(c.id);
+    const data: CapabilityNodeData = {
+      kind: "capability",
+      capId: c.id,
+      label: c.label,
+      domain: c.domain,
+      color: meta.color,
+      action: c.action,
+      modality: c.modality,
+      endpointCount: c.endpointCount,
+      strength: m.strength,
+      rank: i + 1,
+      size: capSize(c.label, true),
+    };
+    nodes.push({ id: c.id, type: "capability", position: { x: 0, y: 0 }, data: data as unknown as Record<string, unknown> });
+    edges.push(edge(`q:${c.id}`, queryId, c.id, "match", meta.color, true));
+  });
+
+  // real ranked endpoints (price + rails), attached to their `via` capability
+  const seen = new Set<string>();
+  for (const ep of find.endpoints.slice(0, 16)) {
+    if (!capIds.has(ep.via)) continue;
+    const host = hostOf(ep.url);
+    const path = pathOf(ep.url);
+    const id = `ep:${ep.via}:${host}${path}`;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const meta = domainMeta(capById.get(ep.via)?.domain ?? "other");
+    const data: EndpointNodeData = {
+      kind: "endpoint",
+      host,
+      method: ep.method,
+      path,
+      color: meta.color,
+      capId: ep.via,
+      price: ep.price_usd,
+      rails: ep.rails,
+      size: [224, ep.price_usd != null ? 48 : 40],
+    };
+    nodes.push({ id, type: "endpoint", position: { x: 0, y: 0 }, data: data as unknown as Record<string, unknown> });
+    edges.push(edge(`s:${id}`, ep.via, id, "serves", meta.color, true));
+  }
+
+  // next-step suggestions (chain-to capabilities) off the top result
+  const topCap = matches[0]?.capability.id ?? queryId;
+  for (const ns of find.nextSteps.slice(0, 5)) {
+    if (capIds.has(ns.intent_id)) continue;
+    const c = capById.get(ns.intent_id);
+    if (!c) continue;
+    capIds.add(c.id);
+    const meta = domainMeta(c.domain);
+    const data: CapabilityNodeData = {
+      kind: "capability",
+      capId: c.id,
+      label: c.label,
+      domain: c.domain,
+      color: meta.color,
+      action: c.action,
+      modality: c.modality,
+      endpointCount: c.endpointCount,
+      nextStep: true,
+      why: ns.why,
+      size: capSize(c.label, false),
+    };
+    nodes.push({ id: c.id, type: "capability", position: { x: 0, y: 0 }, data: data as unknown as Record<string, unknown> });
+    edges.push(edge(`n:${c.id}`, topCap, c.id, "match", NEXT_COLOR, true));
+  }
 
   return { nodes, edges };
 }

@@ -19,7 +19,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import { domainMeta, domains } from "@/lib/ontology";
+import { capById, domainMeta, domains } from "@/lib/ontology";
+import { askToolAtom, findAtom } from "@/stores/ask";
 import { focusDomainAtom, showEntitiesAtom } from "@/stores/options";
 import { inputAtom, matchesAtom, modeAtom, queryAtom, searchingAtom } from "@/stores/query";
 import { selectedIdAtom } from "@/stores/selection";
@@ -199,6 +200,8 @@ function AskBody() {
   const query = useAtomValue(queryAtom);
   const matches = useAtomValue(matchesAtom);
   const searching = useAtomValue(searchingAtom);
+  const [askTool, setAskTool] = useAtom(askToolAtom);
+  const find = useAtomValue(findAtom);
   const [selectedId, setSelectedId] = useAtom(selectedIdAtom);
   const [showAllSamples, setShowAllSamples] = useState(false);
 
@@ -228,6 +231,10 @@ function AskBody() {
         <Button size="sm" className="h-8 w-full gap-1.5" disabled={!input.trim()} onClick={() => run(input)}>
           Trace connections <CornerDownLeft size={13} />
         </Button>
+        <div className="flex items-center gap-0.5 rounded-lg border bg-background/60 p-0.5">
+          <ToolTab label="Capabilities" active={askTool === "capabilities"} onClick={() => setAskTool("capabilities")} />
+          <ToolTab label="Endpoints" active={askTool === "endpoints"} onClick={() => setAskTool("endpoints")} />
+        </div>
         <div
           className={cn(
             "flex flex-wrap gap-1",
@@ -265,56 +272,173 @@ function AskBody() {
               <>
                 <Loader2 size={11} className="animate-spin" /> Binding…
               </>
+            ) : askTool === "endpoints" ? (
+              `${find?.endpoints.length ?? 0} endpoint${(find?.endpoints.length ?? 0) === 1 ? "" : "s"}`
             ) : (
               `${matches.length} match${matches.length === 1 ? "" : "es"}`
             )}
           </div>
           <ScrollArea className="min-h-0 flex-1">
             <div className="space-y-1 p-2 pt-0">
-              {matches.map((m, i) => {
-                const meta = domainMeta(m.capability.domain);
-                const sel = selectedId === m.capability.id;
-                return (
-                  <button
-                    key={m.capability.id}
-                    onClick={() => setSelectedId(m.capability.id)}
-                    className={cn(
-                      "w-full rounded-lg border px-2.5 py-2 text-left transition",
-                      sel ? "border-primary/50 bg-accent" : "hover:bg-accent/50",
-                    )}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span
-                        className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-bold"
-                        style={{ background: `color-mix(in oklab, ${meta.color} 22%, transparent)`, color: meta.color }}
-                      >
-                        {i + 1}
-                      </span>
-                      <span className="flex-1 truncate text-[12.5px] font-medium text-foreground">
-                        {m.capability.label}
-                      </span>
-                    </div>
-                    <div className="mt-1.5 flex items-center gap-2 pl-7">
-                      <div className="h-1 flex-1 overflow-hidden rounded-full bg-muted">
-                        <div className="h-full rounded-full" style={{ width: `${Math.round(m.strength * 100)}%`, background: meta.color }} />
-                      </div>
-                      <span className="shrink-0 font-mono text-[10px] tabular-nums text-muted-foreground">
-                        {m.capability.endpointCount} APIs
-                      </span>
-                    </div>
-                  </button>
-                );
-              })}
+              {askTool === "endpoints" && find ? (
+                <EndpointResults find={find} onSelect={setSelectedId} />
+              ) : (
+                <CapabilityResults matches={matches} selectedId={selectedId} onSelect={setSelectedId} />
+              )}
             </div>
           </ScrollArea>
         </div>
       ) : (
         <div className="flex flex-1 items-center justify-center p-6 text-center">
           <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-            Ask a question to see the capabilities and paid endpoints it connects to.
+            Ask a question to see the {askTool === "endpoints" ? "paid endpoints" : "capabilities"} it connects to.
           </p>
         </div>
       )}
     </div>
+  );
+}
+
+function ToolTab({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex-1 rounded-md px-2 py-1 text-[11px] font-medium transition",
+        active ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground",
+      )}
+    >
+      {label}
+    </button>
+  );
+}
+
+function CapabilityResults({
+  matches,
+  selectedId,
+  onSelect,
+}: {
+  matches: import("@/lib/ontology").MatchResult[];
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <>
+      {matches.map((m, i) => {
+        const meta = domainMeta(m.capability.domain);
+        const sel = selectedId === m.capability.id;
+        return (
+          <button
+            key={m.capability.id}
+            onClick={() => onSelect(m.capability.id)}
+            className={cn(
+              "w-full rounded-lg border px-2.5 py-2 text-left transition",
+              sel ? "border-primary/50 bg-accent" : "hover:bg-accent/50",
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <span
+                className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-bold"
+                style={{ background: `color-mix(in oklab, ${meta.color} 22%, transparent)`, color: meta.color }}
+              >
+                {i + 1}
+              </span>
+              <span className="flex-1 truncate text-[12.5px] font-medium text-foreground">{m.capability.label}</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-2 pl-7">
+              <div className="h-1 flex-1 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full" style={{ width: `${Math.round(m.strength * 100)}%`, background: meta.color }} />
+              </div>
+              <span className="shrink-0 font-mono text-[10px] tabular-nums text-muted-foreground">
+                {m.capability.endpointCount} APIs
+              </span>
+            </div>
+          </button>
+        );
+      })}
+    </>
+  );
+}
+
+function hostOf(u: string) {
+  try {
+    return new URL(u).host;
+  } catch {
+    return u;
+  }
+}
+function pathOf(u: string) {
+  try {
+    return new URL(u).pathname;
+  } catch {
+    return "";
+  }
+}
+
+function EndpointResults({
+  find,
+  onSelect,
+}: {
+  find: import("@/types/graph").FindResult;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <>
+      {find.endpoints.map((ep, i) => {
+        const meta = domainMeta(capById.get(ep.via)?.domain ?? "other");
+        const host = hostOf(ep.url);
+        const path = pathOf(ep.url);
+        return (
+          <button
+            key={`${ep.via}:${host}${path}:${i}`}
+            onClick={() => onSelect(`ep:${ep.via}:${host}${path}`)}
+            className="w-full rounded-lg border px-2.5 py-1.5 text-left transition hover:bg-accent/50"
+          >
+            <div className="flex items-center gap-1.5 font-mono text-[11px]">
+              <span
+                className="rounded px-1 text-[8px] font-bold"
+                style={{ background: `color-mix(in oklab, ${meta.color} 20%, transparent)`, color: meta.color }}
+              >
+                {ep.method}
+              </span>
+              <span className="flex-1 truncate text-foreground/85">
+                {host}
+                <span className="text-muted-foreground">{path}</span>
+              </span>
+            </div>
+            <div className="mt-1 flex items-center justify-between gap-2 text-[9.5px] text-muted-foreground">
+              <span className="truncate">via {capById.get(ep.via)?.label ?? ep.via}</span>
+              <span className="flex shrink-0 items-center gap-1.5">
+                {ep.rails?.length ? <span className="uppercase">{ep.rails.join("·")}</span> : null}
+                {ep.price_usd != null && (
+                  <span className="font-mono font-semibold" style={{ color: meta.color }}>${ep.price_usd}</span>
+                )}
+              </span>
+            </div>
+          </button>
+        );
+      })}
+
+      {find.nextSteps.length > 0 && (
+        <div className="pt-3">
+          <div className="font-display mb-1 px-1 text-[9.5px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+            Next steps
+          </div>
+          {find.nextSteps.map((ns) => (
+            <button
+              key={ns.intent_id}
+              onClick={() => onSelect(ns.intent_id)}
+              className="w-full rounded-lg border border-dashed px-2.5 py-1.5 text-left transition hover:bg-accent/50"
+            >
+              <div className="flex items-center gap-1.5 text-[12px] font-medium text-foreground">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "#5eead4" }} />
+                {ns.do}
+              </div>
+              <div className="mt-0.5 pl-3 text-[10px] text-muted-foreground italic">{ns.why}</div>
+            </button>
+          ))}
+        </div>
+      )}
+    </>
   );
 }
