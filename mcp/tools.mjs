@@ -113,11 +113,72 @@ const TOOLS = [
   },
 ];
 
+// Arm-derived routing (OASIS_ARM_ROUTING=1): the robust query→ENDPOINT arm disambiguates homonyms the
+// thin query→INTENT match can't ("place an AI phone call" → voice_call, NOT blockchain_rpc whose LABEL
+// is "Call blockchain JSON RPC"). Read the intents the arm's top endpoints BIND to, then RRF-fuse with
+// the hybrid caps — arm-derived as the precision primary (×2), hybrid for recall on oblique queries.
+// Returns a ranked list of intent_ids. See docs/proposals/unified-find.md.
+function armDerivedRouting(armHits, hybridCapIds, k = 12) {
+  // Thin endpoints (no documented 200, no inputs) are stubs — their BINDINGS are unreliable, the very
+  // noise that lets "book a flight" pick up a book-metadata endpoint from the deep tail. Tally only the
+  // substantive top endpoints (the clean signal the arm-routing proof used).
+  const thin = (ep) => !((ep.responses && ep.responses.has200) || (ep.inputs && ep.inputs.length));
+  const armScore = new Map();
+  armHits.filter((h) => !thin(h.ep)).slice(0, 8).forEach((h, rank) => {
+    for (const c of (h.ep.capabilities ?? [])) armScore.set(c, (armScore.get(c) ?? 0) + 1 / (rank + 1));
+  });
+  const armRanked = [...armScore.entries()].sort((a, b) => b[1] - a[1]).map(([id]) => id);
+  const K0 = 60, fused = new Map();
+  armRanked.forEach((id, r) => fused.set(id, (fused.get(id) ?? 0) + 2 / (K0 + r)));    // precision primary
+  hybridCapIds.forEach((id, r) => fused.set(id, (fused.get(id) ?? 0) + 1 / (K0 + r))); // recall
+  return [...fused.entries()].sort((a, b) => b[1] - a[1]).map(([id]) => id).slice(0, k);
+}
+
+// Per-intent magnitude of arm support: Σ 1/(rank+1) over the substantive top-8 arm endpoints bound to
+// each intent. The clean signal — stubs (thin) excluded — used by both the router and the guard.
+function armSupportScores(armHits) {
+  const thin = (ep) => !((ep.responses && ep.responses.has200) || (ep.inputs && ep.inputs.length));
+  const s = new Map();
+  armHits.filter((h) => !thin(h.ep)).slice(0, 8).forEach((h, rank) => {
+    for (const c of (h.ep.capabilities ?? [])) s.set(c, (s.get(c) ?? 0) + 1 / (rank + 1));
+  });
+  return s;
+}
+
+// Surgical homonym GUARD (OASIS_ARM_GUARD=1): keep hybrid routing as-is, override its #1 ONLY when the
+// arm FLATLY rejects it — hybrid's #1 has zero support among the arm's clean top-8 endpoints, the arm
+// instead strongly backs a different intent (its #1 endpoint binds to it), and that intent is already a
+// hybrid candidate. Catches "book a flight"→book_lookup / homonym noise without disturbing on-task #1s.
+function armGuard(armHits, hybridOrder) {
+  if (hybridOrder.length < 2) return hybridOrder;
+  const sc = armSupportScores(armHits);
+  const armTop = [...sc.entries()].sort((a, b) => b[1] - a[1])[0];
+  if (!armTop) return hybridOrder;
+  const [armTopId, armTopVal] = armTop;
+  const h1 = hybridOrder[0];
+  if ((sc.get(h1) ?? 0) === 0 && armTopVal >= 1.0 && armTopId !== h1 && hybridOrder.includes(armTopId)) {
+    return [armTopId, ...hybridOrder.filter((id) => id !== armTopId)];
+  }
+  return hybridOrder;
+}
+
 async function oasisSearch({ query, limit = 8 }) {
-  const hits = await searchHybridWithFallback(query, bundle, lanceDir, limit);
-  const capabilities = hits
-    .filter((h) => h.kind === "capability")
-    .map((h) => ({ intent_id: h.capability_id, label: h.label, summary: h.summary }));
+  const hits = await searchHybridWithFallback(query, bundle, lanceDir, Math.max(limit, 12));
+  const capHits = hits.filter((h) => h.kind === "capability");
+  let order = capHits.map((h) => h.capability_id);
+  // Homonym guard is ON by default (validated +2/broke-0 on the 240; set OASIS_ARM_GUARD=0 to disable).
+  // OASIS_ARM_ROUTING=1 is the experimental full arm-derived router (net −8 on the 240 — kept for A/B,
+  // not shipped). See docs/proposals/unified-find.md.
+  const routeOn = process.env.OASIS_ARM_ROUTING === "1";
+  const guardOn = process.env.OASIS_ARM_GUARD !== "0";
+  if ((routeOn || guardOn) && endpointArm.ready) {
+    const armHits = armRerank(endpointArm.topK(await embedText(query), 40));
+    order = routeOn ? armDerivedRouting(armHits, order, limit) : armGuard(armHits, order);
+  }
+  const capabilities = order.slice(0, limit).map((id) => {
+    const h = capHits.find((x) => x.capability_id === id), c = capById.get(id);
+    return (h || c) ? { intent_id: id, label: h?.label ?? c?.label, summary: h?.summary ?? c?.summary } : null;
+  }).filter(Boolean);
   const endpoints = hits
     .filter((h) => h.kind === "endpoint")
     .slice(0, 3)
@@ -242,6 +303,7 @@ async function oasisFind({ query, limit = 12 }) {
   // corroboration), so the base is pure arm; moat recovery needs a smarter fusion (TODO —
   // docs/proposals/unified-find.md). Degrades to concentration when the vector cache is absent.
   let endpoints;
+  let routedCaps = caps; // hybrid order; guarded below when the arm is available
   if (endpointArm.ready) {
     const qv = await getQueryVec();
     const armHits = armRerank(endpointArm.topK(qv, limit * 8));
@@ -252,13 +314,19 @@ async function oasisFind({ query, limit = 12 }) {
     for (const a of armHits) { if (list.length >= limit) break; push(armEp(a)); }
     for (const a of armHits) { if (list.length >= limit) break; const e = armEp(a); if (!list.some((x) => x.url === e.url)) list.push(e); } // same-host backfill if short
     endpoints = list.slice(0, limit);
+    // Seed next_steps from the GUARDED top intent (default-on): when the arm flatly rejects hybrid's #1
+    // (a homonym), reorder so the cluster grows from the right capability. Reuses these arm hits.
+    if (process.env.OASIS_ARM_GUARD !== "0") {
+      const ordered = armGuard(armHits, caps.map((c) => c.capability_id));
+      routedCaps = ordered.map((id) => caps.find((c) => c.capability_id === id)).filter(Boolean);
+    }
   } else {
     endpoints = out.slice(0, limit); // no vectors → concentration
   }
   // next_steps: the "what can you do next" map a pure-vector engine can't return. Unifies the two
   // relationship graphs — the data-driven entity-flow CLUSTER (everything that consumes an entity the
   // task involves, e.g. Place=Japan → weather/reviews/places) plus the curated authored links.
-  return { endpoints, next_steps: await buildNextSteps(caps, query) };
+  return { endpoints, next_steps: await buildNextSteps(routedCaps, query) };
 }
 
 function fmtFollowUp(lead) {

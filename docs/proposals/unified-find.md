@@ -22,6 +22,18 @@ tried and **regressed more than it recovered: net −23/240** (it dropped unifie
 stays *pure arm*. The smarter fusion that captures the moat without the regressions is the next hard
 problem — the ~89% oracle ceiling is real but a naive pin does not reach it.
 
+**Shipped — the homonym guard (routing layer).** The query→ENDPOINT arm is robust to homonyms the
+query→INTENT match falls for ("place an AI phone call" → `voice_call`, not `blockchain_rpc` whose label
+is "Call …"; "book a flight" → `aviation`, not `book_lookup`). We tried deriving routing *entirely* from
+the arm's top endpoints' bindings (`OASIS_ARM_ROUTING`) — it **regressed −8/240 (95.0→91.7% P@1)**: the
+hybrid router is already very strong on direct queries (terse 96%, conversational 99%), and routing
+through endpoints only wins on the contextual slice (+2.5%). Same lesson as the pin. The ship is a
+**surgical guard** (`OASIS_ARM_GUARD`, default-ON, `armGuard()` in `mcp/tools.mjs`): keep hybrid routing,
+override its #1 *only* when the arm flatly rejects it — hybrid's #1 has zero support among the arm's
+substantive top-8 endpoints AND the arm's own #1 endpoint strongly backs a different, already-candidate
+intent. On the 240: **+2 fixed / 0 broke → 95.8% P@1, P@3 stays 100%**. Applied to both `oasis_search`
+caps and `oasis_find`'s `next_steps` seeding. Set `OASIS_ARM_GUARD=0` to disable.
+
 **Also pending:** the `next_steps` **entity-flow** enrichment (folding `oasis_next`'s `entities[]` path).
 The always-on *capability-graph* `next_steps` shipped; the entity-anchored cross-domain leads are the
 next increment, so `oasis_next` stays a separate tool for now.
