@@ -1,7 +1,16 @@
 "use client";
 
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { ChevronDown, Compass, CornerDownLeft, Layers3, PanelLeftClose, Search, Sparkles } from "lucide-react";
+import {
+  ChevronDown,
+  Compass,
+  CornerDownLeft,
+  Layers3,
+  Loader2,
+  PanelLeftClose,
+  Search,
+  Sparkles,
+} from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -12,7 +21,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { domainMeta, domains } from "@/lib/ontology";
 import { focusDomainAtom, showEntitiesAtom } from "@/stores/options";
-import { inputAtom, matchesAtom, modeAtom, queryAtom } from "@/stores/query";
+import { inputAtom, matchesAtom, modeAtom, queryAtom, searchingAtom } from "@/stores/query";
 import { selectedIdAtom } from "@/stores/selection";
 import { sidebarCollapsedAtom } from "@/stores/ui";
 import type { Mode } from "@/types/graph";
@@ -189,6 +198,7 @@ function AskBody() {
   const setQuery = useSetAtom(queryAtom);
   const query = useAtomValue(queryAtom);
   const matches = useAtomValue(matchesAtom);
+  const searching = useAtomValue(searchingAtom);
   const [selectedId, setSelectedId] = useAtom(selectedIdAtom);
   const [showAllSamples, setShowAllSamples] = useState(false);
 
@@ -250,8 +260,14 @@ function AskBody() {
       <Separator />
       {query ? (
         <div className="flex min-h-0 flex-1 flex-col">
-          <div className="font-display px-3 pt-2.5 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-            {matches.length} match{matches.length === 1 ? "" : "es"}
+          <div className="font-display flex items-center gap-1.5 px-3 pt-2.5 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            {searching ? (
+              <>
+                <Loader2 size={11} className="animate-spin" /> Binding…
+              </>
+            ) : (
+              `${matches.length} match${matches.length === 1 ? "" : "es"}`
+            )}
           </div>
           <ScrollArea className="min-h-0 flex-1">
             <div className="space-y-1 p-2 pt-0">

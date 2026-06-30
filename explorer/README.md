@@ -20,6 +20,27 @@ from [OpenMetadata's OntologyExplorer](https://github.com/open-metadata/OpenMeta
 Click any node to **trace its connections** (everything connected lights up, the rest fades)
 and open a detail panel. The view pans the selection clear of the panel.
 
+## Ask — the real binder
+
+The **Ask** results come from the actual OASIS binder, not a keyword guess. The browser POSTs
+the question to a server route (`app/api/search/route.ts`), which calls `oasis_search` on an
+OASIS MCP server and maps the ranked `intent_id`s onto the local dataset to build the graph.
+
+- **MCP endpoint** is configurable via `OASIS_MCP_URL` (default `http://localhost:8899/mcp`).
+- If the MCP is unreachable, Ask **falls back** to a local keyword scorer so it still works
+  offline (rougher results — no semantics).
+
+To run the real binder locally (so Ask mirrors your **local** index), start the OASIS MCP
+over your local build — from the OASIS repo:
+
+```bash
+set -a; . ./.env; set +a        # GOOGLE_API_KEY — embeds each query at runtime
+PORT=8899 node mcp/http-server.mjs
+```
+
+Then run the dashboard (`pnpm dev`); its `/api/search` route will reach it on `:8899`. In
+production, point `OASIS_MCP_URL` at your deployed OASIS MCP instead.
+
 ## Layout engines
 
 A switcher in the canvas toolbar (top-left) picks the layout for the current view:

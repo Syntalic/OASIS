@@ -12,12 +12,14 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { useAskSearch } from "@/hooks/use-ask-search";
 import { useGraph } from "@/hooks/use-graph";
 import { useThemeSync } from "@/hooks/use-theme-sync";
 import { selectedIdAtom } from "@/stores/selection";
 import { sidebarCollapsedAtom } from "@/stores/ui";
 
 function Shell() {
+  useAskSearch();
   useGraph();
   useThemeSync();
   const collapsed = useAtomValue(sidebarCollapsedAtom);

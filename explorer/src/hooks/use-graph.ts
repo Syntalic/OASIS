@@ -31,7 +31,9 @@ export function useGraph() {
   const setSelected = useSetAtom(selectedIdAtom);
 
   useEffect(() => {
-    const isAsk = mode === "ask" && !!query && matches.length > 0;
+    // treat as Ask as soon as there's a question, so the canvas shows the
+    // question hub while the binder resolves (instead of flashing the overview)
+    const isAsk = mode === "ask" && !!query;
     const { nodes, edges } = isAsk
       ? buildAskGraph(query, matches)
       : buildExploreGraph({ showEntities, focusDomain });
