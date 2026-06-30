@@ -196,6 +196,7 @@ function armGuard(armHits, hybridOrder) {
 }
 
 async function oasisSearch({ query, limit = 8 }) {
+  if (!query || !String(query).trim()) return { error: "query is required" };
   const hits = await searchHybridWithFallback(query, bundle, lanceDir, Math.max(limit, 12));
   const capHits = hits.filter((h) => h.kind === "capability");
   let order = capHits.map((h) => h.capability_id);
@@ -296,6 +297,7 @@ async function buildNextSteps(caps, query, held = null) {
 // list with payment metadata inline, PLUS a next_steps map (buildNextSteps) — the agent
 // makes ONE call and gets "here's an endpoint, and here's what you can do next".
 async function oasisDiscover({ query, finding, entities, limit = 12 }) {
+  if (!query || !String(query).trim()) return { error: "query is required" };
   const hits = await searchHybridWithFallback(query, bundle, lanceDir, 12);
   // The query embedding is the ONE live model call (memoized) — shared by the semantic
   // rerank, the gated arm, and condfuse so no path embeds the query twice.
