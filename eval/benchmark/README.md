@@ -1,12 +1,12 @@
-# OASIS-vs-AgentCash discovery benchmark
+# OASIS discovery benchmark (vs. a vector-search baseline)
 
-A repeatable head-to-head: does the **#1** result from `oasis_find` actually perform a natural-language
-task, vs. an independent control (AgentCash `search`). Measures #1-correctness win-rate, blind-judged,
-with loss attribution. Results + analysis: [`docs/benchmarks/oasis-vs-agentcash.md`](../../docs/benchmarks/oasis-vs-agentcash.md).
+A repeatable side-by-side: does the **#1** result from `oasis_find` actually perform a natural-language
+task, vs. an independent control (a vector-search baseline's `search`). Measures #1-correctness match-rate, blind-judged,
+with loss attribution. Results + analysis: [`docs/benchmarks/discovery-benchmark.md`](../../docs/benchmarks/discovery-benchmark.md).
 
 ## What's here
 - `queries.json` — 240 blind queries (3 styles × 80 intents), LLM-generated from task definitions only.
-  ⚠️ Generated from OASIS's *own* intents → home-turf bias (favours OASIS routing; the measured deficit
+  ⚠️ Generated from OASIS's *own* intents → home-turf bias (favours OASIS routing; the measured gap
   is a floor). The next iteration should use a **neutral** (non-OASIS-derived) query set.
 - `calib.json` — 21 hand-labeled (query, endpoint, on_task) pairs to validate the judge.
 
@@ -28,8 +28,8 @@ RATE_LIMIT=0 OASIS_ACTION_PENALTY=30 OASIS_DOMAIN_PENALTY=10 OASIS_ENTITY_PENALT
   OASIS_GATED_INTENTS="cloud.domains,travel.place_reviews" \
   node scripts/benchmark/oasis-arms.mjs $BENCH_DIR/oasis_scoped.json
 
-# 3. AgentCash arm — collect via the agentcash MCP `search` tool (sub-agents or an MCP client),
-#    writing $BENCH_DIR/agentcash.json = { "<qid>": [{url,summary,score}], ... }
+# 3. Baseline arm — collect via a vector-search discovery MCP's `search` tool (sub-agents or an MCP client),
+#    writing $BENCH_DIR/baseline.json = { "<qid>": [{url,summary,score}], ... }
 
 # 4. validate the judge, then judge all arms (blind, deduped union of top-3)
 node scripts/benchmark/judge.mjs --calibrate     # expect ~95% vs calib.json
@@ -38,7 +38,7 @@ node scripts/benchmark/judge.mjs                  # → judgments.json
 # 5. score + attribute
 node scripts/benchmark/score.mjs                  # P@1/P@3, head-to-head, gate contribution
 RATE_LIMIT=0 node scripts/benchmark/attribute.mjs # loss buckets (routing / binding / ranking)
-node scripts/benchmark/coverage.mjs               # split losses by whether AC's host is in OASIS's corpus
+node scripts/benchmark/coverage.mjs               # split losses by whether the baseline's host is in OASIS's corpus
 ```
 
 ## Known limitations (see the report's caveats)

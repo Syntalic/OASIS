@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 const KEY = process.env.GOOGLE_API_KEY;
 const B = process.env.BENCH_DIR || "/tmp/oasis-bench";
 const queries = JSON.parse(readFileSync(`${B}/queries.json`, "utf8"));
-const ARMS = ["oasis_off", "oasis_scoped", "agentcash", "live"].filter((a) => existsSync(`${B}/${a}.json`));
+const ARMS = ["oasis_off", "oasis_scoped", "baseline", "live"].filter((a) => existsSync(`${B}/${a}.json`));
 const arm = Object.fromEntries(ARMS.map((a) => [a, JSON.parse(readFileSync(`${B}/${a}.json`, "utf8"))]));
 const TOPK = 3;
 

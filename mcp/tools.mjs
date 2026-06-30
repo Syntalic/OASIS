@@ -297,7 +297,7 @@ async function oasisFind({ query, limit = 12 }) {
     }
   });
   // ── UNIFIED FIND: the query→endpoint vector ARM is the base — pure query-first retrieval, which
-  // scores ~80% P@1 (vs ~69% for the old intent-first concentration and ~78% for AgentCash). A confident
+  // scores ~80% P@1 (vs ~69% for the old intent-first concentration and ~78% for a vector-search baseline). A confident
   // intent-#1 "pin" to recover the ~17 moat cases the arm distracts on (e.g. "voice"→TTS not a
   // script-writer) was tried but regressed more than it recovered (net −23/240 — even with arm
   // corroboration), so the base is pure arm; moat recovery needs a smarter fusion (TODO —

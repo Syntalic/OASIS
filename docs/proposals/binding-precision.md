@@ -18,7 +18,7 @@ taxonomy** (the moat stays intact).
 
 ## How this surfaced
 
-Six colloquial queries run through `oasis_search`, `oasis_find`, and a control (AgentCash):
+Six colloquial queries run through `oasis_search`, `oasis_find`, and a control (the baseline):
 
 | Query | `oasis_search` routing | `oasis_find` result |
 |---|---|---|
@@ -189,8 +189,8 @@ no full refactor, no taxonomy changes.
 
 **Validated 2026-06-28** against deployed tip `a427f9f` + pinned index
 `oasis-index-20260627-80e97e2`, hosted at `mcp.oasisindex.org` (= `oasis-mcp.fly.dev`).
-Control: the **AgentCash** MCP `search` tool (an independent x402/MPP discovery engine over a
-smaller, brand-curated catalog). Every row of [How this surfaced](#how-this-surfaced) reproduces:
+Control: a **vector-search discovery baseline** — an independent x402/MPP discovery engine over a
+smaller, brand-curated catalog. Every row of [How this surfaced](#how-this-surfaced) reproduces:
 `oasis_search` routes correctly on all six queries; `oasis_find` is clean on the three baselines
 and shows the three predicted failure shapes. Stable to phrasing — "register a domain **for my
 project**" vs "**for my startup**" reshuffles the top-7 but keeps the first true registrar at rank 8.
@@ -199,7 +199,7 @@ Reproduce (no build, no key — hits the deployed index directly):
 
 ```
 oasis_search(q) ; oasis_find(q)         for q in the six queries below
-agentcash search(q)                     control, for the three failing queries
+baseline search(q)                      control, for the three failing queries
 ```
 
 ### A.1 Verdicts
@@ -259,9 +259,9 @@ Baselines clean: `weather`→`data.weather_forecast` (8/8 weather; one aviation 
 `finance.crypto_spot_price` (8/8 spot); `OCR`→`data.ocr` (OCR endpoints + one `qr-code-decode` at #6 — a
 small same-mechanism wart in an otherwise clean bucket, corroborating the thesis rather than denying it).
 
-### A.3 Control — AgentCash MCP `search` (the three failing queries)
+### A.3 Control — the vector-search baseline's `search` (the three failing queries)
 
-AgentCash federates a much smaller, brand-curated catalog and returns its ranking signals inline: each hit
+The baseline federates a much smaller, brand-curated catalog and returns its ranking signals inline: each hit
 carries `vectorSimilarity` **and** `resourceUsage`/`originUsage` (`transactionCount`, `volumeUsd`,
 `trustedUserUsageRatio`) — i.e. it ranks on a **popularity-aware blend**, the very signal OASIS documents as
 intended-but-unbuilt (`select-policy.ts:125-131`; `docs/proposals/onchain-usage-ranking.md`).
@@ -281,15 +281,15 @@ intended-but-unbuilt (`select-policy.ts:125-131`; `docs/proposals/onchain-usage-
 ```
 
 **Sharpest contrast — same endpoint, two rankers.** `stabledomains.dev/api/register` is in **both** indexes:
-OASIS ranks it **#9**, AgentCash **#1**. Inversely `the-stall …/domain-availability` is OASIS **#2** but
-AgentCash **#10**. OASIS's lexical-id ranker puts the *checker* above the *registrar*; AgentCash's usage-blend
+OASIS ranks it **#9**, the baseline **#1**. Inversely `the-stall …/domain-availability` is OASIS **#2** but
+the baseline **#10**. OASIS's lexical-id ranker puts the *checker* above the *registrar*; the baseline's usage-blend
 inverts it. But the popularity signal only *incidentally* separates the action (registrars happen to be more
-used than checkers) — it is not a principled gate: AgentCash still surfaces `namespace/register` (#6) and four
+used than checkers) — it is not a principled gate: the baseline still surfaces `namespace/register` (#6) and four
 availability checkers. → **Typed binding (this proposal) and usage ranking (the deferred proposal) are
 complementary levers**; the control exercises the second and still shows action-confusion.
 
 **find restaurant reviews near my hotel** (8 hits): hotel-ratings #1, Resy restaurant *search/booking*
-#2/#5/#8, nearby-hotels/POI #3/#4/#6/#7 — **no actual restaurant-review endpoint**, and AgentCash's own
+#2/#5/#8, nearby-hotels/POI #3/#4/#6/#7 — **no actual restaurant-review endpoint**, and the baseline's own
 `vectorSimilarity` ranks are 57–78 (it knows these are weak). OASIS surfaces real review providers
 (Tripadvisor, Yelp, Google/Maps) *with* product-review bleed. → Validates §"On 'just raise the spec-quality
 bar'" point 2: OASIS's precision problem is the **cost of the recall** the narrow control simply lacks — less
@@ -298,13 +298,13 @@ breadth yields fewer wrong answers *and* fewer right ones.
 **turn this PDF into a short audio summary** (32 hits): collapses to "audio **summarization**" —
 `audio_summarize` #1/#2, `podcast_summarizer` #3, `book_summary` #4 — with the one real text→MP3 leg
 (`mondello.dev/media/narrate`) at #5; no PDF-extract leg. → Both engines fail this query by collapsing a
-3-step pipeline to a single capability (OASIS → TTS; AgentCash → audio-summary), confirming it as an
+3-step pipeline to a single capability (OASIS → TTS; the baseline → audio-summary), confirming it as an
 orchestration gap independent of binding precision.
 
 ### A.4 Net
 
 The symptom layer of this proposal is reproducible on the deployed tip and survives a cross-engine control.
-The control adds two things: (a) a **same-endpoint registrar swing from rank 9 (OASIS) to rank 1 (AgentCash)**
+The control adds two things: (a) a **same-endpoint registrar swing from rank 9 (OASIS) to rank 1 (the baseline)**
 that a usage-aware blend buys — evidence the deferred popularity ranker is real headroom, complementary to
 typing; and (b) confirmation that OASIS's breadth is the source of **both** its recall edge and its precision
 tax — which is exactly why the fix is *type the endpoints and gate*, not prune the corpus.

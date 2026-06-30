@@ -1,5 +1,5 @@
 // Generate a blind, per-intent query set. The generator sees ONLY each task definition — never
-// any engine's behavior — so neither OASIS nor AgentCash is favored. 3 styles/intent.
+// any engine's behavior — so neither OASIS nor the baseline is favored. 3 styles/intent.
 import { readFileSync, writeFileSync } from "node:fs";
 const KEY = process.env.GOOGLE_API_KEY;
 const B = process.env.BENCH_DIR || "/tmp/oasis-bench";

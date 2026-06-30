@@ -45,7 +45,7 @@ function isContentFree(text: string | undefined): boolean {
   return CONTENT_FREE.has(s) || BARE_PRICE.test(s);
 }
 
-/** The fields that make an endpoint "fleshed out" (mapped to the AgentCash A+ rubric). */
+/** The fields that make an endpoint "fleshed out" (mapped to an external discovery A+ quality rubric). */
 const FLESH_FIELDS: Array<(e: EndpointRecord) => boolean> = [
   (e) => !!(e.summary ?? "").trim(),
   (e) => !!(e.description ?? "").trim(),

@@ -22,7 +22,7 @@ corpus. This section is the **external** check: the same `oasis_find` on a batte
 tasks, with the two largest live x402 discovery layers run on the identical battery so the numbers
 aren't measured in a vacuum.
 
-**Engines.** OASIS (`oasis_find`); **AgentCash** (`search` — vector similarity + live usage
+**Engines.** OASIS (`oasis_find`); a **vector-search baseline** (`search` — vector similarity + live usage
 telemetry); **Coinbase x402 Bazaar** (HTTP `/discovery/search` over a ~25,000-resource catalog).
 
 **Battery.** 40 natural-language tasks across ~20 capability domains, phrased the way a person
@@ -34,7 +34,7 @@ task scores 0; crypto perpetuals for a spot-price task score 0. Providers are de
 
 **Results — every metric spelled out:**
 
-| Metric (what it measures) | **OASIS** | AgentCash | Bazaar |
+| Metric (what it measures) | **OASIS** | Vector baseline | Bazaar |
 |---|---|---|---|
 | **Precision** — of the 8 results returned, the share that *directly do the task* (not merely adjacent). Higher = less noise. | **71%** | 62% | 54% |
 | **Distinct providers / task** — unique hosts returned, useful or not. Measures diversity (vs returning the same host repeated). | **7.8** | 4.4 | 2.8 |

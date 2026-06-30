@@ -1,26 +1,26 @@
-# The traversal moat: next-step recall vs. a vector-only baseline
+# The traversal differentiator: next-step recall vs. a vector-only baseline
 
 **Date:** 2026-06-29 · **Harness:** [`scripts/benchmark/traversal/run.mjs`](../../scripts/benchmark/traversal/run.mjs)
 · **Gold set:** [`eval/benchmark/traversal-tasks.json`](../../eval/benchmark/traversal-tasks.json)
 · **Method README:** [`eval/benchmark/traversal-README.md`](../../eval/benchmark/traversal-README.md)
-· **Motivation:** [`docs/proposals/unified-find.md`](../proposals/unified-find.md) (the moat "needs its own eval")
+· **Motivation:** [`docs/proposals/unified-find.md`](../proposals/unified-find.md) (the differentiator "needs its own eval")
 
 ## TL;DR
 
 On 18 compound, multi-step agent tasks, OASIS surfaces **66.8% of the needed downstream next-steps
 from the start capability alone, on a single call** (mean recall@8; micro 66.7%, 40/60 gold steps).
-A pure-vector discovery engine (AgentCash, or any embedding index) surfaces **0%** of them — it
+A pure-vector discovery engine (any embedding index / vector-search baseline) surfaces **0%** of them — it
 returns one ranked endpoint list and has no relationship layer to traverse.
 
 > **OASIS surfaces ~67% of the next-steps a compound workflow needs; a vector-only engine surfaces 0%.**
 
 That gap is not a tuning artifact. A vector index *structurally* has no "what can I do next" edges to
-return; the moat is the authored ontology (typed capability links + entity-flow), which a similarity
+return; the differentiator is the authored ontology (typed capability links + entity-flow), which a similarity
 score cannot reconstruct.
 
 ## What's measured
 
-The discovery P@1 benchmark ([`oasis-vs-agentcash.md`](./oasis-vs-agentcash.md)) only scores the
+The discovery P@1 benchmark ([`discovery-benchmark.md`](./discovery-benchmark.md)) only scores the
 `endpoints` half of `oasis_find` — "is the #1 result right for this query". It says nothing about the
 `next_steps` half. This benchmark isolates that half.
 
@@ -70,7 +70,7 @@ key-free: GOOGLE_API_KEY not set (no embedding / no LLM)
 
 **Mean next-step recall@8 (macro): 66.8%** · micro recall@8: 66.7% (40/60) · range: 33.3%–100%
 
-**Vector-only baseline (AgentCash / any pure-vector engine): 0.0%.**
+**Vector-only baseline (any pure-vector engine): 0.0%.**
 
 ## Reading the misses
 
@@ -98,7 +98,7 @@ endpoints by embedding similarity; it has **no typed edges** between capabilitie
 entity-flow** (which capability *consumes the identity another produces*). There is simply nothing to
 return for "what can I do next" — the relationship payload doesn't exist in that representation. You
 can make the *endpoint* retrieval excellent (the unified-find proposal flips OASIS's base to exactly
-that vector arm, beating AgentCash at 80.4% P@1) and the next-step recall of a pure-vector engine is
+that vector arm, ahead of the baseline at 80.4% P@1) and the next-step recall of a pure-vector engine is
 still 0. The two axes are independent; this is the one OASIS owns.
 
 ## Caveats

@@ -1,6 +1,6 @@
 # Unified `oasis_find`: vector-baseline retrieval + ontology next-steps
 
-**Status:** proposal · **Date:** 2026-06-29 · **Evidence:** [docs/benchmarks/oasis-vs-agentcash.md](../benchmarks/oasis-vs-agentcash.md)
+**Status:** proposal · **Date:** 2026-06-29 · **Evidence:** [docs/benchmarks/discovery-benchmark.md](../benchmarks/discovery-benchmark.md)
 
 ## TL;DR
 Collapse the agent-facing discovery surface to **one tool, `oasis_find`**, that does what an agent
@@ -9,11 +9,11 @@ return a compact "here's what you can do next" map of adjacent/typed capabilitie
 folds into `find` as an optional `entities[]` enrichment; `oasis_search` stays as the low-level
 pure-vector primitive; `oasis_resolve` becomes `find`'s internal primitive. Two changes in one:
 **simplify the surface**, and **flip `find`'s retrieval base** from intent-first concentration
-(69.6% P@1) to the vector arm (80.4% P@1 — beating AgentCash's 77.9%).
+(69.6% P@1) to the vector arm (80.4% P@1 — ahead of the baseline's 77.9%).
 
 ## Status (2026-06-30)
 **Shipped:** `oasis_find` now defaults to the vector-arm base + an always-on `next_steps` map
-(`mcp/tools.mjs`). 240-query blind benchmark: **80.0% P@1 / 70.8% P@3 — beats AgentCash (77.9% / 71.0%)
+(`mcp/tools.mjs`). 240-query blind benchmark: **80.0% P@1 / 70.8% P@3 — ahead of the baseline (77.9% / 71.0%)
 and the old intent-first default (68.8%) by +11.2pp** (+46 wins / −19 losses).
 
 **Open problem — the ~19 "moat" losses.** Those 19 are queries where confident routing uniquely beat
@@ -53,9 +53,9 @@ entirely.
 | intent-first *concentration* (the current base) | 67.1% | 59.7% |
 | **vector arm alone (query-first)** | **80.4%** | 71.7% |
 | current fused `oasis_find` | 69.6% | 61.7% |
-| AgentCash (external control) | 77.9% | 71.0% |
+| Vector-search baseline (external control) | 77.9% | 71.0% |
 
-The vector arm — *already inside OASIS* (`endpoint-arm.ts`) — beats AgentCash, but `find` buries it
+The vector arm — *already inside OASIS* (`endpoint-arm.ts`) — is ahead of the baseline, but `find` buries it
 as a conservative fallback (fires only on near-tie routing) and ships 69.6%. Separately, `find`
 flattened away the relationship payload it was designed to surface ("no separate `related[]`
 payload" — `mcp/tools.mjs`). Diagnostics on the 240: the arm is right where the fused result is
@@ -86,7 +86,7 @@ layer applies as a **reranker/confirmer** on the retrieved set, not a prefilter:
   retrieval has ("voice" → a script writer; "Shopify" → product search; QR/video → image-gen).
 - Preserve the ~20/240 cases where intent routing uniquely beats raw vector (the moat).
 
-Target: the fusion ≈ **85–89%** P@1, vs 69.6% today and 77.9% for AgentCash.
+Target: the fusion ≈ **85–89%** P@1, vs 69.6% today and 77.9% for the baseline.
 
 ### `next_steps`: two flavors, one field
 - **Capability-adjacency (always, from the query alone):** `relatedOptions(routedIntent)` — the
@@ -114,19 +114,19 @@ Target: the fusion ≈ **85–89%** P@1, vs 69.6% today and 77.9% for AgentCash.
 - (+ contribution tools, separate.)
 
 ## Why this is the moat, not just simpler
-AgentCash (any pure-vector engine) returns one ranked endpoint list. Unified `find` returns that
+A vector-search baseline (any pure-vector engine) returns one ranked endpoint list. Unified `find` returns that
 **plus** a typed map of where to go next — *on every call*. Folding `next` in puts the relationship
 value (the thing a vector index structurally can't produce) in front of the agent every time,
 instead of behind a tool it forgets to call. It surfaces the moat *more*, not less.
 
 ## Caveats / deferred
-- **Coverage is orthogonal.** ~half the AgentCash gap is origins OASIS never crawled — this rework
+- **Coverage is orthogonal.** ~half the baseline gap is origins OASIS never crawled — this rework
   addresses retrieval + relationships, not corpus coverage. Crawl expansion is separate.
 - **Keep the default lean.** `next_steps` compact by default; entity-flow expansion only on
   `entities[]`. Don't bloat the common response.
 - **The moat needs its own eval.** P@1 measures only the `endpoints` half. The `next_steps`/traversal
   value needs a workflow/multi-step benchmark (does `find` surface the right adjacencies to complete
-  a compound task?) — proposed separately; it's the dimension AgentCash can't attempt.
+  a compound task?) — proposed separately; it's the dimension a pure-vector baseline can't attempt.
 - **Reranker strength is load-bearing.** Query-first reintroduces vector-distraction risk; the
   ontology rerank must be strong enough to reject it — that's what preserves the 20 moat wins. Weak
   rerank ⇒ regress toward pure vector.

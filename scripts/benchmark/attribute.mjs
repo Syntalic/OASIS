@@ -1,4 +1,4 @@
-// Attribute every OASIS loss (AgentCash #1 correct, OASIS #1 not) to a cause, using oasis_search
+// Attribute every OASIS loss (baseline #1 correct, OASIS #1 not) to a cause, using oasis_search
 // (routing) + the judge. Buckets:
 //   ranking       = OASIS HAS an on-task endpoint in its top-3, just not at #1 (fixable by gate/ranking; no new data/ontology)
 //   binding/cov   = routed to the right intent but surfaced no on-task endpoint (binding/coverage gap)
@@ -27,7 +27,7 @@ for (const q of losses) {
 }
 process.stderr.write("\n");
 writeFileSync(`${B}/attribution.json`, JSON.stringify({ hist, losses: out }, null, 2));
-console.log(`\nLoss attribution (${losses.length} OASIS losses to AgentCash):`);
+console.log(`\nLoss attribution (${losses.length} OASIS losses to the baseline):`);
 const tot = losses.length || 1;
 for (const [k, v] of Object.entries(hist).sort((a, b) => b[1] - a[1])) console.log(`  ${k.padEnd(13)} ${v}  (${(100 * v / tot).toFixed(0)}%)`);
 console.log("\n  ranking = we already have a correct endpoint, just mis-ranked → fixable, NO usage data needed");

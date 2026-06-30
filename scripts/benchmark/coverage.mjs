@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 const B = process.env.BENCH_DIR || "/tmp/oasis-bench";
-const ac = JSON.parse(readFileSync(`${B}/agentcash.json`, "utf8"));
+const ac = JSON.parse(readFileSync(`${B}/baseline.json`, "utf8"));
 const attr = JSON.parse(readFileSync(`${B}/attribution.json`, "utf8"));
 const eps = JSON.parse(readFileSync((process.env.OASIS_ROOT || process.cwd()) + "/dist/endpoints.json", "utf8")).endpoints;
 const host = (u) => (u || "").replace(/^https?:\/\//, "").split("/")[0];
@@ -15,7 +15,7 @@ for (const l of attr.losses) {
   if (corpusHosts.has(h)) present++;
   else { absent++; absentHosts[h] = (absentHosts[h] || 0) + 1; }
 }
-console.log("\nWithin the 29 binding/cov losses — is AgentCash's winning HOST in OASIS's corpus?");
+console.log("\nWithin the 29 binding/cov losses — is the baseline's winning HOST in OASIS's corpus?");
 console.log("  PRESENT (OASIS has the host, ranked >3 / unbound → binding/rank fix):", present);
 console.log("  ABSENT  (OASIS never crawled it → COVERAGE gap):", absent);
 console.log("\n  top absent hosts (wins OASIS can't produce — a crawl gap):");

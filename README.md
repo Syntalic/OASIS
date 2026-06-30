@@ -56,7 +56,7 @@ the task*. Per task it surfaces **~5.6 useful, distinct providers** (unique host
 result** — a tight, pre-ranked, de-duplicated list rather than a long one.
 
 To confirm these numbers hold up against the field and not just in isolation, we ran the same battery
-through the two largest live x402 discovery layers — **AgentCash** and **Coinbase's x402 Bazaar**;
+through other live x402 discovery layers — a representative **vector-search discovery baseline** and **Coinbase's x402 Bazaar**;
 OASIS returned the most useful options per task at the lowest cost per useful result. The three
 catalogs are **~90% disjoint** (they mostly index *different* providers), so querying more than one
 and merging remains the most complete strategy. Full per-task numbers + method:

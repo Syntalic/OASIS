@@ -1,6 +1,6 @@
-// Traversal (next-step) benchmark — measures the OASIS moat a pure-vector engine can't produce.
+// Traversal (next-step) benchmark — measures the OASIS differentiator a pure-vector engine can't produce.
 //
-// A pure-vector discovery engine (e.g. AgentCash) returns ONE ranked endpoint list and nothing
+// A pure-vector discovery engine (e.g. a vector-search baseline) returns ONE ranked endpoint list and nothing
 // else: it has no notion of "what you can do next". OASIS additionally surfaces the adjacent/
 // downstream capabilities needed to finish a compound, multi-step workflow, via two key-free
 // signals on the AUTHORED ontology:
@@ -155,6 +155,6 @@ console.log("  (* = present in the surfaced union but pushed past the recall@" +
 
 console.log(`MEAN next-step recall@${K} (macro, per-task avg):  ${pct(meanRecall)}`);
 console.log(`micro recall@${K} (gold steps surfaced / total):   ${pct(microRecall)}  (${surfacedTotal}/${goldTotal})`);
-console.log(`\nVECTOR-ONLY BASELINE (AgentCash / any pure-vector engine): 0.0%`);
+console.log(`\nVECTOR-ONLY BASELINE (any pure-vector engine): 0.0%`);
 console.log(`  A vector index returns one ranked endpoint list with no relationship layer, so it`);
 console.log(`  surfaces ZERO downstream next-steps by construction. That gap — ${pct(meanRecall)} vs 0% — is the moat.`);

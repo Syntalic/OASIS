@@ -7,7 +7,7 @@ structurally cannot produce. Results + analysis:
 
 ## What it measures
 
-A pure-vector engine (e.g. AgentCash) answers a query with **one ranked endpoint list** and nothing
+A pure-vector engine (e.g. a vector-search baseline) answers a query with **one ranked endpoint list** and nothing
 else — it has no notion of "what comes next". For a compound, multi-step agent task ("register a
 domain, host the page, email the launch"), the agent still has to discover each *subsequent*
 capability on its own.
@@ -27,7 +27,7 @@ The metric, per task, is **next-step recall@K** (K=8): of the gold downstream ca
 workflow needs, what fraction appear in the union of (a)+(b) surfaced from the start intent. The
 budget K=8 reflects a realistic `next_steps` payload.
 
-**The contrast that is the moat:** OASIS surfaces a real fraction of the needed next-steps; a
+**The contrast that is the differentiator:** OASIS surfaces a real fraction of the needed next-steps; a
 **vector-only engine surfaces 0** — by construction, not by tuning. There is no list of relationships
 in a vector index to return.
 
