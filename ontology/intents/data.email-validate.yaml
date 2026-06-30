@@ -15,3 +15,7 @@ consumes:
   - { entity: Contact, role: identifier, format: email }
 produces:
   - { entity: Contact, role: payload }
+
+facets:
+  domain: data
+  action: validate

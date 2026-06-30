@@ -22,3 +22,7 @@ links:
   - type: pipes_to
     to: ai.embeddings
     note: translate text, then embed the translation for retrieval
+
+facets:
+  domain: data
+  action: transform

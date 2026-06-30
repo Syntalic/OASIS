@@ -18,3 +18,7 @@ consumes:
   - { entity: Text, role: identifier }
 produces:
   - { entity: Image, role: payload, format: png }
+
+facets:
+  domain: ai
+  action: generate

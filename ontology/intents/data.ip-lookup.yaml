@@ -15,3 +15,7 @@ consumes:
   - { entity: IpAddress, role: identifier }
 produces:
   - { entity: DnsRecord, role: payload }
+
+facets:
+  domain: data
+  action: lookup

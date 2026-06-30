@@ -20,3 +20,7 @@ consumes:
   - { entity: Document, role: identifier }
 produces:
   - { entity: Webpage, role: payload }
+
+facets:
+  domain: storage
+  action: provision

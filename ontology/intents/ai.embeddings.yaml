@@ -15,3 +15,7 @@ consumes:
   - { entity: Text, role: identifier }
 produces:
   - { entity: Embedding, role: payload }
+
+facets:
+  domain: ai
+  action: transform

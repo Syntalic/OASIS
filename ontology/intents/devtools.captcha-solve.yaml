@@ -15,3 +15,7 @@ consumes:
   - { entity: Webpage, role: identifier }
 produces:
   - { entity: Text, role: payload }
+
+facets:
+  domain: devtools
+  action: execute

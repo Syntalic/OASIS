@@ -25,3 +25,7 @@ consumes:
   - { entity: Text, role: identifier }
 produces:
   - { entity: Text, role: payload }
+
+facets:
+  domain: ai
+  action: generate
