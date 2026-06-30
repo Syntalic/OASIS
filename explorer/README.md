@@ -23,23 +23,39 @@ and open a detail panel. The view pans the selection clear of the panel.
 ## Ask — the real binder
 
 The **Ask** results come from the actual OASIS binder, not a keyword guess. The browser POSTs
-the question to a server route (`app/api/search/route.ts`), which calls `oasis_search` on an
-OASIS MCP server and maps the ranked `intent_id`s onto the local dataset to build the graph.
+to a server route (`app/api/oasis/route.ts`), which calls the OASIS MCP — `oasis_search`
+(Capabilities), `oasis_find` (Endpoints + `next_steps`), and `oasis_resolve` (the auto
+drill-down) — and maps the results onto the local dataset to build the graph.
 
-- **MCP endpoint** is configurable via `OASIS_MCP_URL` (default `http://localhost:8899/mcp`).
-- If the MCP is unreachable, Ask **falls back** to a local keyword scorer so it still works
-  offline (rougher results — no semantics).
+- **MCP endpoint** is set by `OASIS_MCP_URL` (default `http://localhost:8899/mcp`).
+- If the MCP is unreachable, `oasis_search` **falls back** to a local keyword scorer so the
+  dashboard still works offline (rougher — no semantics). Endpoints / resolve need the MCP.
 
-To run the real binder locally (so Ask mirrors your **local** index), start the OASIS MCP
-over your local build — from the OASIS repo:
+## Running
 
 ```bash
-set -a; . ./.env; set +a        # GOOGLE_API_KEY — embeds each query at runtime
-PORT=8899 node mcp/http-server.mjs
+pnpm install
+pnpm dev:all      # dashboard + the local OASIS MCP together (recommended)
+pnpm dev          # dashboard only (Ask falls back to the keyword scorer)
 ```
 
-Then run the dashboard (`pnpm dev`); its `/api/search` route will reach it on `:8899`. In
-production, point `OASIS_MCP_URL` at your deployed OASIS MCP instead.
+`pnpm dev:all` starts the dashboard **and** the local MCP (over the repo's `dist/index.json`)
+so Ask mirrors your **local** index. The MCP needs `GOOGLE_API_KEY` in the OASIS repo's `.env`
+(it embeds each query at runtime; the key stays in that process, never in the browser). This
+assumes the dashboard lives at `<oasis-repo>/explorer` — `scripts/local-mcp.sh` walks up to
+find `mcp/http-server.mjs` (override with `OASIS_DIR=/path/to/OASIS`).
+
+## Deploy on Vercel
+
+The dashboard is a standard Next app; nothing in it needs the OASIS toolchain at runtime.
+
+1. **Root Directory** → `explorer` (the dashboard is a subdirectory of the OASIS repo).
+2. **Environment variable** → `OASIS_MCP_URL=https://mcp.oasisindex.org/mcp` so Ask uses the
+   **hosted, deployed** MCP (the local default is only for dev). See `.env.example`.
+3. Build/install are auto-detected from the pnpm lockfile.
+
+The hosted MCP is public and per-IP rate-limited; if a deployed dashboard ever gets heavy
+traffic the binder calls may be throttled (Explore is unaffected — it's all static data).
 
 ## Layout engines
 
@@ -52,11 +68,9 @@ A switcher in the canvas toolbar (top-left) picks the layout for the current vie
 Nodes are sized by **canvas-measured label width** before layout, so the engines never
 overlap them. Themes: **light / dark / system** (React Flow `colorMode` + next-themes).
 
-## Develop
+## Other scripts
 
 ```bash
-pnpm install
-pnpm dev          # http://localhost:3000
 pnpm build        # production build
 pnpm lint         # eslint (strict; 0 warnings)
 pnpm data         # regenerate the dataset from a built OASIS index
