@@ -140,16 +140,18 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
     if (o && !originSource.has(o)) originSource.set(o, "paysh");
   }
 
-  // x402scan origins: bootstrap from the prior index (records are tagged provider_fqn
-  // "x402scan/..." below, so this self-sustains after the first run). TODO: live sitemap.
+  // Read the prior index once — reused for the x402scan bootstrap (below) and carry-forward (at merge).
+  let prior: IndexBundle | null = null;
   const priorPath = path.join(opts.outputDir, "index.json");
   if (existsSync(priorPath)) {
-    try {
-      const prior = JSON.parse(await readFile(priorPath, "utf8")) as IndexBundle;
-      for (const e of prior.endpoints ?? []) {
-        if ((e.provider_fqn || "").startsWith("x402scan") && !originSource.has(e.origin)) originSource.set(e.origin, "x402scan");
-      }
-    } catch {}
+    try { prior = JSON.parse(await readFile(priorPath, "utf8")) as IndexBundle; } catch {}
+  }
+  // x402scan origins: bootstrap from the prior index (records tagged provider_fqn "x402scan/..."
+  // below) so they get re-probed for fresh specs; carry-forward (at merge) covers any that don't reply.
+  if (prior) {
+    for (const e of prior.endpoints ?? []) {
+      if ((e.provider_fqn || "").startsWith("x402scan") && !originSource.has(e.origin)) originSource.set(e.origin, "x402scan");
+    }
   }
 
   const origins = [...originSource.keys()].slice(0, opts.enrichLimit);
@@ -188,6 +190,27 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
     }
   }
   for (const [, rec] of inlineByKey) if (!enrichedByOrigin.has(rec.origin)) merged.push(rec);
+
+  // --- Carry forward: an origin in the prior index that didn't re-probe this run AND has no fresh
+  // registry record would otherwise vanish — but a failed probe is usually transient (a serverless
+  // cold-start past the 10s timeout, a blip), not a dead origin, so dropping it silently shrinks the
+  // index every crawl. Re-add its prior endpoints, bounded by a staleness TTL (built_at = last good
+  // probe) so genuinely-gone origins still age out. Disable with INGEST_NO_CARRY_FORWARD=1. ---
+  if (prior && process.env.INGEST_NO_CARRY_FORWARD !== "1") {
+    const staleDays = Number(process.env.INGEST_STALE_DAYS) || 30;
+    const ttlMs = staleDays * 86_400_000;
+    const nowMs = Date.parse(built);
+    const have = new Set(merged.map((e) => e.origin));
+    let carried = 0, evicted = 0;
+    for (const e of prior.endpoints ?? []) {
+      if (have.has(e.origin)) continue; // origin already covered by a fresh probe / inline record
+      const seen = Date.parse(e.built_at ?? "");
+      if (Number.isFinite(seen) && Number.isFinite(nowMs) && nowMs - seen > ttlMs) { evicted++; continue; }
+      merged.push(e);
+      carried++;
+    }
+    console.error(`  carry-forward: +${carried} prior endpoints re-added (origins that didn't re-probe this run); evicted ${evicted} stale > ${staleDays}d`);
+  }
 
   // --- Gate → PASS corpus → bundle ---
   return gateAndWrite(merged, opts.outputDir, built);
