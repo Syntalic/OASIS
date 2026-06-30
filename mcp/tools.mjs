@@ -146,10 +146,46 @@ function oasisResolve({ intent_id, query, limit = 8 }) {
   return { intent: { id: intent.id, label: intent.label }, endpoints, related };
 }
 
+// Unified next_steps for oasis_find: the data-driven entity-flow CLUSTER (everything that consumes an
+// entity the task involves — Place=Japan → weather/reviews/places — with LOOSE caps + act-steps
+// included) UNIONED with the curated authored links. Same entity-flow engine as oasis_next, but
+// cluster-shaped instead of a-few-leads-shaped. See docs/proposals/unified-find.md.
+async function buildNextSteps(caps, query) {
+  const topIntent = caps[0] ? capById.get(caps[0].capability_id) : null;
+  if (!topIntent) return [];
+  let cluster = [];
+  const runtime = await getEntityFlowRuntime();
+  if (runtime) {
+    const extraction = extractEntities({ finding: query, source_intent_id: topIntent.id, bundle, capabilitiesById: capById });
+    // seed from query-extracted identities; fall back to the routed intent's consumed entity TYPES
+    let held = (extraction.entities ?? []).filter((e) => e.kind !== "observation");
+    if (!held.length) held = (topIntent.consumes ?? []).map((c) => ({ entity: c.entity, kind: "identity", role: c.role }));
+    if (held.length) {
+      const topicalScores = new Map(caps.map((c) => [c.capability_id, c.score]));
+      const r = suggestFollowUps(
+        { source_intent_id: topIntent.id, entities: held, finding: query },
+        runtime,
+        { capabilities: curatedCaps, endpoints: bundle.endpoints, topicalScores, limit: 8,
+          shape: { perEntityCap: 99, perDomainCap: 99, relevanceFloor: 0.25, includeAct: true } },
+      );
+      cluster = (r.investigative ?? []).map((l) => ({ intent_id: l.intent_id, do: l.label, why: l.why,
+        endpoint: l.top_endpoint ? `${l.top_endpoint.method} ${l.top_endpoint.origin}${l.top_endpoint.path}` : undefined,
+        price_usd: l.top_endpoint?.price_usd }));
+    }
+  }
+  const rel = legacyRelatedGroups(topIntent);
+  const links = [...rel.next_steps, ...rel.alternatives, ...rel.drill_down]
+    .map((s) => ({ intent_id: s.intent_id, do: s.label, why: s.why, endpoint: s.endpoint, price_usd: s.price_usd }));
+  // cluster first (data-driven, complete), then curated links; dedup by intent_id, exclude self, cap 6
+  const out = []; const seen = new Set([topIntent.id]);
+  for (const s of [...cluster, ...links]) { if (!s.intent_id || seen.has(s.intent_id)) continue; seen.add(s.intent_id); out.push(s); if (out.length >= 6) break; }
+  return out;
+}
+
 // One-hop prototype: collapse search→resolve SERVER-side. Hybrid discovery (capability
-// vectors give recall on oblique queries) is expanded into a single FLAT, ranked
-// endpoint list with payment metadata inline — the agent makes ONE call and reads one
-// compact list, no capability/resolve round-trip and no separate related[] payload.
+// vectors give recall on oblique queries) is expanded into a single FLAT, ranked endpoint
+// list with payment metadata inline, PLUS a next_steps map (buildNextSteps) — the agent
+// makes ONE call and gets "here's an endpoint, and here's what you can do next".
 async function oasisFind({ query, limit = 12 }) {
   const hits = await searchHybridWithFallback(query, bundle, lanceDir, 12);
   // The query embedding is the ONE live model call (memoized) — shared by the semantic
@@ -219,15 +255,10 @@ async function oasisFind({ query, limit = 12 }) {
   } else {
     endpoints = out.slice(0, limit); // no vectors → concentration
   }
-  // next_steps: the typed adjacency from the routed top intent — the "what can you do next" map a
-  // pure-vector engine structurally can't return. Compact: pipeline next-steps, then alternatives,
-  // then drill-down. (entity-flow enrichment via an entities[] arg is the next increment.)
-  const topIntent = caps[0] ? capById.get(caps[0].capability_id) : null;
-  const rel = topIntent ? legacyRelatedGroups(topIntent) : { next_steps: [], alternatives: [], drill_down: [] };
-  const next_steps = [...rel.next_steps, ...rel.alternatives, ...rel.drill_down]
-    .slice(0, 5)
-    .map((s) => ({ do: s.label, why: s.why, intent_id: s.intent_id, endpoint: s.endpoint, price_usd: s.price_usd }));
-  return { endpoints, next_steps };
+  // next_steps: the "what can you do next" map a pure-vector engine can't return. Unifies the two
+  // relationship graphs — the data-driven entity-flow CLUSTER (everything that consumes an entity the
+  // task involves, e.g. Place=Japan → weather/reviews/places) plus the curated authored links.
+  return { endpoints, next_steps: await buildNextSteps(caps, query) };
 }
 
 function fmtFollowUp(lead) {

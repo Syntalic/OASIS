@@ -97,9 +97,17 @@ export function suggestFollowUps(
     /** intent_id → topical relevance of the finding (reuses oasis_find's hybrid search over
      *  the same intent vectors). Absent ⇒ no finding ⇒ structural-only ranking. */
     topicalScores?: Map<string, number>;
+    /** Caller-specific shaping. oasis_next wants a FEW conservative investigative leads (the tight
+     *  defaults); oasis_find's next_steps wants the full task CLUSTER (loose caps, include act-steps).
+     *  Same engine, two jobs — see docs/proposals/unified-find.md. */
+    shape?: { perEntityCap?: number; perDomainCap?: number; relevanceFloor?: number; includeAct?: boolean };
   },
 ): { forward: RankedFollowUp[]; investigative: RankedFollowUp[] } {
   const limit = opts.limit ?? 8;
+  const perEntityCap = opts.shape?.perEntityCap ?? PER_ENTITY_CAP;
+  const perDomainCap = opts.shape?.perDomainCap ?? PER_DOMAIN_CAP;
+  const relevanceFloor = opts.shape?.relevanceFloor ?? RELEVANCE_FLOOR;
+  const includeAct = opts.shape?.includeAct ?? false;
   const capById = new Map(opts.capabilities.map((c) => [c.id, c]));
   const exclude = new Set(ctx.exclude ?? []);
   const closure = {
@@ -135,9 +143,10 @@ export function suggestFollowUps(
       if (!mk) continue;
       const target = capById.get(consumer.intent_id);
       if (!target) continue;
-      // A bridge must INVESTIGATE the held identity, not act on/with it (register a domain,
-      // send it a message). Drop consume-to-act intents.
-      if (ACT_ACTIONS.has(target.facets?.action ?? "")) continue;
+      // For investigative leads (oasis_next) a bridge must INVESTIGATE the held identity, not act
+      // on/with it (register a domain, send it a message) — drop consume-to-act intents. The cluster
+      // use case (find.next_steps) WANTS act-steps (book a hotel, send a confirmation), so includeAct.
+      if (!includeAct && ACT_ACTIONS.has(target.facets?.action ?? "")) continue;
       // Same-domain bridges are NOT excluded: relevance to the finding drives ranking; cross-domain
       // is only a small nudge (below), so the obvious same-domain next step can still win.
 
@@ -196,7 +205,7 @@ export function suggestFollowUps(
   // nothing for an irrelevant held identity than a tangential lead. Never return fully empty.
   let pool = work;
   if (topical) {
-    const passing = work.filter((c) => c.relevance >= RELEVANCE_FLOOR);
+    const passing = work.filter((c) => c.relevance >= relevanceFloor);
     pool = passing.length ? passing : [[...work].sort((a, b) => b.follow.score - a.follow.score)[0]];
   }
   pool.sort((a, b) => b.follow.score - a.follow.score);
@@ -210,9 +219,9 @@ export function suggestFollowUps(
     if (investigative.length >= limit) break;
     const f = c.follow;
     if (seenIntent.has(f.intent_id)) continue;
-    if ((perEntity.get(f.bridging_entity) ?? 0) >= PER_ENTITY_CAP) continue;
+    if ((perEntity.get(f.bridging_entity) ?? 0) >= perEntityCap) continue;
     const dom = capById.get(f.intent_id)?.facets?.domain ?? "unknown";
-    if ((perDomain.get(dom) ?? 0) >= PER_DOMAIN_CAP) continue;
+    if ((perDomain.get(dom) ?? 0) >= perDomainCap) continue;
     investigative.push(f);
     seenIntent.add(f.intent_id);
     perEntity.set(f.bridging_entity, (perEntity.get(f.bridging_entity) ?? 0) + 1);
