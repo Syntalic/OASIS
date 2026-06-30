@@ -1,0 +1,114 @@
+{
+  "spec_version": "0.1.0",
+  "description": "Gold set for the OASIS traversal (next-step) benchmark. Each task is a realistic compound, multi-step agent workflow. `start_intent` is the capability an agent resolves first; `gold_next_intents` are the REAL downstream capabilities needed to finish the job. The benchmark measures what fraction of those next-steps OASIS surfaces from the start intent alone (one call), via the authored capability graph + entity-flow. A pure-vector engine surfaces NONE of them (it returns one ranked endpoint list, no relationships). All intent_ids are verified against dist/index.json capabilities. Misses are genuine multi-hop / cross-domain gaps (the deeper steps an agent reaches progressively as it advances), not relabeled trivia.",
+  "tasks": [
+    {
+      "id": "startup-web-presence",
+      "task": "Stand up a web presence for a new startup: register the domain, host the landing page, read its WHOIS/DNS to wire up records, and email the launch announcement.",
+      "start_intent": "cloud.domains",
+      "gold_next_intents": ["storage.hosting", "data.whois_lookup", "comms.send_email"]
+    },
+    {
+      "id": "sales-account-research",
+      "task": "Research a target account before a sales call: enrich the company from its domain, find the decision-makers, pull its legal-entity record, scan its social presence, send an intro email, and check its stock price.",
+      "start_intent": "data.company_enrich",
+      "gold_next_intents": ["data.person_search", "data.lei_lookup", "media.social_data", "comms.send_email", "finance.stock_quote"]
+    },
+    {
+      "id": "prospect-sms-outreach",
+      "task": "Reach a prospect by text: find the person, check their social profiles, validate their phone number, and send an SMS.",
+      "start_intent": "data.person_search",
+      "gold_next_intents": ["media.social_data", "data.phone_validate", "comms.send_sms"]
+    },
+    {
+      "id": "localize-address",
+      "task": "Localize a street address: geocode it, fetch the local weather, look up nearby civic/government services, and pull property listings in the area.",
+      "start_intent": "maps.geocode",
+      "gold_next_intents": ["data.weather_forecast", "data.gov_civic", "realestate.property_lookup"]
+    },
+    {
+      "id": "daily-weather-brief",
+      "task": "Build a daily weather brief: get the forecast, summarize it with an LLM, pull weather-related news, and text it to the user.",
+      "start_intent": "data.weather_forecast",
+      "gold_next_intents": ["ai.llm_complete", "data.news_headlines", "comms.send_sms"]
+    },
+    {
+      "id": "marketing-graphic-ship",
+      "task": "Produce and ship a marketing graphic: generate the image, host it at a public URL, and email the link to the team.",
+      "start_intent": "ai.image_generate",
+      "gold_next_intents": ["storage.hosting", "comms.send_email"]
+    },
+    {
+      "id": "voice-a-script",
+      "task": "Voice a script: synthesize speech from the text, host the audio file, and place an automated voice call with it.",
+      "start_intent": "ai.text_to_speech",
+      "gold_next_intents": ["storage.hosting", "comms.voice_call"]
+    },
+    {
+      "id": "page-to-knowledge-base",
+      "task": "Turn a web page into a knowledge-base entry: scrape it, extract structured fields from the document, translate it, embed it for retrieval, and summarize with an LLM.",
+      "start_intent": "data.web_scrape",
+      "gold_next_intents": ["ai.document_extract", "data.translate_text", "ai.embeddings", "ai.llm_complete"]
+    },
+    {
+      "id": "equity-snapshot",
+      "task": "Build an equity snapshot: get the live quote, pull macro/economic indicators, convert the price to EUR via FX rates, scan trading signals, and run web research on recent news.",
+      "start_intent": "finance.stock_quote",
+      "gold_next_intents": ["finance.economic_data", "data.exchange_rates", "finance.trading_signals", "ai.web_research"]
+    },
+    {
+      "id": "bargain-hunt-product",
+      "task": "Bargain-hunt for a product: compare current prices, review the price history, set a price-drop alert, and SMS me when it fires.",
+      "start_intent": "shop.compare_price",
+      "gold_next_intents": ["shop.track_price_history", "shop.price_drop_alert", "comms.send_sms"]
+    },
+    {
+      "id": "cited-research-answer",
+      "task": "Answer a research question with citations: run web research, scrape the key source, pull related news headlines, compute a derived answer, and summarize with an LLM.",
+      "start_intent": "ai.web_research",
+      "gold_next_intents": ["data.web_scrape", "data.news_headlines", "data.compute_answer", "ai.llm_complete"]
+    },
+    {
+      "id": "investigate-suspicious-domain",
+      "task": "Investigate a suspicious domain: read its WHOIS/DNS, enrich the owning company, resolve its IP, and geolocate the host.",
+      "start_intent": "data.whois_lookup",
+      "gold_next_intents": ["data.company_enrich", "data.ip_lookup", "maps.geocode"]
+    },
+    {
+      "id": "brand-social-footprint",
+      "task": "Profile a brand's social footprint: pull its social data, find the people behind it, discover related influencers, draft outreach with an LLM, and email it.",
+      "start_intent": "media.social_data",
+      "gold_next_intents": ["data.person_search", "social.influencer_search", "ai.llm_complete", "comms.send_email"]
+    },
+    {
+      "id": "verified-email-send",
+      "task": "Run a verified email send: validate the recipient address, send the email, and fall back to SMS after validating their phone number.",
+      "start_intent": "comms.send_email",
+      "gold_next_intents": ["data.email_validate", "comms.send_sms", "data.phone_validate"]
+    },
+    {
+      "id": "crypto-wallet-analysis",
+      "task": "Analyze a crypto wallet: run on-chain analytics, check token balances, pull spot prices, query the chain via RPC, and research the project on the web.",
+      "start_intent": "finance.onchain_analytics",
+      "gold_next_intents": ["finance.token_balance", "finance.crypto_spot_price", "compute.blockchain_rpc", "ai.web_research"]
+    },
+    {
+      "id": "publish-static-site",
+      "task": "Publish a static site: host the page, attach a custom domain, capture a screenshot for the preview card, and email the live link.",
+      "start_intent": "storage.hosting",
+      "gold_next_intents": ["cloud.domains", "web.screenshot", "comms.send_email"]
+    },
+    {
+      "id": "underwrite-property",
+      "task": "Underwrite a property: pull the listing, geocode it, look up civic/zoning services, check local weather risk, and pull regional economic data.",
+      "start_intent": "realestate.property_lookup",
+      "gold_next_intents": ["maps.geocode", "data.gov_civic", "data.weather_forecast", "finance.economic_data"]
+    },
+    {
+      "id": "process-voicemail",
+      "task": "Process a voicemail: transcribe the audio, translate the text, summarize it with an LLM, and email the summary.",
+      "start_intent": "ai.speech_to_text",
+      "gold_next_intents": ["data.translate_text", "ai.llm_complete", "comms.send_email"]
+    }
+  ]
+}
