@@ -231,9 +231,15 @@ function AskBody() {
         <Button size="sm" className="h-8 w-full gap-1.5" disabled={!input.trim()} onClick={() => run(input)}>
           Trace connections <CornerDownLeft size={13} />
         </Button>
-        <div className="flex items-center gap-0.5 rounded-lg border bg-background/60 p-0.5">
-          <ToolTab label="Capabilities" active={askTool === "capabilities"} onClick={() => setAskTool("capabilities")} />
-          <ToolTab label="Endpoints" active={askTool === "endpoints"} onClick={() => setAskTool("endpoints")} />
+        <div>
+          <div className="flex items-center gap-0.5 rounded-lg border bg-background/60 p-0.5">
+            <ToolTab label="oasis_search" active={askTool === "capabilities"} onClick={() => setAskTool("capabilities")} />
+            <ToolTab label="oasis_find" active={askTool === "endpoints"} onClick={() => setAskTool("endpoints")} />
+          </div>
+          <p className="mt-1 px-1 text-[10px] text-muted-foreground">
+            {askTool === "endpoints" ? "returns ranked paid endpoints" : "returns ranked capabilities"}
+            <span className="opacity-70"> · via local MCP</span>
+          </p>
         </div>
         <div
           className={cn(
@@ -304,11 +310,25 @@ function ToolTab({ label, active, onClick }: { label: string; active: boolean; o
     <button
       onClick={onClick}
       className={cn(
-        "flex-1 rounded-md px-2 py-1 text-[11px] font-medium transition",
+        "flex-1 rounded-md px-2 py-1 font-mono text-[11px] font-medium transition",
         active ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground",
       )}
     >
       {label}
+    </button>
+  );
+}
+
+/** Shared "+N more / Show less" expander used by the sidebar lists. */
+function ExpandToggle({ open, hidden, onClick }: { open: boolean; hidden: number; onClick: () => void }) {
+  if (hidden <= 0) return null;
+  return (
+    <button
+      onClick={onClick}
+      className="flex w-full items-center justify-center gap-0.5 rounded-md px-2 py-1 text-[10.5px] font-medium text-primary transition hover:bg-primary/10"
+    >
+      {open ? "Show less" : `+${hidden} more`}
+      <ChevronDown size={11} className={cn("transition-transform", open && "rotate-180")} />
     </button>
   );
 }
@@ -322,9 +342,12 @@ function CapabilityResults({
   selectedId: string | null;
   onSelect: (id: string) => void;
 }) {
+  const [open, setOpen] = useState(false);
+  const PREVIEW = 6;
+  const list = open ? matches : matches.slice(0, PREVIEW);
   return (
     <>
-      {matches.map((m, i) => {
+      {list.map((m, i) => {
         const meta = domainMeta(m.capability.domain);
         const sel = selectedId === m.capability.id;
         return (
@@ -356,6 +379,7 @@ function CapabilityResults({
           </button>
         );
       })}
+      <ExpandToggle open={open} hidden={matches.length - PREVIEW} onClick={() => setOpen((s) => !s)} />
     </>
   );
 }
@@ -382,9 +406,15 @@ function EndpointResults({
   find: import("@/types/graph").FindResult;
   onSelect: (id: string) => void;
 }) {
+  const [openEp, setOpenEp] = useState(false);
+  const [openNext, setOpenNext] = useState(false);
+  const EP_PREVIEW = 7;
+  const NEXT_PREVIEW = 3;
+  const eps = openEp ? find.endpoints : find.endpoints.slice(0, EP_PREVIEW);
+  const nexts = openNext ? find.nextSteps : find.nextSteps.slice(0, NEXT_PREVIEW);
   return (
     <>
-      {find.endpoints.map((ep, i) => {
+      {eps.map((ep, i) => {
         const meta = domainMeta(capById.get(ep.via)?.domain ?? "other");
         const host = hostOf(ep.url);
         const path = pathOf(ep.url);
@@ -418,13 +448,14 @@ function EndpointResults({
           </button>
         );
       })}
+      <ExpandToggle open={openEp} hidden={find.endpoints.length - EP_PREVIEW} onClick={() => setOpenEp((s) => !s)} />
 
       {find.nextSteps.length > 0 && (
         <div className="pt-3">
           <div className="font-display mb-1 px-1 text-[9.5px] font-semibold uppercase tracking-wider text-muted-foreground/70">
             Next steps
           </div>
-          {find.nextSteps.map((ns) => (
+          {nexts.map((ns) => (
             <button
               key={ns.intent_id}
               onClick={() => onSelect(ns.intent_id)}
@@ -437,6 +468,7 @@ function EndpointResults({
               <div className="mt-0.5 pl-3 text-[10px] text-muted-foreground italic">{ns.why}</div>
             </button>
           ))}
+          <ExpandToggle open={openNext} hidden={find.nextSteps.length - NEXT_PREVIEW} onClick={() => setOpenNext((s) => !s)} />
         </div>
       )}
     </>

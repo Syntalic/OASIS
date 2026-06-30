@@ -11,9 +11,8 @@ import {
   Plug,
   Sparkles,
   X,
-  Zap,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -270,7 +269,12 @@ interface ResolveData {
   related?: Array<{ type?: string; intent_id?: string; label?: string }>;
 }
 
-/** Live drill-down: oasis_resolve for this capability — real ranked endpoints + typed pivots. */
+/**
+ * Auto-loaded oasis_resolve for the focused capability — real ranked endpoints
+ * (with inputs) + typed pivots (next-step / prior-step / alternatives). Shown
+ * automatically since these are capability-scoped (oasis_next/resolve need a
+ * starting intent, so they live here rather than on the query toggle).
+ */
 function ResolveSection({
   capId,
   color,
@@ -285,49 +289,46 @@ function ResolveSection({
   const [data, setData] = useState<ResolveData | null>(null);
   const [error, setError] = useState(false);
 
-  const run = async () => {
-    setLoading(true);
-    setError(false);
-    try {
-      const res = await fetch("/api/oasis", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          tool: "oasis_resolve",
-          args: { intent_id: capId, query: query || capId, limit: 6 },
-        }),
-      });
-      const json = (await res.json()) as { data?: ResolveData | null };
-      if (!json.data) setError(true);
-      else setData(json.data);
-    } catch {
-      setError(true);
-    }
-    setLoading(false);
-  };
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      setLoading(true);
+      setError(false);
+      setData(null);
+      try {
+        const res = await fetch("/api/oasis", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            tool: "oasis_resolve",
+            args: { intent_id: capId, query: query || capId, limit: 6 },
+          }),
+        });
+        const json = (await res.json()) as { data?: ResolveData | null };
+        if (!cancelled) {
+          if (json.data) setData(json.data);
+          else setError(true);
+        }
+      } catch {
+        if (!cancelled) setError(true);
+      }
+      if (!cancelled) setLoading(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [capId, query]);
 
   return (
     <Section title="Live resolve (binder)">
-      {!data && (
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-7 w-full gap-1.5 text-[11px]"
-          disabled={loading}
-          onClick={run}
-        >
-          {loading ? (
-            <>
-              <Loader2 size={12} className="animate-spin" /> Resolving…
-            </>
-          ) : (
-            <>
-              <Zap size={12} /> Resolve live endpoints
-            </>
-          )}
-        </Button>
+      {loading && (
+        <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+          <Loader2 size={12} className="animate-spin" /> Resolving live endpoints…
+        </p>
       )}
-      {error && <p className="mt-1 text-[11px] text-muted-foreground">Couldn’t reach the binder.</p>}
+      {error && !loading && (
+        <p className="text-[11px] text-muted-foreground">Couldn’t reach the binder (bound endpoints shown above).</p>
+      )}
       {data && (
         <div className="space-y-2">
           <div className="space-y-1">
