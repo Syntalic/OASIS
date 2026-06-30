@@ -1,7 +1,8 @@
 "use client";
 
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { Compass, CornerDownLeft, Layers3, PanelLeftClose, Search, Sparkles } from "lucide-react";
+import { ChevronDown, Compass, CornerDownLeft, Layers3, PanelLeftClose, Search, Sparkles } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,14 +18,42 @@ import { sidebarCollapsedAtom } from "@/stores/ui";
 import type { Mode } from "@/types/graph";
 
 const SAMPLES = [
+  // AI / media
   "Narrate an article as audio",
-  "Convert USD to euros",
-  "Screenshot a webpage",
-  "Enrich a company by domain",
+  "Transcribe audio to text",
   "Image from a text prompt",
+  "Generate text embeddings",
+  "Complete a chat prompt with an LLM",
+  // data / reference
+  "Enrich a company by domain",
+  "Find a person's public profile",
+  "Latest news headlines",
+  "Live sports scores",
+  "Look up NFT metadata",
+  "Look up WHOIS for a domain",
+  "Find a job listing",
+  // validation
+  "Validate an email address",
+  "Validate a VAT number",
+  "Check an IBAN bank account",
+  // finance / compute
+  "Convert USD to euros",
+  "Real-time stock quotes",
+  "Convert units & measurements",
+  // web / search
+  "Screenshot a webpage",
+  "Search the web with citations",
+  "Solve a CAPTCHA",
+  // comms
   "Send a transactional SMS",
+  "Place an AI phone call",
+  "Send an email",
+  // maps / misc
   "7-day weather forecast",
+  "Geocode an address",
+  "Translate text to Spanish",
   "Extract data from a PDF",
+  "Find public holidays by country",
 ];
 
 export function Sidebar() {
@@ -153,12 +182,18 @@ function DomainRow({
 
 /* ------------------------------------------------------------------ */
 
+const SAMPLE_PREVIEW = 7;
+
 function AskBody() {
   const [input, setInput] = useAtom(inputAtom);
   const setQuery = useSetAtom(queryAtom);
   const query = useAtomValue(queryAtom);
   const matches = useAtomValue(matchesAtom);
   const [selectedId, setSelectedId] = useAtom(selectedIdAtom);
+  const [showAllSamples, setShowAllSamples] = useState(false);
+
+  const visibleSamples = showAllSamples ? SAMPLES : SAMPLES.slice(0, SAMPLE_PREVIEW);
+  const hiddenCount = SAMPLES.length - SAMPLE_PREVIEW;
 
   const run = (q: string) => {
     setInput(q);
@@ -183,8 +218,13 @@ function AskBody() {
         <Button size="sm" className="h-8 w-full gap-1.5" disabled={!input.trim()} onClick={() => run(input)}>
           Trace connections <CornerDownLeft size={13} />
         </Button>
-        <div className="flex flex-wrap gap-1">
-          {SAMPLES.map((q) => (
+        <div
+          className={cn(
+            "flex flex-wrap gap-1",
+            showAllSamples && "max-h-[176px] overflow-y-auto pr-1",
+          )}
+        >
+          {visibleSamples.map((q) => (
             <button
               key={q}
               onClick={() => run(q)}
@@ -193,6 +233,18 @@ function AskBody() {
               {q}
             </button>
           ))}
+          {hiddenCount > 0 && (
+            <button
+              onClick={() => setShowAllSamples((s) => !s)}
+              className="flex items-center gap-0.5 rounded-full border border-primary/40 px-2 py-0.5 text-[10.5px] font-medium text-primary transition hover:bg-primary/10"
+            >
+              {showAllSamples ? "Show less" : `+${hiddenCount} more`}
+              <ChevronDown
+                size={11}
+                className={cn("transition-transform", showAllSamples && "rotate-180")}
+              />
+            </button>
+          )}
         </div>
       </div>
       <Separator />
