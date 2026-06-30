@@ -182,6 +182,26 @@ async function oasisFind({ query, limit = 12 }) {
   // maximizes distinct relevant providers instead of stacking several paths on one host.
   const caps = hits.filter((h) => h.kind === "capability");
   const hostOf = (origin) => origin.replace(/^https?:\/\//, "").split("/")[0];
+  // ARM-FIRST (OASIS_ARM_FIRST=1, A/B per docs/proposals/unified-find.md): make the query→endpoint
+  // vector arm the BASE (it scores 80.4% P@1 alone vs 69.6% for intent-first concentration), and
+  // apply the ontology as an ADDITIVE reranker — boost candidates bound to a routed intent so the
+  // intent path's unique wins (the moat: "voice"→TTS not a script-writer) are recovered, WITHOUT
+  // penalizing orphans (compat=0 just keeps the base cosine, so the arm's recall wins are preserved).
+  if (process.env.OASIS_ARM_FIRST === "1" && endpointArm.ready) {
+    const qv = await getQueryVec();
+    const armHits = armRerank(endpointArm.topK(qv, limit * 8));
+    const routed = new Set(caps.slice(0, 3).map((c) => c.capability_id));
+    const LAMBDA = Number(process.env.OASIS_ARMFIRST_COMPAT ?? "0.1");
+    const compat = (ep) => ((ep.capabilities ?? []).some((c) => routed.has(c)) ? 1 : 0);
+    const ranked = armHits
+      .map((a) => ({ a, s: a.score + LAMBDA * compat(a.ep) }))
+      .sort((x, y) => y.s - x.s)
+      .map((x) => x.a);
+    const picked = []; const sh = new Set();
+    for (const a of ranked) { if (picked.length >= limit) break; const ho = hostOf(a.ep.origin); if (sh.has(ho)) continue; sh.add(ho); picked.push(a); }
+    for (const a of ranked) { if (picked.length >= limit) break; if (!picked.includes(a)) picked.push(a); }
+    return { endpoints: picked.map((a) => ({ method: a.ep.method, url: `${a.ep.origin}${a.ep.path}`, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: compat(a.ep) ? "arm+intent" : "arm" })) };
+  }
   caps.forEach((h, i) => {
     if (out.length >= limit) return;
     const intent = capById.get(h.capability_id);
