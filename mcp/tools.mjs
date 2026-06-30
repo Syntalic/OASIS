@@ -83,11 +83,40 @@ if (endpointArm.ready) {
   console.error(`[oasis] endpoint arm ready (${endpointArm.size} endpoints, ${endpointArm.source}); gate: margin<${MARGIN_GATE} or (margin<${ARM_CONSIDER_MARGIN} & arm beats conc by ${ARM_BEATS_DELTA})`);
 }
 
+// The PUBLIC tool surface: 1 core (oasis_discover) + 3 utilities (search/taxonomy/validate). Derived into
+// MCP / Anthropic / OpenAI shapes below. oasis_find / oasis_next / oasis_resolve / oasis_validate_binding
+// remain in handleTool as deprecated aliases but are intentionally NOT exposed here. See
+// docs/proposals/oasis-discover.md.
+const ENTITY_ITEMS = {
+  type: "object",
+  properties: {
+    entity: { type: "string" },
+    value: { type: "string" },
+    kind: { type: "string", enum: ["identity", "observation"] },
+    role: { type: "string", enum: ["identifier", "payload"] },
+  },
+  required: ["entity"],
+};
 const TOOLS = [
+  {
+    name: "oasis_discover",
+    description:
+      "Find the paid HTTP API endpoints for a task — and what to do next — in ONE call. Returns `endpoints` (a ranked, host-deduped list: method, url, summary, price_usd, rails) plus `next_steps` — adjacent and cross-domain capabilities to chain into, each with a `why` and, where available, a callable endpoint. Start here whenever you're unsure which API to call.\n\nFor a multi-step task, run a loop: (1) call discover with your task as `query`; (2) invoke one of the returned endpoints; (3) call discover again with `finding` set to a plain-text note of what you just learned (e.g. \"registered acme.com for Acme Corp\") — it extracts the entities you now hold and folds cross-domain follow-ups into `next_steps`. Only `query` is needed on the first call; add `finding` on every follow-up.",
+    schema: {
+      type: "object",
+      properties: {
+        query: { type: "string", description: "The task in natural language." },
+        finding: { type: "string", description: "What you just learned from the last endpoint you called — plain text; pass it on every follow-up call to get cross-domain next steps about what you now hold." },
+        entities: { type: "array", description: "Typed entities you hold (structured alternative to `finding`, for programmatic callers).", items: ENTITY_ITEMS },
+        limit: { type: "number", description: "Max endpoints (default 12)." },
+      },
+      required: ["query"],
+    },
+  },
   {
     name: "oasis_search",
     description:
-      "Discover which paid API capability (task intent) best fits a natural-language task. Returns ranked capability intents (the routing unit) plus a few example endpoints. Call this FIRST when you are unsure which tool/service to use.",
+      "Utility: classify a natural-language task to its OASIS capability intents (the task-type) — routing/introspection only, NO endpoint resolution. Returns ranked capability intents. Use `oasis_discover` to actually find endpoints; reach for this only when you want the classification itself (routing, analytics, categorizing a query).",
     schema: {
       type: "object",
       properties: {
@@ -98,17 +127,21 @@ const TOOLS = [
     },
   },
   {
-    name: "oasis_resolve",
+    name: "oasis_taxonomy",
     description:
-      "Given a capability intent id (from oasis_search) and the original query, return concrete paid endpoints ranked for that query, plus typed related options (alternatives / more-general / more-specific / next-step / prior-step) so you can pivot if needed.",
+      "Utility: return the OASIS controlled vocabulary to bind a service INTO — existing task capabilities (+aliases), facet enums (domain/action/modality/freshness), and the closed entity vocab. Call before authoring or updating a capability.",
+    schema: { type: "object", properties: {} },
+  },
+  {
+    name: "oasis_validate",
+    description:
+      "Utility: validate a contribution against the taxonomy — either a task-intent capability (`intent`) or an endpoint→capability binding (`binding`). Returns { valid, errors, warnings }. The SAME checks CI runs on the PR.",
     schema: {
       type: "object",
       properties: {
-        intent_id: { type: "string", description: "Capability id, e.g. shop.compare_price." },
-        query: { type: "string", description: "The original natural-language task." },
-        limit: { type: "number", description: "Max endpoints (default 8)." },
+        intent: { type: "object", description: "A capability intent object to validate." },
+        binding: { type: "object", description: "A service binding: { bindings: [{ origin, method, path, capabilities }] }." },
       },
-      required: ["intent_id", "query"],
     },
   },
 ];
@@ -211,35 +244,50 @@ function oasisResolve({ intent_id, query, limit = 8 }) {
 // entity the task involves — Place=Japan → weather/reviews/places — with LOOSE caps + act-steps
 // included) UNIONED with the curated authored links. Same entity-flow engine as oasis_next, but
 // cluster-shaped instead of a-few-leads-shaped. See docs/proposals/unified-find.md.
-async function buildNextSteps(caps, query) {
+// The unified "what's next" list. The FORWARD cluster is seeded from entities extracted from the QUERY
+// (works on the first call — no held results). When the caller passes `held` (entities it now holds, from
+// discover's finding/entities — i.e. call 2+), INVESTIGATIVE leads about what it holds are folded into the
+// SAME list. One list out; `why` on each item carries the relationship. See docs/proposals/oasis-discover.md.
+async function buildNextSteps(caps, query, held = null) {
   const topIntent = caps[0] ? capById.get(caps[0].capability_id) : null;
   if (!topIntent) return [];
-  let cluster = [];
+  const toStep = (l) => ({ intent_id: l.intent_id, do: l.label, why: l.why,
+    endpoint: l.top_endpoint ? `${l.top_endpoint.method} ${l.top_endpoint.origin}${l.top_endpoint.path}` : undefined,
+    price_usd: l.top_endpoint?.price_usd });
+  let cluster = [], heldLeads = [];
   const runtime = await getEntityFlowRuntime();
   if (runtime) {
+    const topicalScores = new Map(caps.map((c) => [c.capability_id, c.score]));
+    // forward cluster — entities extracted from the QUERY; fall back to the routed intent's consumed TYPES
     const extraction = extractEntities({ finding: query, source_intent_id: topIntent.id, bundle, capabilitiesById: capById });
-    // seed from query-extracted identities; fall back to the routed intent's consumed entity TYPES
-    let held = (extraction.entities ?? []).filter((e) => e.kind !== "observation");
-    if (!held.length) held = (topIntent.consumes ?? []).map((c) => ({ entity: c.entity, kind: "identity", role: c.role }));
-    if (held.length) {
-      const topicalScores = new Map(caps.map((c) => [c.capability_id, c.score]));
+    let qHeld = (extraction.entities ?? []).filter((e) => e.kind !== "observation");
+    if (!qHeld.length) qHeld = (topIntent.consumes ?? []).map((c) => ({ entity: c.entity, kind: "identity", role: c.role }));
+    if (qHeld.length) {
       const r = suggestFollowUps(
-        { source_intent_id: topIntent.id, entities: held, finding: query },
+        { source_intent_id: topIntent.id, entities: qHeld, finding: query },
         runtime,
         { capabilities: curatedCaps, endpoints: bundle.endpoints, topicalScores, limit: 8,
           shape: { perEntityCap: 99, perDomainCap: 99, relevanceFloor: 0.25, includeAct: true } },
       );
-      cluster = (r.investigative ?? []).map((l) => ({ intent_id: l.intent_id, do: l.label, why: l.why,
-        endpoint: l.top_endpoint ? `${l.top_endpoint.method} ${l.top_endpoint.origin}${l.top_endpoint.path}` : undefined,
-        price_usd: l.top_endpoint?.price_usd }));
+      cluster = (r.investigative ?? []).map(toStep);
+    }
+    // investigative leads — what consumes the identity the agent now HOLDS (discover call 2+ only)
+    if (held && held.length) {
+      const r2 = suggestFollowUps(
+        { source_intent_id: topIntent.id, entities: held, exclude: [topIntent.id], finding: query },
+        runtime,
+        { capabilities: curatedCaps, endpoints: bundle.endpoints, topicalScores, limit: 8 },
+      );
+      heldLeads = (r2.investigative ?? []).map(toStep);
     }
   }
   const rel = legacyRelatedGroups(topIntent);
   const links = [...rel.next_steps, ...rel.alternatives, ...rel.drill_down]
     .map((s) => ({ intent_id: s.intent_id, do: s.label, why: s.why, endpoint: s.endpoint, price_usd: s.price_usd }));
-  // cluster first (data-driven, complete), then curated links; dedup by intent_id, exclude self, cap 6
+  // held-leads first (specific to what you hold), then the forward cluster, then curated links; dedup, cap
+  const cap = held && held.length ? 8 : 6;
   const out = []; const seen = new Set([topIntent.id]);
-  for (const s of [...cluster, ...links]) { if (!s.intent_id || seen.has(s.intent_id)) continue; seen.add(s.intent_id); out.push(s); if (out.length >= 6) break; }
+  for (const s of [...heldLeads, ...cluster, ...links]) { if (!s.intent_id || seen.has(s.intent_id)) continue; seen.add(s.intent_id); out.push(s); if (out.length >= cap) break; }
   return out;
 }
 
@@ -247,7 +295,7 @@ async function buildNextSteps(caps, query) {
 // vectors give recall on oblique queries) is expanded into a single FLAT, ranked endpoint
 // list with payment metadata inline, PLUS a next_steps map (buildNextSteps) — the agent
 // makes ONE call and gets "here's an endpoint, and here's what you can do next".
-async function oasisFind({ query, limit = 12 }) {
+async function oasisDiscover({ query, finding, entities, limit = 12 }) {
   const hits = await searchHybridWithFallback(query, bundle, lanceDir, 12);
   // The query embedding is the ONE live model call (memoized) — shared by the semantic
   // rerank, the gated arm, and condfuse so no path embeds the query twice.
@@ -323,10 +371,26 @@ async function oasisFind({ query, limit = 12 }) {
   } else {
     endpoints = out.slice(0, limit); // no vectors → concentration
   }
-  // next_steps: the "what can you do next" map a pure-vector engine can't return. Unifies the two
-  // relationship graphs — the data-driven entity-flow CLUSTER (everything that consumes an entity the
-  // task involves, e.g. Place=Japan → weather/reviews/places) plus the curated authored links.
-  return { endpoints, next_steps: await buildNextSteps(routedCaps, query) };
+  // next_steps: the "what can you do next" map a pure-vector engine can't return — the entity-flow CLUSTER
+  // from the QUERY (e.g. Place=Japan → weather/reviews/places) + curated links, plus (when the caller passes
+  // finding/entities, i.e. call 2+) investigative leads about what it now HOLDS.
+  let held = null;
+  if ((finding && String(finding).trim()) || (Array.isArray(entities) && entities.length)) {
+    const ex = extractEntities({ finding, explicitEntities: entities, source_intent_id: routedCaps[0]?.capability_id, bundle, capabilitiesById: capById });
+    held = (ex.entities ?? []).filter((e) => e.kind !== "observation");
+  }
+  const next_steps = await buildNextSteps(routedCaps, query, held);
+  // matched_capabilities: the routing signal (what oasis_search returns) as a field — no separate call needed.
+  const matched_capabilities = routedCaps.slice(0, 8)
+    .map((c) => { const cap = capById.get(c.capability_id); return cap ? { intent_id: c.capability_id, label: cap.label } : null; })
+    .filter(Boolean);
+  return { endpoints, next_steps, matched_capabilities };
+}
+
+// oasis_find is a deprecated alias retained for back-compat; oasis_discover supersedes it (+ oasis_next).
+async function oasisFind(args) {
+  const { endpoints, next_steps } = await oasisDiscover(args ?? {});
+  return { endpoints, next_steps };
 }
 
 function fmtFollowUp(lead) {
@@ -474,12 +538,19 @@ async function oasisNext({
 }
 
 export async function handleTool(name, args) {
+  // Public surface: 1 core + 3 utilities.
+  if (name === "oasis_discover") return oasisDiscover(args ?? {});
   if (name === "oasis_search") return oasisSearch(args ?? {});
-  if (name === "oasis_resolve") return oasisResolve(args ?? {});
+  if (name === "oasis_taxonomy") return getTaxonomy();
+  if (name === "oasis_validate") {
+    // accepts either a capability intent ({intent}) or an endpoint→capability binding ({binding})
+    if (args?.binding) return validateBinding(args.binding, bundle.endpoints);
+    return validateSourceIntent(args?.intent ?? args ?? {});
+  }
+  // Deprecated aliases — superseded by oasis_discover / oasis_validate; still routed for back-compat.
   if (name === "oasis_find") return oasisFind(args ?? {});
   if (name === "oasis_next") return oasisNext(args ?? {});
-  if (name === "oasis_taxonomy") return getTaxonomy();
-  if (name === "oasis_validate") return validateSourceIntent(args?.intent ?? args ?? {});
+  if (name === "oasis_resolve") return oasisResolve(args ?? {});
   if (name === "oasis_validate_binding") return validateBinding(args?.binding ?? args ?? {}, bundle.endpoints);
   return { error: `unknown tool: ${name}` };
 }
@@ -494,88 +565,10 @@ export const ANTHROPIC_TOOLS = TOOLS.map((t) => ({
   input_schema: t.schema,
 }));
 
-/** MCP tool shape ({ inputSchema }). The server exposes the one-hop primary tool
- *  (oasis_find), the lower-level search/resolve, and the contribution tools. */
-const FIND_SCHEMA = {
-  type: "object",
-  properties: {
-    query: { type: "string", description: "The task in natural language." },
-    limit: { type: "number", description: "Max endpoints (default 12)." },
-  },
-  required: ["query"],
-};
-const SERVER_TOOLS = [
-  {
-    name: "oasis_find",
-    description:
-      "Find the best paid HTTP API endpoints for a task in ONE call. Returns a ranked, flat list of endpoints (method, url, summary, price, payment rails). Use this first when an agent is unsure which tool/service to use.",
-    schema: FIND_SCHEMA,
-  },
-  {
-    name: "oasis_next",
-    description:
-      "Given what an agent just found (finding) and/or typed identity entities it holds, return CALLABLE cross-domain investigative follow-ups — other-domain capabilities that consume an identity you hold. Each suggestion includes the bridging entity proving you can invoke it. Prefer passing entities[] explicitly. Forward chaining is v2 (forward always []).",
-    schema: {
-      type: "object",
-      properties: {
-        finding: { type: "string", description: "What the agent just learned — used for heuristic extraction when entities omitted." },
-        entities: {
-          type: "array",
-          description: "Typed entities held (identity preferred for investigative leads).",
-          items: {
-            type: "object",
-            properties: {
-              entity: { type: "string" },
-              value: { type: "string" },
-              kind: { type: "string", enum: ["identity", "observation"] },
-              source_intent_id: { type: "string" },
-              role: { type: "string", enum: ["identifier", "payload"] },
-            },
-            required: ["entity"],
-          },
-        },
-        intent_id: { type: "string", description: "Last capability invoked (source domain for cross-domain bias)." },
-        query: { type: "string", description: "DEPRECATED — routes to intent when intent_id omitted." },
-        exclude_intent_ids: { type: "array", items: { type: "string" } },
-        limit: { type: "number", description: "Max investigative follow-ups (default 8)." },
-      },
-      anyOf: [
-        { required: ["entities"] },
-        { required: ["finding"] },
-        { required: ["intent_id"] },
-        { required: ["query"] },
-      ],
-    },
-  },
-  ...TOOLS,
-  {
-    name: "oasis_taxonomy",
-    description:
-      "Return the OASIS controlled vocabulary to bind a service INTO: existing task capabilities (+aliases), facet enums (domain/action/modality/freshness), and the closed entity vocab. Call before authoring or updating a capability.",
-    schema: { type: "object", properties: {} },
-  },
-  {
-    name: "oasis_validate",
-    description:
-      "Validate a proposed task-intent object (an ontology/intents capability) against the taxonomy: schema, facet/entity vocab, link targets. Returns { valid, isNew, errors, warnings }. SAME check CI runs on the PR.",
-    schema: {
-      type: "object",
-      properties: { intent: { type: "object", description: "The capability intent object to validate." } },
-      required: ["intent"],
-    },
-  },
-  {
-    name: "oasis_validate_binding",
-    description:
-      "Validate an authored endpoint→capability binding for a service: schema + capability ids exist in the taxonomy + whether the endpoints are in the index. Returns { valid, errors, warnings }. SAME check CI runs on the PR.",
-    schema: {
-      type: "object",
-      properties: { binding: { type: "object", description: "Service binding: { bindings: [{ origin, method, path, capabilities }] }." } },
-      required: ["binding"],
-    },
-  },
-];
-export const MCP_TOOLS = SERVER_TOOLS.map((t) => ({
+/** MCP tool shape ({ inputSchema }) — derived from the public surface (TOOLS): oasis_discover + the
+ *  three utilities. The deprecated aliases (find/next/resolve/validate_binding) are routed by handleTool
+ *  but intentionally not advertised here. */
+export const MCP_TOOLS = TOOLS.map((t) => ({
   name: t.name,
   description: t.description,
   inputSchema: t.schema,
