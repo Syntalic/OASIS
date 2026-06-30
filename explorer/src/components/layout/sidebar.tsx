@@ -1,0 +1,476 @@
+"use client";
+
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import {
+  ChevronDown,
+  Compass,
+  CornerDownLeft,
+  Layers3,
+  Loader2,
+  PanelLeftClose,
+  Search,
+  Sparkles,
+} from "lucide-react";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
+import { capById, domainMeta, domains } from "@/lib/ontology";
+import { askToolAtom, findAtom } from "@/stores/ask";
+import { focusDomainAtom, showEntitiesAtom } from "@/stores/options";
+import { inputAtom, matchesAtom, modeAtom, queryAtom, searchingAtom } from "@/stores/query";
+import { selectedIdAtom } from "@/stores/selection";
+import { sidebarCollapsedAtom } from "@/stores/ui";
+import type { Mode } from "@/types/graph";
+
+const SAMPLES = [
+  // AI / media
+  "Narrate an article as audio",
+  "Transcribe audio to text",
+  "Image from a text prompt",
+  "Generate text embeddings",
+  "Complete a chat prompt with an LLM",
+  // data / reference
+  "Enrich a company by domain",
+  "Find a person's public profile",
+  "Latest news headlines",
+  "Live sports scores",
+  "Look up NFT metadata",
+  "Look up WHOIS for a domain",
+  "Find a job listing",
+  // validation
+  "Validate an email address",
+  "Validate a VAT number",
+  "Check an IBAN bank account",
+  // finance / compute
+  "Convert USD to euros",
+  "Real-time stock quotes",
+  "Convert units & measurements",
+  // web / search
+  "Screenshot a webpage",
+  "Search the web with citations",
+  "Solve a CAPTCHA",
+  // comms
+  "Send a transactional SMS",
+  "Place an AI phone call",
+  "Send an email",
+  // maps / misc
+  "7-day weather forecast",
+  "Geocode an address",
+  "Translate text to Spanish",
+  "Extract data from a PDF",
+  "Find public holidays by country",
+];
+
+export function Sidebar() {
+  const [mode, setMode] = useAtom(modeAtom);
+  const setCollapsed = useSetAtom(sidebarCollapsedAtom);
+
+  const onMode = (m: Mode) => setMode(m);
+
+  return (
+    <aside className="flex h-full min-h-0 flex-col bg-card/40">
+      <div className="flex items-center gap-2 p-2.5">
+        <div className="flex flex-1 items-center gap-0.5 rounded-lg border bg-background/60 p-0.5">
+          <ModeTab icon={<Compass size={14} />} label="Explore" active={mode === "explore"} onClick={() => onMode("explore")} />
+          <ModeTab icon={<Sparkles size={14} />} label="Ask" active={mode === "ask"} onClick={() => onMode("ask")} />
+        </div>
+        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" title="Collapse panel" onClick={() => setCollapsed(true)}>
+          <PanelLeftClose size={15} />
+        </Button>
+      </div>
+      <Separator />
+      {mode === "ask" ? <AskBody /> : <ExploreBody />}
+    </aside>
+  );
+}
+
+function ModeTab({
+  icon,
+  label,
+  active,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex flex-1 items-center justify-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition",
+        active ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground",
+      )}
+    >
+      {icon}
+      {label}
+    </button>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
+function ExploreBody() {
+  const [showEntities, setShowEntities] = useAtom(showEntitiesAtom);
+  const [focusDomain, setFocusDomain] = useAtom(focusDomainAtom);
+
+  return (
+    <ScrollArea className="min-h-0 flex-1">
+      <div className="space-y-4 p-3">
+        <label className="flex items-center justify-between gap-2 rounded-lg border bg-secondary/40 px-3 py-2">
+          <span className="flex items-center gap-2 text-[12.5px] font-medium">
+            <Layers3 size={14} className="text-muted-foreground" /> Entity flow
+          </span>
+          <Switch checked={showEntities} onCheckedChange={setShowEntities} />
+        </label>
+
+        <div>
+          <div className="font-display mb-1.5 px-1 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            Domains
+          </div>
+          <div className="space-y-0.5">
+            <DomainRow
+              active={focusDomain === null}
+              color="var(--muted-foreground)"
+              label="All domains"
+              count={domains.reduce((s, d) => s + d.capabilities.length, 0)}
+              onClick={() => setFocusDomain(null)}
+            />
+            {domains.map((d) => {
+              const meta = domainMeta(d.id);
+              return (
+                <DomainRow
+                  key={d.id}
+                  active={focusDomain === d.id}
+                  color={meta.color}
+                  label={meta.label}
+                  count={d.capabilities.length}
+                  onClick={() => setFocusDomain(focusDomain === d.id ? null : d.id)}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </ScrollArea>
+  );
+}
+
+function DomainRow({
+  active,
+  color,
+  label,
+  count,
+  onClick,
+}: {
+  active: boolean;
+  color: string;
+  label: string;
+  count: number;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex w-full items-center gap-2.5 rounded-md px-2.5 py-1.5 text-left text-[12.5px] transition",
+        active ? "bg-accent text-foreground" : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+      )}
+    >
+      <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: color }} />
+      <span className="flex-1 truncate">{label}</span>
+      <span className="font-mono text-[11px] tabular-nums text-muted-foreground">{count}</span>
+    </button>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
+const SAMPLE_PREVIEW = 7;
+
+function AskBody() {
+  const [input, setInput] = useAtom(inputAtom);
+  const setQuery = useSetAtom(queryAtom);
+  const query = useAtomValue(queryAtom);
+  const matches = useAtomValue(matchesAtom);
+  const searching = useAtomValue(searchingAtom);
+  const [askTool, setAskTool] = useAtom(askToolAtom);
+  const find = useAtomValue(findAtom);
+  const [selectedId, setSelectedId] = useAtom(selectedIdAtom);
+  const [showAllSamples, setShowAllSamples] = useState(false);
+
+  const visibleSamples = showAllSamples ? SAMPLES : SAMPLES.slice(0, SAMPLE_PREVIEW);
+  const hiddenCount = SAMPLES.length - SAMPLE_PREVIEW;
+
+  const run = (q: string) => {
+    setInput(q);
+    setQuery(q);
+  };
+
+  return (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div className="space-y-2.5 p-3">
+        <div className="flex items-center gap-1.5 rounded-lg border bg-secondary/40 pl-2.5">
+          <Search size={15} className="shrink-0 text-muted-foreground" />
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && input.trim()) run(input);
+            }}
+            placeholder="Describe a task…"
+            className="h-9 border-0 bg-transparent px-1 text-sm shadow-none focus-visible:ring-0"
+          />
+        </div>
+        <Button size="sm" className="h-8 w-full gap-1.5" disabled={!input.trim()} onClick={() => run(input)}>
+          Trace connections <CornerDownLeft size={13} />
+        </Button>
+        <div>
+          <div className="flex items-center gap-0.5 rounded-lg border bg-background/60 p-0.5">
+            <ToolTab label="oasis_search" active={askTool === "capabilities"} onClick={() => setAskTool("capabilities")} />
+            <ToolTab label="oasis_find" active={askTool === "endpoints"} onClick={() => setAskTool("endpoints")} />
+          </div>
+          <p className="mt-1 px-1 text-[10px] text-muted-foreground">
+            {askTool === "endpoints" ? "returns ranked paid endpoints" : "returns ranked capabilities"}
+            <span className="opacity-70"> · via local MCP</span>
+          </p>
+        </div>
+        <div
+          className={cn(
+            "flex flex-wrap gap-1",
+            showAllSamples && "max-h-[176px] overflow-y-auto pr-1",
+          )}
+        >
+          {visibleSamples.map((q) => (
+            <button
+              key={q}
+              onClick={() => run(q)}
+              className="rounded-full border px-2 py-0.5 text-[10.5px] text-muted-foreground transition hover:border-primary/40 hover:text-foreground"
+            >
+              {q}
+            </button>
+          ))}
+          {hiddenCount > 0 && (
+            <button
+              onClick={() => setShowAllSamples((s) => !s)}
+              className="flex items-center gap-0.5 rounded-full border border-primary/40 px-2 py-0.5 text-[10.5px] font-medium text-primary transition hover:bg-primary/10"
+            >
+              {showAllSamples ? "Show less" : `+${hiddenCount} more`}
+              <ChevronDown
+                size={11}
+                className={cn("transition-transform", showAllSamples && "rotate-180")}
+              />
+            </button>
+          )}
+        </div>
+      </div>
+      <Separator />
+      {query ? (
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="font-display flex items-center gap-1.5 px-3 pt-2.5 pb-1 text-[10.5px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+            {searching ? (
+              <>
+                <Loader2 size={11} className="animate-spin" /> Binding…
+              </>
+            ) : askTool === "endpoints" ? (
+              `${find?.endpoints.length ?? 0} endpoint${(find?.endpoints.length ?? 0) === 1 ? "" : "s"}`
+            ) : (
+              `${matches.length} match${matches.length === 1 ? "" : "es"}`
+            )}
+          </div>
+          <ScrollArea className="min-h-0 flex-1">
+            <div className="space-y-1 p-2 pt-0">
+              {askTool === "endpoints" && find ? (
+                <EndpointResults find={find} onSelect={setSelectedId} />
+              ) : (
+                <CapabilityResults matches={matches} selectedId={selectedId} onSelect={setSelectedId} />
+              )}
+            </div>
+          </ScrollArea>
+        </div>
+      ) : (
+        <div className="flex flex-1 items-center justify-center p-6 text-center">
+          <p className="text-[12.5px] leading-relaxed text-muted-foreground">
+            Ask a question to see the {askTool === "endpoints" ? "paid endpoints" : "capabilities"} it connects to.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ToolTab({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex-1 rounded-md px-2 py-1 font-mono text-[11px] font-medium transition",
+        active ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground",
+      )}
+    >
+      {label}
+    </button>
+  );
+}
+
+/** Shared "+N more / Show less" expander used by the sidebar lists. */
+function ExpandToggle({ open, hidden, onClick }: { open: boolean; hidden: number; onClick: () => void }) {
+  if (hidden <= 0) return null;
+  return (
+    <button
+      onClick={onClick}
+      className="flex w-full items-center justify-center gap-0.5 rounded-md px-2 py-1 text-[10.5px] font-medium text-primary transition hover:bg-primary/10"
+    >
+      {open ? "Show less" : `+${hidden} more`}
+      <ChevronDown size={11} className={cn("transition-transform", open && "rotate-180")} />
+    </button>
+  );
+}
+
+function CapabilityResults({
+  matches,
+  selectedId,
+  onSelect,
+}: {
+  matches: import("@/lib/ontology").MatchResult[];
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const PREVIEW = 6;
+  const list = open ? matches : matches.slice(0, PREVIEW);
+  return (
+    <>
+      {list.map((m, i) => {
+        const meta = domainMeta(m.capability.domain);
+        const sel = selectedId === m.capability.id;
+        return (
+          <button
+            key={m.capability.id}
+            onClick={() => onSelect(m.capability.id)}
+            className={cn(
+              "w-full rounded-lg border px-2.5 py-2 text-left transition",
+              sel ? "border-primary/50 bg-accent" : "hover:bg-accent/50",
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <span
+                className="grid h-5 w-5 shrink-0 place-items-center rounded-full text-[10px] font-bold"
+                style={{ background: `color-mix(in oklab, ${meta.color} 22%, transparent)`, color: meta.color }}
+              >
+                {i + 1}
+              </span>
+              <span className="flex-1 truncate text-[12.5px] font-medium text-foreground">{m.capability.label}</span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-2 pl-7">
+              <div className="h-1 flex-1 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full" style={{ width: `${Math.round(m.strength * 100)}%`, background: meta.color }} />
+              </div>
+              <span className="shrink-0 font-mono text-[10px] tabular-nums text-muted-foreground">
+                {m.capability.endpointCount} APIs
+              </span>
+            </div>
+          </button>
+        );
+      })}
+      <ExpandToggle open={open} hidden={matches.length - PREVIEW} onClick={() => setOpen((s) => !s)} />
+    </>
+  );
+}
+
+function hostOf(u: string) {
+  try {
+    return new URL(u).host;
+  } catch {
+    return u;
+  }
+}
+function pathOf(u: string) {
+  try {
+    return new URL(u).pathname;
+  } catch {
+    return "";
+  }
+}
+
+function EndpointResults({
+  find,
+  onSelect,
+}: {
+  find: import("@/types/graph").FindResult;
+  onSelect: (id: string) => void;
+}) {
+  const [openEp, setOpenEp] = useState(false);
+  const [openNext, setOpenNext] = useState(false);
+  const EP_PREVIEW = 7;
+  const NEXT_PREVIEW = 3;
+  const eps = openEp ? find.endpoints : find.endpoints.slice(0, EP_PREVIEW);
+  const nexts = openNext ? find.nextSteps : find.nextSteps.slice(0, NEXT_PREVIEW);
+  return (
+    <>
+      {eps.map((ep, i) => {
+        const meta = domainMeta(capById.get(ep.via)?.domain ?? "other");
+        const host = hostOf(ep.url);
+        const path = pathOf(ep.url);
+        return (
+          <button
+            key={`${ep.via}:${host}${path}:${i}`}
+            onClick={() => onSelect(`ep:${ep.via}:${host}${path}`)}
+            className="w-full rounded-lg border px-2.5 py-1.5 text-left transition hover:bg-accent/50"
+          >
+            <div className="flex items-center gap-1.5 font-mono text-[11px]">
+              <span
+                className="rounded px-1 text-[8px] font-bold"
+                style={{ background: `color-mix(in oklab, ${meta.color} 20%, transparent)`, color: meta.color }}
+              >
+                {ep.method}
+              </span>
+              <span className="flex-1 truncate text-foreground/85">
+                {host}
+                <span className="text-muted-foreground">{path}</span>
+              </span>
+            </div>
+            <div className="mt-1 flex items-center justify-between gap-2 text-[9.5px] text-muted-foreground">
+              <span className="truncate">via {capById.get(ep.via)?.label ?? ep.via}</span>
+              <span className="flex shrink-0 items-center gap-1.5">
+                {ep.rails?.length ? <span className="uppercase">{ep.rails.join("·")}</span> : null}
+                {ep.price_usd != null && (
+                  <span className="font-mono font-semibold" style={{ color: meta.color }}>${ep.price_usd}</span>
+                )}
+              </span>
+            </div>
+          </button>
+        );
+      })}
+      <ExpandToggle open={openEp} hidden={find.endpoints.length - EP_PREVIEW} onClick={() => setOpenEp((s) => !s)} />
+
+      {find.nextSteps.length > 0 && (
+        <div className="pt-3">
+          <div className="font-display mb-1 px-1 text-[9.5px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+            Next steps
+          </div>
+          {nexts.map((ns) => (
+            <button
+              key={ns.intent_id}
+              onClick={() => onSelect(ns.intent_id)}
+              className="w-full rounded-lg border border-dashed px-2.5 py-1.5 text-left transition hover:bg-accent/50"
+            >
+              <div className="flex items-center gap-1.5 text-[12px] font-medium text-foreground">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "#5eead4" }} />
+                {ns.do}
+              </div>
+              <div className="mt-0.5 pl-3 text-[10px] text-muted-foreground italic">{ns.why}</div>
+            </button>
+          ))}
+          <ExpandToggle open={openNext} hidden={find.nextSteps.length - NEXT_PREVIEW} onClick={() => setOpenNext((s) => !s)} />
+        </div>
+      )}
+    </>
+  );
+}
