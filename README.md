@@ -15,9 +15,9 @@ discovery mechanism — so we built OASIS and open-sourced it.
 
 ## Integrate it as one agent tool
 
-Drop the reference MCP server into any agent. **`oasis_find` returns the right paid endpoint
-for a task in a single call** — a flat, ranked list with price + payment rails inline. Works
-with any LLM provider.
+Drop the reference MCP server into any agent. **`oasis_discover` returns the right paid endpoint
+for a task — plus a map of what to do next — in a single call**: a flat, ranked endpoint list with
+price + payment rails inline, and a `next_steps` graph to chain follow-ups. Works with any LLM provider.
 
 **👉 Just want to try it?** A free hosted instance is live — no clone, no key:
 
@@ -34,12 +34,13 @@ standard; self-host the same image (see [`mcp/deploy/`](mcp/deploy/)) or run it 
     "args": ["/absolute/path/OASIS/mcp/server.mjs"] } } }
 ```
 
-**Teach your agent the tools** — drop in the OASIS skill so it calls `oasis_find` first and
-chains follow-ups with `oasis_next`. Copy [`mcp/skills/oasis.md`](mcp/skills/oasis.md) into
+**Teach your agent the tools** — drop in the OASIS skill so it calls `oasis_discover` first and
+chains multi-step tasks by passing `finding` back. Copy [`mcp/skills/oasis.md`](mcp/skills/oasis.md) into
 your agent's skill directory (Claude Code: `~/.claude/skills/oasis/SKILL.md`).
 
-The server also exposes the lower-level `search` / `resolve` primitives and the
-`oasis_taxonomy` / `oasis_validate` contribution tools. See [`mcp/`](mcp/).
+The server also exposes `oasis_search` (classify a query → task intents) and the
+`oasis_taxonomy` / `oasis_validate` contribution tools. (`oasis_find` / `oasis_next` / `oasis_resolve`
+remain as deprecated aliases of `oasis_discover`.) See [`mcp/`](mcp/).
 
 ## Why it holds up
 
@@ -50,7 +51,7 @@ own corpus — token cost, accuracy, scale.
 ### 🎯 Real-task results
 
 On **40 natural-language tasks** a person would actually type ("what's bitcoin going for right
-now?"), `oasis_find` returns its top endpoints, each hand-scored for whether it *directly performs
+now?"), `oasis_discover` returns its top endpoints, each hand-scored for whether it *directly performs
 the task*. Per task it surfaces **~5.6 useful, distinct providers** (unique hosts that do the task) at
 **71% precision**, almost never comes up empty, and spends only **~97 response tokens per useful
 result** — a tight, pre-ranked, de-duplicated list rather than a long one.
@@ -65,24 +66,26 @@ and merging remains the most complete strategy. Full per-task numbers + method:
 ### 💸 Token cost — cheapest of every method tested
 
 End-to-end (a live LLM picks a paid endpoint for 18 real tasks; a method-neutral judge
-scores the pick), `oasis_find` finds *and* picks in one call at the lowest token cost — fewer
+scores the pick), `oasis_discover` finds *and* picks in one call at the lowest token cost — fewer
 tokens **and** fewer round-trips than both keyword search and the **semantic-spec** approach
 (the technique third-party semantic registries use):
 
 Tokens/task is **input (prompt) + output (completion)**, summed across the agent's
 round-trips (you re-send the prompt on every call, so more tool-calls → more input tokens):
 
-| discovery method | tokens/task (in + out) | avg tool-calls/task | vs `oasis_find` |
+| discovery method | tokens/task (in + out) | avg tool-calls/task | vs `oasis_discover` |
 |---|---|---|---|
-| **`oasis_find` (OASIS, one call)** | **2,354** (2,052 + 302) | **1.1** | — |
+| **`oasis_discover` (OASIS, one call)** | **2,354** (2,052 + 302) | **1.1** | — |
 | spec-embedding — semantic over endpoint specs | 2,715 (2,444 + 271) | 1.9 | +15% |
 | keyword — single-registry slice | 3,358 (3,036 + 322) | 2.2 | +43% |
 
 **What each method is:**
 
-- **`oasis_find` (OASIS)** — the shipped method: **one** MCP call; server-side **vector search
+- **`oasis_discover` (OASIS)** — the shipped method: **one** MCP call; server-side **vector search
   over the curated task intents** (`gemini-embedding-001`) returns a tight, pre-ranked endpoint
-  list with price/rails inline → the agent picks in ~1 hop. Covers the whole index.
+  list with price/rails inline → the agent picks in ~1 hop. Covers the whole index. (Token figures
+  above are the endpoint path; `discover` also returns a compact `next_steps` map — a small added
+  payload that replaces a separate follow-up call.)
 - **spec-embedding** — semantic search over the 30k *raw endpoint specs* — the
   technique third-party semantic registries use, run on our corpus so coverage is equal. Finds
   good candidates but returns bare endpoints, so the agent makes a 2nd call for details.
