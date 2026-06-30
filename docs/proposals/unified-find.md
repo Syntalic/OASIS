@@ -11,6 +11,21 @@ pure-vector primitive; `oasis_resolve` becomes `find`'s internal primitive. Two 
 **simplify the surface**, and **flip `find`'s retrieval base** from intent-first concentration
 (69.6% P@1) to the vector arm (80.4% P@1 — beating AgentCash's 77.9%).
 
+## Status (2026-06-30)
+**Shipped:** `oasis_find` now defaults to the vector-arm base + an always-on `next_steps` map
+(`mcp/tools.mjs`). 240-query blind benchmark: **80.0% P@1 / 70.8% P@3 — beats AgentCash (77.9% / 71.0%)
+and the old intent-first default (68.8%) by +11.2pp** (+46 wins / −19 losses).
+
+**Open problem — the ~19 "moat" losses.** Those 19 are queries where confident routing uniquely beat
+the arm. A confident intent-#1 *pin* to recover them (even gated on arm corroboration of the host) was
+tried and **regressed more than it recovered: net −23/240** (it dropped unified to 70.4%). So the base
+stays *pure arm*. The smarter fusion that captures the moat without the regressions is the next hard
+problem — the ~89% oracle ceiling is real but a naive pin does not reach it.
+
+**Also pending:** the `next_steps` **entity-flow** enrichment (folding `oasis_next`'s `entities[]` path).
+The always-on *capability-graph* `next_steps` shipped; the entity-anchored cross-domain leads are the
+next increment, so `oasis_next` stays a separate tool for now.
+
 ## Motivation — two problems, one fix
 
 **1. The surface is confusing.** An agent today faces `oasis_find`, `oasis_next`, `oasis_search`,

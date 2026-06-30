@@ -182,26 +182,7 @@ async function oasisFind({ query, limit = 12 }) {
   // maximizes distinct relevant providers instead of stacking several paths on one host.
   const caps = hits.filter((h) => h.kind === "capability");
   const hostOf = (origin) => origin.replace(/^https?:\/\//, "").split("/")[0];
-  // ARM-FIRST (OASIS_ARM_FIRST=1, A/B per docs/proposals/unified-find.md): make the query→endpoint
-  // vector arm the BASE (it scores 80.4% P@1 alone vs 69.6% for intent-first concentration), and
-  // apply the ontology as an ADDITIVE reranker — boost candidates bound to a routed intent so the
-  // intent path's unique wins (the moat: "voice"→TTS not a script-writer) are recovered, WITHOUT
-  // penalizing orphans (compat=0 just keeps the base cosine, so the arm's recall wins are preserved).
-  if (process.env.OASIS_ARM_FIRST === "1" && endpointArm.ready) {
-    const qv = await getQueryVec();
-    const armHits = armRerank(endpointArm.topK(qv, limit * 8));
-    const routed = new Set(caps.slice(0, 3).map((c) => c.capability_id));
-    const LAMBDA = Number(process.env.OASIS_ARMFIRST_COMPAT ?? "0.1");
-    const compat = (ep) => ((ep.capabilities ?? []).some((c) => routed.has(c)) ? 1 : 0);
-    const ranked = armHits
-      .map((a) => ({ a, s: a.score + LAMBDA * compat(a.ep) }))
-      .sort((x, y) => y.s - x.s)
-      .map((x) => x.a);
-    const picked = []; const sh = new Set();
-    for (const a of ranked) { if (picked.length >= limit) break; const ho = hostOf(a.ep.origin); if (sh.has(ho)) continue; sh.add(ho); picked.push(a); }
-    for (const a of ranked) { if (picked.length >= limit) break; if (!picked.includes(a)) picked.push(a); }
-    return { endpoints: picked.map((a) => ({ method: a.ep.method, url: `${a.ep.origin}${a.ep.path}`, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: compat(a.ep) ? "arm+intent" : "arm" })) };
-  }
+  // Build concentration (out) — its #1 is the intent-path's pick, pinned below when routing is confident.
   caps.forEach((h, i) => {
     if (out.length >= limit) return;
     const intent = capById.get(h.capability_id);
@@ -218,85 +199,35 @@ async function oasisFind({ query, limit = 12 }) {
       for (const e of pool.slice(0, 2)) { if (out.length >= limit) break; addEp(e); }
     }
   });
-  // GATED endpoint arm: when the router was UNSURE — the top two intents are separated by
-  // a hair (e.g. whois: cloud.domains 0.560 vs data.whois_lookup 0.559) — the intent layer
-  // is the bottleneck (mis-route, or the right endpoints mis-bound to a sibling). A direct
-  // query→endpoint cosine search bypasses both. A CONFIDENT route is returned untouched, so
-  // the 38/40 wins are structurally protected (a naive merge cost −27; this only swaps the
-  // close-race tail). Degrades to pure concentration when the vector cache is absent.
-  const margin = caps.length >= 2 ? caps[0].score - caps[1].score : 1;
-  if (endpointArm.ready && out.length && margin < ARM_CONSIDER_MARGIN) {
-    const queryVec = await getQueryVec();
-    const armHits = armRerank(endpointArm.topK(queryVec, limit * 6));
-    // Gate signal 2: does the arm's best beat concentration's #1 on query-cosine by a clear
-    // margin? (cosineToEndpoint reuses the same in-memory vectors — no extra embed call.)
-    const concCosine = endpointArm.cosineToEndpoint(queryVec, `${out[0].method} ${out[0].url}`);
-    const armTop = armHits[0]?.score ?? 0;
-    const fire = margin < MARGIN_GATE || (concCosine != null && armTop - concCosine > ARM_BEATS_DELTA);
-    if (fire && armHits.length) {
-      const picked = [];
-      const seenHost = new Set();
-      for (const a of armHits) { if (picked.length >= limit) break; const ho = hostOf(a.ep.origin); if (seenHost.has(ho)) continue; seenHost.add(ho); picked.push(a); }
-      for (const a of armHits) { if (picked.length >= limit) break; if (!picked.includes(a)) picked.push(a); }
-      const armList = picked.map((a) => ({
-        method: a.ep.method,
-        url: `${a.ep.origin}${a.ep.path}`,
-        summary: a.ep.summary,
-        price_usd: a.ep.payment?.price_usd,
-        rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol),
-        via: "endpoint-arm",
-      }));
-      // CONSENSUS: keep resolve's rank-1 when the arm corroborates it (its host is among the arm
-      // hits). Resolve's id-token fit beats the arm's pure cosine for distinctions the cosine
-      // clusters over (price-HISTORY vs current-price), while a true routing mispick — where
-      // resolve's #1 is NOT in the arm hits — still gets fully rescued by the arm.
-      const r1Host = hostOf(out[0].url);
-      if (armHits.some((a) => hostOf(a.ep.origin) === r1Host)) {
-        return { endpoints: [out[0], ...armList.filter((e) => hostOf(e.url) !== r1Host)].slice(0, limit) };
-      }
-      return { endpoints: armList };
-    }
-  }
-  // EXPERIMENTAL conditional fusion (OASIS_CONDFUSE=1) — runs ONLY when the gated arm did NOT fire.
-  // Diversify a HOST-MONOPOLIZED intent bucket (e.g. image_gen = all one provider) by keeping one
-  // endpoint per distinct intent host, then backfilling from query→endpoint direct retrieval.
-  // Host-DIVERSE buckets (whois, web_scrape) are untouched; arm-served queries already returned above.
-  if (process.env.OASIS_CONDFUSE !== "0" && endpointArm.ready && out.length) {
-    const uHost = (u) => u.replace(/^https?:\/\//, "").split("/")[0];
-    if (new Set(out.map((e) => uHost(e.url))).size < limit) {
-      const qv = await getQueryVec();
-      const arm = armRerank(endpointArm.topK(qv, limit * 6));
-      const kept = []; const kh = new Set();
-      for (const e of out) { const h = uHost(e.url); if (kh.has(h)) continue; kh.add(h); kept.push(e); }
-      for (const a of arm) {
-        if (kept.length >= limit) break;
-        const url = `${a.ep.origin}${a.ep.path}`; const h = uHost(url); if (kh.has(h)) continue; kh.add(h);
-        kept.push({ method: a.ep.method, url, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: "fused-arm" });
-      }
-      return { endpoints: kept.slice(0, limit) };
-    }
-  }
-  // OASIS_ARMFILL=1 — distinct-relevant/q lever. Diagnosis: ~half the un-surfaced relevant hosts
-  // are ORPHANS (bound to no intent), unreachable by the resolve path; the arm searches the whole
-  // corpus by query-cosine (a relevance proxy) so it CAN surface them. Pin rank-1 from resolve
-  // (precision untouched), then fill slots 2..N with the arm's top distinct hosts — recall without
-  // touching the rank-1 win. Runs only when the gated arm did NOT already return.
-  if (process.env.OASIS_ARMFILL === "1" && endpointArm.ready && out.length) {
-    const uHost = (u) => u.replace(/^https?:\/\//, "").split("/")[0];
+  // ── UNIFIED FIND: the query→endpoint vector ARM is the base — pure query-first retrieval, which
+  // scores ~80% P@1 (vs ~69% for the old intent-first concentration and ~78% for AgentCash). A confident
+  // intent-#1 "pin" to recover the ~17 moat cases the arm distracts on (e.g. "voice"→TTS not a
+  // script-writer) was tried but regressed more than it recovered (net −23/240 — even with arm
+  // corroboration), so the base is pure arm; moat recovery needs a smarter fusion (TODO —
+  // docs/proposals/unified-find.md). Degrades to concentration when the vector cache is absent.
+  let endpoints;
+  if (endpointArm.ready) {
     const qv = await getQueryVec();
-    const armHits = armRerank(endpointArm.topK(qv, limit * 10));
-    const keep = [out[0]];
-    const seen = new Set([uHost(out[0].url)]);
-    for (const a of armHits) {
-      if (keep.length >= limit) break;
-      const url = `${a.ep.origin}${a.ep.path}`; const h = uHost(url);
-      if (seen.has(h)) continue; seen.add(h);
-      keep.push({ method: a.ep.method, url, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: "arm-fill" });
-    }
-    for (const e of out) { if (keep.length >= limit) break; const h = uHost(e.url); if (seen.has(h)) continue; seen.add(h); keep.push(e); }
-    return { endpoints: keep.slice(0, limit) };
+    const armHits = armRerank(endpointArm.topK(qv, limit * 8));
+    const list = [];
+    const sh = new Set();
+    const push = (e) => { const ho = hostOf(e.url); if (sh.has(ho) || list.some((x) => x.url === e.url)) return; sh.add(ho); list.push(e); };
+    const armEp = (a) => ({ method: a.ep.method, url: `${a.ep.origin}${a.ep.path}`, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: "arm" });
+    for (const a of armHits) { if (list.length >= limit) break; push(armEp(a)); }
+    for (const a of armHits) { if (list.length >= limit) break; const e = armEp(a); if (!list.some((x) => x.url === e.url)) list.push(e); } // same-host backfill if short
+    endpoints = list.slice(0, limit);
+  } else {
+    endpoints = out.slice(0, limit); // no vectors → concentration
   }
-  return { endpoints: out.slice(0, limit) };
+  // next_steps: the typed adjacency from the routed top intent — the "what can you do next" map a
+  // pure-vector engine structurally can't return. Compact: pipeline next-steps, then alternatives,
+  // then drill-down. (entity-flow enrichment via an entities[] arg is the next increment.)
+  const topIntent = caps[0] ? capById.get(caps[0].capability_id) : null;
+  const rel = topIntent ? legacyRelatedGroups(topIntent) : { next_steps: [], alternatives: [], drill_down: [] };
+  const next_steps = [...rel.next_steps, ...rel.alternatives, ...rel.drill_down]
+    .slice(0, 5)
+    .map((s) => ({ do: s.label, why: s.why, intent_id: s.intent_id, endpoint: s.endpoint, price_usd: s.price_usd }));
+  return { endpoints, next_steps };
 }
 
 function fmtFollowUp(lead) {
