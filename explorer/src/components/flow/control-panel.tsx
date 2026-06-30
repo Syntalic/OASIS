@@ -12,6 +12,7 @@ import {
   Plus,
   RotateCcw,
 } from "lucide-react";
+import { useMemo } from "react";
 
 import {
   DropdownMenu,
@@ -20,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { nodesAtom } from "@/stores/graph";
 import { layoutEngineAtom } from "@/stores/options";
 import { modeAtom } from "@/stores/query";
 import { legendOpenAtom, relayoutNonceAtom, showMinimapAtom, sidebarCollapsedAtom } from "@/stores/ui";
@@ -129,34 +131,132 @@ function Divider() {
 }
 
 function Legend({ isAsk }: { isAsk: boolean }) {
-  const items = isAsk
-    ? [
-        { c: "var(--primary)", l: "Your question" },
-        { c: "#a78bfa", l: "Capability" },
-        { c: "#94a3b8", l: "Entity (data passed between capabilities)" },
-        { c: "#34d399", l: "Paid endpoint" },
-      ]
-    : [
-        { c: "#38bdf8", l: "Domain" },
-        { c: "#a78bfa", l: "Capability" },
-        { c: "#94a3b8", l: "Entity (data passed between capabilities)" },
-      ];
+  const nodes = useAtomValue(nodesAtom);
+  const counts = useMemo(() => {
+    const c: Record<string, number> = {};
+    for (const n of nodes) {
+      const k = (n.data as { kind?: string }).kind ?? "";
+      c[k] = (c[k] ?? 0) + 1;
+    }
+    return c;
+  }, [nodes]);
+
   return (
-    <div className="absolute top-[calc(100%+8px)] left-0 w-64 rounded-xl border bg-popover/95 p-3 shadow-2xl backdrop-blur-md">
-      <div className="font-display mb-2 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-        Legend
+    <div className="absolute top-[calc(100%+8px)] left-0 w-72 rounded-xl border bg-popover/95 p-3 shadow-2xl backdrop-blur-md">
+      <div className="font-display mb-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+        Map key
       </div>
-      <div className="flex flex-col gap-1.5">
-        {items.map((it) => (
-          <div key={it.l} className="flex items-center gap-2 text-[12px] text-foreground/90">
-            <span className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ background: it.c }} />
-            {it.l}
-          </div>
-        ))}
-      </div>
-      <p className="mt-2.5 border-t pt-2 text-[10.5px] leading-relaxed text-muted-foreground">
-        Click a node to trace its connections and open details.
+
+      <LegendGroup title="Nodes">
+        {isAsk ? (
+          <>
+            <LegendRow glyph={<QueryGlyph />} label="Your question" meta={counts.query} />
+            <LegendRow glyph={<CapGlyph />} label="Matched capability" meta={counts.capability} />
+            <LegendRow glyph={<EntityGlyph />} label="Entity · shared data" meta={counts.entity} />
+            <LegendRow glyph={<EndpointGlyph />} label="Paid endpoint" meta={counts.endpoint} />
+          </>
+        ) : (
+          <>
+            <LegendRow glyph={<DomainGlyph />} label="Domain · a family of capabilities" meta={counts.domain} />
+            <LegendRow glyph={<CapGlyph />} label="Capability · a task you can ask for" meta={counts.capability} />
+            <LegendRow glyph={<EntityGlyph />} label="Entity · typed data" meta={counts.entity} />
+          </>
+        )}
+      </LegendGroup>
+
+      <LegendGroup title="Connections">
+        {isAsk ? (
+          <>
+            <LegendRow glyph={<EdgeGlyph color="var(--primary)" />} label="matches your question" />
+            <LegendRow glyph={<EdgeGlyph color="#a78bfa" dashed />} label="produces · consumes (data flow)" />
+            <LegendRow glyph={<EdgeGlyph color="#34d399" />} label="served by (paid endpoint)" />
+          </>
+        ) : (
+          <>
+            <LegendRow glyph={<EdgeGlyph color="#64748b" />} label="in domain (capability → domain)" />
+            <LegendRow glyph={<EdgeGlyph color="#64748b" dashed />} label="produces · consumes (data flow)" />
+          </>
+        )}
+      </LegendGroup>
+
+      <LegendGroup title="How to read">
+        {isAsk && <LegendRow glyph={<BarGlyph />} label="bar = match strength" />}
+        <LegendRow glyph={<StarGlyph />} label="★ = bound paid endpoints" />
+        {!isAsk && <LegendRow glyph={<DomainCountGlyph />} label="domain badge = capabilities · endpoints" />}
+      </LegendGroup>
+
+      <p className="mt-1 border-t pt-2 text-[10px] leading-relaxed text-muted-foreground">
+        Click a node to trace its links · drag to rearrange.
       </p>
     </div>
+  );
+}
+
+function LegendGroup({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-2.5 last:mb-0">
+      <div className="mb-1 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground/70">{title}</div>
+      <div className="flex flex-col gap-0.5">{children}</div>
+    </div>
+  );
+}
+
+function LegendRow({ glyph, label, meta }: { glyph: React.ReactNode; label: string; meta?: number }) {
+  return (
+    <div className="flex items-center gap-2 text-[11.5px]">
+      <span className="flex w-6 shrink-0 justify-center">{glyph}</span>
+      <span className="flex-1 text-foreground/90">{label}</span>
+      {meta != null && (
+        <span className="font-mono text-[10px] tabular-nums text-muted-foreground">{meta}</span>
+      )}
+    </div>
+  );
+}
+
+/* mini-glyphs that mirror the canvas */
+function DomainGlyph() {
+  return <span className="h-3.5 w-3.5 rounded-full border-2" style={{ borderColor: "#38bdf8", background: "color-mix(in oklab, #38bdf8 18%, transparent)" }} />;
+}
+function CapGlyph() {
+  return (
+    <span className="relative h-3 w-5 overflow-hidden rounded-[3px] border bg-card">
+      <span className="absolute top-0 left-0 h-full w-1" style={{ background: "#a78bfa" }} />
+    </span>
+  );
+}
+function EntityGlyph() {
+  return <span className="h-3 w-5 rounded-[3px] border border-dashed bg-secondary" />;
+}
+function QueryGlyph() {
+  return <span className="h-3.5 w-3.5 rounded-full border-2 border-primary bg-primary/25" />;
+}
+function EndpointGlyph() {
+  return (
+    <span className="flex h-3 w-5 items-center rounded border bg-background px-1">
+      <span className="h-1.5 w-1.5 rounded-full" style={{ background: "#34d399" }} />
+    </span>
+  );
+}
+function StarGlyph() {
+  return <span className="font-mono text-[10px] text-muted-foreground">★</span>;
+}
+function BarGlyph() {
+  return (
+    <span className="block h-1.5 w-5 overflow-hidden rounded-full bg-muted">
+      <span className="block h-full w-3/5 rounded-full" style={{ background: "#a78bfa" }} />
+    </span>
+  );
+}
+function DomainCountGlyph() {
+  return <span className="font-mono text-[8px] text-muted-foreground">3·40</span>;
+}
+function EdgeGlyph({ color, dashed }: { color: string; dashed?: boolean }) {
+  return (
+    <span className="flex items-center gap-0.5">
+      <span className="h-0 w-3.5 border-t-2" style={{ borderColor: color, borderStyle: dashed ? "dashed" : "solid" }} />
+      <span className="text-[8px] leading-none" style={{ color }}>
+        ▸
+      </span>
+    </span>
   );
 }
