@@ -1,0 +1,31 @@
+id: media.transcode
+label: Transcode and convert audio and video
+description: Convert audio and video between formats and extract media — MP4 to MP3, extract audio, generate subtitles from video, grab a video frame or thumbnail, trim, concatenate, or change playback speed. Use when an agent reformats or processes A/V media, not transcription to text (ai.speech_to_text).
+aliases:
+  - transcode video
+  - convert mp4 to mp3
+  - extract audio from video
+  - generate subtitles from video
+  - video to subtitles
+  - convert audio format
+  - grab a video thumbnail
+  - extract a video frame
+  - trim a video clip
+  - change audio format
+  - remux a media file
+  - concatenate video clips
+consumes:
+  - entity: AudioClip
+    role: identifier
+produces:
+  - entity: AudioClip
+    role: payload
+facets:
+  domain: media
+  action: transform
+  modality:
+    - audio
+links:
+  - type: sibling_of
+    to: ai.speech_to_text
+    note: transcode reformats or processes A/V media; speech_to_text transcribes audio into text — not substitutable

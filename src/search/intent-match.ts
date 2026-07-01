@@ -88,6 +88,14 @@ export const CURATED_INTENT_IDS = [
   "travel.aviation",
   "web.markdown_extract",
   "web.screenshot",
+  // Coverage additions — clusters surfaced by the orphan audit (see ontology/intents/*.yaml).
+  "ai.moderate_content",
+  "ai.token_count",
+  "compute.chain_metrics",
+  "data.pii_detect",
+  "devtools.generate_secret",
+  "devtools.file_convert",
+  "media.transcode",
 ] as const;
 
 export type CuratedIntentId = (typeof CURATED_INTENT_IDS)[number];
