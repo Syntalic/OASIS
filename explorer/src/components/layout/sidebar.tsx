@@ -290,7 +290,7 @@ function AskBody() {
             ) : askTool === "endpoints" ? (
               `${find?.endpoints.length ?? 0} endpoint${(find?.endpoints.length ?? 0) === 1 ? "" : "s"}`
             ) : (
-              `${matches.length} match${matches.length === 1 ? "" : "es"}`
+              `${matches.length} ${matches.length === 1 ? "capability" : "capabilities"}`
             )}
           </div>
           <ScrollArea className="min-h-0 flex-1">
@@ -377,13 +377,10 @@ function CapabilityResults({
               </span>
               <span className="flex-1 truncate text-[12.5px] font-medium text-foreground">{m.capability.label}</span>
             </div>
-            <div className="mt-1.5 flex items-center gap-2 pl-7">
-              <div className="h-1 flex-1 overflow-hidden rounded-full bg-muted">
-                <div className="h-full rounded-full" style={{ width: `${Math.round(m.strength * 100)}%`, background: meta.color }} />
-              </div>
-              <span className="shrink-0 font-mono text-[10px] tabular-nums text-muted-foreground">
-                {m.capability.endpointCount} APIs
-              </span>
+            <div className="mt-1 flex items-center gap-1.5 pl-7 font-mono text-[10px] tabular-nums text-muted-foreground">
+              <span style={{ color: meta.color }}>{Math.round(m.strength * 100)}% match</span>
+              <span className="text-border">·</span>
+              <span>{m.capability.endpointCount} endpoints</span>
             </div>
           </button>
         );
