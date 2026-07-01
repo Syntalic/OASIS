@@ -108,8 +108,8 @@ export const CapabilityNode = memo(function CapabilityNode({ data, selected }: N
           <div className="mt-1 text-[10px] leading-snug text-muted-foreground italic">{c.why}</div>
         )}
         {typeof c.strength === "number" && (
-          <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full rounded-full" style={{ width: `${Math.round(c.strength * 100)}%`, background: c.color }} />
+          <div className="mt-2 font-mono text-[10px] tabular-nums" style={{ color: c.color }}>
+            {Math.round(c.strength * 100)}% match
           </div>
         )}
       </div>
