@@ -354,9 +354,11 @@ async function oasisDiscover({ query, finding, entities, limit = 12 }) {
   // docs/proposals/unified-find.md). Degrades to concentration when the vector cache is absent.
   let endpoints;
   let routedCaps = caps; // hybrid order; guarded below when the arm is available
+  let armSupport = null; // capability_id → arm support; prunes the matched_capabilities tail (see below)
   if (endpointArm.ready) {
     const qv = await getQueryVec();
     const armHits = armRerank(endpointArm.topK(qv, limit * 8));
+    armSupport = armSupportScores(armHits); // which intents the arm's clean top-8 endpoints actually bind to
     const list = [];
     const sh = new Set();
     const push = (e) => { const ho = hostOf(e.url); if (sh.has(ho) || list.some((x) => x.url === e.url)) return; sh.add(ho); list.push(e); };
@@ -382,9 +384,26 @@ async function oasisDiscover({ query, finding, entities, limit = 12 }) {
     held = (ex.entities ?? []).filter((e) => e.kind !== "observation");
   }
   const next_steps = await buildNextSteps(routedCaps, query, held);
-  // matched_capabilities: the routing signal (what oasis_search returns) as a field — no separate call needed.
-  const matched_capabilities = routedCaps.slice(0, 8)
-    .map((c) => { const cap = capById.get(c.capability_id); return cap ? { intent_id: c.capability_id, label: cap.label } : null; })
+  // matched_capabilities: the capabilities the RETURNED endpoints actually serve — a summary of what
+  // discover found, NOT a parallel intent guess. The hybrid classifier pads its tail with homonym noise
+  // (a real-estate query pulls in shop.find_deals / shop.compare_price on "$400K"/"deal"/"price" tokens);
+  // those intents have ZERO backing among the arm's clean top-8 endpoints. Keep the routed #1 (the anchor
+  // next_steps grows from) and drop tail intents with no arm support, preserving hybrid order among the
+  // survivors. Degrades to the raw hybrid order when the arm is absent (no vectors). oasis_search stays the
+  // unpruned classifier — it's a classify-only utility where the full ranked list is the point.
+  const shortlist = armSupport
+    ? routedCaps.filter((c, i) => i === 0 || (armSupport.get(c.capability_id) ?? 0) > 0)
+    : routedCaps;
+  const matched_capabilities = shortlist.slice(0, 8)
+    .map((c) => {
+      const cap = capById.get(c.capability_id);
+      if (!cap) return null;
+      const m = { intent_id: c.capability_id, label: cap.label };
+      // Real strength signal for callers + the dashboard bars: arm support = Σ 1/(rank+1) over the
+      // arm's clean top-8 endpoints bound to this capability. Omitted when the arm is absent (no vectors).
+      if (armSupport) m.score = Number((armSupport.get(c.capability_id) ?? 0).toFixed(4));
+      return m;
+    })
     .filter(Boolean);
   return { endpoints, next_steps, matched_capabilities };
 }

@@ -23,20 +23,26 @@ async function callOasis<T>(tool: string, args: Record<string, unknown>): Promis
   }
 }
 
-/** matched_capabilities → ranked MatchResult[]. discover returns no score, so
- *  strength is derived from rank position. */
-function toMatches(caps: { intent_id: string }[]): MatchResult[] {
+/** matched_capabilities → ranked MatchResult[]. discover now returns a real arm-support
+ *  `score` per capability; strength is score/max (same normalization as the offline scorer).
+ *  Falls back to rank position when the score is absent (arm unavailable / offline). */
+function toMatches(caps: { intent_id: string; score?: number }[]): MatchResult[] {
+  const max = Math.max(0, ...caps.map((c) => c.score ?? 0));
+  const hasScores = max > 0 && caps.some((c) => c.score != null);
   const out: MatchResult[] = [];
   caps.forEach((c, i) => {
     const capability = capById.get(c.intent_id);
-    if (capability) out.push({ capability, score: caps.length - i, strength: Math.max(0.3, 1 - i * 0.1), hits: [] });
+    if (!capability) return;
+    const score = c.score ?? caps.length - i;
+    const strength = hasScores ? Math.max(0.3, score / max) : Math.max(0.3, 1 - i * 0.1);
+    out.push({ capability, score, strength, hits: [] });
   });
   return out;
 }
 
 /** The full oasis_discover payload — the superset of the other tools. */
 interface DiscoverResult {
-  matched_capabilities?: { intent_id: string; label?: string }[];
+  matched_capabilities?: { intent_id: string; label?: string; score?: number }[];
   endpoints?: FindEndpoint[];
   next_steps?: NextStep[];
 }
