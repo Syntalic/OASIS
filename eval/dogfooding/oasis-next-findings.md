@@ -1,7 +1,8 @@
 # OASIS Next — findings (durable)
 
-`oasis-next-chains.md` is **regenerated (full overwrite) on every dogfood run**, so analysis lives
-here instead. Two threads: the `oasis_next` ranking work (done) and the foundation issues under it (open).
+The per-run dogfood chain log was **regenerated (full overwrite) on every dogfood run** (not kept in
+git), so durable analysis lives here instead. Two threads: the `oasis_next` ranking work (done) and
+the foundation issues under it (open).
 
 ## 1. `oasis_next` ranking — DONE (graph + topical relevance)
 

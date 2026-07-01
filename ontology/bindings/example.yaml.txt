@@ -1,0 +1,14 @@
+# TEMPLATE (not loaded — .txt so the build/CI loader, which reads only *.yaml/*.yml, skips it).
+# Copy to `<provider>.yaml` to author a real binding. An authoritative endpoint→capability
+# binding for a service, applied at index build / enrich-facets time to OVERRIDE the heuristic
+# binder for the listed endpoints — the same mechanism a maintainer uses to correct a heuristic
+# mis-bind, and the core of a contributed service's curation. Validate your copy before a PR:
+#   pnpm exec capindex validate-binding ontology/bindings/<provider>.yaml
+provider: 2s.io (example)
+note: Example — asserts an endpoint's capability authoritatively. capabilities[] is the complete set the endpoint satisfies and replaces the heuristic binding for it.
+bindings:
+  - origin: https://2s.io
+    method: GET
+    path: /api/stocks/quote
+    capabilities:
+      - finance.stock_quote
