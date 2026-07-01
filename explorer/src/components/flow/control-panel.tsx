@@ -167,7 +167,7 @@ function Legend({ isAsk }: { isAsk: boolean }) {
       <LegendGroup title="Connections">
         {isAsk ? (
           <>
-            <LegendRow glyph={<EdgeGlyph color="var(--primary)" />} label="matches your question" />
+            <LegendRow glyph={<EdgeGlyph color="rgb(var(--signal))" />} label="matches your question" />
             <LegendRow glyph={<EdgeGlyph color="#a78bfa" dashed />} label="produces · consumes (data flow)" />
             <LegendRow glyph={<EdgeGlyph color="#34d399" />} label="served by (paid endpoint)" />
           </>

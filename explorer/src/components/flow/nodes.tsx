@@ -141,8 +141,11 @@ export const QueryNode = memo(function QueryNode({ data }: NodeProps) {
   return (
     <div>
       <Handles />
-      <div className="w-[264px] rounded-2xl border-2 border-primary/70 bg-primary/10 px-4 py-3 shadow-2xl backdrop-blur [animation:oasis-pulse_3.4s_ease-in-out_infinite] motion-reduce:[animation:none]">
-        <div className="flex items-center gap-2 text-primary">
+      <div
+        className="w-[264px] rounded-2xl border-2 px-4 py-3 shadow-2xl backdrop-blur [animation:oasis-pulse_3.4s_ease-in-out_infinite] motion-reduce:[animation:none]"
+        style={{ borderColor: "rgb(var(--signal) / 0.7)", background: "rgb(var(--signal) / 0.1)" }}
+      >
+        <div className="flex items-center gap-2" style={{ color: "rgb(var(--signal))" }}>
           <Search size={15} />
           <span className="font-display text-[10px] font-semibold uppercase tracking-[0.18em]">Your question</span>
         </div>
