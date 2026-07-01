@@ -11,7 +11,7 @@ import {
   Search,
   Sparkles,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,13 +19,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
-import { capById, domainMeta, domains } from "@/lib/ontology";
-import { askToolAtom, findAtom } from "@/stores/ask";
+import { domainMeta, domains } from "@/lib/ontology";
+import { findAtom } from "@/stores/ask";
 import { focusDomainAtom, showEntitiesAtom } from "@/stores/options";
 import { inputAtom, matchesAtom, modeAtom, queryAtom, searchingAtom } from "@/stores/query";
 import { selectedIdAtom } from "@/stores/selection";
 import { sidebarCollapsedAtom } from "@/stores/ui";
-import type { Mode } from "@/types/graph";
+import type { FindEndpoint, Mode, NextStep } from "@/types/graph";
 
 const SAMPLES = [
   // AI / media
@@ -200,7 +200,6 @@ function AskBody() {
   const query = useAtomValue(queryAtom);
   const matches = useAtomValue(matchesAtom);
   const searching = useAtomValue(searchingAtom);
-  const [askTool, setAskTool] = useAtom(askToolAtom);
   const find = useAtomValue(findAtom);
   const [selectedId, setSelectedId] = useAtom(selectedIdAtom);
   const [showAllSamples, setShowAllSamples] = useState(false);
@@ -240,16 +239,6 @@ function AskBody() {
             <CornerDownLeft size={15} />
           </Button>
         </div>
-        <div>
-          <div className="flex items-center gap-0.5 rounded-lg border bg-background/60 p-0.5">
-            <ToolTab label="oasis_search" active={askTool === "capabilities"} onClick={() => setAskTool("capabilities")} />
-            <ToolTab label="oasis_find" active={askTool === "endpoints"} onClick={() => setAskTool("endpoints")} />
-          </div>
-          <p className="mt-1 px-1 text-[10px] text-muted-foreground">
-            {askTool === "endpoints" ? "returns ranked paid endpoints" : "returns ranked capabilities"}
-            <span className="opacity-70"> · via local MCP</span>
-          </p>
-        </div>
         <div
           className={cn(
             "flex flex-wrap gap-1",
@@ -287,18 +276,26 @@ function AskBody() {
               <>
                 <Loader2 size={11} className="animate-spin" /> Binding…
               </>
-            ) : askTool === "endpoints" ? (
-              `${find?.endpoints.length ?? 0} endpoint${(find?.endpoints.length ?? 0) === 1 ? "" : "s"}`
             ) : (
               `${matches.length} ${matches.length === 1 ? "capability" : "capabilities"}`
             )}
           </div>
           <ScrollArea className="min-h-0 flex-1">
-            <div className="space-y-1 p-2 pt-0">
-              {askTool === "endpoints" && find ? (
-                <EndpointResults find={find} onSelect={setSelectedId} />
-              ) : (
+            <div className="space-y-3 p-2 pt-0">
+              <div className="space-y-1">
                 <CapabilityResults matches={matches} selectedId={selectedId} onSelect={setSelectedId} />
+              </div>
+              {find && find.endpoints.length > 0 && (
+                <div className="space-y-1">
+                  <SectionLabel>{find.endpoints.length} paid endpoints</SectionLabel>
+                  <EndpointList endpoints={find.endpoints} />
+                </div>
+              )}
+              {find && find.nextSteps.length > 0 && (
+                <div className="space-y-1">
+                  <SectionLabel>Next steps</SectionLabel>
+                  <NextStepList steps={find.nextSteps} selectedId={selectedId} onSelect={setSelectedId} />
+                </div>
               )}
             </div>
           </ScrollArea>
@@ -306,25 +303,11 @@ function AskBody() {
       ) : (
         <div className="flex flex-1 items-center justify-center p-6 text-center">
           <p className="text-[12.5px] leading-relaxed text-muted-foreground">
-            Ask a question to see the {askTool === "endpoints" ? "paid endpoints" : "capabilities"} it connects to.
+            Ask a question to see the capabilities it connects to.
           </p>
         </div>
       )}
     </div>
-  );
-}
-
-function ToolTab({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className={cn(
-        "flex-1 rounded-md px-2 py-1 font-mono text-[11px] font-medium transition",
-        active ? "bg-primary text-primary-foreground shadow" : "text-muted-foreground hover:text-foreground",
-      )}
-    >
-      {label}
-    </button>
   );
 }
 
@@ -390,6 +373,14 @@ function CapabilityResults({
   );
 }
 
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <div className="font-display px-1 pt-1 text-[9.5px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/70">
+      {children}
+    </div>
+  );
+}
+
 function hostOf(u: string) {
   try {
     return new URL(u).host;
@@ -405,78 +396,76 @@ function pathOf(u: string) {
   }
 }
 
-function EndpointResults({
-  find,
-  onSelect,
-}: {
-  find: import("@/types/graph").FindResult;
-  onSelect: (id: string) => void;
-}) {
-  const [openEp, setOpenEp] = useState(false);
-  const [openNext, setOpenNext] = useState(false);
-  const EP_PREVIEW = 7;
-  const NEXT_PREVIEW = 3;
-  const eps = openEp ? find.endpoints : find.endpoints.slice(0, EP_PREVIEW);
-  const nexts = openNext ? find.nextSteps : find.nextSteps.slice(0, NEXT_PREVIEW);
+/** Real paid endpoints from oasis_discover — flat (via:"arm", no per-capability grouping). */
+function EndpointList({ endpoints }: { endpoints: FindEndpoint[] }) {
+  const [open, setOpen] = useState(false);
+  const PREVIEW = 6;
+  const list = open ? endpoints : endpoints.slice(0, PREVIEW);
   return (
     <>
-      {eps.map((ep, i) => {
-        const meta = domainMeta(capById.get(ep.via)?.domain ?? "other");
+      {list.map((ep, i) => {
         const host = hostOf(ep.url);
         const path = pathOf(ep.url);
         return (
-          <button
-            key={`${ep.via}:${host}${path}:${i}`}
-            onClick={() => onSelect(`ep:${ep.via}:${host}${path}`)}
-            className="w-full rounded-lg border px-2.5 py-1.5 text-left transition hover:bg-accent/50"
-          >
+          <div key={`${host}${path}:${i}`} className="rounded-lg border px-2.5 py-1.5">
             <div className="flex items-center gap-1.5 font-mono text-[11px]">
-              <span
-                className="rounded px-1 text-[8px] font-bold"
-                style={{ background: `color-mix(in oklab, ${meta.color} 20%, transparent)`, color: meta.color }}
-              >
-                {ep.method}
-              </span>
+              <span className="rounded bg-secondary px-1 text-[8px] font-bold text-foreground/70">{ep.method}</span>
               <span className="flex-1 truncate text-foreground/85">
                 {host}
                 <span className="text-muted-foreground">{path}</span>
               </span>
+              {ep.price_usd != null && (
+                <span className="shrink-0 font-mono font-semibold text-foreground">${ep.price_usd}</span>
+              )}
             </div>
-            <div className="mt-1 flex items-center justify-between gap-2 text-[9.5px] text-muted-foreground">
-              <span className="truncate">via {capById.get(ep.via)?.label ?? ep.via}</span>
-              <span className="flex shrink-0 items-center gap-1.5">
-                {ep.rails?.length ? <span className="uppercase">{ep.rails.join("·")}</span> : null}
-                {ep.price_usd != null && (
-                  <span className="font-mono font-semibold" style={{ color: meta.color }}>${ep.price_usd}</span>
-                )}
-              </span>
-            </div>
-          </button>
+            {ep.summary && <div className="mt-0.5 truncate text-[10px] text-muted-foreground">{ep.summary}</div>}
+            {ep.rails?.length ? (
+              <div className="mt-0.5 text-[9px] uppercase tracking-wide text-muted-foreground/70">{ep.rails.join(" · ")}</div>
+            ) : null}
+          </div>
         );
       })}
-      <ExpandToggle open={openEp} hidden={find.endpoints.length - EP_PREVIEW} onClick={() => setOpenEp((s) => !s)} />
-
-      {find.nextSteps.length > 0 && (
-        <div className="pt-3">
-          <div className="font-display mb-1 px-1 text-[9.5px] font-semibold uppercase tracking-wider text-muted-foreground/70">
-            Next steps
-          </div>
-          {nexts.map((ns) => (
-            <button
-              key={ns.intent_id}
-              onClick={() => onSelect(ns.intent_id)}
-              className="w-full rounded-lg border border-dashed px-2.5 py-1.5 text-left transition hover:bg-accent/50"
-            >
-              <div className="flex items-center gap-1.5 text-[12px] font-medium text-foreground">
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "#5eead4" }} />
-                {ns.do}
-              </div>
-              <div className="mt-0.5 pl-3 text-[10px] text-muted-foreground italic">{ns.why}</div>
-            </button>
-          ))}
-          <ExpandToggle open={openNext} hidden={find.nextSteps.length - NEXT_PREVIEW} onClick={() => setOpenNext((s) => !s)} />
-        </div>
-      )}
+      <ExpandToggle open={open} hidden={endpoints.length - PREVIEW} onClick={() => setOpen((s) => !s)} />
     </>
   );
 }
+
+/** Chain-to capabilities from oasis_discover.next_steps (click selects the graph node). */
+function NextStepList({
+  steps,
+  selectedId,
+  onSelect,
+}: {
+  steps: NextStep[];
+  selectedId: string | null;
+  onSelect: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const PREVIEW = 4;
+  const list = open ? steps : steps.slice(0, PREVIEW);
+  return (
+    <>
+      {list.map((ns) => {
+        const sel = selectedId === ns.intent_id;
+        return (
+          <button
+            key={ns.intent_id}
+            onClick={() => onSelect(ns.intent_id)}
+            className={cn(
+              "w-full rounded-lg border border-dashed px-2.5 py-1.5 text-left transition",
+              sel ? "bg-accent" : "hover:bg-accent/50",
+            )}
+          >
+            <div className="flex items-center gap-1.5 text-[12px] font-medium text-foreground">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: "#5eead4" }} />
+              {ns.do}
+            </div>
+            <div className="mt-0.5 pl-3 text-[10px] italic text-muted-foreground">{ns.why}</div>
+          </button>
+        );
+      })}
+      <ExpandToggle open={open} hidden={steps.length - PREVIEW} onClick={() => setOpen((s) => !s)} />
+    </>
+  );
+}
+

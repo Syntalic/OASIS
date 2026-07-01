@@ -4,7 +4,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 
 import { capById, matchCapabilities, type MatchResult } from "@/lib/ontology";
-import { askToolAtom, findAtom } from "@/stores/ask";
+import { findAtom } from "@/stores/ask";
 import { matchesAtom, modeAtom, queryAtom, searchingAtom } from "@/stores/query";
 import type { FindEndpoint, NextStep } from "@/types/graph";
 
@@ -23,7 +23,8 @@ async function callOasis<T>(tool: string, args: Record<string, unknown>): Promis
   }
 }
 
-/** capability intents (oasis_search) → ranked MatchResult[] */
+/** matched_capabilities → ranked MatchResult[]. discover returns no score, so
+ *  strength is derived from rank position. */
 function toMatches(caps: { intent_id: string }[]): MatchResult[] {
   const out: MatchResult[] = [];
   caps.forEach((c, i) => {
@@ -33,28 +34,22 @@ function toMatches(caps: { intent_id: string }[]): MatchResult[] {
   return out;
 }
 
-/** endpoints (oasis_find) → ranked MatchResult[] of the distinct `via` capabilities */
-function viaMatches(endpoints: FindEndpoint[]): MatchResult[] {
-  const order: string[] = [];
-  for (const e of endpoints) if (e.via && !order.includes(e.via)) order.push(e.via);
-  const out: MatchResult[] = [];
-  order.forEach((id, i) => {
-    const capability = capById.get(id);
-    if (capability) out.push({ capability, score: order.length - i, strength: Math.max(0.35, 1 - i * 0.12), hits: [] });
-  });
-  return out;
+/** The full oasis_discover payload — the superset of the other tools. */
+interface DiscoverResult {
+  matched_capabilities?: { intent_id: string; label?: string }[];
+  endpoints?: FindEndpoint[];
+  next_steps?: NextStep[];
 }
 
 /**
- * Resolves the question through the chosen OASIS tool:
- * - capabilities → oasis_search (ranked capabilities)
- * - endpoints    → oasis_find (real endpoints + next_steps)
- * Falls back to the local keyword scorer if the MCP is unreachable.
+ * Resolves the question through OASIS `oasis_discover` — the single call that
+ * returns everything: matched capabilities + real paid endpoints + next steps.
+ * Falls back to the local keyword scorer for the capability list if the MCP is
+ * unreachable (endpoints / next steps then stay empty).
  */
 export function useAskSearch() {
   const mode = useAtomValue(modeAtom);
   const query = useAtomValue(queryAtom);
-  const tool = useAtomValue(askToolAtom);
   const setMatches = useSetAtom(matchesAtom);
   const setFind = useSetAtom(findAtom);
   const setSearching = useSetAtom(searchingAtom);
@@ -70,27 +65,14 @@ export function useAskSearch() {
       }
       setSearching(true);
 
-      let matches: MatchResult[] = [];
-      let find: { endpoints: FindEndpoint[]; nextSteps: NextStep[] } | null = null;
+      const data = await callOasis<DiscoverResult>("oasis_discover", { query });
 
-      if (tool === "endpoints") {
-        const data = await callOasis<{ endpoints?: FindEndpoint[]; next_steps?: NextStep[] }>("oasis_find", {
-          query,
-          limit: 24,
-        });
-        if (data?.endpoints?.length) {
-          find = { endpoints: data.endpoints, nextSteps: data.next_steps ?? [] };
-          matches = viaMatches(data.endpoints);
-        }
-      } else {
-        const data = await callOasis<{ capabilities?: { intent_id: string }[] }>("oasis_search", {
-          query,
-          limit: 8,
-        });
-        if (data?.capabilities?.length) matches = toMatches(data.capabilities);
-      }
-
+      let matches = toMatches(data?.matched_capabilities ?? []);
       if (matches.length === 0) matches = matchCapabilities(query); // offline fallback
+      const find =
+        data?.endpoints?.length || data?.next_steps?.length
+          ? { endpoints: data.endpoints ?? [], nextSteps: data.next_steps ?? [] }
+          : null;
 
       if (!cancelled) {
         setMatches(matches);
@@ -101,5 +83,5 @@ export function useAskSearch() {
     return () => {
       cancelled = true;
     };
-  }, [mode, query, tool, setMatches, setFind, setSearching]);
+  }, [mode, query, setMatches, setFind, setSearching]);
 }

@@ -11,9 +11,6 @@ export type EdgeKind =
 
 export type Mode = "explore" | "ask";
 
-/** Which OASIS tool the Ask tab runs the question through. */
-export type AskTool = "capabilities" | "endpoints";
-
 export type LayoutEngine = "grouped" | "layered" | "radial";
 
 /** oasis_find result shapes. */
