@@ -57,7 +57,7 @@ export function FlowCanvas() {
 
   const minimapColor = useCallback((n: Node) => {
     const c = n.data as { color?: string; kind?: string };
-    if (c.kind === "query") return "var(--primary)";
+    if (c.kind === "query") return "rgb(var(--signal))";
     if (c.kind === "entity") return "var(--muted-foreground)";
     return c.color ?? "var(--muted-foreground)";
   }, []);

@@ -216,21 +216,30 @@ function AskBody() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="space-y-2.5 p-3">
-        <div className="flex items-center gap-1.5 rounded-lg border bg-secondary/40 pl-2.5">
-          <Search size={15} className="shrink-0 text-muted-foreground" />
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && input.trim()) run(input);
-            }}
-            placeholder="Describe a task…"
-            className="h-9 border-0 bg-transparent px-1 text-sm shadow-none focus-visible:ring-0"
-          />
+        <div className="flex items-center gap-1.5">
+          <div className="flex flex-1 items-center gap-1.5 rounded-lg border bg-secondary/40 pl-2.5">
+            <Search size={15} className="shrink-0 text-muted-foreground" />
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && input.trim()) run(input);
+              }}
+              placeholder="Describe a task…"
+              className="h-9 border-0 bg-transparent px-1 text-sm shadow-none focus-visible:ring-0"
+            />
+          </div>
+          <Button
+            size="sm"
+            className="h-9 w-9 shrink-0 p-0"
+            disabled={!input.trim()}
+            onClick={() => run(input)}
+            aria-label="Search"
+            title="Search"
+          >
+            <CornerDownLeft size={15} />
+          </Button>
         </div>
-        <Button size="sm" className="h-8 w-full gap-1.5" disabled={!input.trim()} onClick={() => run(input)}>
-          Trace connections <CornerDownLeft size={13} />
-        </Button>
         <div>
           <div className="flex items-center gap-0.5 rounded-lg border bg-background/60 p-0.5">
             <ToolTab label="oasis_search" active={askTool === "capabilities"} onClick={() => setAskTool("capabilities")} />
