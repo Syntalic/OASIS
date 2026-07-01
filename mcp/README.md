@@ -6,7 +6,7 @@ of scope). Self-contained: installs its own SDKs via npm, imports the built OASI
 
 ```bash
 cd mcp && npm install          # @modelcontextprotocol/sdk, @anthropic-ai/sdk, openai
-# (build the index first from the repo root: pnpm run build && pnpm run embed)
+# (build the index first from the repo root: pnpm run build && pnpm run embed && pnpm run build:endpoint-index)
 ```
 
 ## MCP server (local, stdio)
@@ -14,15 +14,19 @@ cd mcp && npm install          # @modelcontextprotocol/sdk, @anthropic-ai/sdk, o
 Exposes, backed by the OASIS index:
 
 *Discovery (use a tool):*
-- **`oasis_find(query)`** — one call → flat, ranked endpoints with price/rails inline. The
-  primary tool: cheapest + most accurate (see the A/B below). Use this first.
-- `oasis_search(query)` — lower-level hybrid discovery → ranked capability intents
-- `oasis_resolve(intent_id, query)` — query-aware endpoints for an intent + typed related options
-- **`oasis_next(finding, entities[], intent_id)`** — cross-domain investigative follow-ups from held identity entities (v1 lateral only)
+- **`oasis_discover(query, finding?, entities?)`** — one call → ranked capabilities + endpoints
+  (price/rails inline) + `next_steps`. The primary tool and a superset of the others: cheapest +
+  most accurate (see the A/B below). Use this first. Pass `finding` / `entities` on a follow-up
+  call to get cross-domain investigative leads from held identity entities.
+- `oasis_search(query)` — lower-level classify-only utility → ranked capability intents
+
+> `oasis_find` / `oasis_resolve` / `oasis_next` / `oasis_validate_binding` remain as **deprecated
+> aliases** in the handler for back-compat but are **not advertised** as tools — `oasis_discover`
+> supersedes `oasis_find` + `oasis_next`.
 
 ## Skills
 
-Copy `mcp/skills/oasis.md` to your agent's skills directory — it teaches `oasis_find` first, then the `oasis_next` follow-up loop (find → call → reflect → next → synthesize).
+Copy `mcp/skills/oasis.md` to your agent's skills directory — it teaches `oasis_discover` (discover → call → discover-with-`finding` → synthesize).
 
 *Contribution (add a service):*
 - `oasis_taxonomy()` — the controlled vocab to bind INTO (capabilities + facet/entity enums)

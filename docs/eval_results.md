@@ -1,5 +1,12 @@
 # OASIS Evaluation Results
 
+> **Snapshot — as of 2026-06** (index built 2026-06-27: the frozen **~30,561-endpoint /
+> 1,101-service** corpus with **56 curated intents**). The figures below are a point-in-time
+> record. The live index has since changed — currently **18,781 gated endpoints / 1,068 origins /
+> 80 intents** — so absolute numbers won't match a fresh run; re-run the [Reproduce](#reproduce)
+> block for current values. The one-call method benchmarked here as **`oasis_find`** is now
+> **`oasis_discover`** (same method, renamed; `oasis_find` remains a deprecated alias).
+
 The shipped method, **`oasis_find`** — one MCP call that returns a ranked, priced endpoint
 list — is the **cheapest discovery method tested** (~2,354 tokens/task, fewest round-trips) at
 **equal-or-better accuracy**, and it generalizes to held-out queries at **95% discover@1 / 99%

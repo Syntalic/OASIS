@@ -31,7 +31,7 @@ x402 (Coinbase / AgentCash / Merit) and MPP (Tempo) are **one co-authored standa
 - [x] **Decisions:** keep Bazaar + openapi-enrichment + x402scan (9.5% unique yield) + mpp.dev; **skip mppscan**; pay.sh replaces local PAY.md; Bazaar promoted from eval-only → ingestion
 
 ### Quality gate
-- [x] `src/quality-gate.ts` — **inclusion (pass/drop) separate from ranking**. DROP = junk (no real summary / stub / meta / **content-free boilerplate**) OR **thin (<5 fields)**. PASS = real + ≥5 fields. **Quarantine removed**; **free kept if fleshed**.
+- [x] `src/bind/quality-gate.ts` — **inclusion (pass/drop) separate from ranking**. DROP = junk (no real summary / stub / meta / **content-free boilerplate**) OR **thin (<5 fields)**. PASS = real + ≥5 fields. **Quarantine removed**; **free kept if fleshed**.
 - [x] Per-record **completeness score (0–13)** + quality **flags**
 - [x] **Content-free boilerplate drop** (`isContentFree`): a non-stub summary that conveys no capability (seed: `"Premium API Access"`, `"handler"`, bare price strings) **with no real description to fall back on**. Surfaced by the floor calibration — **one provider (`lowpaymentfee.com`) was 31.5% of the corpus**, 10,028× `"Premium API Access"` on templated numeric-id paths, and the dominant source of low-floor binding noise. Rule drops **10,082** (mostly lowpaymentfee); keeps informative-but-templated catalogs (tcgapi price-history ×1,227 untouched). **31,810 → 21,728** on the saved corpus.
 

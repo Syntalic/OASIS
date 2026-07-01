@@ -23,13 +23,15 @@ and open a detail panel. The view pans the selection clear of the panel.
 ## Ask — the real binder
 
 The **Ask** results come from the actual OASIS binder, not a keyword guess. The browser POSTs
-to a server route (`app/api/oasis/route.ts`), which calls the OASIS MCP — `oasis_search`
-(Capabilities), `oasis_find` (Endpoints + `next_steps`), and `oasis_resolve` (the auto
-drill-down) — and maps the results onto the local dataset to build the graph.
+to a server route (`app/api/oasis/route.ts`), which calls the OASIS MCP with a single
+**`oasis_discover`** call (the superset — capabilities + endpoints + `next_steps` in one) and
+maps the results onto the local dataset to build the graph. `oasis_resolve` is used only for
+the per-capability drill-down in the detail panel.
 
 - **MCP endpoint** is set by `OASIS_MCP_URL` (default `http://localhost:8899/mcp`).
-- If the MCP is unreachable, `oasis_search` **falls back** to a local keyword scorer so the
-  dashboard still works offline (rougher — no semantics). Endpoints / resolve need the MCP.
+- If the MCP is unreachable (or `oasis_discover` returns no `matched_capabilities`), it **falls
+  back** to a local keyword scorer so the dashboard still works offline (rougher — no semantics).
+  Endpoints / resolve need the MCP.
 
 ## Running
 

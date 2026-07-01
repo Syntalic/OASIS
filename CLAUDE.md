@@ -77,7 +77,7 @@ Details: [docs/index-snapshots.md](docs/index-snapshots.md), [mcp/deploy/README.
 
 ## CLI
 
-`pnpm exec capindex <search|resolve|validate|ingest|embed|build> …` (see README → CLI).
+`pnpm exec capindex <search|resolve|validate|validate-source|taxonomy|validate-binding|ingest|embed|stats> …` (see README → CLI).
 `capindex validate-source <intent.yaml>` is the exact gate CI runs on a contributed intent.
 
 ## Layout
@@ -96,4 +96,4 @@ Details: [docs/index-snapshots.md](docs/index-snapshots.md), [mcp/deploy/README.
 
 - Match the surrounding style; keep changes minimal. Never commit `dist/` or `dist-pinned/` (gitignored build output).
 - Publishing a paid API so OASIS can find it: [docs/authoring-openapi-specs.md](docs/authoring-openapi-specs.md). Binding endpoints into the ontology: [docs/contributing-capabilities.md](docs/contributing-capabilities.md).
-- CI (`.github/workflows/ci.yml`): `build:ts` → `test:unit` → `validate-source` → `validate-binding` → an offline fixture build. Run those locally before a PR.
+- CI (`.github/workflows/ci.yml`): `build:ts` → `test:unit` → `validate-source` → `validate-binding`. Run those locally before a PR. (No offline end-to-end build in CI — the production pipeline is network-bound; the full build runs locally/at deploy.)

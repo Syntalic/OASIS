@@ -5,6 +5,13 @@
 **Provenance:** deployed tip `a427f9f` (PR #12 `feat/local-relevance-ranking` + pinned index
 snapshot); `dist/` built 2026-06-27 (21,834 endpoints, 80 capabilities).
 
+> **Update — core premise superseded (shipped):** the diagnosis below argues from "endpoints carry
+> **no** `action` facet (0 / 21,834), so binding can't gate on type." That has since shipped: the
+> authored facet set now types **10,107 / 18,781** endpoints with `facets.action`, and the facet
+> gates (`domainPenalty` / `actionPenalty` / entity gate) are live in `src/bind/select-policy.ts`.
+> Read this as the design rationale for what's now implemented, not an open problem. (Current corpus
+> is 18,781 endpoints, not 21,834.)
+
 ## TL;DR
 
 `oasis_search` (routing into the ontology) is solid; the accuracy lost in `oasis_find` is almost

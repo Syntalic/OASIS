@@ -2,7 +2,7 @@
 
 High-level design of how OASIS discovers paid HTTP APIs (x402 and MPP) for agentic commerce.
 This describes the **current** index-build + traversal implementation; for the direction the
-project is heading (endpoint-atomic retrieval, the one-hop `oasis_find`, LLM-assisted
+project is heading (endpoint-atomic retrieval, the one-hop `oasis_discover`, LLM-assisted
 distributed curation), see [docs/scaling.md](docs/scaling.md).
 
 ## Agent traversal protocol
@@ -20,8 +20,8 @@ flowchart LR
   end
 
   subgraph oasis["OASIS index (dist/)"]
-    CAP["capabilities.json<br/>56 curated intents"]
-    EP["endpoints.json<br/>~22k gated endpoints"]
+    CAP["capabilities.json<br/>80 curated intents"]
+    EP["endpoints.json<br/>~19k gated endpoints"]
     IDX["index.json<br/>full bundle"]
   end
 
@@ -129,7 +129,7 @@ flowchart TB
   subgraph vector["Vector search (optional, --hybrid)"]
     EMB["embed/embedder.ts<br/>text embeddings"]
     LANCE["embed/lance-index.ts<br/>LanceDB table"]
-    VEC["Vector nearest-neighbors<br/>56 curated intents"]
+    VEC["Vector nearest-neighbors<br/>80 curated intents"]
   end
 
   subgraph fusion["Hybrid fusion (search-hybrid.ts)"]
@@ -176,8 +176,8 @@ flowchart LR
     LB["label + aliases + facets"]
   end
 
-  subgraph bind["linkCapabilitiesToEndpoints()"]
-    M["Bind endpoints → capabilities<br/>(facet/semantic; regex = fallback)"]
+  subgraph bind["bindEndpointsByEmbedding()"]
+    M["Bind endpoints → capabilities<br/>(semantic / embedding; strong-sparse promotion)"]
     C["endpoint.capabilities[]"]
   end
 
@@ -197,7 +197,7 @@ flowchart LR
   C --> REV
 ```
 
-**Resolve path** (`capindex resolve --intent <id>`, and the `oasis_find` server tool):
+**Resolve path** (`capindex resolve --intent <id>`, and the `oasis_discover` server tool):
 
 1. Load the intent and map its `satisfies[]` to concrete endpoints via `sha256(origin|method|path)`.
 2. Rank by **task fit** (`resolveEndpointsForQuery`): intent-id tokens (`weather_forecast`
@@ -215,7 +215,7 @@ flowchart LR
      synonym gap; gated to low-breadth hosts so it can't ride a catch-all into a specialist bucket.
 4. Return origin, path, `payment.rails`, `price_usd`, `openapi_url`.
 
-**Endpoint arm + consensus** (`bind/endpoint-arm.ts`, `oasis_find`): when the router is a
+**Endpoint arm + consensus** (`bind/endpoint-arm.ts`, `oasis_discover`): when the router is a
 near-tie (the right endpoints may be mis-routed or mis-bound), a direct query→endpoint cosine
 search over the whole corpus supplements concentration. It is **confidence-gated** (only on a
 thin routing margin), always **drops thin/no-spec rows** (no declared 200, no inputs), and —
@@ -226,7 +226,7 @@ absent from the arm) is still fully rescued.
 
 > The serve-time ranking constants (breadth/semrank weights, arm gate) are tuned defaults and
 > env-overridable (`OASIS_BREADTH_PENALTY`, `OASIS_SEMRANK_WEIGHT`/`_FLOOR`, `OASIS_MARGIN_GATE`,
-> …). `oasis_find` returns up to **12** ranked endpoints by default.
+> …). `oasis_discover` returns up to **12** ranked endpoints by default.
 
 ---
 
@@ -237,7 +237,7 @@ Benchmarks measure whether `search → resolve` finds the right paid API for nat
 ```mermaid
 flowchart LR
   subgraph queries["eval/"]
-    MQ["messy-queries.json<br/>64 hand-written NL queries"]
+    MQ["messy-queries.json<br/>63 hand-written NL queries"]
     GQ["queries.json<br/>644 golden queries"]
   end
 
@@ -253,7 +253,7 @@ flowchart LR
     D3["discover@3"]
     D1["discover@1"]
     MRR["discover MRR"]
-    RES["resolve accuracy<br/>56/56 intents"]
+    RES["resolve accuracy<br/>80/80 intents"]
   end
 
   MQ --> modes
@@ -274,7 +274,7 @@ ontology/intents/      Curated capability definitions (YAML)
 src/                   Indexer, CLI, search, embed, eval, validate (TypeScript)
 dist/                  Built artifacts (endpoints, capabilities, index)
 eval/                  Benchmark query sets
-mcp/                   Reference MCP server (oasis_find + contribution tools), agent probe, A/B harness
+mcp/                   Reference MCP server (oasis_discover + contribution tools), agent probe, A/B harness
 docs/                  Benchmarks, scaling thesis, contribution guide
 ```
 

@@ -33,12 +33,12 @@ remote/authenticated HTTP; a fine fallback, but we don't require it for a public
 
 ## Deploy
 
-From the **repo root**, with the index built (`pnpm install && pnpm build && pnpm embed`):
+From the **repo root**, with the index built (`pnpm install && pnpm build && pnpm embed && pnpm build:endpoint-index`):
 
 ```bash
 fly apps create oasis-mcp                                       # claim the app name (once)
 fly secrets set OASIS_AUTH_TOKEN=$(openssl rand -hex 24) -a oasis-mcp   # optional bearer auth
-fly deploy --config mcp/deploy/fly.toml                         # remote builder → linux/amd64
+fly deploy --config mcp/deploy/fly.toml --build-secret GOOGLE_API_KEY="$GOOGLE_API_KEY"   # remote builder → linux/amd64
 fly certs add mcp.oasisindex.org -a oasis-mcp                   # custom domain (optional)
 ```
 
@@ -60,7 +60,7 @@ whatever crawl is on the build machine, materialize `dist/` from the pinned snap
 
 ```bash
 scripts/snapshot/restore.sh   # rebuilds dist/ from dist-snapshot.lock.json (deterministic, no crawl)
-fly deploy                     # now COPYs the pinned index
+fly deploy --config mcp/deploy/fly.toml --build-secret GOOGLE_API_KEY="$GOOGLE_API_KEY"   # now COPYs the pinned index
 ```
 
 See `docs/index-snapshots.md`. Pin a new snapshot with `scripts/snapshot/publish.sh` after an authoritative build.
