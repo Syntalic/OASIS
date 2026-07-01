@@ -11,7 +11,7 @@ export const runtime = "nodejs";
  */
 const MCP_URL = process.env.OASIS_MCP_URL ?? "http://localhost:8899/mcp";
 
-const ALLOWED = new Set(["oasis_search", "oasis_find", "oasis_resolve", "oasis_next"]);
+const ALLOWED = new Set(["oasis_discover", "oasis_search", "oasis_find", "oasis_resolve", "oasis_next"]);
 
 export async function POST(request: Request) {
   let tool = "";

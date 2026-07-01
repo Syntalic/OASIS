@@ -1,9 +1,10 @@
 import { atom } from "jotai";
 
-import type { AskTool, FindResult } from "@/types/graph";
+import type { FindResult } from "@/types/graph";
 
-/** Which OASIS tool the Ask tab runs the question through. */
-export const askToolAtom = atom<AskTool>("capabilities");
-
-/** Live oasis_find result (endpoints + next_steps); null in capabilities mode. */
+/**
+ * The live oasis_discover result for the current question — the real paid
+ * endpoints + next_steps that accompany the matched capabilities. Null until a
+ * query resolves (or if the MCP is unreachable and only the local fallback ran).
+ */
 export const findAtom = atom<FindResult | null>(null);
