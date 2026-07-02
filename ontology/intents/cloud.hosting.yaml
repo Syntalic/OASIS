@@ -1,4 +1,4 @@
-id: storage.hosting
+id: cloud.hosting
 label: Host files and static websites
 description: Upload files or deploy static websites with permanent CDN URLs via micropayment. Use when an agent needs to publish assets or a static site and return a permanent public URL without managing cloud storage accounts.
 aliases:
@@ -22,5 +22,5 @@ produces:
   - { entity: Webpage, role: payload }
 
 facets:
-  domain: storage
+  domain: cloud
   action: provision

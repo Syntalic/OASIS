@@ -50,14 +50,13 @@ export type FacetDomain =
   | "realestate"
   | "social"
   | "media"
-  | "marketing"
-  | "analyst"
   | "cloud"
   | "compute"
   | "devtools"
-  | "storage"
-  | "search"
-  | "crypto";
+  | "blockchain"
+  | "identity"
+  | "agent"
+  | "utility";
 
 export type FacetAction =
   | "search"

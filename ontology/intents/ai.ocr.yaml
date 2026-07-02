@@ -1,4 +1,4 @@
-id: data.ocr
+id: ai.ocr
 label: Extract text from images (OCR)
 description: Optical character recognition on images and photos. Use when an agent reads text from screenshots, scans, signs, or photos — distinct from full document parsing pipelines.
 aliases:
@@ -19,13 +19,13 @@ produces:
     role: payload
     format: text
 facets:
-  domain: data
+  domain: ai
   action: extract
   modality:
     - text
 links:
   - type: pipes_to
-    to: data.translate_text
+    to: ai.translate_text
     note: extract text from the image, then translate it
   - type: pipes_to
     to: ai.embeddings

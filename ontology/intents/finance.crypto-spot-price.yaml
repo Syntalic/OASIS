@@ -32,10 +32,10 @@ links:
     to: finance.stock_quote
     note: same lookup-a-live-quote family, differs only by entity (CryptoAsset vs Ticker)
   - type: sibling_of
-    to: data.exchange_rates
+    to: finance.exchange_rates
     note: same lookup-a-live-quote family, differs only by entity (CryptoAsset vs Currency)
   - type: sibling_of
-    to: finance.token_balance
+    to: blockchain.token_balance
     note: same crypto asset family, differs by action (price lookup vs wallet holdings)
   - type: sibling_of
     to: blockchain.onchain_analytics

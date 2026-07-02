@@ -24,9 +24,9 @@ describe("suggestFollowUps", () => {
 
     const result = suggestFollowUps(
       {
-        source_intent_id: "analyst.inflation_tracker",
+        source_intent_id: "shop.inflation_tracker",
         entities: [{ entity: "Place", value: "Los Angeles, CA", kind: "identity" }],
-        exclude: ["analyst.inflation_tracker"],
+        exclude: ["shop.inflation_tracker"],
       },
       runtime,
       { limit: 8, capabilities, endpoints: bundle.endpoints },
@@ -38,7 +38,7 @@ describe("suggestFollowUps", () => {
       assert.equal(lead.mode, "investigative");
       assert.ok(runtime.entityIndex.bridge_eligible.includes(lead.bridging_entity));
       assert.ok(lead.top_endpoint?.origin && lead.top_endpoint?.path);
-      assert.notEqual(lead.intent_id, "analyst.inflation_tracker");
+      assert.notEqual(lead.intent_id, "shop.inflation_tracker");
     }
   });
 

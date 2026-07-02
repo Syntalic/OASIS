@@ -1,6 +1,6 @@
 id: data.book_lookup
 label: Search book metadata and bibliographic records
-description: Book and publication metadata lookup by title, author, ISBN, or free-text query — bibliographic details, editions, and library catalog records. Use when an agent resolves book identity or enriches reading lists, not general web page scraping (data.web_scrape).
+description: Book and publication metadata lookup by title, author, ISBN, or free-text query — bibliographic details, editions, and library catalog records. Use when an agent resolves book identity or enriches reading lists, not general web page scraping (web.scrape).
 aliases:
   - book metadata search
   - public library catalog book lookup

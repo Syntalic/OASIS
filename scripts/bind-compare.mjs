@@ -42,8 +42,8 @@ async function runBind(label, endpoints, intentsDir, cacheDir) {
       "shop.price_drop_alert": 0.75,
       "shop.find_deals": 0.75,
       "comms.send_fax": 0.75,
-      "analyst.inflation_tracker": 0.75,
-      "marketing.competitive_landscape": 0.75,
+      "shop.inflation_tracker": 0.75,
+      "shop.competitive_landscape": 0.75,
     },
   });
   const ms = Date.now() - t0;

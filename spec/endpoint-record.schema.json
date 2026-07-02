@@ -70,15 +70,13 @@
             "realestate",
             "social",
             "media",
-            "marketing",
-            "analyst",
             "cloud",
             "compute",
             "devtools",
-            "storage",
-            "search",
-            "crypto",
-            "blockchain"
+            "blockchain",
+            "identity",
+            "agent",
+            "utility"
           ]
         },
         "primary_entity": { "type": "string" },

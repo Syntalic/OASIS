@@ -1,4 +1,4 @@
-id: data.compute_answer
+id: compute.compute_answer
 label: Answer computational and factual queries
 description: Math, science, unit conversion, and structured fact lookup via computational knowledge engine. Use when an agent needs precise numeric answers, formulas, or verified factual computations.
 aliases:
@@ -22,5 +22,5 @@ produces:
   - { entity: Answer, role: payload }
 
 facets:
-  domain: data
+  domain: compute
   action: lookup

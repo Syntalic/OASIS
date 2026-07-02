@@ -211,7 +211,7 @@ export async function bindEndpointsByEmbedding(
     // intent with a STRONG sparse match (the orphan-rescue promotion). Dense passers are kept
     // ahead of promotions, so promotion is strictly ADDITIVE: it can only fill top-K slots a
     // dense passer didn't claim — an endpoint that already had a dense binding keeps exactly
-    // it. So this rescues orphans (e.g. the Apify Reddit actor → media.social_data) without
+    // it. So this rescues orphans (e.g. the Apify Reddit actor → social.social_data) without
     // displacing a correct binding.
     const dRank = new Map<string, number>();
     [...scored].sort((a, b) => b.dense - a.dense).forEach((x, r) => dRank.set(x.id, r));

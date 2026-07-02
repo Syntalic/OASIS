@@ -1,4 +1,4 @@
-id: data.person_search
+id: identity.person_search
 label: Search for people and public profiles
 description: People search and public profile lookup by name, location, or contact hints. Use when an agent enriches leads, finds public profiles, or resolves a person from partial identity signals.
 aliases:
@@ -21,15 +21,15 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: data
+  domain: identity
   action: search
 links:
   - type: sibling_of
     to: social.influencer_search
     note: same identity-lookup family, differs by entity (Person vs SocialProfile)
   - type: sibling_of
-    to: data.company_enrich
+    to: identity.company_enrich
     note: same identity-lookup family, differs by entity x purpose (Person vs Company from domain)
   - type: sibling_of
-    to: media.social_data
+    to: social.social_data
     note: same identity family, differs by purpose (resolve a person vs fetch social posts)

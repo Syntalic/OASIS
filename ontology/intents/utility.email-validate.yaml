@@ -1,4 +1,4 @@
-id: data.email_validate
+id: utility.email_validate
 label: Validate email deliverability and reputation
 description: Check whether an email address is deliverable, risky, or disposable before sending. Use when an agent verifies signup emails, cleans lead lists, or reduces bounce rates.
 aliases:
@@ -17,5 +17,5 @@ produces:
   - { entity: Contact, role: payload }
 
 facets:
-  domain: data
+  domain: utility
   action: validate

@@ -1,6 +1,6 @@
 id: compute.convert_units
 label: Convert units, measurements, and encodings
-description: Transform numeric values between measurement units, data-size units, time units, timezone offsets, encodings, and lightweight dev utilities (hash, HMAC, Base64, JWT decode, UUID, JSON/CSV). Use when an agent normalizes quantities or encodings (centimeters to inches, gigabytes to bytes, hex to decimal, SHA-256 hash) — not currency exchange (data.exchange_rates), financial calculators (compute.financial_calculator), or natural-language translation (data.translate_text).
+description: Transform numeric values between measurement units, data-size units, time units, timezone offsets, encodings, and lightweight dev utilities (hash, HMAC, Base64, JWT decode, UUID, JSON/CSV). Use when an agent normalizes quantities or encodings (centimeters to inches, gigabytes to bytes, hex to decimal, SHA-256 hash) — not currency exchange (finance.exchange_rates), financial calculators (compute.financial_calculator), or natural-language translation (ai.translate_text).
 aliases:
   - unit conversion
   - convert measurement units
@@ -43,5 +43,5 @@ facets:
   action: transform
 links:
   - type: sibling_of
-    to: data.exchange_rates
+    to: finance.exchange_rates
     note: convert_units is physical, data-size, and time units; exchange_rates is currency pairs

@@ -1,6 +1,6 @@
-id: data.nft_metadata
+id: blockchain.nft_metadata
 label: Look up NFT collection and token metadata
-description: NFT collection stats, holder counts, traits, floor prices, events, and individual token metadata. Use when an agent researches NFT collections or assets, not fungible token balances (finance.token_balance) or social posts (media.social_data).
+description: NFT collection stats, holder counts, traits, floor prices, events, and individual token metadata. Use when an agent researches NFT collections or assets, not fungible token balances (blockchain.token_balance) or social posts (social.social_data).
 aliases:
   - NFT collection metadata
   - NFT collection stats and holders
@@ -17,7 +17,7 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: data
+  domain: blockchain
   action: lookup
 links:
   - type: sibling_of

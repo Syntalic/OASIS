@@ -19,14 +19,14 @@
     {
       "from": "ai.document_extract",
       "type": "pipes_to",
-      "to": "data.translate_text",
+      "to": "ai.translate_text",
       "why": "translate extracted document fields or text",
       "votes": 3
     },
     {
       "from": "ai.image_generate",
       "type": "pipes_to",
-      "to": "storage.hosting",
+      "to": "cloud.hosting",
       "why": "publish generated image to a permanent CDN URL",
       "votes": 3
     },
@@ -40,14 +40,14 @@
     {
       "from": "ai.text_to_speech",
       "type": "pipes_to",
-      "to": "storage.hosting",
+      "to": "cloud.hosting",
       "why": "host synthesized audio at a public URL",
       "votes": 3
     },
     {
       "from": "ai.web_research",
       "type": "pipes_to",
-      "to": "data.web_scrape",
+      "to": "web.scrape",
       "why": "fetch full content of a cited source URL",
       "votes": 3
     },
@@ -61,7 +61,7 @@
     {
       "from": "cloud.domains",
       "type": "pipes_to",
-      "to": "storage.hosting",
+      "to": "cloud.hosting",
       "why": "host a static site on the new domain",
       "votes": 3
     },
@@ -80,21 +80,21 @@
       "votes": 3
     },
     {
-      "from": "data.company_enrich",
+      "from": "identity.company_enrich",
       "type": "pipes_to",
       "to": "data.job_search",
       "why": "pull the company's open job postings",
       "votes": 3
     },
     {
-      "from": "data.company_enrich",
+      "from": "identity.company_enrich",
       "type": "pipes_to",
-      "to": "data.person_search",
+      "to": "identity.person_search",
       "why": "find people once the company is identified",
       "votes": 3
     },
     {
-      "from": "data.email_validate",
+      "from": "utility.email_validate",
       "type": "pipes_to",
       "to": "comms.send_email",
       "why": "send only after the address passes validation",
@@ -103,33 +103,33 @@
     {
       "from": "data.job_search",
       "type": "pipes_to",
-      "to": "data.company_enrich",
+      "to": "identity.company_enrich",
       "why": "enrich the hiring company behind a posting",
       "votes": 3
     },
     {
-      "from": "data.ocr",
+      "from": "ai.ocr",
       "type": "pipes_to",
       "to": "ai.llm_complete",
       "why": "interpret the extracted raw text",
       "votes": 3
     },
     {
-      "from": "data.phone_validate",
+      "from": "utility.phone_validate",
       "type": "pipes_to",
       "to": "comms.send_sms",
       "why": "text only after the number validates",
       "votes": 3
     },
     {
-      "from": "data.translate_text",
+      "from": "ai.translate_text",
       "type": "pipes_to",
       "to": "ai.llm_complete",
       "why": "reason over the translated text",
       "votes": 3
     },
     {
-      "from": "data.web_scrape",
+      "from": "web.scrape",
       "type": "pipes_to",
       "to": "ai.document_extract",
       "why": "extract structured fields from scraped content",
@@ -138,26 +138,26 @@
     {
       "from": "data.whois_lookup",
       "type": "pipes_to",
-      "to": "data.company_enrich",
+      "to": "identity.company_enrich",
       "why": "enrich the company owning the domain",
       "votes": 3
     },
     {
       "from": "devtools.captcha_solve",
       "type": "pipes_to",
-      "to": "data.web_scrape",
+      "to": "web.scrape",
       "why": "resume scraping once the challenge is solved",
       "votes": 3
     },
     {
       "from": "blockchain.onchain_analytics",
       "type": "pipes_to",
-      "to": "finance.token_balance",
+      "to": "blockchain.token_balance",
       "why": "drill into a flagged wallet's balances",
       "votes": 3
     },
     {
-      "from": "finance.token_balance",
+      "from": "blockchain.token_balance",
       "type": "pipes_to",
       "to": "finance.crypto_spot_price",
       "why": "price the held tokens for valuation",
@@ -178,7 +178,7 @@
       "votes": 3
     },
     {
-      "from": "marketing.competitive_landscape",
+      "from": "shop.competitive_landscape",
       "type": "pipes_to",
       "to": "shop.compare_price",
       "why": "compare a specific SKU across retailers",
@@ -199,7 +199,7 @@
       "votes": 3
     },
     {
-      "from": "search.web",
+      "from": "web.search",
       "type": "pipes_to",
       "to": "web.markdown_extract",
       "why": "extract clean article text from a result",
@@ -208,12 +208,12 @@
     {
       "from": "social.influencer_search",
       "type": "pipes_to",
-      "to": "media.social_data",
+      "to": "social.social_data",
       "why": "pull a creator's posts and engagement",
       "votes": 3
     },
     {
-      "from": "storage.hosting",
+      "from": "cloud.hosting",
       "type": "pipes_to",
       "to": "cloud.domains",
       "why": "map a custom domain to the hosted site",
@@ -229,21 +229,21 @@
     {
       "from": "web.markdown_extract",
       "type": "pipes_to",
-      "to": "data.translate_text",
+      "to": "ai.translate_text",
       "why": "translate the extracted article text",
       "votes": 3
     },
     {
       "from": "web.screenshot",
       "type": "pipes_to",
-      "to": "data.ocr",
+      "to": "ai.ocr",
       "why": "read text from the captured screenshot",
       "votes": 3
     },
     {
       "from": "web.screenshot",
       "type": "pipes_to",
-      "to": "storage.hosting",
+      "to": "cloud.hosting",
       "why": "host the captured screenshot at a URL",
       "votes": 3
     },
@@ -278,7 +278,7 @@
     {
       "from": "comms.agent_inbox",
       "type": "pipes_to",
-      "to": "data.email_validate",
+      "to": "utility.email_validate",
       "why": "validate inbound sender addresses before reply",
       "votes": 2
     },
@@ -292,14 +292,14 @@
     {
       "from": "blockchain.rpc",
       "type": "pipes_to",
-      "to": "finance.token_balance",
+      "to": "blockchain.token_balance",
       "why": "RPC balance call resolves wallet holdings",
       "votes": 2
     },
     {
-      "from": "data.compute_answer",
+      "from": "compute.compute_answer",
       "type": "pipes_to",
-      "to": "data.exchange_rates",
+      "to": "finance.exchange_rates",
       "why": "convert currency for a computed amount",
       "votes": 2
     },
@@ -313,26 +313,26 @@
     {
       "from": "data.job_search",
       "type": "pipes_to",
-      "to": "data.person_search",
+      "to": "identity.person_search",
       "why": "find the recruiter or hiring contact",
       "votes": 2
     },
     {
-      "from": "data.person_search",
+      "from": "identity.person_search",
       "type": "pipes_to",
-      "to": "data.email_validate",
+      "to": "utility.email_validate",
       "why": "verify a discovered contact email",
       "votes": 2
     },
     {
-      "from": "data.person_search",
+      "from": "identity.person_search",
       "type": "pipes_to",
-      "to": "media.social_data",
+      "to": "social.social_data",
       "why": "pull found person's posts and engagement",
       "votes": 2
     },
     {
-      "from": "data.phone_validate",
+      "from": "utility.phone_validate",
       "type": "pipes_to",
       "to": "comms.voice_call",
       "why": "call only valid reachable numbers",
@@ -348,21 +348,21 @@
     {
       "from": "data.scientific_lookup",
       "type": "pipes_to",
-      "to": "data.compute_answer",
+      "to": "compute.compute_answer",
       "why": "compute over resolved scientific constants",
       "votes": 2
     },
     {
-      "from": "data.web_scrape",
+      "from": "web.scrape",
       "type": "pipes_to",
       "to": "ai.embeddings",
       "why": "embed scraped content for retrieval",
       "votes": 2
     },
     {
-      "from": "data.web_scrape",
+      "from": "web.scrape",
       "type": "pipes_to",
-      "to": "data.translate_text",
+      "to": "ai.translate_text",
       "why": "translate foreign-language scraped text",
       "votes": 2
     },
@@ -376,7 +376,7 @@
     {
       "from": "finance.crypto_spot_price",
       "type": "pipes_to",
-      "to": "finance.token_balance",
+      "to": "blockchain.token_balance",
       "why": "value holdings at the current spot price",
       "votes": 2
     },
@@ -409,7 +409,7 @@
       "votes": 2
     },
     {
-      "from": "finance.token_balance",
+      "from": "blockchain.token_balance",
       "type": "pipes_to",
       "to": "blockchain.onchain_analytics",
       "why": "profile the wallet behind the balances",
@@ -451,28 +451,28 @@
       "votes": 2
     },
     {
-      "from": "media.social_data",
+      "from": "social.social_data",
       "type": "pipes_to",
       "to": "ai.llm_complete",
       "why": "summarize sentiment from fetched posts",
       "votes": 2
     },
     {
-      "from": "media.social_data",
+      "from": "social.social_data",
       "type": "pipes_to",
-      "to": "data.person_search",
+      "to": "identity.person_search",
       "why": "resolve a poster's public identity",
       "votes": 2
     },
     {
-      "from": "media.social_data",
+      "from": "social.social_data",
       "type": "pipes_to",
       "to": "social.influencer_search",
       "why": "find creators behind high-engagement posts",
       "votes": 2
     },
     {
-      "from": "search.web",
+      "from": "web.search",
       "type": "pipes_to",
       "to": "ai.llm_complete",
       "why": "summarize search results into an answer",
@@ -521,7 +521,7 @@
       "votes": 2
     },
     {
-      "from": "storage.hosting",
+      "from": "cloud.hosting",
       "type": "pipes_to",
       "to": "web.screenshot",
       "why": "capture the deployed site for QA",
@@ -551,19 +551,19 @@
     {
       "from": "ai.speech_to_text",
       "type": "pipes_to",
-      "to": "data.compute_answer",
+      "to": "compute.compute_answer",
       "why": "answer factual questions parsed from transcript",
       "votes": 1
     },
     {
-      "from": "data.ocr",
+      "from": "ai.ocr",
       "type": "pipes_to",
-      "to": "data.compute_answer",
+      "to": "compute.compute_answer",
       "why": "compute over numbers read from the image",
       "votes": 1
     },
     {
-      "from": "data.person_search",
+      "from": "identity.person_search",
       "type": "pipes_to",
       "to": "comms.send_email",
       "why": "reach out to the resolved person",
@@ -579,7 +579,7 @@
     {
       "from": "finance.stock_quote",
       "type": "pipes_to",
-      "to": "data.exchange_rates",
+      "to": "finance.exchange_rates",
       "why": "convert the quote to another currency",
       "votes": 1
     },
@@ -605,7 +605,7 @@
       "votes": 2
     },
     {
-      "from": "finance.token_balance",
+      "from": "blockchain.token_balance",
       "type": "narrower_of",
       "to": "blockchain.rpc",
       "why": "token balance is a specific RPC use",
@@ -614,21 +614,21 @@
     {
       "from": "shop.track_price_history",
       "type": "narrower_of",
-      "to": "analyst.inflation_tracker",
+      "to": "shop.inflation_tracker",
       "why": "product history rolls up to category inflation",
       "votes": 2
     },
     {
       "from": "shop.compare_price",
       "type": "narrower_of",
-      "to": "marketing.competitive_landscape",
+      "to": "shop.competitive_landscape",
       "why": "single-SKU compare narrows category landscape",
       "votes": 1
     },
     {
       "from": "shop.find_deals",
       "type": "narrower_of",
-      "to": "marketing.competitive_landscape",
+      "to": "shop.competitive_landscape",
       "why": "deals narrow category to discounted items",
       "votes": 1
     },
@@ -642,7 +642,7 @@
     {
       "from": "social.influencer_search",
       "type": "narrower_of",
-      "to": "data.person_search",
+      "to": "identity.person_search",
       "why": "creator discovery specializes people search",
       "votes": 1
     },
@@ -656,26 +656,26 @@
     {
       "from": "ai.web_research",
       "type": "sibling_of",
-      "to": "data.compute_answer",
+      "to": "compute.compute_answer",
       "why": "both return grounded factual answers",
       "votes": 3
     },
     {
-      "from": "analyst.inflation_tracker",
+      "from": "shop.inflation_tracker",
       "type": "sibling_of",
       "to": "finance.economic_data",
       "why": "both track price-level and macro trends",
       "votes": 3
     },
     {
-      "from": "data.email_validate",
+      "from": "utility.email_validate",
       "type": "sibling_of",
-      "to": "data.phone_validate",
+      "to": "utility.phone_validate",
       "why": "parallel contact-field validation checks",
       "votes": 3
     },
     {
-      "from": "data.exchange_rates",
+      "from": "finance.exchange_rates",
       "type": "sibling_of",
       "to": "finance.economic_data",
       "why": "both are macro financial reference series",
@@ -705,21 +705,21 @@
     {
       "from": "ai.embeddings",
       "type": "sibling_of",
-      "to": "search.web",
+      "to": "web.search",
       "why": "both serve retrieval and search",
       "votes": 2
     },
     {
       "from": "ai.llm_complete",
       "type": "sibling_of",
-      "to": "data.compute_answer",
+      "to": "compute.compute_answer",
       "why": "alternative for precise factual/numeric queries",
       "votes": 2
     },
     {
       "from": "data.code_repository",
       "type": "sibling_of",
-      "to": "data.company_enrich",
+      "to": "identity.company_enrich",
       "why": "both enrich an org from public signals",
       "votes": 2
     },
@@ -731,7 +731,7 @@
       "votes": 2
     },
     {
-      "from": "data.compute_answer",
+      "from": "compute.compute_answer",
       "type": "sibling_of",
       "to": "data.scientific_lookup",
       "why": "both resolve precise reference facts",

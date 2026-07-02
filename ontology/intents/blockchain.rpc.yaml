@@ -1,6 +1,6 @@
 id: blockchain.rpc
 label: Call blockchain JSON-RPC
-description: Execute JSON-RPC calls (eth_call, eth_getBalance, getBlock, and similar methods) against blockchain networks via pay-per-request RPC. Use when an agent submits JSON-RPC methods or reads raw on-chain state without running its own node — not for crypto prices (finance.crypto_spot_price) or wallet token balances (finance.token_balance).
+description: Execute JSON-RPC calls (eth_call, eth_getBalance, getBlock, and similar methods) against blockchain networks via pay-per-request RPC. Use when an agent submits JSON-RPC methods or reads raw on-chain state without running its own node — not for crypto prices (finance.crypto_spot_price) or wallet token balances (blockchain.token_balance).
 aliases:
   - json-rpc
   - node rpc

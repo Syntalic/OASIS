@@ -136,7 +136,7 @@ oasis_discover({ "query": "register the domain mycoolstartup.xyz" })
 
 // Later call — agent passes what it now holds, as free text
 oasis_discover({ "query": "set up the new domain", "finding": "registered mycoolstartup.xyz for Acme Corp" })
-// → { endpoints: [<hosting>], next_steps: [ …forward…, {intent_id:"data.company_enrich", why:"investigate Acme Corp you hold", bridging_entity:"Company"} ] }
+// → { endpoints: [<hosting>], next_steps: [ …forward…, {intent_id:"identity.company_enrich", why:"investigate Acme Corp you hold", bridging_entity:"Company"} ] }
 ```
 
 ## Decisions (resolved)

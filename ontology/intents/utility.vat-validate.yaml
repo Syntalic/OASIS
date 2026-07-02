@@ -1,4 +1,4 @@
-id: data.vat_validate
+id: utility.vat_validate
 label: Validate VAT and tax identification numbers
 description: VAT number validation and tax-ID verification for businesses across jurisdictions. Use when an agent checks whether a VAT or tax registration number is valid before invoicing or compliance checks.
 aliases:
@@ -15,5 +15,5 @@ produces:
   - entity: Answer
     role: payload
 facets:
-  domain: data
+  domain: utility
   action: validate

@@ -134,9 +134,9 @@ const LINK_INVERSE: Record<string, CapabilityLink["type"]> = {
 };
 
 /**
- * Make the typed-link graph bidirectional: an authored `data.web_scrape
+ * Make the typed-link graph bidirectional: an authored `web.scrape
  * broader_of web.markdown_extract` yields `web.markdown_extract narrower_of
- * data.web_scrape`, so resolving EITHER side surfaces the other as an
+ * web.scrape`, so resolving EITHER side surfaces the other as an
  * alternative/option (the core "find related tools" use case). Authored links
  * always win — a generated inverse is only added when the target has no link
  * to the source yet.

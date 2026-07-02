@@ -121,7 +121,7 @@ export interface InferredQueryFacets {
 // word-ish so they do not fire on incidental substrings.
 const DOMAIN_CUES: Array<[FacetDomain, RegExp]> = [
   ["maps", /\b(near\s?by|nearby|near me|near downtown|points? of interest|\bpoi\b|coffee shop|restaurant|cafe|open now|street address|geocod|lat(itude)?\b|directions?)\b/i],
-  ["crypto", /\b(crypto|on.?chain|onchain|wallet address|token balance|erc-?20|blockchain|defi)\b/i],
+  ["blockchain", /\b(crypto|on.?chain|onchain|wallet address|token balance|erc-?20|blockchain|defi)\b/i],
   ["shop", /\b(cheapest|best price|on sale|discount|coupon|deal|clearance|retailer)\b/i],
   ["comms", /\b(send (an )?(email|sms|text|fax)|outbound (email|sms|call)|voice call|cold email)\b/i],
 ];

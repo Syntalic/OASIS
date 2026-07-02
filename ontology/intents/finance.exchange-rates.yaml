@@ -1,4 +1,4 @@
-id: data.exchange_rates
+id: finance.exchange_rates
 label: Convert and look up currency exchange rates
 description: Live and historical foreign exchange rates between currency pairs. Use when an agent converts amounts, quotes FX rates, or normalizes multi-currency financial data.
 aliases:
@@ -19,6 +19,6 @@ produces:
   - entity: MarketQuote
     role: payload
 facets:
-  domain: data
+  domain: finance
   action: lookup
   freshness: realtime

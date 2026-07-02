@@ -1,4 +1,4 @@
-id: data.airdrop_tracker
+id: blockchain.airdrop_tracker
 label: Track crypto airdrops and eligibility
 description: Upcoming and recent airdrop calendars — eligibility criteria, deadlines, estimated value, and farming requirements across ecosystems. Use when an agent monitors airdrop opportunities.
 aliases:
@@ -16,6 +16,6 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: data
+  domain: blockchain
   action: monitor
   freshness: recent

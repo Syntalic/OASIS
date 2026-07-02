@@ -1,4 +1,4 @@
-id: data.phone_validate
+id: utility.phone_validate
 label: Validate a phone number and carrier info
 description: Check whether a phone number is valid, reachable, and identify carrier or line type metadata. Use when an agent verifies signup numbers, cleans contact lists, or enriches leads before SMS or voice outreach.
 aliases:
@@ -17,5 +17,5 @@ produces:
   - { entity: Contact, role: payload }
 
 facets:
-  domain: data
+  domain: utility
   action: validate
