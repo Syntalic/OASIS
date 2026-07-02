@@ -39,11 +39,11 @@ async function runBind(label, endpoints, intentsDir, cacheDir) {
   const result = await bindEndpointsByEmbedding(endpoints, sources, {
     cacheDir,
     floorOverrides: {
-      "shop.price_drop_alert": 0.75,
-      "shop.find_deals": 0.75,
+      "commerce.price_drop_alert": 0.75,
+      "commerce.find_deals": 0.75,
       "comms.send_fax": 0.75,
-      "shop.inflation_tracker": 0.75,
-      "shop.competitive_landscape": 0.75,
+      "commerce.inflation_tracker": 0.75,
+      "commerce.competitive_landscape": 0.75,
     },
   });
   const ms = Date.now() - t0;

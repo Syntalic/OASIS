@@ -20,6 +20,8 @@ aliases:
 consumes:
   - entity: Text
     role: identifier
+  - entity: Image
+    role: identifier
 produces:
   - entity: Answer
     role: payload
@@ -29,6 +31,7 @@ facets:
   action: analyze
   modality:
     - text
+    - image
 links:
   - type: pipes_to
     to: ai.llm_complete

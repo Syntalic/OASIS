@@ -1,4 +1,4 @@
-id: shop.track_price_history
+id: commerce.track_price_history
 label: Get historical price trends for a product
 description: Retrieve price history over time for a specific product query. Use when an agent needs historical pricing trends to judge buy timing, volatility, or whether an item was cheaper before.
 aliases:
@@ -21,10 +21,10 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: shop
+  domain: commerce
   action: lookup
   freshness: historical
 links:
   - type: sibling_of
-    to: shop.inflation_tracker
+    to: commerce.inflation_tracker
     note: same pricing-intel family, differs by entity granularity (one Product vs a ProductCategory), both historical

@@ -1,4 +1,4 @@
-id: identity.lei_lookup
+id: gov.lei_lookup
 label: Look up legal entity identifiers and corporate hierarchy
 description: LEI (Legal Entity Identifier) lookup — entity records, corporate ownership graphs, parent-subsidiary hierarchy, and ISIN-to-LEI mapping from official legal-entity registries. Use when an agent verifies legal entity identity, not firmographics from a website domain (identity.company_enrich).
 aliases:
@@ -16,12 +16,12 @@ produces:
   - entity: Company
     role: payload
 facets:
-  domain: identity
+  domain: gov
   action: lookup
 links:
   - type: sibling_of
     to: identity.company_enrich
     note: lei_lookup is official legal-entity registry data; company_enrich is firmographics from a domain
   - type: sibling_of
-    to: identity.gov_records
+    to: gov.records
     note: lei_lookup is corporate registry identifiers; gov_records is identity verification against government databases

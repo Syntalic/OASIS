@@ -1,4 +1,4 @@
-id: data.code_repository
+id: devtools.code_repository
 label: Look up source code repository data
 description: Read hosted source-code repository data — repository metadata, commits, pull requests, issues, releases, tags, and programming-language breakdown by owner and name. Use when an agent inspects a code repository's history or contents, not general web pages (web.scrape) or web search (web.search).
 aliases:
@@ -16,5 +16,5 @@ produces:
   - entity: CodeRepository
     role: payload
 facets:
-  domain: data
+  domain: devtools
   action: lookup

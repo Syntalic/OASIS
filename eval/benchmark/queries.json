@@ -126,19 +126,19 @@
     "qid": 21
   },
   {
-    "intent_id": "shop.inflation_tracker",
+    "intent_id": "commerce.inflation_tracker",
     "query": "category inflation price tracker",
     "style": "terse",
     "qid": 22
   },
   {
-    "intent_id": "shop.inflation_tracker",
+    "intent_id": "commerce.inflation_tracker",
     "query": "I need a service that monitors how prices are inflating across different product categories over time.",
     "style": "conversational",
     "qid": 23
   },
   {
-    "intent_id": "shop.inflation_tracker",
+    "intent_id": "commerce.inflation_tracker",
     "query": "How can I track the monthly inflation rate of dairy products and eggs in the United States since 2021?",
     "style": "contextual",
     "qid": 24
@@ -360,19 +360,19 @@
     "qid": 60
   },
   {
-    "intent_id": "data.agriculture_stats",
+    "intent_id": "science.agriculture_stats",
     "query": "US crop yield statistics",
     "style": "terse",
     "qid": 61
   },
   {
-    "intent_id": "data.agriculture_stats",
+    "intent_id": "science.agriculture_stats",
     "query": "Where can I find historical data on farming and livestock production in America?",
     "style": "conversational",
     "qid": 62
   },
   {
-    "intent_id": "data.agriculture_stats",
+    "intent_id": "science.agriculture_stats",
     "query": "I need the 2023 corn and soybean harvest yields specifically for Lancaster County, Pennsylvania.",
     "style": "contextual",
     "qid": 63
@@ -396,91 +396,91 @@
     "qid": 66
   },
   {
-    "intent_id": "data.gov_civic",
+    "intent_id": "gov.civic",
     "query": "local government representatives by address",
     "style": "terse",
     "qid": 67
   },
   {
-    "intent_id": "data.gov_civic",
+    "intent_id": "gov.civic",
     "query": "How do I look up who my local city council members and state representatives are?",
     "style": "conversational",
     "qid": 68
   },
   {
-    "intent_id": "data.gov_civic",
+    "intent_id": "gov.civic",
     "query": "Find the congressional district and polling locations for an address in Fulton County, Georgia.",
     "style": "contextual",
     "qid": 69
   },
   {
-    "intent_id": "identity.gov_records",
+    "intent_id": "gov.records",
     "query": "verify public identity records",
     "style": "terse",
     "qid": 70
   },
   {
-    "intent_id": "identity.gov_records",
+    "intent_id": "gov.records",
     "query": "How can I verify if someone has a valid public record or check their official registration status?",
     "style": "conversational",
     "qid": 71
   },
   {
-    "intent_id": "identity.gov_records",
+    "intent_id": "gov.records",
     "query": "I need to verify the business registration status of a company with the California Secretary of State.",
     "style": "contextual",
     "qid": 72
   },
   {
-    "intent_id": "identity.lei_lookup",
+    "intent_id": "gov.lei_lookup",
     "query": "LEI legal entity search",
     "style": "terse",
     "qid": 73
   },
   {
-    "intent_id": "identity.lei_lookup",
+    "intent_id": "gov.lei_lookup",
     "query": "How do I find the corporate parent structure and legal entity identifier for a business?",
     "style": "conversational",
     "qid": 74
   },
   {
-    "intent_id": "identity.lei_lookup",
+    "intent_id": "gov.lei_lookup",
     "query": "Show me the corporate hierarchy and ownership tree for LEI code 5493008438092.",
     "style": "contextual",
     "qid": 75
   },
   {
-    "intent_id": "data.book_lookup",
+    "intent_id": "media.book_lookup",
     "query": "book metadata search ISBN",
     "style": "terse",
     "qid": 76
   },
   {
-    "intent_id": "data.book_lookup",
+    "intent_id": "media.book_lookup",
     "query": "I want to look up the publisher, author, and publication date of a book.",
     "style": "conversational",
     "qid": 77
   },
   {
-    "intent_id": "data.book_lookup",
+    "intent_id": "media.book_lookup",
     "query": "Retrieve the bibliographic record and cover art link for ISBN 9780141187761.",
     "style": "contextual",
     "qid": 78
   },
   {
-    "intent_id": "data.drug_label",
+    "intent_id": "science.drug_label",
     "query": "FDA drug label lookup",
     "style": "terse",
     "qid": 79
   },
   {
-    "intent_id": "data.drug_label",
+    "intent_id": "science.drug_label",
     "query": "Where can I find official information about active ingredients and warnings for a specific medicine?",
     "style": "conversational",
     "qid": 80
   },
   {
-    "intent_id": "data.drug_label",
+    "intent_id": "science.drug_label",
     "query": "Get the usage warnings and inactive ingredients list for Advil Liqui-Gels.",
     "style": "contextual",
     "qid": 81
@@ -522,37 +522,37 @@
     "qid": 87
   },
   {
-    "intent_id": "data.news_headlines",
+    "intent_id": "media.news_headlines",
     "query": "latest news headlines search",
     "style": "terse",
     "qid": 88
   },
   {
-    "intent_id": "data.news_headlines",
+    "intent_id": "media.news_headlines",
     "query": "Where can I get a real-time feed of current news stories organized by category?",
     "style": "conversational",
     "qid": 89
   },
   {
-    "intent_id": "data.news_headlines",
+    "intent_id": "media.news_headlines",
     "query": "Show me the latest breaking news stories about Microsoft and OpenAI from today.",
     "style": "contextual",
     "qid": 90
   },
   {
-    "intent_id": "data.sports_scores",
+    "intent_id": "media.sports_scores",
     "query": "live football scores schedule",
     "style": "terse",
     "qid": 91
   },
   {
-    "intent_id": "data.sports_scores",
+    "intent_id": "media.sports_scores",
     "query": "Where can I find real-time results and schedules for professional sports leagues?",
     "style": "conversational",
     "qid": 92
   },
   {
-    "intent_id": "data.sports_scores",
+    "intent_id": "media.sports_scores",
     "query": "I need to get the historical game results for the Golden State Warriors 2018 season.",
     "style": "contextual",
     "qid": 93
@@ -594,55 +594,55 @@
     "qid": 99
   },
   {
-    "intent_id": "data.scientific_lookup",
+    "intent_id": "science.scientific_lookup",
     "query": "protein gene chemical lookup",
     "style": "terse",
     "qid": 100
   },
   {
-    "intent_id": "data.scientific_lookup",
+    "intent_id": "science.scientific_lookup",
     "query": "I need to retrieve biological properties and reference information for specific genes and molecules.",
     "style": "conversational",
     "qid": 101
   },
   {
-    "intent_id": "data.scientific_lookup",
+    "intent_id": "science.scientific_lookup",
     "query": "Can you help me find the genetic sequence and associated proteins for the BRCA1 gene?",
     "style": "contextual",
     "qid": 102
   },
   {
-    "intent_id": "data.code_repository",
+    "intent_id": "devtools.code_repository",
     "query": "search github repository data",
     "style": "terse",
     "qid": 103
   },
   {
-    "intent_id": "data.code_repository",
+    "intent_id": "devtools.code_repository",
     "query": "How can I programmatically retrieve commit history and open issues from a public code repo?",
     "style": "conversational",
     "qid": 104
   },
   {
-    "intent_id": "data.code_repository",
+    "intent_id": "devtools.code_repository",
     "query": "I want to extract the star history and active contributors list for the kubernetes/kubernetes repository.",
     "style": "contextual",
     "qid": 105
   },
   {
-    "intent_id": "data.ip_lookup",
+    "intent_id": "devtools.ip_lookup",
     "query": "ip address geolocation info",
     "style": "terse",
     "qid": 106
   },
   {
-    "intent_id": "data.ip_lookup",
+    "intent_id": "devtools.ip_lookup",
     "query": "How can I find out which country and internet service provider an IP address belongs to?",
     "style": "conversational",
     "qid": 107
   },
   {
-    "intent_id": "data.ip_lookup",
+    "intent_id": "devtools.ip_lookup",
     "query": "I need to trace the physical location and carrier details for the visitor at 8.8.8.8.",
     "style": "contextual",
     "qid": 108
@@ -774,19 +774,19 @@
     "qid": 129
   },
   {
-    "intent_id": "data.whois_lookup",
+    "intent_id": "devtools.whois_lookup",
     "query": "domain whois lookup",
     "style": "terse",
     "qid": 130
   },
   {
-    "intent_id": "data.whois_lookup",
+    "intent_id": "devtools.whois_lookup",
     "query": "How can I find out who owns a specific website domain and when it expires?",
     "style": "conversational",
     "qid": 131
   },
   {
-    "intent_id": "data.whois_lookup",
+    "intent_id": "devtools.whois_lookup",
     "query": "I need to check the registrar and creation date for github.com.",
     "style": "contextual",
     "qid": 132
@@ -1080,19 +1080,19 @@
     "qid": 180
   },
   {
-    "intent_id": "shop.competitive_landscape",
+    "intent_id": "commerce.competitive_landscape",
     "query": "competitor price tracking software",
     "style": "terse",
     "qid": 181
   },
   {
-    "intent_id": "shop.competitive_landscape",
+    "intent_id": "commerce.competitive_landscape",
     "query": "How can I track and analyze what my competitors are charging for their products in real-time?",
     "style": "conversational",
     "qid": 182
   },
   {
-    "intent_id": "shop.competitive_landscape",
+    "intent_id": "commerce.competitive_landscape",
     "query": "I need to monitor the average pricing strategies of organic skincare brands on Shopify compared to Sephora's listings.",
     "style": "contextual",
     "qid": 183
@@ -1206,91 +1206,91 @@
     "qid": 201
   },
   {
-    "intent_id": "shop.compare_price",
+    "intent_id": "commerce.compare_price",
     "query": "compare product prices online",
     "style": "terse",
     "qid": 202
   },
   {
-    "intent_id": "shop.compare_price",
+    "intent_id": "commerce.compare_price",
     "query": "Is there a service that lets me compare the price of a specific item across different retail stores?",
     "style": "conversational",
     "qid": 203
   },
   {
-    "intent_id": "shop.compare_price",
+    "intent_id": "commerce.compare_price",
     "query": "Compare the current retail price of the Sony WH-1000XM5 headphones across Best Buy, Amazon, and Target.",
     "style": "contextual",
     "qid": 204
   },
   {
-    "intent_id": "shop.find_deals",
+    "intent_id": "commerce.find_deals",
     "query": "discounted products finder",
     "style": "terse",
     "qid": 205
   },
   {
-    "intent_id": "shop.find_deals",
+    "intent_id": "commerce.find_deals",
     "query": "How can I find the latest sales and price drops on items in a specific shopping category?",
     "style": "conversational",
     "qid": 206
   },
   {
-    "intent_id": "shop.find_deals",
+    "intent_id": "commerce.find_deals",
     "query": "Show me all active discounts of 30% or more on men's running shoes from brands like Nike and Adidas.",
     "style": "contextual",
     "qid": 207
   },
   {
-    "intent_id": "shop.tcg_catalog",
+    "intent_id": "commerce.tcg_catalog",
     "query": "tcg card lookup",
     "style": "terse",
     "qid": 208
   },
   {
-    "intent_id": "shop.tcg_catalog",
+    "intent_id": "commerce.tcg_catalog",
     "query": "Where can I find a complete catalog of trading card game sets and individual card details?",
     "style": "conversational",
     "qid": 209
   },
   {
-    "intent_id": "shop.tcg_catalog",
+    "intent_id": "commerce.tcg_catalog",
     "query": "Retrieve the market price and card text for the Base Set Charizard from the Pokemon TCG.",
     "style": "contextual",
     "qid": 210
   },
   {
-    "intent_id": "shop.price_drop_alert",
+    "intent_id": "commerce.price_drop_alert",
     "query": "product price drop monitor",
     "style": "terse",
     "qid": 211
   },
   {
-    "intent_id": "shop.price_drop_alert",
+    "intent_id": "commerce.price_drop_alert",
     "query": "Can you notify me when the price of this product goes down?",
     "style": "conversational",
     "qid": 212
   },
   {
-    "intent_id": "shop.price_drop_alert",
+    "intent_id": "commerce.price_drop_alert",
     "query": "I want to track price cuts on the Sony WH-1000XM5 headphones on Amazon.",
     "style": "contextual",
     "qid": 213
   },
   {
-    "intent_id": "shop.track_price_history",
+    "intent_id": "commerce.track_price_history",
     "query": "track price history charts",
     "style": "terse",
     "qid": 214
   },
   {
-    "intent_id": "shop.track_price_history",
+    "intent_id": "commerce.track_price_history",
     "query": "I need to see how the price of this item has changed over the last year.",
     "style": "conversational",
     "qid": 215
   },
   {
-    "intent_id": "shop.track_price_history",
+    "intent_id": "commerce.track_price_history",
     "query": "Show me the historical pricing trends for the Dyson V15 vacuum since Black Friday.",
     "style": "contextual",
     "qid": 216

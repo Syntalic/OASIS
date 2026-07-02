@@ -103,11 +103,11 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
     // Lower the DENSE floor for sparse intents the global 0.78 floor starves; the
     // sparse-vocabulary floor still guards against binding noise to them.
     floorOverrides: {
-      "shop.price_drop_alert": 0.75,
-      "shop.find_deals": 0.75,
+      "commerce.price_drop_alert": 0.75,
+      "commerce.find_deals": 0.75,
       "comms.send_fax": 0.75,
-      "shop.inflation_tracker": 0.75,
-      "shop.competitive_landscape": 0.75,
+      "commerce.inflation_tracker": 0.75,
+      "commerce.competitive_landscape": 0.75,
     },
   });
   console.error(

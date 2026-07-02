@@ -18,7 +18,7 @@ consumes:
   - entity: BlockchainNetwork
     role: identifier
 produces:
-  - entity: MarketQuote
+  - entity: Answer
     role: payload
     format: json
 facets:

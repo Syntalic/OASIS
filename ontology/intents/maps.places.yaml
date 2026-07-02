@@ -1,6 +1,6 @@
 id: maps.places
 label: Search local businesses and points of interest
-description: Find restaurants, stores, hotels, and other places with ratings, hours, contact info, and location metadata. Use when an agent discovers nearby businesses, resolves addresses, or enriches location context for users.
+description: Find restaurants, stores, hotels, and other places with ratings, hours, contact info, and location metadata. Use when an agent discovers nearby businesses or enriches location context for users — not for resolving a street address to coordinates (maps.geocode).
 aliases:
   - find nearby businesses
   - local place search

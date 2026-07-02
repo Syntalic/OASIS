@@ -67,7 +67,7 @@ async function main() {
   else {
     // validation slice: both collision targets (all bound) + a sample of the noisy intents
     const targets = ["cloud.domains", "travel.place_reviews"];
-    const noisy = { "blockchain.rpc": 15, "finance.exchange_rates": 15, "agent.memory": 15, "shop.tcg_catalog": 15 };
+    const noisy = { "blockchain.rpc": 15, "finance.exchange_rates": 15, "agent.memory": 15, "commerce.tcg_catalog": 15 };
     const pick = new Map();
     for (const e of eps) {
       const caps_ = e.capabilities ?? [];

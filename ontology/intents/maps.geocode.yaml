@@ -1,6 +1,6 @@
 id: maps.geocode
 label: Geocode an address to coordinates (and reverse)
-description: Convert a street address or place name into latitude/longitude coordinates (forward geocoding), or turn coordinates back into a formatted postal address (reverse geocoding). Use when an agent needs the map point for an address, or a human-readable address for a lat/long pair — not for discovering nearby businesses (maps.places) and not for locating an IP address (data.ip_lookup).
+description: Convert a street address or place name into latitude/longitude coordinates (forward geocoding), or turn coordinates back into a formatted postal address (reverse geocoding). Use when an agent needs the map point for an address, or a human-readable address for a lat/long pair — not for discovering nearby businesses (maps.places) and not for locating an IP address (devtools.ip_lookup).
 aliases:
   - geocode this street address into latitude and longitude
   - convert an address to coordinates

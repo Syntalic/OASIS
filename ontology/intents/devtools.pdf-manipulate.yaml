@@ -8,6 +8,10 @@ aliases:
   - add watermark to PDF
   - reduce PDF file size
   - PDF manipulation utility
+  - merge PDF files
+  - split a PDF
+  - combine PDFs into one
+  - extract pages from PDF
 consumes:
   - entity: Document
     role: identifier

@@ -1,6 +1,6 @@
 id: social.influencer_search
 label: Find social media influencers by niche
-description: Search Instagram and other major social creator profiles by niche, location, follower count, and engagement for marketing campaigns. Use when an agent needs creator discovery filtered by audience, niche, or geography for outreach or campaign planning.
+description: Search Instagram, TikTok, and YouTube creator profiles by niche, location, follower count, and engagement for marketing campaigns. Use when an agent needs creator discovery filtered by audience, niche, or geography for outreach or campaign planning.
 aliases:
   - instagram influencer
   - influencer search
@@ -11,10 +11,11 @@ aliases:
   - instagram accounts by follower count
   - micro influencers by city
   - search creators for brand campaign
-  - influencer discovery on instagram
   - find creators by engagement rate
   - marketing influencers by location
-  - niche creator profiles instagram
+  - tiktok creators by follower count
+  - youtube creators by subscriber count
+  - find creators across instagram tiktok youtube
 consumes:
   - entity: Topic
     role: identifier

@@ -1,21 +1,21 @@
 id: compute.compute_answer
 label: Answer computational and factual queries
-description: Math, science, unit conversion, and structured fact lookup via computational knowledge engine. Use when an agent needs precise numeric answers, formulas, or verified factual computations.
+description: General computational-knowledge engine for math, science, symbolic calculus, and verified factual computations. Use when an agent needs precise numeric answers, formulas, or verified facts — not unit and encoding conversion (compute.convert_units) or personal-finance and loan math (compute.financial_calculator).
 aliases:
   - computational knowledge query
   - computational knowledge
   - math problem solver API
-  - unit conversion API
   - scientific calculation
   - solve equation API
   - factual computation
   - structured math answer
   - compute integral or derivative
   - definite integral
-  - wolfram alpha query
   - precise math computation
   - solve calculus problem
   - compute integral from 0 to 3
+  - evaluate a math expression
+  - answer a science question
 consumes:
   - { entity: Query, role: identifier }
 produces:

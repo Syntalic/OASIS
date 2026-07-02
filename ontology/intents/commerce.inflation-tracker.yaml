@@ -1,9 +1,8 @@
-id: shop.inflation_tracker
+id: commerce.inflation_tracker
 label: Track category price inflation trends
-description: Analyze price inflation and trend direction within a retail category. Use when an agent needs category-level inflation trends to explain rising costs, budget impacts, or year-over-year price changes.
+description: Analyze price inflation and trend direction within a retail category. Use when an agent needs category-level inflation trends to explain rising costs, budget impacts, or year-over-year price changes — not economy-wide macroeconomic CPI/inflation indicators (finance.economic_data).
 aliases:
-  - inflation
-  - price inflation
+  - retail price inflation
   - category trends
   - grocery prices increased
   - how much have prices increased
@@ -13,6 +12,7 @@ aliases:
   - how fast are prices rising
   - category price change over time
   - inflation trend in groceries
+  - are grocery prices going up this year
   - yoy price increase by category
   - are household goods getting more expensive
 consumes:
@@ -23,10 +23,10 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: shop
+  domain: commerce
   action: analyze
   freshness: historical
 links:
   - type: sibling_of
-    to: shop.competitive_landscape
-    note: same category pricing-intel family, differs by purpose (inflation trend vs competitive scan); repoints dangling related analyst.price_dispersion
+    to: commerce.competitive_landscape
+    note: same category pricing-intel family, differs by purpose (inflation trend vs competitive scan)

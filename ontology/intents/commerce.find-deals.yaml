@@ -1,4 +1,4 @@
-id: shop.find_deals
+id: commerce.find_deals
 label: Find discounted products in a category
 description: Discover current deals and discounts within a product category. Use when an agent needs to surface discounted or on-sale items under a budget for shopping recommendations or deal scouting.
 aliases:
@@ -26,10 +26,10 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: shop
+  domain: commerce
   action: search
   freshness: realtime
 links:
   - type: sibling_of
-    to: shop.price_drop_alert
+    to: commerce.price_drop_alert
     note: same pricing-intel family, differs by purpose (surface category deals vs monitor one SKU for drops)

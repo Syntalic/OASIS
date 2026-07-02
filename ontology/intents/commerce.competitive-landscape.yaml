@@ -1,6 +1,6 @@
-id: shop.competitive_landscape
+id: commerce.competitive_landscape
 label: Competitive pricing landscape for a category
-description: View all products in a category with competitive pricing across retailers. Use when an agent needs a category-wide market scan for competitive positioning, pricing research, or shelf analysis.
+description: View all products in a category with competitive pricing across retailers. Use when an agent needs a category-wide market scan for competitive positioning, pricing research, or shelf analysis — not company-level competitor/business analysis (identity.company_enrich).
 aliases:
   - competitive analysis
   - category landscape
@@ -21,13 +21,13 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: shop
+  domain: commerce
   action: analyze
   freshness: realtime
 links:
   - type: sibling_of
-    to: shop.compare_price
+    to: commerce.compare_price
     note: same pricing-intel family, differs by entity granularity (ProductCategory scan vs one Product comparison)
   - type: sibling_of
-    to: shop.find_deals
-    note: same category pricing-intel family, differs by purpose (competitive scan vs deal surfacing); repoints dangling related marketing.brand_tracker
+    to: commerce.find_deals
+    note: same category pricing-intel family, differs by purpose (competitive scan vs deal surfacing)

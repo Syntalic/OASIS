@@ -386,7 +386,7 @@ async function oasisDiscover({ query, finding, entities, limit = 12 }) {
   const next_steps = await buildNextSteps(routedCaps, query, held);
   // matched_capabilities: the capabilities the RETURNED endpoints actually serve — a summary of what
   // discover found, NOT a parallel intent guess. The hybrid classifier pads its tail with homonym noise
-  // (a real-estate query pulls in shop.find_deals / shop.compare_price on "$400K"/"deal"/"price" tokens);
+  // (a real-estate query pulls in commerce.find_deals / commerce.compare_price on "$400K"/"deal"/"price" tokens);
   // those intents have ZERO backing among the arm's clean top-8 endpoints. Keep the routed #1 (the anchor
   // next_steps grows from) and drop tail intents with no arm support, preserving hybrid order among the
   // survivors. Degrades to the raw hybrid order when the arm is absent (no vectors). oasis_search stays the

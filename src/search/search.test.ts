@@ -5,7 +5,7 @@ import type { CapabilityIntent, EndpointRecord } from "../core/types.js";
 
 const capabilities: CapabilityIntent[] = [
   {
-    id: "shop.compare_price",
+    id: "commerce.compare_price",
     label: "Compare retail price across stores",
     aliases: ["cheapest price"],
     satisfies: [
@@ -36,6 +36,6 @@ describe("searchIndex", () => {
     const hits = searchIndex("cheapest airpods", endpoints, capabilities, 5);
     assert.ok(hits.length > 0);
     assert.equal(hits[0].kind, "capability");
-    assert.equal(hits[0].capability_id, "shop.compare_price");
+    assert.equal(hits[0].capability_id, "commerce.compare_price");
   });
 });

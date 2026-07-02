@@ -103,7 +103,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "shop-compare-1",
     query: "cheapest airpods pro across retailers",
-    expect_intent: "shop.compare_price",
+    expect_intent: "commerce.compare_price",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -113,7 +113,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "shop-compare-2",
     query: "find the best price for a product",
-    expect_intent: "shop.compare_price",
+    expect_intent: "commerce.compare_price",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -123,7 +123,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "shop-deals-1",
     query: "find discounted electronics deals",
-    expect_intent: "shop.find_deals",
+    expect_intent: "commerce.find_deals",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -133,7 +133,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "shop-drop-1",
     query: "has the price dropped on this product recently",
-    expect_intent: "shop.price_drop_alert",
+    expect_intent: "commerce.price_drop_alert",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -143,7 +143,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "shop-history-1",
     query: "price history trend for a product",
-    expect_intent: "shop.track_price_history",
+    expect_intent: "commerce.track_price_history",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -153,7 +153,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "marketing-landscape-1",
     query: "competitive pricing landscape for a category",
-    expect_intent: "shop.competitive_landscape",
+    expect_intent: "commerce.competitive_landscape",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -163,7 +163,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "analyst-inflation-1",
     query: "track price inflation in grocery category",
-    expect_intent: "shop.inflation_tracker",
+    expect_intent: "commerce.inflation_tracker",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -243,7 +243,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "shop-compare-3",
     query: "lowest price on sony wh-1000xm5 headphones",
-    expect_intent: "shop.compare_price",
+    expect_intent: "commerce.compare_price",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -253,7 +253,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "shop-compare-4",
     query: "where can I buy this cheaper walmart or amazon",
-    expect_intent: "shop.compare_price",
+    expect_intent: "commerce.compare_price",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -263,7 +263,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "shop-deals-2",
     query: "show me on sale kitchen appliances",
-    expect_intent: "shop.find_deals",
+    expect_intent: "commerce.find_deals",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -273,7 +273,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "analyst-inflation-2",
     query: "how much have grocery prices increased this year",
-    expect_intent: "shop.inflation_tracker",
+    expect_intent: "commerce.inflation_tracker",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -424,7 +424,7 @@ export async function generateEvalQueries(
   );
 
   for (const cap of bundle.capabilities) {
-    if (curatedIds.has(cap.id) && cap.id.startsWith("shop.")) continue;
+    if (curatedIds.has(cap.id) && cap.id.startsWith("commerce.")) continue;
     generated.push(...queriesFromCapability(cap, bundle.endpoints, maxPerCap));
   }
 

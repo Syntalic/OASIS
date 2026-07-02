@@ -5,7 +5,7 @@ bindings:
     method: GET
     path: /civicinfo/v2/voterinfo
     capabilities:
-      - data.gov_civic
+      - gov.civic
   - origin: https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8
     method: POST
     path: /person/search
@@ -60,7 +60,7 @@ bindings:
     method: GET
     path: /v1/marketing/competitive-landscape
     capabilities:
-      - shop.competitive_landscape
+      - commerce.competitive_landscape
   - origin: https://airquality.google.gateway-402.com
     method: POST
     path: /v1/forecast:lookup

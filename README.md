@@ -4,22 +4,35 @@
 
 # OASIS
 
-**Open standard for discoverability of paid HTTP APIs in agentic commerce** (x402 / MPP) —
-a unified, payment-aware endpoint index, a task ontology, JSON schemas, and reference
-tooling that map a natural-language task to the right paid API. Not a hosted product, no
-fees. See [GOVERNANCE.md](GOVERNANCE.md).
+**Open standard for discoverability of paid HTTP APIs in agentic commerce** (x402 / MPP).
+OASIS is a vendor-neutral discovery layer for **paid** HTTP APIs: a task ontology, a
+payment-aware endpoint index, JSON schemas, and a reference MCP server that map a
+natural-language task to the right paid endpoint — price and payment rails inline. Not a
+hosted product, no fees. See [GOVERNANCE.md](GOVERNANCE.md).
 
-As paid endpoints multiply, agents face registry noise, keyword collisions, and no reliable
+As paid endpoints multiply, agents hit registry noise, keyword collisions, and no reliable
 way to pick the right micropayment API. We could not find a high-quality, vendor-neutral
 discovery mechanism — so we built OASIS and open-sourced it.
 
-## Integrate it as one agent tool
+## What's in the repo
 
-Drop the reference MCP server into any agent. **`oasis_discover` returns the right paid endpoint
-for a task — plus a map of what to do next — in a single call**: a flat, ranked endpoint list with
-price + payment rails inline, and a `next_steps` graph to chain follow-ups. Works with any LLM provider.
+| Artifact | Purpose |
+|---|---|
+| `ontology/intents/` | Curated task capabilities — the controlled vocabulary agents route to (87 intents across 20 domains) |
+| `dist/index.json` (+ `endpoints` / `capabilities`) | The unified, payment-aware paid-endpoint index (~19k gated endpoints) |
+| `spec/` | JSON schemas + entity vocab + [agent traversal protocol](spec/traversal.md) |
+| `mcp/` | Reference MCP server (`oasis_discover` + contribution tools) + drop-in agent skill |
 
-**👉 Just want to try it?** A free hosted instance is live — no clone, no key:
+**New here? Start with [docs/concepts.md](docs/concepts.md)** — the mental model and glossary
+(taxonomy, ontology, capability, domain, facet, entity, link, endpoint, binding).
+
+## Use it as one agent tool
+
+Drop the reference MCP server into any agent. **`oasis_discover` returns the right paid
+endpoint for a task — plus a `next_steps` map to chain follow-ups — in a single call**: a flat,
+ranked endpoint list with price + payment rails inline. Works with any LLM provider.
+
+A free hosted instance is live — no clone, no key:
 
 ```bash
 claude mcp add --transport http oasis https://mcp.oasisindex.org/mcp
@@ -27,156 +40,66 @@ claude mcp add --transport http oasis https://mcp.oasisindex.org/mcp
 
 (or any MCP client: `{ "mcpServers": { "oasis": { "url": "https://mcp.oasisindex.org/mcp" } } }`).
 Open + per-IP rate-limited, operated by the stewards as a convenience — **not** part of the
-standard; self-host the same image (see [`mcp/deploy/`](mcp/deploy/)) or run it locally:
-
-```json
-{ "mcpServers": { "oasis": { "command": "node",
-    "args": ["/absolute/path/OASIS/mcp/server.mjs"] } } }
-```
-
-**Teach your agent the tools** — drop in the OASIS skill so it calls `oasis_discover` first and
-chains multi-step tasks by passing `finding` back. Copy [`mcp/skills/oasis.md`](mcp/skills/oasis.md) into
-your agent's skill directory (Claude Code: `~/.claude/skills/oasis/SKILL.md`).
+standard. To self-host the same image or run it locally over stdio, see [`mcp/`](mcp/) and
+[`mcp/deploy/`](mcp/deploy/).
 
 The server also exposes `oasis_search` (classify a query → task intents) and the
-`oasis_taxonomy` / `oasis_validate` contribution tools. (`oasis_find` / `oasis_next` / `oasis_resolve`
-remain as deprecated aliases of `oasis_discover`.) See [`mcp/`](mcp/).
-
-## Why it holds up
-
-Two kinds of evidence: results on a battery of **real, colloquial tasks** (below — including a check
-against the largest live alternatives), and an **internal comparison of discovery techniques** on our
-own corpus — token cost, accuracy, scale.
-
-### 🎯 Real-task results
-
-On **40 natural-language tasks** a person would actually type ("what's bitcoin going for right
-now?"), `oasis_discover` returns its top endpoints, each hand-scored for whether it *directly performs
-the task*. Per task it surfaces **~5.6 useful, distinct providers** (unique hosts that do the task) at
-**71% precision**, almost never comes up empty, and spends only **~97 response tokens per useful
-result** — a tight, pre-ranked, de-duplicated list rather than a long one.
-
-To confirm these numbers hold up against the field and not just in isolation, we ran the same battery
-through other live x402 discovery layers — a representative **vector-search discovery baseline** and **Coinbase's x402 Bazaar**;
-OASIS returned the most useful options per task at the lowest cost per useful result. The three
-catalogs are **~90% disjoint** (they mostly index *different* providers), so querying more than one
-and merging remains the most complete strategy. Full per-task numbers + method:
-**[docs/eval_results.md](docs/eval_results.md)**.
-
-### 💸 Token cost — cheapest of every method tested
-
-End-to-end (a live LLM picks a paid endpoint for 18 real tasks; a method-neutral judge
-scores the pick), `oasis_discover` finds *and* picks in one call at the lowest token cost — fewer
-tokens **and** fewer round-trips than both keyword search and the **semantic-spec** approach
-(the technique third-party semantic registries use):
-
-Tokens/task is **input (prompt) + output (completion)**, summed across the agent's
-round-trips (you re-send the prompt on every call, so more tool-calls → more input tokens):
-
-| discovery method | tokens/task (in + out) | avg tool-calls/task | vs `oasis_discover` |
-|---|---|---|---|
-| **`oasis_discover` (OASIS, one call)** | **2,354** (2,052 + 302) | **1.1** | — |
-| spec-embedding — semantic over endpoint specs | 2,715 (2,444 + 271) | 1.9 | +15% |
-| keyword — single-registry slice | 3,358 (3,036 + 322) | 2.2 | +43% |
-
-**What each method is:**
-
-- **`oasis_discover` (OASIS)** — the shipped method: **one** MCP call; server-side **vector search
-  over the curated task intents** (`gemini-embedding-001`) returns a tight, pre-ranked endpoint
-  list with price/rails inline → the agent picks in ~1 hop. Covers the whole index. (Token figures
-  above are the endpoint path; `discover` also returns a compact `next_steps` map — a small added
-  payload that replaces a separate follow-up call.)
-- **spec-embedding** — semantic search over the 30k *raw endpoint specs* — the
-  technique third-party semantic registries use, run on our corpus so coverage is equal. Finds
-  good candidates but returns bare endpoints, so the agent makes a 2nd call for details.
-- **keyword** — plain lexical search over a registry's raw summaries (no ontology, no vectors);
-  the agent reads more hits and searches more. (Full per-registry slice breakdown in the docs.)
-
-Full analysis + reproduction (all slices, generalization, the embedding-base analysis):
-**[docs/eval_results.md](docs/eval_results.md)**.
-
-### 🎯 Accuracy — the honest, generalizing number
-
-On held-out queries phrased *away* from the capability labels (never tuned against):
-**95% discover@1 / 99% discover@3** with `gemini-embedding-001` vector routing — vs **41%**
-for keyword alone. Head-to-head on the same corpus, curated-intent routing beats the
-**semantic-spec** approach (**100% vs 87%**) and keyword catalogs (**33%**) on retrieval: the
-ontology is a *clean, query-shaped* target, not 30k noisy vendor specs. On easy high-coverage
-tasks every method's agent reaches a working endpoint at near-parity — but **OASIS does it for
-the fewest tokens and round-trips** (above). The curated set reads ~100% but is overfit to
-alias vocabulary; held-out is the truth. Tables + the embedding-base analysis:
-**[docs/eval_results.md](docs/eval_results.md)**.
-
-### 📈 Scale — endpoint-atomic + distributed curation
-
-The **endpoint is the atomic unit**; the capability ontology is a **server-side recall +
-ranking aid** (paid in compute, not agent tokens), and the index is filled by **LLM-assisted,
-contributor-funded curation** — each service owner curates their own endpoints. This is the
-design that holds as the corpus grows 10–100× — where raw keyword degrades on collisions,
-best-of-many ranking, and token growth. Thesis + evidence: **[docs/scaling.md](docs/scaling.md)**.
-
-## What this is
-
-| Artifact | Purpose |
-|---|---|
-| `ontology/intents/` | Curated task capabilities (what agents want to do) |
-| `dist/index.json` (+ `endpoints` / `capabilities`) | The unified paid-endpoint index |
-| `spec/` | JSON schemas + [agent traversal protocol](spec/traversal.md) |
-| `mcp/` | Reference MCP server + agent probe + A/B harness (any provider) |
+`oasis_taxonomy` / `oasis_validate` contribution tools. Teach your agent to call
+`oasis_discover` first by dropping in [`mcp/skills/oasis.md`](mcp/skills/oasis.md) (Claude
+Code: `~/.claude/skills/oasis/SKILL.md`).
 
 ## Quick start
 
+No build needed to search or resolve — download `dist/index.json` (and siblings) from
+[Releases](https://github.com/Syntalic/OASIS/releases). To build the index yourself:
+
 ```bash
 git clone https://github.com/Syntalic/OASIS.git && cd OASIS && pnpm install
-pnpm run build    # federated ingest → quality gate → semantic bind (~19k gated endpoints; needs network; GOOGLE_API_KEY for gemini binding)
-pnpm run embed    # vector index (80 curated intents, gemini-embedding-001)
+pnpm run build    # federated ingest → quality gate → semantic bind (needs network; GOOGLE_API_KEY for gemini binding)
+pnpm run embed    # vector index (87 curated intents, gemini-embedding-001)
 pnpm test
 ```
 
-Or download `dist/index.json` (and siblings) from
-[Releases](https://github.com/Syntalic/OASIS/releases) — no build needed to search/resolve
-against the prebuilt index. Build pipeline, ingestion sources, and payment-metadata
-extraction: [ARCHITECTURE.md](ARCHITECTURE.md).
-
-## CLI
+CLI (`capindex`):
 
 ```bash
-pnpm exec capindex search "cheapest airpods pro"            # vector search over curated intents
-pnpm exec capindex resolve --intent shop.compare_price
-pnpm exec capindex validate                                 # validate dist/index.json
-pnpm exec capindex taxonomy --json                          # controlled vocab (to contribute)
-pnpm exec capindex validate-source <intent.yaml>            # SAME check CI runs on a PR
-pnpm exec capindex validate-binding [file]                  # authoritative endpoint→capability bindings
+pnpm exec capindex search "cheapest airpods pro"             # vector search over curated intents
+pnpm exec capindex resolve --intent commerce.compare_price   # endpoints that satisfy a task
+pnpm exec capindex validate                                  # validate dist/index.json
+pnpm exec capindex taxonomy --json                           # controlled vocab (to contribute)
+pnpm exec capindex validate-source <intent.yaml>             # SAME check CI runs on a PR
 ```
+
+## Why it holds up
+
+On a battery of **real, colloquial tasks**, `oasis_discover` finds *and* picks a paid endpoint
+in one call at **71% precision** and the **lowest token cost of every method tested** (vs
+keyword and the semantic-spec approach third-party registries use). On held-out queries phrased
+away from the labels it routes at **95% discover@1 / 99% discover@3** (vs 41% for keyword). Full
+numbers, the comparison to the largest live x402 layers, and reproduction:
+**[docs/eval_results.md](docs/eval_results.md)**.
 
 ## Contributing a service
 
 OASIS scales by **LLM-assisted, contributor-funded curation**: the service owner binds their
 own endpoints into the taxonomy (their LLM, their cost) and opens a PR; CI runs an objective
-validation gate (`validate-source`). Bind into existing capabilities where one fits; propose
-new ones sparingly (flagged for review). Full guide:
-**[docs/contributing-capabilities.md](docs/contributing-capabilities.md)**.
+validation gate (`validate-source`). See
+**[docs/contributing-capabilities.md](docs/contributing-capabilities.md)** (bind endpoints into
+the ontology) and **[docs/authoring-openapi-specs.md](docs/authoring-openapi-specs.md)** (author
+a discoverable spec that passes the quality gate and ranks well).
 
-Publishing the paid endpoints themselves? **[docs/authoring-openapi-specs.md](docs/authoring-openapi-specs.md)**
-covers how to write summaries + payment metadata that pass the quality gate and rank well.
+## Documentation
 
-## Docs
-
-- **[docs/OASIS-explainer.pdf](docs/OASIS-explainer.pdf)** — visual explainer deck (PDF overview of OASIS)
+- **[docs/concepts.md](docs/concepts.md)** — start here: the data model + glossary (taxonomy, ontology, capability, domain, facet, entity, link, endpoint, binding)
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** — index-build pipeline, search/retrieval, ontology→endpoint wiring
+- **[spec/traversal.md](spec/traversal.md)** — agent protocol: search → resolve → schema → execute
+- **[docs/scaling.md](docs/scaling.md)** — the endpoint-atomic direction and why it scales
 - **[docs/eval_results.md](docs/eval_results.md)** — full benchmarks: accuracy, token cost, generalization, the agent probe
-- **[docs/scaling.md](docs/scaling.md)** — the endpoint-atomic direction, why it scales, the per-service binding artifact
-- **[docs/contributing-capabilities.md](docs/contributing-capabilities.md)** — how to add a service (bind endpoints into the task ontology)
-- **[docs/authoring-openapi-specs.md](docs/authoring-openapi-specs.md)** — authoring a discoverable OpenAPI spec (what the quality gate + ranker expect from summaries + payment metadata)
-- **[docs/proposals/onchain-usage-ranking.md](docs/proposals/onchain-usage-ranking.md)** — proposed (**help wanted**): quality-aware ranking from on-chain usage (volume/trend/buyers)
-- [ARCHITECTURE.md](ARCHITECTURE.md) · [GOVERNANCE.md](GOVERNANCE.md) · [spec/traversal.md](spec/traversal.md)
-
-## Design principles
-
-- **Discover, don't gate** — surface tasks + capable endpoints; selection is agent policy
-- **Endpoint is the atomic unit** — capability = server-side recall/ranking overlay; service = facet
-- **Origin-centric IDs** — `sha256(origin|method|path)`, no vendor special cases
-- **Payment rails as facets** — x402 and MPP are siblings under `payment.rails[]`
-- **OpenAPI is source of truth; ingest, don't own** — index holds summaries; pull from public catalogs, publish a neutral `dist/`
+- **[docs/contributing-capabilities.md](docs/contributing-capabilities.md)** — add a service (bind endpoints into the task ontology)
+- **[docs/authoring-openapi-specs.md](docs/authoring-openapi-specs.md)** — author a discoverable OpenAPI spec (what the quality gate + ranker expect)
+- **[docs/index-snapshots.md](docs/index-snapshots.md)** — reproduce a pinned index anywhere (snapshot lock + restore)
+- **[GOVERNANCE.md](GOVERNANCE.md)** · **[CONTRIBUTING.md](CONTRIBUTING.md)** — what OASIS is (and isn't), and how to contribute
+- **[docs/OASIS-explainer.pdf](docs/OASIS-explainer.pdf)** — visual explainer deck
 
 ## License
 

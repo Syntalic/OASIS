@@ -18,7 +18,7 @@ export const TASKS = [
   { q: "just give me the plain text printed on this scanned page", expect: "ai.ocr", trap: "document_extract" },
   { q: "what is one bitcoin worth in euros right this second", expect: "finance.crypto_spot_price", trap: "stock_quote/exchange_rates" },
   { q: "convert 500 US dollars into Japanese yen at today's rate", expect: "finance.exchange_rates", trap: "crypto_spot_price" },
-  { q: "who is the registrant behind the domain name acme.com", expect: "data.whois_lookup", trap: "ip_lookup" },
+  { q: "who is the registrant behind the domain name acme.com", expect: "devtools.whois_lookup", trap: "ip_lookup" },
   { q: "what software and frameworks is this website built with", expect: "data.builtwith", trap: "web_scrape/whois" },
   { q: "generate a product photo of a red sneaker on a white background", expect: "ai.image_generate", trap: "screenshot" },
   { q: "give me a sourced, citation-backed briefing on the latest EU AI Act developments", expect: "ai.web_research", trap: "llm_complete/web_scrape" },

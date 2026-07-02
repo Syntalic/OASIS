@@ -1,6 +1,6 @@
 id: compute.convert_units
 label: Convert units, measurements, and encodings
-description: Transform numeric values between measurement units, data-size units, time units, timezone offsets, encodings, and lightweight dev utilities (hash, HMAC, Base64, JWT decode, UUID, JSON/CSV). Use when an agent normalizes quantities or encodings (centimeters to inches, gigabytes to bytes, hex to decimal, SHA-256 hash) — not currency exchange (finance.exchange_rates), financial calculators (compute.financial_calculator), or natural-language translation (ai.translate_text).
+description: Transform numeric values between measurement units, data-size units, time units, timezone offsets, encodings, and lightweight dev utilities (hash, HMAC, Base64, JWT decode). Use when an agent normalizes quantities or encodings (centimeters to inches, gigabytes to bytes, hex to decimal, SHA-256 hash) — not currency exchange (finance.exchange_rates), financial calculators (compute.financial_calculator), or natural-language translation (ai.translate_text).
 aliases:
   - unit conversion
   - convert measurement units
@@ -18,17 +18,12 @@ aliases:
   - HMAC compute API
   - Base64 encode decode
   - JWT decode utility
-  - UUID generator API
-  - JSON to CSV conversion
-  - CSV to JSON conversion
   - slugify text utility
   - cron next run time
   - date difference calculator
   - duration conversion utility
   - URL encode decode utility
-  - ULID generator
   - TOTP code generator
-  - password generator API
   - regex test utility
   - user agent parser
   - case convert text utility

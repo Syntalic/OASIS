@@ -1,4 +1,4 @@
-id: data.ip_lookup
+id: devtools.ip_lookup
 label: Look up IP address intelligence
 description: Geolocation, ISP, threat signals, and metadata for an IP address. Use when an agent enriches traffic logs, fraud checks, or security events with IP context.
 aliases:
@@ -14,8 +14,8 @@ aliases:
 consumes:
   - { entity: IpAddress, role: identifier }
 produces:
-  - { entity: DnsRecord, role: payload }
+  - { entity: Answer, role: payload }
 
 facets:
-  domain: data
+  domain: devtools
   action: lookup

@@ -1,4 +1,4 @@
-id: shop.compare_price
+id: commerce.compare_price
 label: Compare retail price across stores
 description: Find the lowest current price for a product across multiple retailers. Use when an agent must compare the same SKU across stores before recommending where a user should buy.
 aliases:
@@ -7,10 +7,7 @@ aliases:
   - price comparison
   - compare prices
   - cheapest airpods
-  - airpods pro
   - lowest price
-  - walmart or amazon
-  - cheaper walmart
   - cross retailer price
   - where can I buy
   - buy cheaper
@@ -30,13 +27,13 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: shop
+  domain: commerce
   action: compare
   freshness: realtime
 links:
   - type: sibling_of
-    to: shop.find_deals
+    to: commerce.find_deals
     note: same pricing-intel family, differs by entity granularity (one Product vs a ProductCategory)
   - type: sibling_of
-    to: shop.track_price_history
+    to: commerce.track_price_history
     note: same pricing-intel family, differs by time axis (current lowest vs historical trend)

@@ -5,7 +5,7 @@
       "user_query": "Why are LA electronics sales down? Investigate.",
       "steps": [
         {
-          "simulate_intent_id": "shop.inflation_tracker",
+          "simulate_intent_id": "commerce.inflation_tracker",
           "simulate_finding": "LA consumer electronics sales down 12% YoY",
           "simulate_entities": [
             { "entity": "Place", "value": "Los Angeles, CA", "kind": "identity" },
@@ -20,8 +20,8 @@
       ],
       "good_follow_ups": [
         { "intent_id": "data.weather_forecast", "reason": "weather drives foot traffic" },
-        { "intent_id": "shop.competitive_landscape", "reason": "competitive pricing pressure" },
-        { "intent_id": "data.gov_civic", "reason": "local policy / civic events" }
+        { "intent_id": "commerce.competitive_landscape", "reason": "competitive pricing pressure" },
+        { "intent_id": "gov.civic", "reason": "local policy / civic events" }
       ],
       "bad_follow_ups": [
         { "intent_id": "ai.image_generate", "reason": "not investigatively relevant" },
@@ -33,7 +33,7 @@
       "user_query": "Dig into competitor Acme Corp rising share",
       "steps": [
         {
-          "simulate_intent_id": "shop.competitive_landscape",
+          "simulate_intent_id": "commerce.competitive_landscape",
           "simulate_finding": "Acme Corp gained 8% share",
           "simulate_entities": [
             { "entity": "Company", "value": "Acme Corp", "kind": "identity" }
@@ -56,7 +56,7 @@
       "user_query": "Investigate acme.com domain and brand footprint",
       "steps": [
         {
-          "simulate_intent_id": "data.whois_lookup",
+          "simulate_intent_id": "devtools.whois_lookup",
           "simulate_finding": "acme.com registered 2010",
           "simulate_entities": [
             { "entity": "Domain", "value": "acme.com", "kind": "identity" }

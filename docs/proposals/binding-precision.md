@@ -222,7 +222,7 @@ baseline search(q)                      control, for the three failing queries
 
 ### A.2 OASIS transcripts (condensed; `via` = bound intent)
 
-**register a domain name for my startup** — `search` → `cloud.domains` #1 ✓, then `data.whois_lookup`,
+**register a domain name for my startup** — `search` → `cloud.domains` #1 ✓, then `devtools.whois_lookup`,
 `identity.company_enrich`, `agent.marketplace`, `cloud.hosting`, … `find` (all `via: cloud.domains`):
 
 ```

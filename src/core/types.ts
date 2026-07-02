@@ -39,7 +39,7 @@ export interface PaymentInfo {
 
 /** Facet enum axes (mirror spec/ontology-source.schema.json). */
 export type FacetDomain =
-  | "shop"
+  | "commerce"
   | "ai"
   | "data"
   | "web"
@@ -56,7 +56,9 @@ export type FacetDomain =
   | "blockchain"
   | "identity"
   | "agent"
-  | "utility";
+  | "utility"
+  | "science"
+  | "gov";
 
 export type FacetAction =
   | "search"

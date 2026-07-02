@@ -20,7 +20,7 @@ flowchart LR
   end
 
   subgraph oasis["OASIS index (dist/)"]
-    CAP["capabilities.json<br/>80 curated intents"]
+    CAP["capabilities.json<br/>87 curated intents"]
     EP["endpoints.json<br/>~19k gated endpoints"]
     IDX["index.json<br/>full bundle"]
   end
@@ -129,7 +129,7 @@ flowchart TB
   subgraph vector["Vector search (optional, --hybrid)"]
     EMB["embed/embedder.ts<br/>text embeddings"]
     LANCE["embed/lance-index.ts<br/>LanceDB table"]
-    VEC["Vector nearest-neighbors<br/>80 curated intents"]
+    VEC["Vector nearest-neighbors<br/>87 curated intents"]
   end
 
   subgraph fusion["Hybrid fusion (search-hybrid.ts)"]
@@ -253,7 +253,7 @@ flowchart LR
     D3["discover@3"]
     D1["discover@1"]
     MRR["discover MRR"]
-    RES["resolve accuracy<br/>80/80 intents"]
+    RES["resolve accuracy<br/>87/87 intents"]
   end
 
   MQ --> modes
