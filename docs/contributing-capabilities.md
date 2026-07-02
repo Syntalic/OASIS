@@ -66,8 +66,9 @@ links:                              # optional typed edges to EXISTING capabilit
 
 ## The rules (what the validator + review enforce)
 
-- **Facets** must come from the enums (`domain` 19, `action` 12, `modality` 9,
-  `freshness` 5). **`consumes`/`produces` entities** must be in the closed entity vocab
+- **Facets** must come from the enums (`domain` 20, `action` 12, `modality` 9,
+  `freshness` 5 — the authoritative lists are the enums in `spec/capability.schema.json`).
+  **`consumes`/`produces` entities** must be in the closed entity vocab
   (`spec/entity-vocab.json`) — this is what powers chaining and the type guard. **Link
   targets** must be existing capability ids.
 - **Describe what the endpoint *does*, verifiable from the spec — not a sales pitch.**

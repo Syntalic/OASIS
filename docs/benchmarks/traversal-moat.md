@@ -53,14 +53,14 @@ key-free: GOOGLE_API_KEY not set (no embedding / no LLM)
 | sales-account-research | `identity.company_enrich` | 60.0% | 3/5 | `comms.send_email`, `finance.stock_quote` |
 | prospect-sms-outreach | `identity.person_search` | 33.3% | 1/3 | `utility.phone_validate`, `comms.send_sms` |
 | localize-address | `maps.geocode` | 100.0% | 3/3 | — |
-| daily-weather-brief | `data.weather_forecast` | 33.3% | 1/3 | `data.news_headlines`, `comms.send_sms` |
+| daily-weather-brief | `data.weather_forecast` | 33.3% | 1/3 | `media.news_headlines`, `comms.send_sms` |
 | marketing-graphic-ship | `ai.image_generate` | 50.0% | 1/2 | `comms.send_email` |
 | voice-a-script | `ai.text_to_speech` | 100.0% | 2/2 | — |
 | page-to-knowledge-base | `web.scrape` | 75.0% | 3/4 | `ai.llm_complete` |
 | equity-snapshot | `finance.stock_quote` | 75.0% | 3/4 | `ai.web_research` |
-| bargain-hunt-product | `shop.compare_price` | 66.7% | 2/3 | `comms.send_sms` |
+| bargain-hunt-product | `commerce.compare_price` | 66.7% | 2/3 | `comms.send_sms` |
 | cited-research-answer | `ai.web_research` | 75.0% | 3/4 | `ai.llm_complete` |
-| investigate-suspicious-domain | `data.whois_lookup` | 66.7% | 2/3 | `maps.geocode` |
+| investigate-suspicious-domain | `devtools.whois_lookup` | 66.7% | 2/3 | `maps.geocode` |
 | brand-social-footprint | `social.social_data` | 75.0% | 3/4 | `comms.send_email` |
 | verified-email-send | `comms.send_email` | 66.7% | 2/3 | `utility.phone_validate` |
 | crypto-wallet-analysis | `blockchain.onchain_analytics` | 75.0% | 3/4 | `ai.web_research` |
