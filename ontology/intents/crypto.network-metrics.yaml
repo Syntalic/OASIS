@@ -1,4 +1,4 @@
-id: compute.chain_metrics
+id: crypto.network_metrics
 label: Get blockchain gas prices and network health metrics
 description: Live network telemetry for blockchains — gas price and EIP-1559 fee tiers, gas oracles, mempool congestion, block height and time, TPS and throughput, finality, and validator or chain health. Use when an agent reads network-level conditions to time or price a transaction, not wallet and token analytics (finance.onchain_analytics) or raw JSON-RPC calls (compute.blockchain_rpc).
 aliases:
@@ -24,13 +24,16 @@ produces:
     role: payload
     format: json
 facets:
-  domain: compute
+  domain: crypto
   action: lookup
   freshness: realtime
 links:
   - type: sibling_of
     to: compute.blockchain_rpc
-    note: chain_metrics reads gas and health telemetry; blockchain_rpc executes raw JSON-RPC methods
+    note: network_metrics reads gas and health telemetry; blockchain_rpc executes raw JSON-RPC methods
+  - type: sibling_of
+    to: crypto.defi_analytics
+    note: network_metrics is network-level infrastructure telemetry; defi_analytics is protocol/app-level metrics
   - type: sibling_of
     to: finance.onchain_analytics
-    note: chain_metrics is network-level infrastructure telemetry; onchain_analytics is wallet and smart-money flows
+    note: network_metrics is network-level infrastructure telemetry; onchain_analytics is wallet and smart-money flows

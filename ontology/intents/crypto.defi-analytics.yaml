@@ -1,4 +1,4 @@
-id: finance.defi_analytics
+id: crypto.defi_analytics
 label: Get DeFi protocol and yield analytics
 description: DeFi protocol directory data — TVL, yields, protocol metadata, chain-level DeFi stats, and liquidity analytics. Use when an agent researches protocols and DeFi markets, not wallet-level flows (finance.onchain_analytics) or single-token spot prices (finance.crypto_spot_price).
 aliases:
@@ -19,7 +19,7 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: finance
+  domain: crypto
   action: lookup
   freshness: recent
 links:

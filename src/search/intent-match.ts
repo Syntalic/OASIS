@@ -57,7 +57,7 @@ export const CURATED_INTENT_IDS = [
   "devtools.webhook_tools",
   "finance.crypto_market_intel",
   "finance.crypto_spot_price",
-  "finance.defi_analytics",
+  "crypto.defi_analytics",
   "finance.onchain_analytics",
   "finance.stock_quote",
   "finance.token_balance",
@@ -91,7 +91,7 @@ export const CURATED_INTENT_IDS = [
   // Coverage additions — clusters surfaced by the orphan audit (see ontology/intents/*.yaml).
   "ai.moderate_content",
   "ai.token_count",
-  "compute.chain_metrics",
+  "crypto.network_metrics",
   "data.pii_detect",
   "devtools.generate_secret",
   "devtools.file_convert",

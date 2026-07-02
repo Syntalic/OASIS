@@ -882,19 +882,19 @@
     "qid": 147
   },
   {
-    "intent_id": "finance.defi_analytics",
+    "intent_id": "crypto.defi_analytics",
     "query": "defi yield rates tracker",
     "style": "terse",
     "qid": 148
   },
   {
-    "intent_id": "finance.defi_analytics",
+    "intent_id": "crypto.defi_analytics",
     "query": "Where can I find historical yield data and total value locked for decentralized finance protocols?",
     "style": "conversational",
     "qid": 149
   },
   {
-    "intent_id": "finance.defi_analytics",
+    "intent_id": "crypto.defi_analytics",
     "query": "I want to compare the current lending APY for USDC on Aave versus Compound.",
     "style": "contextual",
     "qid": 150
