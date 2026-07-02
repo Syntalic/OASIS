@@ -40,7 +40,7 @@
       "properties": {
         "domain": {
           "enum": [
-            "shop",
+            "commerce",
             "ai",
             "data",
             "web",
@@ -57,7 +57,9 @@
             "blockchain",
             "identity",
             "agent",
-            "utility"
+            "utility",
+            "science",
+            "gov"
           ]
         },
         "action": {

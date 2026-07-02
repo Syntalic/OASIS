@@ -11,10 +11,6 @@ aliases:
   - latest trade signals with confidence
   - algorithmic trade calls
   - forex trading signals scan
-  - forex scan buy sell signals
-  - scan forex pairs for signals
-  - strategy performance signals
-  - arena trading strategy signals
   - algorithmic strategy scan
 consumes:
   - entity: Query

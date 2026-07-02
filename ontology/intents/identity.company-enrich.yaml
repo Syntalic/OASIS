@@ -15,10 +15,8 @@ aliases:
   - business info from URL
   - company profile from domain
   - what company owns this domain
-  - organizational depth chart
-  - company employee depth chart
-  - ATS organization catalog
-  - corporate org structure lookup
+  - enrich company from email domain
+  - b2b company data enrichment
 consumes:
   - entity: Domain
     role: identifier
@@ -33,7 +31,7 @@ links:
     to: social.social_data
     note: same identity family, differs by entity x purpose (Company firmographics vs social posts)
   - type: sibling_of
-    to: data.whois_lookup
+    to: devtools.whois_lookup
     note: same domain family, differs by purpose (enrich the owning company vs read DNS/WHOIS)
   - type: sibling_of
     to: cloud.domains

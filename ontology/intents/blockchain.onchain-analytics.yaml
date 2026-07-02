@@ -1,6 +1,6 @@
 id: blockchain.onchain_analytics
 label: Track on-chain smart money and wallet analytics
-description: On-chain analytics for smart-money flows, wallet profiling, token holder metrics, and fund movements. Use when an agent researches crypto wallets, token accumulation, or labeled on-chain activity.
+description: On-chain analytics for smart-money flows, wallet profiling, token holder metrics, and fund movements. Use when an agent researches crypto wallets, token accumulation, or labeled on-chain activity, not protocol/market aggregates (blockchain.defi_analytics) or network gas and health telemetry (blockchain.network_metrics).
 aliases:
   - smart money tracking
   - on-chain wallet analytics
@@ -11,15 +11,16 @@ aliases:
   - what wallets are accumulating
   - on-chain signal discovery
   - crypto wallet intelligence
-  - DeFi protocol risk assessment
-  - liquidation risk monitoring
-  - DeFi position monitoring
   - on-chain fund flow dashboard
+  - whale wallet tracker
+  - smart money leaderboard
+  - wallet profit and loss (PnL)
+  - token holder concentration
 consumes:
   - entity: WalletAddress
     role: identifier
 produces:
-  - entity: TradingSignal
+  - entity: Answer
     role: payload
     format: json
 facets:

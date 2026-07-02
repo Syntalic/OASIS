@@ -1,4 +1,4 @@
-id: data.news_headlines
+id: media.news_headlines
 label: Fetch latest news headlines by topic
 description: Current news headlines and topical news feeds across tech, business, science, crypto, sports, and world news. Use when an agent needs headline summaries, not long-form cited research (ai.web_research).
 aliases:
@@ -17,7 +17,7 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: data
+  domain: media
   action: lookup
   freshness: realtime
 links:

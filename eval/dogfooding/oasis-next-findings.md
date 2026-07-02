@@ -77,7 +77,7 @@ The major fixes all hold on a fresh production build. Two minor, non-blocking re
 - **Within-intent representative ranking** (the highest-value one). The bridge resolves the right *intent*
   but `selectEndpointsForIntent` (`rankEndpointsNeutral`, query-blind) picks an off endpoint:
   `data.job_search → 2s.io/api/gov/usajobs` (gov, not corporate), `realestate.property_lookup →
-  property-tax-assessment`, `shop.find_deals → kyb/winloss`. Fix: rank an intent's `satisfies[]` by
+  property-tax-assessment`, `commerce.find_deals → kyb/winloss`. Fix: rank an intent's `satisfies[]` by
   relevance (to the finding / the intent's own label) so the surfaced endpoint is the good one.
 - **Preview-host gate gap.** `quality-gate.ts` `PREVIEW_HOST` catches `*-git-<branch>-*.vercel.app` but
   NOT the deploy-hash form `*-<hash>-<team>.vercel.app` (e.g. `apify-dlfd68ww7-merit-systems.vercel.app`

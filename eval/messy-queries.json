@@ -182,7 +182,7 @@
   {
     "id": "messy-compare-price-1",
     "query": "is this SKU cheaper at Amazon or Walmart right now",
-    "expect_intent": "shop.compare_price",
+    "expect_intent": "commerce.compare_price",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -192,7 +192,7 @@
   {
     "id": "messy-compare-price-2",
     "query": "cross-store retail price comparison for a product link",
-    "expect_intent": "shop.compare_price",
+    "expect_intent": "commerce.compare_price",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -202,7 +202,7 @@
   {
     "id": "messy-inflation-1",
     "query": "did grocery prices inflate this year versus last",
-    "expect_intent": "shop.inflation_tracker",
+    "expect_intent": "commerce.inflation_tracker",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -212,7 +212,7 @@
   {
     "id": "messy-inflation-2",
     "query": "category-level CPI style trend for consumer goods",
-    "expect_intent": "shop.inflation_tracker",
+    "expect_intent": "commerce.inflation_tracker",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -322,7 +322,7 @@
   {
     "id": "messy-competitive-1",
     "query": "map competitor pricing across brands in running shoes",
-    "expect_intent": "shop.competitive_landscape",
+    "expect_intent": "commerce.competitive_landscape",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -332,7 +332,7 @@
   {
     "id": "messy-deals-1",
     "query": "surface discounted electronics under a budget cap",
-    "expect_intent": "shop.find_deals",
+    "expect_intent": "commerce.find_deals",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -342,7 +342,7 @@
   {
     "id": "messy-price-drop-1",
     "query": "alert me if this product had a recent markdown",
-    "expect_intent": "shop.price_drop_alert",
+    "expect_intent": "commerce.price_drop_alert",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -352,7 +352,7 @@
   {
     "id": "messy-price-history-1",
     "query": "chart how this item's price moved over the last 90 days",
-    "expect_intent": "shop.track_price_history",
+    "expect_intent": "commerce.track_price_history",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -542,7 +542,7 @@
   {
     "id": "messy-ip-1",
     "query": "where is this login IP address located and who hosts it",
-    "expect_intent": "data.ip_lookup",
+    "expect_intent": "devtools.ip_lookup",
     "expect_endpoint": {
       "origin": "https://abstract-ip-intelligence.mpp.paywithlocus.com",
       "method": "POST",
@@ -572,7 +572,7 @@
   {
     "id": "messy-whois-1",
     "query": "look up WHOIS and MX records for a domain before we onboard them",
-    "expect_intent": "data.whois_lookup",
+    "expect_intent": "devtools.whois_lookup",
     "expect_endpoint": {
       "origin": "https://dns-lookup.x402.paysponge.com",
       "method": "POST",

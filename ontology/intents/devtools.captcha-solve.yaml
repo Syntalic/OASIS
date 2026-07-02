@@ -11,6 +11,9 @@ aliases:
   - automated captcha solving
   - bypass human verification form
   - solve challenge before scraping
+  - hcaptcha solver
+  - cloudflare turnstile solver
+  - solve image challenge captcha
 consumes:
   - { entity: Webpage, role: identifier }
 produces:

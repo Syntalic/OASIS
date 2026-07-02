@@ -1,4 +1,4 @@
-id: data.book_lookup
+id: media.book_lookup
 label: Search book metadata and bibliographic records
 description: Book and publication metadata lookup by title, author, ISBN, or free-text query — bibliographic details, editions, and library catalog records. Use when an agent resolves book identity or enriches reading lists, not general web page scraping (web.scrape).
 aliases:
@@ -18,5 +18,5 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: data
+  domain: media
   action: lookup

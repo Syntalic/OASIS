@@ -2,7 +2,7 @@
   {
     "id": "shop-compare-1",
     "query": "cheapest airpods pro across retailers",
-    "expect_intent": "shop.compare_price",
+    "expect_intent": "commerce.compare_price",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -12,7 +12,7 @@
   {
     "id": "shop-compare-2",
     "query": "find the best price for a product",
-    "expect_intent": "shop.compare_price",
+    "expect_intent": "commerce.compare_price",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -22,7 +22,7 @@
   {
     "id": "shop-deals-1",
     "query": "find discounted electronics deals",
-    "expect_intent": "shop.find_deals",
+    "expect_intent": "commerce.find_deals",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -32,7 +32,7 @@
   {
     "id": "shop-drop-1",
     "query": "has the price dropped on this product recently",
-    "expect_intent": "shop.price_drop_alert",
+    "expect_intent": "commerce.price_drop_alert",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -42,7 +42,7 @@
   {
     "id": "shop-history-1",
     "query": "price history trend for a product",
-    "expect_intent": "shop.track_price_history",
+    "expect_intent": "commerce.track_price_history",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -52,7 +52,7 @@
   {
     "id": "marketing-landscape-1",
     "query": "competitive pricing landscape for a category",
-    "expect_intent": "shop.competitive_landscape",
+    "expect_intent": "commerce.competitive_landscape",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -62,7 +62,7 @@
   {
     "id": "analyst-inflation-1",
     "query": "track price inflation in grocery category",
-    "expect_intent": "shop.inflation_tracker",
+    "expect_intent": "commerce.inflation_tracker",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -142,7 +142,7 @@
   {
     "id": "shop-compare-3",
     "query": "lowest price on sony wh-1000xm5 headphones",
-    "expect_intent": "shop.compare_price",
+    "expect_intent": "commerce.compare_price",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -152,7 +152,7 @@
   {
     "id": "shop-compare-4",
     "query": "where can I buy this cheaper walmart or amazon",
-    "expect_intent": "shop.compare_price",
+    "expect_intent": "commerce.compare_price",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -162,7 +162,7 @@
   {
     "id": "shop-deals-2",
     "query": "show me on sale kitchen appliances",
-    "expect_intent": "shop.find_deals",
+    "expect_intent": "commerce.find_deals",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -172,7 +172,7 @@
   {
     "id": "analyst-inflation-2",
     "query": "how much have grocery prices increased this year",
-    "expect_intent": "shop.inflation_tracker",
+    "expect_intent": "commerce.inflation_tracker",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -333,7 +333,7 @@
   {
     "id": "analyst-inflation-tracker-1",
     "query": "Track category price inflation trends",
-    "expect_intent": "shop.inflation_tracker",
+    "expect_intent": "commerce.inflation_tracker",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -343,7 +343,7 @@
   {
     "id": "analyst-inflation-tracker-2",
     "query": "Track category price inflation trends via micropayment",
-    "expect_intent": "shop.inflation_tracker",
+    "expect_intent": "commerce.inflation_tracker",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -353,7 +353,7 @@
   {
     "id": "analyst-inflation-tracker-3",
     "query": "I need to Track category price inflation trends",
-    "expect_intent": "shop.inflation_tracker",
+    "expect_intent": "commerce.inflation_tracker",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -543,7 +543,7 @@
   {
     "id": "marketing-competitive-landscape-2",
     "query": "Competitive pricing landscape for a category via micropayment",
-    "expect_intent": "shop.competitive_landscape",
+    "expect_intent": "commerce.competitive_landscape",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -553,7 +553,7 @@
   {
     "id": "marketing-competitive-landscape-3",
     "query": "I need to Competitive pricing landscape for a category",
-    "expect_intent": "shop.competitive_landscape",
+    "expect_intent": "commerce.competitive_landscape",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -1160,7 +1160,7 @@
   {
     "id": "shopping-marketplace-1",
     "query": "use for product search",
-    "expect_intent": "shop.compare_price",
+    "expect_intent": "commerce.compare_price",
     "expect_endpoint": {
       "origin": "https://api.purch.xyz",
       "method": "POST",
@@ -1171,7 +1171,7 @@
   {
     "id": "shopping-marketplace-2",
     "query": "use for product search via micropayment",
-    "expect_intent": "shop.compare_price",
+    "expect_intent": "commerce.compare_price",
     "expect_endpoint": {
       "origin": "https://api.purch.xyz",
       "method": "POST",
@@ -1182,7 +1182,7 @@
   {
     "id": "shopping-marketplace-3",
     "query": "I need to use for product search",
-    "expect_intent": "shop.compare_price",
+    "expect_intent": "commerce.compare_price",
     "expect_endpoint": {
       "origin": "https://api.purch.xyz",
       "method": "POST",
@@ -2324,7 +2324,7 @@
   {
     "id": "search-civicinfo-1",
     "query": "Google Civic Information API",
-    "expect_intent": "data.gov_civic",
+    "expect_intent": "gov.civic",
     "expect_endpoint": {
       "origin": "https://civicinfo.google.gateway-402.com",
       "method": "GET",
@@ -2335,7 +2335,7 @@
   {
     "id": "search-civicinfo-2",
     "query": "Google Civic Information API via micropayment",
-    "expect_intent": "data.gov_civic",
+    "expect_intent": "gov.civic",
     "expect_endpoint": {
       "origin": "https://civicinfo.google.gateway-402.com",
       "method": "GET",
@@ -2346,7 +2346,7 @@
   {
     "id": "search-civicinfo-3",
     "query": "I need to Google Civic Information API",
-    "expect_intent": "data.gov_civic",
+    "expect_intent": "gov.civic",
     "expect_endpoint": {
       "origin": "https://civicinfo.google.gateway-402.com",
       "method": "GET",
@@ -2732,7 +2732,7 @@
   {
     "id": "data-abstract-ip-intelligence-1",
     "query": "lookup ip intelligence abstract ip intelligence data",
-    "expect_intent": "data.ip_lookup",
+    "expect_intent": "devtools.ip_lookup",
     "expect_endpoint": {
       "origin": "https://abstract-ip-intelligence.mpp.paywithlocus.com",
       "method": "POST",
@@ -2743,7 +2743,7 @@
   {
     "id": "data-abstract-ip-intelligence-2",
     "query": "lookup ip intelligence abstract ip intelligence data via micropayment",
-    "expect_intent": "data.ip_lookup",
+    "expect_intent": "devtools.ip_lookup",
     "expect_endpoint": {
       "origin": "https://abstract-ip-intelligence.mpp.paywithlocus.com",
       "method": "POST",
@@ -2754,7 +2754,7 @@
   {
     "id": "data-abstract-ip-intelligence-3",
     "query": "I need to lookup ip intelligence abstract ip intelligence data",
-    "expect_intent": "data.ip_lookup",
+    "expect_intent": "devtools.ip_lookup",
     "expect_endpoint": {
       "origin": "https://abstract-ip-intelligence.mpp.paywithlocus.com",
       "method": "POST",
@@ -3485,7 +3485,7 @@
   {
     "id": "storage-codestorage-1",
     "query": "Create a Git repository",
-    "expect_intent": "data.code_repository",
+    "expect_intent": "devtools.code_repository",
     "expect_endpoint": {
       "origin": "https://codestorage.mpp.tempo.xyz",
       "method": "POST",
@@ -3496,7 +3496,7 @@
   {
     "id": "storage-codestorage-2",
     "query": "Create a Git repository via micropayment",
-    "expect_intent": "data.code_repository",
+    "expect_intent": "devtools.code_repository",
     "expect_endpoint": {
       "origin": "https://codestorage.mpp.tempo.xyz",
       "method": "POST",
@@ -3507,7 +3507,7 @@
   {
     "id": "storage-codestorage-3",
     "query": "I need to Create a Git repository",
-    "expect_intent": "data.code_repository",
+    "expect_intent": "devtools.code_repository",
     "expect_endpoint": {
       "origin": "https://codestorage.mpp.tempo.xyz",
       "method": "POST",
@@ -4052,7 +4052,7 @@
   {
     "id": "data-govlaws-1",
     "query": "Recent Federal Register change events filtered by agency, citation, or lookback",
-    "expect_intent": "data.gov_civic",
+    "expect_intent": "gov.civic",
     "expect_endpoint": {
       "origin": "https://govlaws.ai",
       "method": "GET",
@@ -4063,7 +4063,7 @@
   {
     "id": "data-govlaws-2",
     "query": "Recent Federal Register change events filtered by agency, citation, or lookback via micropayment",
-    "expect_intent": "data.gov_civic",
+    "expect_intent": "gov.civic",
     "expect_endpoint": {
       "origin": "https://govlaws.ai",
       "method": "GET",
@@ -4074,7 +4074,7 @@
   {
     "id": "data-govlaws-3",
     "query": "I need to Recent Federal Register change events filtered by agency, citation, or lookback",
-    "expect_intent": "data.gov_civic",
+    "expect_intent": "gov.civic",
     "expect_endpoint": {
       "origin": "https://govlaws.ai",
       "method": "GET",
@@ -4217,7 +4217,7 @@
   {
     "id": "data-ipinfo-1",
     "query": "ip lite ipinfo ipinfo data",
-    "expect_intent": "data.ip_lookup",
+    "expect_intent": "devtools.ip_lookup",
     "expect_endpoint": {
       "origin": "https://ipinfo.mpp.paywithlocus.com",
       "method": "POST",
@@ -4228,7 +4228,7 @@
   {
     "id": "data-ipinfo-2",
     "query": "ip lite ipinfo ipinfo data via micropayment",
-    "expect_intent": "data.ip_lookup",
+    "expect_intent": "devtools.ip_lookup",
     "expect_endpoint": {
       "origin": "https://ipinfo.mpp.paywithlocus.com",
       "method": "POST",
@@ -4239,7 +4239,7 @@
   {
     "id": "data-ipinfo-3",
     "query": "I need to ip lite ipinfo ipinfo data",
-    "expect_intent": "data.ip_lookup",
+    "expect_intent": "devtools.ip_lookup",
     "expect_endpoint": {
       "origin": "https://ipinfo.mpp.paywithlocus.com",
       "method": "POST",
@@ -4286,7 +4286,7 @@
   {
     "id": "data-kicksdb-1",
     "query": "daily csv snapshot kicksdb kicksdb data",
-    "expect_intent": "shop.track_price_history",
+    "expect_intent": "commerce.track_price_history",
     "expect_endpoint": {
       "origin": "https://kicksdb.mpp.tempo.xyz",
       "method": "GET",
@@ -4297,7 +4297,7 @@
   {
     "id": "data-kicksdb-2",
     "query": "daily csv snapshot kicksdb kicksdb data via micropayment",
-    "expect_intent": "shop.track_price_history",
+    "expect_intent": "commerce.track_price_history",
     "expect_endpoint": {
       "origin": "https://kicksdb.mpp.tempo.xyz",
       "method": "GET",
@@ -4308,7 +4308,7 @@
   {
     "id": "data-kicksdb-3",
     "query": "I need to daily csv snapshot kicksdb kicksdb data",
-    "expect_intent": "shop.track_price_history",
+    "expect_intent": "commerce.track_price_history",
     "expect_endpoint": {
       "origin": "https://kicksdb.mpp.tempo.xyz",
       "method": "GET",
@@ -5153,7 +5153,7 @@
   {
     "id": "data-orth-didit-1",
     "query": "The AML Screening API allows you to screen individuals or companies against global watchlists and high-risk databases",
-    "expect_intent": "identity.gov_records",
+    "expect_intent": "gov.records",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/didit",
       "method": "POST",
@@ -6479,7 +6479,7 @@
   {
     "id": "data-spyfu-1",
     "query": "ad history research spyfu spyfu data",
-    "expect_intent": "shop.competitive_landscape",
+    "expect_intent": "commerce.competitive_landscape",
     "expect_endpoint": {
       "origin": "https://spyfu.mpp.tempo.xyz",
       "method": "GET",
@@ -6490,7 +6490,7 @@
   {
     "id": "data-spyfu-2",
     "query": "ad history research spyfu spyfu data via micropayment",
-    "expect_intent": "shop.competitive_landscape",
+    "expect_intent": "commerce.competitive_landscape",
     "expect_endpoint": {
       "origin": "https://spyfu.mpp.tempo.xyz",
       "method": "GET",
@@ -6501,7 +6501,7 @@
   {
     "id": "data-spyfu-3",
     "query": "I need to ad history research spyfu spyfu data",
-    "expect_intent": "shop.competitive_landscape",
+    "expect_intent": "commerce.competitive_landscape",
     "expect_endpoint": {
       "origin": "https://spyfu.mpp.tempo.xyz",
       "method": "GET",

@@ -39,7 +39,7 @@ links:
     note: same crypto asset family, differs by action (price lookup vs wallet holdings)
   - type: sibling_of
     to: blockchain.onchain_analytics
-    note: same crypto family, differs by action (price lookup vs analyze flows); was dangling related finance.crypto_market_data
+    note: same crypto family, differs by action (price lookup vs analyze flows)
   - type: sibling_of
     to: blockchain.rpc
     note: same crypto family, differs by action (price lookup vs execute JSON-RPC)

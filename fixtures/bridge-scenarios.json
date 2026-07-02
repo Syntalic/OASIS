@@ -8,7 +8,7 @@
       "source_domain": "analyst",
       "expect_intents": [
         "data.weather_forecast",
-        "data.gov_civic",
+        "gov.civic",
         "travel.place_reviews",
         "realestate.property_lookup"
       ],
@@ -38,7 +38,7 @@
       "description": "Agent holds a Domain — registration + DNS intel reachable cross-domain",
       "held_entities": [{ "entity": "Domain", "value": "acme.com" }],
       "source_domain": "marketing",
-      "expect_intents": ["data.whois_lookup", "cloud.domains"],
+      "expect_intents": ["devtools.whois_lookup", "cloud.domains"],
       "min_hits": 2,
       "must_cross_domain": true
     },

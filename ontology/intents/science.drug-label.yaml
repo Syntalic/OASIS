@@ -1,4 +1,4 @@
-id: data.drug_label
+id: science.drug_label
 label: Look up FDA drug labels and medication information
 description: Regulatory drug-label lookup — FDA-approved indications, dosage, warnings, adverse reactions, and manufacturer details by brand or generic name from official pharmaceutical registries. Use when an agent needs authoritative medication information, not open-web health articles (ai.web_research).
 aliases:
@@ -17,9 +17,9 @@ produces:
   - entity: ScientificEntity
     role: payload
 facets:
-  domain: data
+  domain: science
   action: lookup
 links:
   - type: sibling_of
-    to: data.scientific_lookup
+    to: science.scientific_lookup
     note: drug_label is regulatory medication labels; scientific_lookup is broader research entities

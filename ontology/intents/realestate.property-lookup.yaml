@@ -1,5 +1,5 @@
 id: realestate.property_lookup
-label: Search homes and rentals for sale
+label: Search homes for sale and rentals
 description: Find property listings, rental comps, and home value estimates in the US. Use when an agent needs residential sale or rental listings for a city, zip, or neighborhood to answer relocation, investment, or housing budget questions.
 aliases:
   - homes for sale
@@ -15,6 +15,8 @@ aliases:
   - rental listings by city
   - property search by zip code
   - list houses in a neighborhood
+  - home value estimate
+  - what is this home worth
 consumes:
   - { entity: Place, role: identifier }
 produces:

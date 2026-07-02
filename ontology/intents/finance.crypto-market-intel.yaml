@@ -1,15 +1,14 @@
 id: finance.crypto_market_intel
-label: Get crypto market intelligence and trading context
-description: Crypto market intelligence beyond a single quote — trending altcoins, trade history, bridge and withdraw flows, cross-chain token context, and agent-oriented trading snapshots. Use when an agent monitors market narrative or portfolio activity, not raw protocol TVL (blockchain.defi_analytics) or actionable trade signals (finance.trading_signals).
+label: Get crypto market intelligence and sentiment
+description: Crypto market intelligence beyond a single quote — trending altcoins, market sentiment and momentum, trade history, and cross-chain token context. Use when an agent monitors market narrative or portfolio activity, not raw protocol TVL (blockchain.defi_analytics) or actionable trade signals (finance.trading_signals).
 aliases:
   - trending altcoins list
   - crypto trade history lookup
-  - bridge tokens cross-chain
-  - withdraw tokens from wallet
   - crypto transaction history API
   - altcoin trending scanner
-  - cross-chain bridge intelligence
-  - crypto market snapshot for agents
+  - crypto market sentiment
+  - crypto market overview
+  - trending crypto tokens
 consumes:
   - entity: Query
     role: identifier

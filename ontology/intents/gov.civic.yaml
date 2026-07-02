@@ -1,6 +1,6 @@
-id: data.gov_civic
+id: gov.civic
 label: Look up US government and civic data for a location
-description: Official government and civic information tied to a US address or location — legislative district and sitting representatives, flood-zone designation, jurisdiction, and federal or regulatory status. Use when an agent enriches a place with government data, not when it just needs the map coordinates of an address (maps.geocode) or nearby businesses (maps.places).
+description: Official government and civic information tied to a US address or location — legislative district and sitting representatives, flood-zone designation, jurisdiction, federal or regulatory status, and environmental context (EPA Toxic Release Inventory, county-level pollution exposure). Use when an agent enriches a place with government data, not when it just needs the map coordinates of an address (maps.geocode) or nearby businesses (maps.places).
 aliases:
   - legislative district for an address
   - who are my elected representatives
@@ -23,7 +23,7 @@ produces:
   - entity: GovernmentService
     role: payload
 facets:
-  domain: data
+  domain: gov
   action: lookup
 links:
   - type: fed_by

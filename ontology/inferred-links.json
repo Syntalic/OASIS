@@ -54,7 +54,7 @@
     {
       "from": "cloud.domains",
       "type": "pipes_to",
-      "to": "data.whois_lookup",
+      "to": "devtools.whois_lookup",
       "why": "verify DNS and registration of the domain",
       "votes": 3
     },
@@ -136,7 +136,7 @@
       "votes": 3
     },
     {
-      "from": "data.whois_lookup",
+      "from": "devtools.whois_lookup",
       "type": "pipes_to",
       "to": "identity.company_enrich",
       "why": "enrich the company owning the domain",
@@ -166,7 +166,7 @@
     {
       "from": "maps.geocode",
       "type": "pipes_to",
-      "to": "data.gov_civic",
+      "to": "gov.civic",
       "why": "look up civic data for the coordinates",
       "votes": 3
     },
@@ -178,16 +178,16 @@
       "votes": 3
     },
     {
-      "from": "shop.competitive_landscape",
+      "from": "commerce.competitive_landscape",
       "type": "pipes_to",
-      "to": "shop.compare_price",
+      "to": "commerce.compare_price",
       "why": "compare a specific SKU across retailers",
       "votes": 3
     },
     {
       "from": "realestate.property_lookup",
       "type": "pipes_to",
-      "to": "data.gov_civic",
+      "to": "gov.civic",
       "why": "check flood zone and district for a property",
       "votes": 3
     },
@@ -304,7 +304,7 @@
       "votes": 2
     },
     {
-      "from": "data.ip_lookup",
+      "from": "devtools.ip_lookup",
       "type": "pipes_to",
       "to": "maps.geocode",
       "why": "reverse-geocode the IP location coordinates",
@@ -339,14 +339,14 @@
       "votes": 2
     },
     {
-      "from": "data.scientific_lookup",
+      "from": "science.scientific_lookup",
       "type": "pipes_to",
       "to": "ai.web_research",
       "why": "deepen entity facts with cited research",
       "votes": 2
     },
     {
-      "from": "data.scientific_lookup",
+      "from": "science.scientific_lookup",
       "type": "pipes_to",
       "to": "compute.compute_answer",
       "why": "compute over resolved scientific constants",
@@ -367,9 +367,9 @@
       "votes": 2
     },
     {
-      "from": "data.whois_lookup",
+      "from": "devtools.whois_lookup",
       "type": "pipes_to",
-      "to": "data.ip_lookup",
+      "to": "devtools.ip_lookup",
       "why": "investigate the resolved host IP",
       "votes": 2
     },
@@ -479,44 +479,44 @@
       "votes": 2
     },
     {
-      "from": "shop.compare_price",
+      "from": "commerce.compare_price",
       "type": "pipes_to",
-      "to": "shop.price_drop_alert",
+      "to": "commerce.price_drop_alert",
       "why": "watch the cheapest SKU for a markdown",
       "votes": 2
     },
     {
-      "from": "shop.compare_price",
+      "from": "commerce.compare_price",
       "type": "pipes_to",
-      "to": "shop.track_price_history",
+      "to": "commerce.track_price_history",
       "why": "check if the current price is historically low",
       "votes": 2
     },
     {
-      "from": "shop.find_deals",
+      "from": "commerce.find_deals",
       "type": "pipes_to",
-      "to": "shop.compare_price",
+      "to": "commerce.compare_price",
       "why": "compare a discounted item across retailers",
       "votes": 2
     },
     {
-      "from": "shop.find_deals",
+      "from": "commerce.find_deals",
       "type": "pipes_to",
-      "to": "shop.track_price_history",
+      "to": "commerce.track_price_history",
       "why": "verify a deal against historical pricing",
       "votes": 2
     },
     {
-      "from": "shop.price_drop_alert",
+      "from": "commerce.price_drop_alert",
       "type": "pipes_to",
-      "to": "shop.compare_price",
+      "to": "commerce.compare_price",
       "why": "find the cheapest store after a drop",
       "votes": 2
     },
     {
-      "from": "shop.track_price_history",
+      "from": "commerce.track_price_history",
       "type": "pipes_to",
-      "to": "shop.compare_price",
+      "to": "commerce.compare_price",
       "why": "compare current prices after reviewing history",
       "votes": 2
     },
@@ -584,7 +584,7 @@
       "votes": 1
     },
     {
-      "from": "shop.price_drop_alert",
+      "from": "commerce.price_drop_alert",
       "type": "pipes_to",
       "to": "comms.send_sms",
       "why": "text the user when a price drops",
@@ -612,30 +612,30 @@
       "votes": 2
     },
     {
-      "from": "shop.track_price_history",
+      "from": "commerce.track_price_history",
       "type": "narrower_of",
-      "to": "shop.inflation_tracker",
+      "to": "commerce.inflation_tracker",
       "why": "product history rolls up to category inflation",
       "votes": 2
     },
     {
-      "from": "shop.compare_price",
+      "from": "commerce.compare_price",
       "type": "narrower_of",
-      "to": "shop.competitive_landscape",
+      "to": "commerce.competitive_landscape",
       "why": "single-SKU compare narrows category landscape",
       "votes": 1
     },
     {
-      "from": "shop.find_deals",
+      "from": "commerce.find_deals",
       "type": "narrower_of",
-      "to": "shop.competitive_landscape",
+      "to": "commerce.competitive_landscape",
       "why": "deals narrow category to discounted items",
       "votes": 1
     },
     {
-      "from": "shop.price_drop_alert",
+      "from": "commerce.price_drop_alert",
       "type": "narrower_of",
-      "to": "shop.track_price_history",
+      "to": "commerce.track_price_history",
       "why": "recent drop is a slice of full price history",
       "votes": 1
     },
@@ -661,7 +661,7 @@
       "votes": 3
     },
     {
-      "from": "shop.inflation_tracker",
+      "from": "commerce.inflation_tracker",
       "type": "sibling_of",
       "to": "finance.economic_data",
       "why": "both track price-level and macro trends",
@@ -682,16 +682,16 @@
       "votes": 3
     },
     {
-      "from": "data.gov_civic",
+      "from": "gov.civic",
       "type": "sibling_of",
       "to": "data.weather_forecast",
       "why": "both are location-keyed lookups",
       "votes": 3
     },
     {
-      "from": "data.ip_lookup",
+      "from": "devtools.ip_lookup",
       "type": "sibling_of",
-      "to": "data.whois_lookup",
+      "to": "devtools.whois_lookup",
       "why": "both resolve network ownership intelligence",
       "votes": 3
     },
@@ -717,14 +717,14 @@
       "votes": 2
     },
     {
-      "from": "data.code_repository",
+      "from": "devtools.code_repository",
       "type": "sibling_of",
       "to": "identity.company_enrich",
       "why": "both enrich an org from public signals",
       "votes": 2
     },
     {
-      "from": "data.code_repository",
+      "from": "devtools.code_repository",
       "type": "sibling_of",
       "to": "data.job_search",
       "why": "both surface hiring and engineering signals",
@@ -733,12 +733,12 @@
     {
       "from": "compute.compute_answer",
       "type": "sibling_of",
-      "to": "data.scientific_lookup",
+      "to": "science.scientific_lookup",
       "why": "both resolve precise reference facts",
       "votes": 2
     },
     {
-      "from": "data.gov_civic",
+      "from": "gov.civic",
       "type": "sibling_of",
       "to": "realestate.property_lookup",
       "why": "both resolve location-tied US property context",

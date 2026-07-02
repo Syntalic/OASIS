@@ -37,7 +37,7 @@ Prefer capability matches over raw endpoint matches when both are available.
 Get full metadata for a single endpoint or all endpoints satisfying an intent.
 
 ```bash
-capindex resolve --intent shop.compare_price
+capindex resolve --intent commerce.compare_price
 capindex resolve --endpoint <sha256-id>
 ```
 

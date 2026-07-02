@@ -1,5 +1,5 @@
 id: finance.stock_quote
-label: Look up stock price quotes and market data
+label: Look up stock price quotes by ticker
 description: Current and recent equity quotes, prices, and trading metadata by ticker symbol. Use when an agent answers stock price questions, monitors portfolios, or grounds financial analysis in live market data.
 aliases:
   - stock price

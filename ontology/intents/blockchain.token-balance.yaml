@@ -1,6 +1,6 @@
 id: blockchain.token_balance
 label: Look up wallet token balances
-description: On-chain token and wallet balance lookups for EVM wallets. Use when an agent needs holdings, ERC-1155 balances, or wallet inventory before transfers, portfolio checks, or treasury reporting.
+description: On-chain token and wallet balance lookups across EVM and non-EVM chains. Use when an agent needs ERC-20 holdings, multi-chain portfolio value in USD, or wallet inventory before transfers, portfolio checks, or treasury reporting.
 aliases:
   - ERC-1155 balance
   - wallet holdings
@@ -8,14 +8,17 @@ aliases:
   - how many tokens wallet holds
   - wallet token balance
   - check wallet holdings on chain
-  - ERC1155 token count
   - what tokens does this wallet hold
   - on-chain balance lookup
+  - ERC-20 token balance
+  - wallet portfolio value in USD
+  - multi-chain wallet balances
+  - how much USDC does this wallet hold
 consumes:
   - entity: WalletAddress
     role: identifier
 produces:
-  - entity: MarketQuote
+  - entity: Answer
     role: payload
     format: json
 facets:
