@@ -18,6 +18,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
+import { gunzipSync } from "node:zlib";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");
@@ -30,15 +31,40 @@ const candidates = [
   resolve(root, "dist", "index.json"),
 ].filter(Boolean);
 
-const indexPath = candidates.find((p) => existsSync(p));
-if (!indexPath) {
-  console.error("Could not find an OASIS index.json. Tried:\n" + candidates.map((c) => "  " + c).join("\n"));
-  console.error("\nBuild it in the OASIS repo with `pnpm run build`, or pass a path explicitly.");
-  process.exit(1);
+// Source the index: a local built dist/index.json when present (local dev), otherwise the PINNED
+// release asset recorded in dist-snapshot.lock.json. This is what makes the deployed dashboard
+// auto-refresh on a new index release — publish.sh commits the lock, Vercel rebuilds, and this
+// fetches the just-pinned index. Override with OASIS_INDEX (local path) or OASIS_INDEX_URL (gz/json URL).
+async function loadIndex() {
+  const local = candidates.find((p) => existsSync(p));
+  if (local) {
+    console.log("Reading index (local):", local);
+    return JSON.parse(readFileSync(local, "utf8"));
+  }
+  let url = process.env.OASIS_INDEX_URL;
+  if (!url) {
+    const lockPath = resolve(root, "..", "dist-snapshot.lock.json");
+    if (!existsSync(lockPath)) {
+      console.error("No local index found and no dist-snapshot.lock.json at " + lockPath);
+      console.error("Build the index (`pnpm run build`) or set OASIS_INDEX / OASIS_INDEX_URL.");
+      process.exit(1);
+    }
+    const lock = JSON.parse(readFileSync(lockPath, "utf8"));
+    const repo = process.env.OASIS_REPO || "Syntalic/OASIS";
+    url = `https://github.com/${repo}/releases/download/${lock.release_tag}/${lock.asset || "index.json.gz"}`;
+  }
+  console.log("No local index; fetching pinned release:", url);
+  const res = await fetch(url, { redirect: "follow" });
+  if (!res.ok) {
+    console.error(`Failed to fetch pinned index (${res.status} ${res.statusText}): ${url}`);
+    process.exit(1);
+  }
+  const buf = Buffer.from(await res.arrayBuffer());
+  const json = url.endsWith(".gz") ? gunzipSync(buf).toString("utf8") : buf.toString("utf8");
+  return JSON.parse(json);
 }
 
-console.log("Reading index:", indexPath);
-const d = JSON.parse(readFileSync(indexPath, "utf8"));
+const d = await loadIndex();
 
 const hostOf = (origin) => {
   try {

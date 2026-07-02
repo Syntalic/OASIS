@@ -107,13 +107,24 @@ const DOMAIN_META: Record<string, Omit<DomainMeta, "id">> = {
   devtools: { label: "Dev Tools", color: "#94a3b8", soft: "rgba(148,163,184,0.14)", blurb: "Developer utilities" },
   storage: { label: "Storage", color: "#5eead4", soft: "rgba(94,234,212,0.14)", blurb: "File & object storage" },
   search: { label: "Search", color: "#fcd34d", soft: "rgba(252,211,77,0.14)", blurb: "Search & retrieval" },
-  crypto: { label: "Crypto", color: "#a3e635", soft: "rgba(163,230,53,0.14)", blurb: "On-chain & web3 data" },
+  blockchain: { label: "Blockchain", color: "#a3e635", soft: "rgba(163,230,53,0.14)", blurb: "Chain infra, protocols & on-chain data" },
   agent: { label: "Agent", color: "#e879f9", soft: "rgba(232,121,249,0.14)", blurb: "Agent memory & marketplaces" },
   other: { label: "Other", color: "#9ca3af", soft: "rgba(156,163,184,0.14)", blurb: "Uncategorized" },
 };
 
+// Un-curated domains (e.g. a domain the ontology adds before the palette is hand-updated) get a
+// stable, distinct label + color derived from the id — so the dashboard renders every domain
+// correctly on its own instead of collapsing new ones into "Other".
+function derivedMeta(id: string): Omit<DomainMeta, "id"> {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (Math.imul(h, 31) + id.charCodeAt(i)) >>> 0;
+  const hue = h % 360;
+  const label = id.replace(/[_-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  return { label, color: `hsl(${hue} 68% 66%)`, soft: `hsl(${hue} 68% 66% / 0.14)`, blurb: "" };
+}
+
 export function domainMeta(id: string): DomainMeta {
-  const m = DOMAIN_META[id] ?? DOMAIN_META.other;
+  const m = DOMAIN_META[id] ?? derivedMeta(id);
   return { id, ...m };
 }
 

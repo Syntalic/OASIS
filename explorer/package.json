@@ -6,7 +6,7 @@
     "dev": "next dev",
     "dev:all": "concurrently -k -n mcp,web -c magenta,cyan \"pnpm mcp:local\" \"next dev\"",
     "mcp:local": "bash scripts/local-mcp.sh",
-    "build": "next build",
+    "build": "node scripts/build-dataset.mjs && next build",
     "start": "next start",
     "lint": "eslint",
     "data": "node scripts/build-dataset.mjs"
