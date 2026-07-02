@@ -17,9 +17,9 @@ and CLI.
 
 | In scope | Out of scope (for now) |
 |----------|-------------------------|
-| Ontology, index build, eval suite, traversal spec | MCP server |
-| Reference CLI (`capindex`) | Hosted discovery service |
-| Open GitHub repo + community intents | Monetization / paid tiers |
+| Ontology, index build, eval suite, traversal spec | Hosted discovery service (as a product / SLA) |
+| Reference tooling — `capindex` CLI + reference MCP server (`mcp/`, out-of-tree) | Monetization / paid tiers |
+| Open GitHub repo + community intents | — |
 
 Agent runtimes consume `dist/index.json`, capabilities, and the traversal protocol — or
 embed search/resolve logic directly.
@@ -30,7 +30,7 @@ embed search/resolve logic directly.
 2. **No monetization** — No charge for discovery, search, or resolve. No planned toll on the protocol.
 3. **Neutral discovery** — Task intents describe what agents want to do. Multiple endpoints may satisfy the same intent. OASIS does not pick commercial winners at runtime.
 4. **Contributor-friendly** — The main lever for improvement is **new task intents** (YAML + eval queries). Adding your endpoint to `satisfies` for an existing task is welcome when it genuinely fits.
-5. **Reference CLI only** — `capindex` demonstrates the protocol. Production agents may use the library artifacts directly.
+5. **Reference tooling, not the standard** — `capindex` (CLI) and the `mcp/` server both demonstrate the protocol; they're out-of-tree reference implementations, not part of the normative standard. Production agents may use the library artifacts directly.
 
 ## Maintainer role
 

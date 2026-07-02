@@ -22,7 +22,7 @@
 
   { "id": "rel-compare-price", "kind": "related", "query": "compare airpods prices across stores", "expect_intents": ["shop.compare_price"], "expect_related": ["shop.find_deals", "shop.track_price_history"] },
   { "id": "rel-send-email", "kind": "related", "query": "send an outbound email to a lead", "expect_intents": ["comms.send_email"], "expect_related": ["comms.send_sms", "comms.send_fax", "comms.voice_call"] },
-  { "id": "rel-crypto", "kind": "related", "query": "what is ethereum trading at right now", "expect_intents": ["finance.crypto_spot_price"], "expect_related": ["finance.token_balance", "finance.onchain_analytics", "finance.stock_quote"] },
+  { "id": "rel-crypto", "kind": "related", "query": "what is ethereum trading at right now", "expect_intents": ["finance.crypto_spot_price"], "expect_related": ["finance.token_balance", "blockchain.onchain_analytics", "finance.stock_quote"] },
   { "id": "rel-stt", "kind": "related", "query": "transcribe this audio recording to text", "expect_intents": ["ai.speech_to_text"], "expect_related": ["ai.text_to_speech"] },
   { "id": "rel-places", "kind": "related", "query": "find a place to eat near downtown Seattle", "expect_intents": ["maps.places"], "expect_related": ["travel.place_reviews"] },
   { "id": "rel-websearch", "kind": "related", "query": "search the web for organic result links", "expect_intents": ["search.web"], "expect_related": ["ai.web_research"] },

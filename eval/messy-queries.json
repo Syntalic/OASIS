@@ -282,7 +282,7 @@
   {
     "id": "messy-nansen-1",
     "query": "track what smart-money wallets are accumulating on chain",
-    "expect_intent": "finance.onchain_analytics",
+    "expect_intent": "blockchain.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://api.nansen.ai",
       "method": "POST",
@@ -292,7 +292,7 @@
   {
     "id": "messy-nansen-2",
     "query": "on-chain fund flow analytics for labeled wallets",
-    "expect_intent": "finance.onchain_analytics",
+    "expect_intent": "blockchain.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://api.nansen.ai",
       "method": "POST",
@@ -302,7 +302,7 @@
   {
     "id": "messy-rpc-1",
     "query": "JSON-RPC call into Solana mainnet without running a node",
-    "expect_intent": "compute.blockchain_rpc",
+    "expect_intent": "blockchain.rpc",
     "expect_endpoint": {
       "origin": "https://x402.quicknode.com",
       "method": "POST",
@@ -312,7 +312,7 @@
   {
     "id": "messy-rpc-2",
     "query": "submit a solana getBalance style RPC request",
-    "expect_intent": "compute.blockchain_rpc",
+    "expect_intent": "blockchain.rpc",
     "expect_endpoint": {
       "origin": "https://x402.quicknode.com",
       "method": "POST",
@@ -627,6 +627,196 @@
       "origin": "https://alphavantage.mpp.paywithlocus.com",
       "method": "POST",
       "path": "/alphavantage/global-quote"
+    }
+  },
+  {
+    "id": "messy-gensecret-1",
+    "query": "I need a fresh v4 uuid for this database record",
+    "expect_intent": "devtools.generate_secret",
+    "expect_endpoint": {
+      "origin": "https://httpay.xyz",
+      "method": "GET",
+      "path": "/api/uuid"
+    }
+  },
+  {
+    "id": "messy-gensecret-2",
+    "query": "spin up a strong 20-character random password for a new account",
+    "expect_intent": "devtools.generate_secret",
+    "expect_endpoint": {
+      "origin": "https://api.x402node.dev",
+      "method": "GET",
+      "path": "/generate/password"
+    }
+  },
+  {
+    "id": "messy-gensecret-3",
+    "query": "give me a sortable unique id to stamp on each event",
+    "expect_intent": "devtools.generate_secret",
+    "expect_endpoint": {
+      "origin": "https://agent402.tools",
+      "method": "GET",
+      "path": "/api/ulid"
+    }
+  },
+  {
+    "id": "messy-chainmetrics-1",
+    "query": "what's gas running at on base right now",
+    "expect_intent": "blockchain.network_metrics",
+    "expect_endpoint": {
+      "origin": "https://x402.agentutility.ai",
+      "method": "POST",
+      "path": "/gas-price"
+    }
+  },
+  {
+    "id": "messy-chainmetrics-2",
+    "query": "how busy is the base network right now, whats the tps and block time",
+    "expect_intent": "blockchain.network_metrics",
+    "expect_endpoint": {
+      "origin": "https://httpay.xyz",
+      "method": "GET",
+      "path": "/api/base-stats"
+    }
+  },
+  {
+    "id": "messy-chainmetrics-3",
+    "query": "estimate the current eip-1559 priority fee before I broadcast a tx",
+    "expect_intent": "blockchain.network_metrics",
+    "expect_endpoint": {
+      "origin": "https://x402.agentutility.ai",
+      "method": "POST",
+      "path": "/gas-price"
+    }
+  },
+  {
+    "id": "messy-moderate-1",
+    "query": "does this user comment cross the line into hate speech",
+    "expect_intent": "ai.moderate_content",
+    "expect_endpoint": {
+      "origin": "https://2s.io",
+      "method": "POST",
+      "path": "/api/ai/moderate"
+    }
+  },
+  {
+    "id": "messy-moderate-2",
+    "query": "screen this caption for anything nsfw before we publish it",
+    "expect_intent": "ai.moderate_content",
+    "expect_endpoint": {
+      "origin": "https://x402.agentutility.ai",
+      "method": "POST",
+      "path": "/moderate-content"
+    }
+  },
+  {
+    "id": "messy-moderate-3",
+    "query": "flag toxic or abusive language in these product reviews",
+    "expect_intent": "ai.moderate_content",
+    "expect_endpoint": {
+      "origin": "https://2s.io",
+      "method": "POST",
+      "path": "/api/ai/moderate"
+    }
+  },
+  {
+    "id": "messy-pii-1",
+    "query": "strip out any names, emails, or phone numbers from this transcript",
+    "expect_intent": "data.pii_detect",
+    "expect_endpoint": {
+      "origin": "https://agent402.tools",
+      "method": "POST",
+      "path": "/api/redact"
+    }
+  },
+  {
+    "id": "messy-pii-2",
+    "query": "does this support ticket contain personal data we need to mask",
+    "expect_intent": "data.pii_detect",
+    "expect_endpoint": {
+      "origin": "https://2s.io",
+      "method": "POST",
+      "path": "/api/ai/pii"
+    }
+  },
+  {
+    "id": "messy-pii-3",
+    "query": "scrub PII from these logs before I feed them to the model",
+    "expect_intent": "data.pii_detect",
+    "expect_endpoint": {
+      "origin": "https://x402.agentutility.ai",
+      "method": "POST",
+      "path": "/detect-pii"
+    }
+  },
+  {
+    "id": "messy-transcode-1",
+    "query": "pull the audio out of this mp4 as an mp3",
+    "expect_intent": "media.transcode",
+    "expect_endpoint": {
+      "origin": "https://x402.agentutility.ai",
+      "method": "POST",
+      "path": "/mp4-to-mp3"
+    }
+  },
+  {
+    "id": "messy-transcode-2",
+    "query": "auto-generate captions for this video clip",
+    "expect_intent": "media.transcode",
+    "expect_endpoint": {
+      "origin": "https://x402.agentutility.ai",
+      "method": "POST",
+      "path": "/video-to-subtitles"
+    }
+  },
+  {
+    "id": "messy-fileconvert-1",
+    "query": "turn this json config into yaml",
+    "expect_intent": "devtools.file_convert",
+    "expect_endpoint": {
+      "origin": "https://x402.agentutility.ai",
+      "method": "POST",
+      "path": "/json-yaml"
+    }
+  },
+  {
+    "id": "messy-fileconvert-2",
+    "query": "convert this png to webp and shrink it down",
+    "expect_intent": "devtools.file_convert",
+    "expect_endpoint": {
+      "origin": "https://vibesprings.net",
+      "method": "POST",
+      "path": "/api/convert-image"
+    }
+  },
+  {
+    "id": "messy-fileconvert-3",
+    "query": "I have a yaml file, I need it back as json",
+    "expect_intent": "devtools.file_convert",
+    "expect_endpoint": {
+      "origin": "https://api.x402node.dev",
+      "method": "GET",
+      "path": "/convert/json-yaml"
+    }
+  },
+  {
+    "id": "messy-tokencount-1",
+    "query": "how many tokens will this prompt cost on gpt-4o",
+    "expect_intent": "ai.token_count",
+    "expect_endpoint": {
+      "origin": "https://api.x402node.dev",
+      "method": "POST",
+      "path": "/ai/token-count"
+    }
+  },
+  {
+    "id": "messy-tokencount-2",
+    "query": "count the tokens in this string so I stay under my context budget",
+    "expect_intent": "ai.token_count",
+    "expect_endpoint": {
+      "origin": "https://x402.shizu.me",
+      "method": "POST",
+      "path": "/count"
     }
   }
 ]

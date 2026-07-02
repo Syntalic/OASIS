@@ -1,6 +1,6 @@
-id: finance.defi_analytics
+id: blockchain.defi_analytics
 label: Get DeFi protocol and yield analytics
-description: DeFi protocol directory data — TVL, yields, protocol metadata, chain-level DeFi stats, and liquidity analytics. Use when an agent researches protocols and DeFi markets, not wallet-level flows (finance.onchain_analytics) or single-token spot prices (finance.crypto_spot_price).
+description: DeFi protocol directory data — TVL, yields, protocol metadata, chain-level DeFi stats, and liquidity analytics. Use when an agent researches protocols and DeFi markets, not wallet-level flows (blockchain.onchain_analytics) or single-token spot prices (finance.crypto_spot_price).
 aliases:
   - DeFi protocol TVL lookup
   - DeFiLlama protocols list
@@ -19,12 +19,12 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: finance
+  domain: blockchain
   action: lookup
   freshness: recent
 links:
   - type: sibling_of
-    to: finance.onchain_analytics
+    to: blockchain.onchain_analytics
     note: defi_analytics is protocol/market aggregates; onchain_analytics is wallet and smart-money flows
   - type: sibling_of
     to: finance.crypto_spot_price

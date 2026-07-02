@@ -1,0 +1,28 @@
+id: data.pii_detect
+label: Detect and redact PII in text
+description: Find and redact personally identifiable information — names, emails, phone numbers, SSNs, credit cards, IBANs, and IP addresses — for privacy, GDPR or HIPAA compliance, and safe logging. Use when an agent sanitizes or classifies sensitive text, not email deliverability checks (data.email_validate).
+aliases:
+  - detect PII
+  - redact PII
+  - PII detection API
+  - anonymize personal data
+  - remove personal information from text
+  - mask emails and phone numbers
+  - scrub sensitive data
+  - GDPR redaction
+  - de-identify text
+  - sanitize text before logging
+  - find personally identifiable information
+consumes:
+  - entity: Text
+    role: identifier
+produces:
+  - entity: Text
+    role: payload
+facets:
+  domain: data
+  action: transform
+links:
+  - type: pipes_to
+    to: ai.llm_complete
+    note: redact PII before sending text to an LLM

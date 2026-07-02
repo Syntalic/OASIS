@@ -44,10 +44,10 @@ The integration shape is small and independent of how the data is sourced:
    source. Absent until ingested.
 2. **An offline enrichment pass** that mirrors `src/enrich-facets.ts`: read the built
    `dist/index.json`, attach the per-origin `usage` snapshot by matching the service's origin
-   (`canonicalOrigin` in `src/origin-aliases.ts`), and rewrite `dist`. Best-effort — a fetch
+   (`canonicalOrigin` in `src/ingest/origin-aliases.ts`), and rewrite `dist`. Best-effort — a fetch
    failure must never break the build.
 3. **A popularity term in resolve ranking** — an additive signal in
-   `resolveEndpointsForQuery` (see the marked extension point in `src/select-policy.ts`),
+   `resolveEndpointsForQuery` (see the marked extension point in `src/bind/select-policy.ts`),
    **gated by task fit** so it only decides among comparably on-task endpoints. Roughly:
    log-compressed volume + buyers, times a trend factor when windowed data exists. Tune the
    weight against the eval gate.
@@ -62,7 +62,7 @@ The integration shape is small and independent of how the data is sourced:
    curated `eval:compare` discover@3 must hold.
 
 ## References
-- Origin matching: `src/origin-aliases.ts` (`canonicalOrigin`)
+- Origin matching: `src/ingest/origin-aliases.ts` (`canonicalOrigin`)
 - Enrichment pattern to mirror: `src/enrich-facets.ts`
-- Ranking extension point: `src/select-policy.ts` → `resolveEndpointsForQuery`
+- Ranking extension point: `src/bind/select-policy.ts` → `resolveEndpointsForQuery`
 - Ingest adapter pattern: `src/ingest/mpp-catalog.ts`

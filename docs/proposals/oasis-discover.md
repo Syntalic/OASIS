@@ -125,8 +125,8 @@ follow-up call to get cross-domain next steps about what you now hold."*
 ## Migration / compatibility
 - Hosted MCP (`mcp.oasisindex.org`) is the main consumer; churn is low. The deprecated aliases forward to
   the internals for one release, then drop.
-- **Remaining:** update the agent skill (`mcp/skills/oasis.md`), README, and CLAUDE.md to the
-  `discover`-first flow — the docs still describe the old tools; the aliases keep them working meanwhile.
+- **Done:** the agent skill (`mcp/skills/oasis.md`), the MCP README, and CLAUDE.md now lead with the
+  `discover`-first flow; the deprecated aliases keep older callers working meanwhile.
 
 ## Examples
 ```jsonc

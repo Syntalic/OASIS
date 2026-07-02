@@ -1,4 +1,4 @@
-id: finance.onchain_analytics
+id: blockchain.onchain_analytics
 label: Track on-chain smart money and wallet analytics
 description: On-chain analytics for smart-money flows, wallet profiling, token holder metrics, and fund movements. Use when an agent researches crypto wallets, token accumulation, or labeled on-chain activity.
 aliases:
@@ -23,10 +23,10 @@ produces:
     role: payload
     format: json
 facets:
-  domain: finance
+  domain: blockchain
   action: analyze
   freshness: recent
 links:
   - type: sibling_of
-    to: compute.blockchain_rpc
+    to: blockchain.rpc
     note: same on-chain family, differs by action (analyze flows vs execute JSON-RPC)

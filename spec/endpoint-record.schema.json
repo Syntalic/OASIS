@@ -77,7 +77,8 @@
             "devtools",
             "storage",
             "search",
-            "crypto"
+            "crypto",
+            "blockchain"
           ]
         },
         "primary_entity": { "type": "string" },

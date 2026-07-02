@@ -120,7 +120,7 @@ best-of-many ranking, and token growth. Thesis + evidence: **[docs/scaling.md](d
 | Artifact | Purpose |
 |---|---|
 | `ontology/intents/` | Curated task capabilities (what agents want to do) |
-| `dist/index.json` (+ `endpoints` / `capabilities` / `providers`) | The unified paid-endpoint index |
+| `dist/index.json` (+ `endpoints` / `capabilities`) | The unified paid-endpoint index |
 | `spec/` | JSON schemas + [agent traversal protocol](spec/traversal.md) |
 | `mcp/` | Reference MCP server + agent probe + A/B harness (any provider) |
 
@@ -128,8 +128,8 @@ best-of-many ranking, and token growth. Thesis + evidence: **[docs/scaling.md](d
 
 ```bash
 git clone https://github.com/Syntalic/OASIS.git && cd OASIS && pnpm install
-pnpm run build    # federated ingest → quality gate → semantic bind (~22k gated endpoints; needs network; GOOGLE_API_KEY for gemini binding)
-pnpm run embed    # vector index (56 curated intents, gemini-embedding-001)
+pnpm run build    # federated ingest → quality gate → semantic bind (~19k gated endpoints; needs network; GOOGLE_API_KEY for gemini binding)
+pnpm run embed    # vector index (80 curated intents, gemini-embedding-001)
 pnpm test
 ```
 

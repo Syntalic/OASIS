@@ -1,0 +1,29 @@
+id: ai.token_count
+label: Count LLM tokens for a prompt
+description: Tokenize text and count LLM tokens (BPE or tiktoken) for GPT, Claude, and Llama models to budget context windows and estimate request cost. Use when an agent measures prompt size before a completion, not running the completion itself (ai.llm_complete).
+aliases:
+  - count tokens
+  - token counter
+  - how many tokens
+  - tokenize text
+  - tiktoken token count
+  - BPE token count
+  - GPT token count
+  - estimate prompt tokens
+  - context window budget
+  - token count and cost estimate
+  - llm token counter
+consumes:
+  - entity: Text
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+    format: json
+facets:
+  domain: ai
+  action: analyze
+links:
+  - type: sibling_of
+    to: ai.llm_complete
+    note: token_count sizes a prompt in tokens; llm_complete runs the completion — separate capabilities

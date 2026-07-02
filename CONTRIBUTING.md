@@ -6,7 +6,7 @@ The highest-impact contribution is **new agent task intents**. See [GOVERNANCE.m
 ## Add a capability intent
 
 1. Create `ontology/intents/<domain>.<name>.yaml` with **task-only** fields: `id`, `label`, `description`, `aliases` (no vendor or product names in `id` — e.g. `ai.web_research` not `ai_ml.perplexity`; no `satisfies`)
-2. Add a matcher in `src/intent-match.ts` so the index build can link endpoints API-agnostically
+2. Register the new `id` in the `CURATED_INTENT_IDS` array in `src/search/intent-match.ts` — the semantic binder, search, and vector index all scope to this list, so an intent absent from it loads into the index but binds **zero** endpoints (binding is semantic now; there are no per-intent regex matchers)
 3. Add messy eval queries in `eval/messy-queries.json` with `expect_intent` (required). Optional `expect_endpoint` is a **select@k regression anchor only** — not a promoted winner; agents discover tasks and candidate APIs neutrally, then pick via `select-policy.ts`
 4. Run `pnpm run build` and `pnpm test`
 5. Open a PR

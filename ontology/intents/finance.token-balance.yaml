@@ -24,8 +24,8 @@ facets:
   freshness: realtime
 links:
   - type: sibling_of
-    to: finance.onchain_analytics
+    to: blockchain.onchain_analytics
     note: same crypto wallet family, differs by action (read holdings vs analyze flows)
   - type: sibling_of
-    to: compute.blockchain_rpc
+    to: blockchain.rpc
     note: same on-chain family, differs by action (read balance vs execute JSON-RPC)

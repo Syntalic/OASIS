@@ -1,6 +1,6 @@
 # How OASIS scales (and the architecture direction)
 
-The honest finding from the [end-to-end benchmarks](eval_results.md): at today's ~30k
+The honest finding from the [end-to-end benchmarks](eval_results.md): at today's ~19k
 endpoints, with a strong model, **raw keyword search over the unified index matches the
 capability ontology on accuracy.** That isn't a failure of the ontology — it's that the
 substrate is still small enough for brute force, and a capable LLM disambiguates by
@@ -11,7 +11,7 @@ This doc is the thesis for that world.
 
 Three roles, kept distinct:
 
-- **Endpoint = the atomic unit the agent sees.** One tool (`oasis_find`), one flat ranked
+- **Endpoint = the atomic unit the agent sees.** One tool (`oasis_discover`), one flat ranked
   list, one round-trip. Search and resolve collapse server-side — there is no
   capability→endpoint hop for the agent to traverse (or for a binder to get wrong).
 - **Capability = a server-side recall + ranking aid**, not an agent-facing routing layer.
@@ -20,11 +20,11 @@ Three roles, kept distinct:
 - **Service = a facet** (auth, price, rails, reputation, coverage), never the routing unit.
   The binding pollution that caused a real resolve bug was a *service-coarse* artifact.
 
-The evidence that drove this (full tables in [eval_results.md](eval_results.md)):
+The evidence that drove this (illustrative, from an earlier deploy — the current dated tables are in [eval_results.md](eval_results.md)):
 
 | design | accuracy | tokens/task | why |
 |---|---|---|---|
-| `oasis_find` (one hop) | 18/18 | **2,562** | server-side recall+ranking, flat output |
+| `oasis_discover` (one hop) | 18/18 | **2,562** | server-side recall+ranking, flat output |
 | two-hop search→resolve | 18/18 | 5,031 | agent reads capability list + resolve + related[] |
 | raw keyword (same index) | 17/18 | 2,723 | no ranking; fine at small scale |
 
@@ -33,10 +33,11 @@ traversal is the part to retire; the ontology earns its keep underneath it.
 
 ## Why this holds as the corpus grows 10–100×
 
-Raw keyword ties OASIS at 30k but degrades with N on three axes:
+Raw keyword ties OASIS at ~19k but degrades with N on three axes:
 
 1. **Collision explosion.** "weather" matches a few hundred endpoints at 30k; tens of
-   thousands at 3M. The lexical top-k becomes a thin, noisy slice — the right endpoint
+   thousands at 3M. (Substitute the current corpus for "30k" throughout this section — the
+   argument is about growth multiples, not the absolute base.) The lexical top-k becomes a thin, noisy slice — the right endpoint
    may not be in it, and a recall miss is fatal (no model intelligence recovers an
    endpoint never shown).
 2. **A new "best-of-many" problem.** 100× means ~100 equivalent weather APIs. The question
@@ -49,7 +50,7 @@ Raw keyword ties OASIS at 30k but degrades with N on three axes:
 What scales: **vector/ANN recall** (semantic, sublinear, stable), **faceted pruning**
 (domain/action/freshness/price filters indifferent to N), a **bounded task vocabulary**
 (~hundreds of tasks regardless of millions of endpoints, so the agent's reasoning surface
-doesn't grow), and **within-task ranking** by objective signals. `oasis_find` already runs
+doesn't grow), and **within-task ranking** by objective signals. `oasis_discover` already runs
 on these primitives server-side — so it is the design expected to *widen* its lead, not
 lose it, as N grows.
 
@@ -78,7 +79,7 @@ in CI and the `oasis_validate_binding` MCP tool) and applied at build / `enrich-
 time to **authoritatively override** the heuristic binder for those endpoints.
 
 The **certain core is built** ([`spec/binding.schema.json`](../spec/binding.schema.json),
-`src/binding.ts`): endpoint identity + capability ids — the same identity the index already
+`src/bind/binding.ts`): endpoint identity + capability ids — the same identity the index already
 keys on, so there is nothing to guess. It is immediately useful as a maintainer tool to
 correct any binding the heuristic gets wrong. The **richer format** (per-endpoint facets,
 price, and ingesting a brand-new service's OpenAPI alongside the binding) layers on at the
@@ -88,9 +89,9 @@ guessing it.
 ## Still to measure
 
 - **Best-of-many quality at scale** is testable *now* on the naturally high-cardinality
-  tasks (`finance.stock_quote` already has 638 endpoints, `crypto_spot_price` 295): does
+  tasks (`finance.stock_quote` already has 243 endpoints, `crypto_spot_price` 236): does
   ranking pick a *cheaper/better* endpoint than keyword's arbitrary one? Requires
-  price-aware ranking in `oasis_find`.
+  price-aware ranking in `oasis_discover`.
 - **Endpoint-level embeddings** would make recall fully endpoint-atomic — but naive
   embeddings of terse OpenAPI summaries mostly add noise; the higher-signal move is to
   embed the LLM-curated representation, i.e. the binding above.

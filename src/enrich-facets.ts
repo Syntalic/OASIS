@@ -161,7 +161,19 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
   }
   for (const ep of endpoints) ep.host_breadth = hostIntents.get(hostOf(ep.origin))?.size ?? 0;
 
-  const next: IndexBundle = { ...bundle, endpoints, capabilities };
+  // Recompute stats on the FINAL post-enrich set — ingest wrote them on the raw gated set
+  // (pre-dedup/bind), leaving endpoints/origins high and capabilities pinned at 0.
+  const next: IndexBundle = {
+    ...bundle,
+    endpoints,
+    capabilities,
+    stats: {
+      ...bundle.stats,
+      endpoints: endpoints.length,
+      capabilities: capabilities.length,
+      origins: new Set(endpoints.map((e) => e.origin)).size,
+    },
+  };
 
   await writeFile(indexPath, JSON.stringify(next, null, 2));
   await writeFile(

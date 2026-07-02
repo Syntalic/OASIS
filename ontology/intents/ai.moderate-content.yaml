@@ -1,0 +1,35 @@
+id: ai.moderate_content
+label: Moderate text and images for safety
+description: Content moderation and safety classification — flag toxicity, hate speech, harassment, sexual or NSFW material, violence, and self-harm across user or model text and images. Use when an agent screens content before publishing or responding, not on-chain token risk or smart-contract safety audits.
+aliases:
+  - content moderation API
+  - moderate text
+  - moderate user content
+  - toxicity detection
+  - flag toxic or abusive language
+  - abusive language detection
+  - flag abusive comments
+  - detect hate speech
+  - NSFW content detection
+  - profanity filter
+  - is this text safe
+  - flag harmful content
+  - safety classifier
+  - image moderation
+  - screen content for policy violations
+consumes:
+  - entity: Text
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+    format: json
+facets:
+  domain: ai
+  action: analyze
+  modality:
+    - text
+links:
+  - type: pipes_to
+    to: ai.llm_complete
+    note: moderate user input or model output around an LLM completion

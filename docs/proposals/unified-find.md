@@ -2,6 +2,11 @@
 
 **Status:** proposal · **Date:** 2026-06-29 · **Evidence:** [docs/benchmarks/discovery-benchmark.md](../benchmarks/discovery-benchmark.md)
 
+> **Superseded (naming):** the single discovery tool shipped as **`oasis_discover`**, not `oasis_find`
+> — every `oasis_find` below is now a deprecated alias; read it as `oasis_discover`. The surface
+> design here is superseded by [oasis-discover.md](oasis-discover.md); kept for the arm-base
+> retrieval + homonym-guard rationale that did ship.
+
 ## TL;DR
 Collapse the agent-facing discovery surface to **one tool, `oasis_find`**, that does what an agent
 actually needs in a single call: vector-search the corpus for callable endpoints **and** always
@@ -55,7 +60,7 @@ entirely.
 | current fused `oasis_find` | 69.6% | 61.7% |
 | Vector-search baseline (external control) | 77.9% | 71.0% |
 
-The vector arm — *already inside OASIS* (`endpoint-arm.ts`) — is ahead of the baseline, but `find` buries it
+The vector arm — *already inside OASIS* (`src/bind/endpoint-arm.ts`) — is ahead of the baseline, but `find` buries it
 as a conservative fallback (fires only on near-tie routing) and ships 69.6%. Separately, `find`
 flattened away the relationship payload it was designed to surface ("no separate `related[]`
 payload" — `mcp/tools.mjs`). Diagnostics on the 240: the arm is right where the fused result is

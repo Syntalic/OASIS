@@ -63,7 +63,7 @@ key-free: GOOGLE_API_KEY not set (no embedding / no LLM)
 | investigate-suspicious-domain | `data.whois_lookup` | 66.7% | 2/3 | `maps.geocode` |
 | brand-social-footprint | `media.social_data` | 75.0% | 3/4 | `comms.send_email` |
 | verified-email-send | `comms.send_email` | 66.7% | 2/3 | `data.phone_validate` |
-| crypto-wallet-analysis | `finance.onchain_analytics` | 75.0% | 3/4 | `ai.web_research` |
+| crypto-wallet-analysis | `blockchain.onchain_analytics` | 75.0% | 3/4 | `ai.web_research` |
 | publish-static-site | `storage.hosting` | 66.7% | 2/3 | `comms.send_email` |
 | underwrite-property | `realestate.property_lookup` | 50.0% | 2/4 | `data.weather_forecast`, `finance.economic_data` |
 | process-voicemail | `ai.speech_to_text` | 66.7% | 2/3 | `comms.send_email` |

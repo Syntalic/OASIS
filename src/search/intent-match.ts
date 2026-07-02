@@ -21,7 +21,7 @@ export const CURATED_INTENT_IDS = [
   "comms.send_email",
   "comms.send_fax",
   "comms.voice_call",
-  "compute.blockchain_rpc",
+  "blockchain.rpc",
   "compute.convert_units",
   "compute.financial_calculator",
   "data.company_enrich",
@@ -57,8 +57,8 @@ export const CURATED_INTENT_IDS = [
   "devtools.webhook_tools",
   "finance.crypto_market_intel",
   "finance.crypto_spot_price",
-  "finance.defi_analytics",
-  "finance.onchain_analytics",
+  "blockchain.defi_analytics",
+  "blockchain.onchain_analytics",
   "finance.stock_quote",
   "finance.token_balance",
   "finance.prediction_markets",
@@ -88,6 +88,14 @@ export const CURATED_INTENT_IDS = [
   "travel.aviation",
   "web.markdown_extract",
   "web.screenshot",
+  // Coverage additions — clusters surfaced by the orphan audit (see ontology/intents/*.yaml).
+  "ai.moderate_content",
+  "ai.token_count",
+  "blockchain.network_metrics",
+  "data.pii_detect",
+  "devtools.generate_secret",
+  "devtools.file_convert",
+  "media.transcode",
 ] as const;
 
 export type CuratedIntentId = (typeof CURATED_INTENT_IDS)[number];

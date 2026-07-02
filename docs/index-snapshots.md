@@ -18,7 +18,7 @@ redeploy reshuffles the catalog, and eval can't match production.
 
 The crawl is non-deterministic, but **everything after the crawl is deterministic** (`ingest --snapshot`
 re-gates, `enrich` binds, `embed` vectors). So pinning the *crawl/index* artifact makes the whole pipeline
-reproducible. (Releases, not Git LFS: the snapshot is ~47 MB / ~5 MB gzipped — Release assets avoid LFS
+reproducible. (Releases, not Git LFS: the snapshot is ~38 MB / ~4 MB gzipped — Release assets avoid LFS
 quota and match the existing "consume the prebuilt index via Releases" convention.)
 
 ## Commands
@@ -37,7 +37,7 @@ scripts/snapshot/restore.sh          # gh download + ingest --snapshot + enrich 
 Before `fly deploy`, materialize `dist/` from the pin so the image ships the **reproducible** index:
 
 ```bash
-scripts/snapshot/restore.sh && (cd mcp/deploy && fly deploy ...)   # Dockerfile COPY dist now copies the pinned index
+scripts/snapshot/restore.sh && fly deploy --config mcp/deploy/fly.toml --build-secret GOOGLE_API_KEY="$GOOGLE_API_KEY"   # Dockerfile COPY dist now copies the pinned index
 ```
 
 ## Eval (dogfooding harness)
