@@ -234,19 +234,19 @@
     "qid": 39
   },
   {
-    "intent_id": "compute.blockchain_rpc",
+    "intent_id": "blockchain.rpc",
     "query": "ethereum rpc node query",
     "style": "terse",
     "qid": 40
   },
   {
-    "intent_id": "compute.blockchain_rpc",
+    "intent_id": "blockchain.rpc",
     "query": "How do I interact with a blockchain node to fetch block data?",
     "style": "conversational",
     "qid": 41
   },
   {
-    "intent_id": "compute.blockchain_rpc",
+    "intent_id": "blockchain.rpc",
     "query": "I need to query the latest block height on the Arbitrum One mainnet.",
     "style": "contextual",
     "qid": 42
@@ -882,37 +882,37 @@
     "qid": 147
   },
   {
-    "intent_id": "crypto.defi_analytics",
+    "intent_id": "blockchain.defi_analytics",
     "query": "defi yield rates tracker",
     "style": "terse",
     "qid": 148
   },
   {
-    "intent_id": "crypto.defi_analytics",
+    "intent_id": "blockchain.defi_analytics",
     "query": "Where can I find historical yield data and total value locked for decentralized finance protocols?",
     "style": "conversational",
     "qid": 149
   },
   {
-    "intent_id": "crypto.defi_analytics",
+    "intent_id": "blockchain.defi_analytics",
     "query": "I want to compare the current lending APY for USDC on Aave versus Compound.",
     "style": "contextual",
     "qid": 150
   },
   {
-    "intent_id": "finance.onchain_analytics",
+    "intent_id": "blockchain.onchain_analytics",
     "query": "on-chain smart money tracker",
     "style": "terse",
     "qid": 151
   },
   {
-    "intent_id": "finance.onchain_analytics",
+    "intent_id": "blockchain.onchain_analytics",
     "query": "How can I track what the most profitable wallets are buying right now?",
     "style": "conversational",
     "qid": 152
   },
   {
-    "intent_id": "finance.onchain_analytics",
+    "intent_id": "blockchain.onchain_analytics",
     "query": "I want to monitor the Ethereum address starting with 0x71C and see its historical DEX trades.",
     "style": "contextual",
     "qid": 153

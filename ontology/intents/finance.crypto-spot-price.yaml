@@ -1,6 +1,6 @@
 id: finance.crypto_spot_price
 label: Get cryptocurrency spot price
-description: Fetch the current spot price for one or more crypto assets. Use when an agent needs a live fiat-denominated spot quote for trading, portfolio valuation, or price-aware routing — not trading signals (finance.trading_signals), risk or on-chain flow analytics (finance.onchain_analytics), prediction markets, or news. Spot price only.
+description: Fetch the current spot price for one or more crypto assets. Use when an agent needs a live fiat-denominated spot quote for trading, portfolio valuation, or price-aware routing — not trading signals (finance.trading_signals), risk or on-chain flow analytics (blockchain.onchain_analytics), prediction markets, or news. Spot price only.
 aliases:
   - crypto price
   - token price
@@ -38,8 +38,8 @@ links:
     to: finance.token_balance
     note: same crypto asset family, differs by action (price lookup vs wallet holdings)
   - type: sibling_of
-    to: finance.onchain_analytics
+    to: blockchain.onchain_analytics
     note: same crypto family, differs by action (price lookup vs analyze flows); was dangling related finance.crypto_market_data
   - type: sibling_of
-    to: compute.blockchain_rpc
+    to: blockchain.rpc
     note: same crypto family, differs by action (price lookup vs execute JSON-RPC)

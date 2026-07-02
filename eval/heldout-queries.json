@@ -37,12 +37,12 @@
   { "id": "ho-jobs", "query": "find open backend engineering roles hiring in Austin", "expect_intents": ["data.job_search"] },
   { "id": "ho-person", "query": "dig up the public profile and work email for a Jane Doe at Acme", "expect_intents": ["data.person_search"] },
   { "id": "ho-social", "query": "pull the comment thread under this instagram post", "expect_intents": ["media.social_data"] },
-  { "id": "ho-rpc", "query": "run a low-level getBalance call against an Ethereum node for this account", "expect_intents": ["compute.blockchain_rpc"] },
+  { "id": "ho-rpc", "query": "run a low-level getBalance call against an Ethereum node for this account", "expect_intents": ["blockchain.rpc"] },
   { "id": "ho-tts", "query": "read this announcement aloud in a natural voice and give me the audio", "expect_intents": ["ai.text_to_speech"] },
   { "id": "ho-compute", "query": "what's the integral of x squared from zero to three", "expect_intents": ["data.compute_answer"] },
   { "id": "ho-weather", "query": "should I pack an umbrella for Berlin on Thursday", "expect_intents": ["data.weather_forecast"] },
   { "id": "ho-email", "query": "fire off a message straight to a customer's inbox from my app", "expect_intents": ["comms.send_email"] },
-  { "id": "ho-onchain", "query": "are big wallets buying into this token lately — show me the flows", "expect_intents": ["finance.onchain_analytics"] },
+  { "id": "ho-onchain", "query": "are big wallets buying into this token lately — show me the flows", "expect_intents": ["blockchain.onchain_analytics"] },
 
   { "id": "t-compare", "split": "test", "query": "same blender, who sells it for less", "expect_intents": ["shop.compare_price"] },
   { "id": "t-history", "split": "test", "query": "show me how this gpu's cost moved this year", "expect_intents": ["shop.track_price_history"] },
@@ -81,10 +81,10 @@
   { "id": "t-jobs", "split": "test", "query": "who's hiring remote rust developers", "expect_intents": ["data.job_search"] },
   { "id": "t-person", "split": "test", "query": "contact details for a John Smith who works at OpenAI", "expect_intents": ["data.person_search"] },
   { "id": "t-social", "split": "test", "query": "fetch the replies under this tweet", "expect_intents": ["media.social_data"] },
-  { "id": "t-rpc", "split": "test", "query": "eth_getBalance for this address on mainnet", "expect_intents": ["compute.blockchain_rpc"] },
+  { "id": "t-rpc", "split": "test", "query": "eth_getBalance for this address on mainnet", "expect_intents": ["blockchain.rpc"] },
   { "id": "t-tts", "split": "test", "query": "voice this sentence and hand me an mp3", "expect_intents": ["ai.text_to_speech"] },
   { "id": "t-compute", "split": "test", "query": "derivative of sin x times x", "expect_intents": ["data.compute_answer"] },
   { "id": "t-weather", "split": "test", "query": "rain in seattle tomorrow?", "expect_intents": ["data.weather_forecast"] },
   { "id": "t-email", "split": "test", "query": "shoot an email to this address from my service", "expect_intents": ["comms.send_email"] },
-  { "id": "t-onchain", "split": "test", "query": "which big holders are moving this token recently", "expect_intents": ["finance.onchain_analytics"] }
+  { "id": "t-onchain", "split": "test", "query": "which big holders are moving this token recently", "expect_intents": ["blockchain.onchain_analytics"] }
 ]

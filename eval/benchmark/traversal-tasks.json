@@ -89,8 +89,8 @@
     {
       "id": "crypto-wallet-analysis",
       "task": "Analyze a crypto wallet: run on-chain analytics, check token balances, pull spot prices, query the chain via RPC, and research the project on the web.",
-      "start_intent": "finance.onchain_analytics",
-      "gold_next_intents": ["finance.token_balance", "finance.crypto_spot_price", "compute.blockchain_rpc", "ai.web_research"]
+      "start_intent": "blockchain.onchain_analytics",
+      "gold_next_intents": ["finance.token_balance", "finance.crypto_spot_price", "blockchain.rpc", "ai.web_research"]
     },
     {
       "id": "publish-static-site",

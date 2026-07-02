@@ -58,7 +58,8 @@
             "devtools",
             "storage",
             "search",
-            "crypto"
+            "crypto",
+            "blockchain"
           ]
         },
         "action": {

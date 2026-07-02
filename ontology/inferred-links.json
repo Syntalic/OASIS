@@ -150,7 +150,7 @@
       "votes": 3
     },
     {
-      "from": "finance.onchain_analytics",
+      "from": "blockchain.onchain_analytics",
       "type": "pipes_to",
       "to": "finance.token_balance",
       "why": "drill into a flagged wallet's balances",
@@ -283,14 +283,14 @@
       "votes": 2
     },
     {
-      "from": "compute.blockchain_rpc",
+      "from": "blockchain.rpc",
       "type": "pipes_to",
-      "to": "finance.onchain_analytics",
+      "to": "blockchain.onchain_analytics",
       "why": "raw chain reads feed wallet analytics",
       "votes": 2
     },
     {
-      "from": "compute.blockchain_rpc",
+      "from": "blockchain.rpc",
       "type": "pipes_to",
       "to": "finance.token_balance",
       "why": "RPC balance call resolves wallet holdings",
@@ -388,7 +388,7 @@
       "votes": 2
     },
     {
-      "from": "finance.onchain_analytics",
+      "from": "blockchain.onchain_analytics",
       "type": "pipes_to",
       "to": "finance.crypto_spot_price",
       "why": "value tracked flows at spot price",
@@ -411,7 +411,7 @@
     {
       "from": "finance.token_balance",
       "type": "pipes_to",
-      "to": "finance.onchain_analytics",
+      "to": "blockchain.onchain_analytics",
       "why": "profile the wallet behind the balances",
       "votes": 2
     },
@@ -607,7 +607,7 @@
     {
       "from": "finance.token_balance",
       "type": "narrower_of",
-      "to": "compute.blockchain_rpc",
+      "to": "blockchain.rpc",
       "why": "token balance is a specific RPC use",
       "votes": 2
     },

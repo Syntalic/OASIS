@@ -213,7 +213,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "compute-rpc-1",
     query: "solana json-rpc node call",
-    expect_intent: "compute.blockchain_rpc",
+    expect_intent: "blockchain.rpc",
     expect_endpoint: {
       origin: "https://x402.quicknode.com",
       method: "POST",
@@ -303,7 +303,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "compute-rpc-2",
     query: "ethereum mainnet json rpc proxy",
-    expect_intent: "compute.blockchain_rpc",
+    expect_intent: "blockchain.rpc",
     expect_endpoint: {
       origin: "https://x402.quicknode.com",
       method: "POST",

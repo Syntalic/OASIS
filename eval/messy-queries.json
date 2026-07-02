@@ -282,7 +282,7 @@
   {
     "id": "messy-nansen-1",
     "query": "track what smart-money wallets are accumulating on chain",
-    "expect_intent": "finance.onchain_analytics",
+    "expect_intent": "blockchain.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://api.nansen.ai",
       "method": "POST",
@@ -292,7 +292,7 @@
   {
     "id": "messy-nansen-2",
     "query": "on-chain fund flow analytics for labeled wallets",
-    "expect_intent": "finance.onchain_analytics",
+    "expect_intent": "blockchain.onchain_analytics",
     "expect_endpoint": {
       "origin": "https://api.nansen.ai",
       "method": "POST",
@@ -302,7 +302,7 @@
   {
     "id": "messy-rpc-1",
     "query": "JSON-RPC call into Solana mainnet without running a node",
-    "expect_intent": "compute.blockchain_rpc",
+    "expect_intent": "blockchain.rpc",
     "expect_endpoint": {
       "origin": "https://x402.quicknode.com",
       "method": "POST",
@@ -312,7 +312,7 @@
   {
     "id": "messy-rpc-2",
     "query": "submit a solana getBalance style RPC request",
-    "expect_intent": "compute.blockchain_rpc",
+    "expect_intent": "blockchain.rpc",
     "expect_endpoint": {
       "origin": "https://x402.quicknode.com",
       "method": "POST",
@@ -662,7 +662,7 @@
   {
     "id": "messy-chainmetrics-1",
     "query": "what's gas running at on base right now",
-    "expect_intent": "crypto.network_metrics",
+    "expect_intent": "blockchain.network_metrics",
     "expect_endpoint": {
       "origin": "https://x402.agentutility.ai",
       "method": "POST",
@@ -672,7 +672,7 @@
   {
     "id": "messy-chainmetrics-2",
     "query": "how busy is the base network right now, whats the tps and block time",
-    "expect_intent": "crypto.network_metrics",
+    "expect_intent": "blockchain.network_metrics",
     "expect_endpoint": {
       "origin": "https://httpay.xyz",
       "method": "GET",
@@ -682,7 +682,7 @@
   {
     "id": "messy-chainmetrics-3",
     "query": "estimate the current eip-1559 priority fee before I broadcast a tx",
-    "expect_intent": "crypto.network_metrics",
+    "expect_intent": "blockchain.network_metrics",
     "expect_endpoint": {
       "origin": "https://x402.agentutility.ai",
       "method": "POST",

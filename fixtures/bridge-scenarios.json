@@ -57,7 +57,7 @@
       "v1": false,
       "held_entities": [{ "entity": "CryptoAsset", "value": "SOL" }],
       "source_domain": "finance",
-      "expect_intents": ["finance.onchain_analytics", "compute.blockchain_rpc"],
+      "expect_intents": ["blockchain.onchain_analytics", "blockchain.rpc"],
       "min_hits": 2
     },
     {

@@ -1,6 +1,6 @@
 id: finance.prediction_markets
 label: Browse prediction and event markets
-description: Query prediction and event markets — list markets, event outcomes, current odds and outcome prices, and resolution status. Use when an agent wants the market-implied probability or price of a real-world event outcome — not crypto spot prices (finance.crypto_spot_price), equity quotes (finance.stock_quote), or wallet flows (finance.onchain_analytics).
+description: Query prediction and event markets — list markets, event outcomes, current odds and outcome prices, and resolution status. Use when an agent wants the market-implied probability or price of a real-world event outcome — not crypto spot prices (finance.crypto_spot_price), equity quotes (finance.stock_quote), or wallet flows (blockchain.onchain_analytics).
 aliases:
   - prediction markets
   - event markets

@@ -1,6 +1,6 @@
 id: finance.trading_signals
 label: Get trading signals and strategy performance
-description: Actionable trading signals and track records — entry / exit / close signals, buy-sell calls, realized P&L, and strategy or agent performance leaderboards. Use when an agent wants a trade recommendation or a performance record, not raw prices (finance.crypto_spot_price / finance.stock_quote) or on-chain wallet metrics (finance.onchain_analytics).
+description: Actionable trading signals and track records — entry / exit / close signals, buy-sell calls, realized P&L, and strategy or agent performance leaderboards. Use when an agent wants a trade recommendation or a performance record, not raw prices (finance.crypto_spot_price / finance.stock_quote) or on-chain wallet metrics (blockchain.onchain_analytics).
 aliases:
   - trading signals
   - buy and sell signals
