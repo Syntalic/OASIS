@@ -6,6 +6,9 @@ aliases:
   - moderate text
   - moderate user content
   - toxicity detection
+  - flag toxic or abusive language
+  - abusive language detection
+  - flag abusive comments
   - detect hate speech
   - NSFW content detection
   - profanity filter

@@ -3,6 +3,9 @@ label: Convert files between data formats
 description: Convert documents and data files between formats — JSON to YAML, XML to JSON, CSV to JSON, XML or Markdown to DOCX or Word, Excel to CSV, and image transcoding between PNG, JPG, WebP, and AVIF. Use when an agent changes a file's format or serialization, not numeric or unit conversion (compute.convert_units) and not PDF-only edits (devtools.pdf_manipulate).
 aliases:
   - convert JSON to YAML
+  - json config to yaml
+  - turn json into yaml
+  - convert a config file
   - yaml to json converter
   - convert XML to JSON
   - csv to json
