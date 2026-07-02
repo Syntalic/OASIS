@@ -126,19 +126,19 @@
     "qid": 21
   },
   {
-    "intent_id": "analyst.inflation_tracker",
+    "intent_id": "shop.inflation_tracker",
     "query": "category inflation price tracker",
     "style": "terse",
     "qid": 22
   },
   {
-    "intent_id": "analyst.inflation_tracker",
+    "intent_id": "shop.inflation_tracker",
     "query": "I need a service that monitors how prices are inflating across different product categories over time.",
     "style": "conversational",
     "qid": 23
   },
   {
-    "intent_id": "analyst.inflation_tracker",
+    "intent_id": "shop.inflation_tracker",
     "query": "How can I track the monthly inflation rate of dairy products and eggs in the United States since 2021?",
     "style": "contextual",
     "qid": 24
@@ -288,73 +288,73 @@
     "qid": 48
   },
   {
-    "intent_id": "data.company_enrich",
+    "intent_id": "identity.company_enrich",
     "query": "domain to company data",
     "style": "terse",
     "qid": 49
   },
   {
-    "intent_id": "data.company_enrich",
+    "intent_id": "identity.company_enrich",
     "query": "I need to get detailed information about a company using just their website address.",
     "style": "conversational",
     "qid": 50
   },
   {
-    "intent_id": "data.company_enrich",
+    "intent_id": "identity.company_enrich",
     "query": "Find the employee count and funding history for stripe.com.",
     "style": "contextual",
     "qid": 51
   },
   {
-    "intent_id": "data.compute_answer",
+    "intent_id": "compute.compute_answer",
     "query": "factual query solver",
     "style": "terse",
     "qid": 52
   },
   {
-    "intent_id": "data.compute_answer",
+    "intent_id": "compute.compute_answer",
     "query": "Can you answer a complex math or factual question for me?",
     "style": "conversational",
     "qid": 53
   },
   {
-    "intent_id": "data.compute_answer",
+    "intent_id": "compute.compute_answer",
     "query": "What is the exact distance between the Earth and Mars in kilometers right now?",
     "style": "contextual",
     "qid": 54
   },
   {
-    "intent_id": "data.email_validate",
+    "intent_id": "utility.email_validate",
     "query": "verify email deliverability",
     "style": "terse",
     "qid": 55
   },
   {
-    "intent_id": "data.email_validate",
+    "intent_id": "utility.email_validate",
     "query": "I want to check if an email address is valid and can actually receive messages.",
     "style": "conversational",
     "qid": 56
   },
   {
-    "intent_id": "data.email_validate",
+    "intent_id": "utility.email_validate",
     "query": "Check if test-user-123@gmail.com is a valid inbox or if it will bounce.",
     "style": "contextual",
     "qid": 57
   },
   {
-    "intent_id": "data.exchange_rates",
+    "intent_id": "finance.exchange_rates",
     "query": "currency exchange lookup",
     "style": "terse",
     "qid": 58
   },
   {
-    "intent_id": "data.exchange_rates",
+    "intent_id": "finance.exchange_rates",
     "query": "How can I get the latest currency conversion rates?",
     "style": "conversational",
     "qid": 59
   },
   {
-    "intent_id": "data.exchange_rates",
+    "intent_id": "finance.exchange_rates",
     "query": "Convert 5000 Japanese Yen to Euros based on today's market rates.",
     "style": "contextual",
     "qid": 60
@@ -378,19 +378,19 @@
     "qid": 63
   },
   {
-    "intent_id": "data.airdrop_tracker",
+    "intent_id": "blockchain.airdrop_tracker",
     "query": "crypto airdrop eligibility tracker",
     "style": "terse",
     "qid": 64
   },
   {
-    "intent_id": "data.airdrop_tracker",
+    "intent_id": "blockchain.airdrop_tracker",
     "query": "Is there a way to check which upcoming token distributions my wallet is eligible for?",
     "style": "conversational",
     "qid": 65
   },
   {
-    "intent_id": "data.airdrop_tracker",
+    "intent_id": "blockchain.airdrop_tracker",
     "query": "Check if this Ethereum address is eligible for the upcoming Starknet or LayerZero token distribution.",
     "style": "contextual",
     "qid": 66
@@ -414,37 +414,37 @@
     "qid": 69
   },
   {
-    "intent_id": "data.gov_records",
+    "intent_id": "identity.gov_records",
     "query": "verify public identity records",
     "style": "terse",
     "qid": 70
   },
   {
-    "intent_id": "data.gov_records",
+    "intent_id": "identity.gov_records",
     "query": "How can I verify if someone has a valid public record or check their official registration status?",
     "style": "conversational",
     "qid": 71
   },
   {
-    "intent_id": "data.gov_records",
+    "intent_id": "identity.gov_records",
     "query": "I need to verify the business registration status of a company with the California Secretary of State.",
     "style": "contextual",
     "qid": 72
   },
   {
-    "intent_id": "data.lei_lookup",
+    "intent_id": "identity.lei_lookup",
     "query": "LEI legal entity search",
     "style": "terse",
     "qid": 73
   },
   {
-    "intent_id": "data.lei_lookup",
+    "intent_id": "identity.lei_lookup",
     "query": "How do I find the corporate parent structure and legal entity identifier for a business?",
     "style": "conversational",
     "qid": 74
   },
   {
-    "intent_id": "data.lei_lookup",
+    "intent_id": "identity.lei_lookup",
     "query": "Show me the corporate hierarchy and ownership tree for LEI code 5493008438092.",
     "style": "contextual",
     "qid": 75
@@ -504,19 +504,19 @@
     "qid": 84
   },
   {
-    "intent_id": "data.nft_metadata",
+    "intent_id": "blockchain.nft_metadata",
     "query": "NFT collection token metadata",
     "style": "terse",
     "qid": 85
   },
   {
-    "intent_id": "data.nft_metadata",
+    "intent_id": "blockchain.nft_metadata",
     "query": "How do I retrieve the traits, image URL, and description of a specific digital collectible?",
     "style": "conversational",
     "qid": 86
   },
   {
-    "intent_id": "data.nft_metadata",
+    "intent_id": "blockchain.nft_metadata",
     "query": "Get the metadata and attributes for Bored Ape Yacht Club token number 8817.",
     "style": "contextual",
     "qid": 87
@@ -558,37 +558,37 @@
     "qid": 93
   },
   {
-    "intent_id": "data.iban_validate",
+    "intent_id": "utility.iban_validate",
     "query": "validate iban bank account",
     "style": "terse",
     "qid": 94
   },
   {
-    "intent_id": "data.iban_validate",
+    "intent_id": "utility.iban_validate",
     "query": "Is there a way to check if a European bank account number is valid before sending a payment?",
     "style": "conversational",
     "qid": 95
   },
   {
-    "intent_id": "data.iban_validate",
+    "intent_id": "utility.iban_validate",
     "query": "I need to verify if Deutsche Bank IBAN DE89370400440532013000 is correctly formatted.",
     "style": "contextual",
     "qid": 96
   },
   {
-    "intent_id": "data.vat_validate",
+    "intent_id": "utility.vat_validate",
     "query": "vat number verification",
     "style": "terse",
     "qid": 97
   },
   {
-    "intent_id": "data.vat_validate",
+    "intent_id": "utility.vat_validate",
     "query": "How do I check if a business tax registration number is active and valid?",
     "style": "conversational",
     "qid": 98
   },
   {
-    "intent_id": "data.vat_validate",
+    "intent_id": "utility.vat_validate",
     "query": "I need to confirm the VAT status for a supplier registered in France with ID FR74395820123.",
     "style": "contextual",
     "qid": 99
@@ -666,73 +666,73 @@
     "qid": 111
   },
   {
-    "intent_id": "data.person_search",
+    "intent_id": "identity.person_search",
     "query": "find people public profiles",
     "style": "terse",
     "qid": 112
   },
   {
-    "intent_id": "data.person_search",
+    "intent_id": "identity.person_search",
     "query": "How do I look up public professional profiles and contact details for individuals?",
     "style": "conversational",
     "qid": 113
   },
   {
-    "intent_id": "data.person_search",
+    "intent_id": "identity.person_search",
     "query": "I need to find the current job title and social profiles for a marketing director named Sarah Jenkins in Chicago.",
     "style": "contextual",
     "qid": 114
   },
   {
-    "intent_id": "data.ocr",
+    "intent_id": "ai.ocr",
     "query": "extract text from image",
     "style": "terse",
     "qid": 115
   },
   {
-    "intent_id": "data.ocr",
+    "intent_id": "ai.ocr",
     "query": "What's the best way to read the typed text from a scanned document or photograph?",
     "style": "conversational",
     "qid": 116
   },
   {
-    "intent_id": "data.ocr",
+    "intent_id": "ai.ocr",
     "query": "I need to scan these PDF receipts from Walmart and pull out the line-item prices and totals.",
     "style": "contextual",
     "qid": 117
   },
   {
-    "intent_id": "data.phone_validate",
+    "intent_id": "utility.phone_validate",
     "query": "phone number validation carrier",
     "style": "terse",
     "qid": 118
   },
   {
-    "intent_id": "data.phone_validate",
+    "intent_id": "utility.phone_validate",
     "query": "How can I check if a mobile number is active and identify which network operator it belongs to?",
     "style": "conversational",
     "qid": 119
   },
   {
-    "intent_id": "data.phone_validate",
+    "intent_id": "utility.phone_validate",
     "query": "I need to check if +44 7911 123456 is a valid UK mobile number and see if it's on Vodafone.",
     "style": "contextual",
     "qid": 120
   },
   {
-    "intent_id": "data.translate_text",
+    "intent_id": "ai.translate_text",
     "query": "translate english to spanish",
     "style": "terse",
     "qid": 121
   },
   {
-    "intent_id": "data.translate_text",
+    "intent_id": "ai.translate_text",
     "query": "I need a way to convert my English product descriptions into fluent French.",
     "style": "conversational",
     "qid": 122
   },
   {
-    "intent_id": "data.translate_text",
+    "intent_id": "ai.translate_text",
     "query": "How do I translate our Tokyo office's Japanese onboarding manual into German?",
     "style": "contextual",
     "qid": 123
@@ -756,19 +756,19 @@
     "qid": 126
   },
   {
-    "intent_id": "data.web_scrape",
+    "intent_id": "web.scrape",
     "query": "extract web page content",
     "style": "terse",
     "qid": 127
   },
   {
-    "intent_id": "data.web_scrape",
+    "intent_id": "web.scrape",
     "query": "I want to retrieve the full HTML and text content from a given website URL.",
     "style": "conversational",
     "qid": 128
   },
   {
-    "intent_id": "data.web_scrape",
+    "intent_id": "web.scrape",
     "query": "How can I pull the latest blog post titles and author names from TechCrunch automatically?",
     "style": "contextual",
     "qid": 129
@@ -936,19 +936,19 @@
     "qid": 156
   },
   {
-    "intent_id": "finance.token_balance",
+    "intent_id": "blockchain.token_balance",
     "query": "crypto wallet token balance",
     "style": "terse",
     "qid": 157
   },
   {
-    "intent_id": "finance.token_balance",
+    "intent_id": "blockchain.token_balance",
     "query": "Can you show me all the digital assets held in this specific wallet address?",
     "style": "conversational",
     "qid": 158
   },
   {
-    "intent_id": "finance.token_balance",
+    "intent_id": "blockchain.token_balance",
     "query": "Check how many USDC and Chainlink tokens are currently inside Vitalik's public wallet.",
     "style": "contextual",
     "qid": 159
@@ -1080,37 +1080,37 @@
     "qid": 180
   },
   {
-    "intent_id": "marketing.competitive_landscape",
+    "intent_id": "shop.competitive_landscape",
     "query": "competitor price tracking software",
     "style": "terse",
     "qid": 181
   },
   {
-    "intent_id": "marketing.competitive_landscape",
+    "intent_id": "shop.competitive_landscape",
     "query": "How can I track and analyze what my competitors are charging for their products in real-time?",
     "style": "conversational",
     "qid": 182
   },
   {
-    "intent_id": "marketing.competitive_landscape",
+    "intent_id": "shop.competitive_landscape",
     "query": "I need to monitor the average pricing strategies of organic skincare brands on Shopify compared to Sephora's listings.",
     "style": "contextual",
     "qid": 183
   },
   {
-    "intent_id": "media.social_data",
+    "intent_id": "social.social_data",
     "query": "extract social media comments",
     "style": "terse",
     "qid": 184
   },
   {
-    "intent_id": "media.social_data",
+    "intent_id": "social.social_data",
     "query": "I want to gather user posts and discussions from social platforms to analyze public sentiment.",
     "style": "conversational",
     "qid": 185
   },
   {
-    "intent_id": "media.social_data",
+    "intent_id": "social.social_data",
     "query": "Show me recent Reddit comments and Twitter threads mentioning the new Apple Vision Pro release.",
     "style": "contextual",
     "qid": 186
@@ -1188,19 +1188,19 @@
     "qid": 198
   },
   {
-    "intent_id": "search.web",
+    "intent_id": "web.search",
     "query": "web search engine results",
     "style": "terse",
     "qid": 199
   },
   {
-    "intent_id": "search.web",
+    "intent_id": "web.search",
     "query": "I need a tool that lets me search the entire internet and returns organic web page results.",
     "style": "conversational",
     "qid": 200
   },
   {
-    "intent_id": "search.web",
+    "intent_id": "web.search",
     "query": "Find the top ten organic search results for best hybrid SUVs of 2024 excluding paid ads.",
     "style": "contextual",
     "qid": 201
@@ -1314,19 +1314,19 @@
     "qid": 219
   },
   {
-    "intent_id": "storage.hosting",
+    "intent_id": "cloud.hosting",
     "query": "static site hosting",
     "style": "terse",
     "qid": 220
   },
   {
-    "intent_id": "storage.hosting",
+    "intent_id": "cloud.hosting",
     "query": "Where can I deploy my HTML files and assets online easily?",
     "style": "conversational",
     "qid": 221
   },
   {
-    "intent_id": "storage.hosting",
+    "intent_id": "cloud.hosting",
     "query": "I want to host a simple portfolio site built with Hugo and some image assets.",
     "style": "contextual",
     "qid": 222

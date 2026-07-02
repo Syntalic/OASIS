@@ -50,21 +50,21 @@ key-free: GOOGLE_API_KEY not set (no embedding / no LLM)
 | task | start_intent | recall@8 | hit/gold | missed next-steps (genuine multi-hop / cross-domain) |
 |---|---|--:|:--:|---|
 | startup-web-presence | `cloud.domains` | 66.7% | 2/3 | `comms.send_email` |
-| sales-account-research | `data.company_enrich` | 60.0% | 3/5 | `comms.send_email`, `finance.stock_quote` |
-| prospect-sms-outreach | `data.person_search` | 33.3% | 1/3 | `data.phone_validate`, `comms.send_sms` |
+| sales-account-research | `identity.company_enrich` | 60.0% | 3/5 | `comms.send_email`, `finance.stock_quote` |
+| prospect-sms-outreach | `identity.person_search` | 33.3% | 1/3 | `utility.phone_validate`, `comms.send_sms` |
 | localize-address | `maps.geocode` | 100.0% | 3/3 | — |
 | daily-weather-brief | `data.weather_forecast` | 33.3% | 1/3 | `data.news_headlines`, `comms.send_sms` |
 | marketing-graphic-ship | `ai.image_generate` | 50.0% | 1/2 | `comms.send_email` |
 | voice-a-script | `ai.text_to_speech` | 100.0% | 2/2 | — |
-| page-to-knowledge-base | `data.web_scrape` | 75.0% | 3/4 | `ai.llm_complete` |
+| page-to-knowledge-base | `web.scrape` | 75.0% | 3/4 | `ai.llm_complete` |
 | equity-snapshot | `finance.stock_quote` | 75.0% | 3/4 | `ai.web_research` |
 | bargain-hunt-product | `shop.compare_price` | 66.7% | 2/3 | `comms.send_sms` |
 | cited-research-answer | `ai.web_research` | 75.0% | 3/4 | `ai.llm_complete` |
 | investigate-suspicious-domain | `data.whois_lookup` | 66.7% | 2/3 | `maps.geocode` |
-| brand-social-footprint | `media.social_data` | 75.0% | 3/4 | `comms.send_email` |
-| verified-email-send | `comms.send_email` | 66.7% | 2/3 | `data.phone_validate` |
+| brand-social-footprint | `social.social_data` | 75.0% | 3/4 | `comms.send_email` |
+| verified-email-send | `comms.send_email` | 66.7% | 2/3 | `utility.phone_validate` |
 | crypto-wallet-analysis | `blockchain.onchain_analytics` | 75.0% | 3/4 | `ai.web_research` |
-| publish-static-site | `storage.hosting` | 66.7% | 2/3 | `comms.send_email` |
+| publish-static-site | `cloud.hosting` | 66.7% | 2/3 | `comms.send_email` |
 | underwrite-property | `realestate.property_lookup` | 50.0% | 2/4 | `data.weather_forecast`, `finance.economic_data` |
 | process-voicemail | `ai.speech_to_text` | 66.7% | 2/3 | `comms.send_email` |
 
@@ -78,7 +78,7 @@ The misses are not ranking failures — they are the workflow's *deeper* steps, 
 neighbors of the start. Two recurring shapes:
 
 - **2-hop sends.** `comms.send_email` / `comms.send_sms` sit one capability past the identity step:
-  `data.company_enrich → data.person_search → comms.send_email`. From `company_enrich` (1 hop), the
+  `identity.company_enrich → identity.person_search → comms.send_email`. From `company_enrich` (1 hop), the
   email step isn't surfaced; from `person_search` it would be (`person_search` links `pipes_to
   comms.send_email`). The agent reaches it on the *next* call, when `person_search` becomes its
   current intent. So per-task recall@8 is a **floor** on full-traversal reachability.

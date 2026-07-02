@@ -1,6 +1,6 @@
-id: data.iban_validate
+id: utility.iban_validate
 label: Validate IBAN bank account numbers
-description: IBAN format and checksum validation for international bank account numbers. Use when an agent verifies payment rails before transfers, not general company enrichment (data.company_enrich).
+description: IBAN format and checksum validation for international bank account numbers. Use when an agent verifies payment rails before transfers, not general company enrichment (identity.company_enrich).
 aliases:
   - IBAN validation
   - validate IBAN number
@@ -14,5 +14,5 @@ produces:
   - entity: Answer
     role: payload
 facets:
-  domain: data
+  domain: utility
   action: validate

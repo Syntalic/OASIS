@@ -5,7 +5,7 @@
       "user_query": "Why are LA electronics sales down? Investigate.",
       "steps": [
         {
-          "simulate_intent_id": "analyst.inflation_tracker",
+          "simulate_intent_id": "shop.inflation_tracker",
           "simulate_finding": "LA consumer electronics sales down 12% YoY",
           "simulate_entities": [
             { "entity": "Place", "value": "Los Angeles, CA", "kind": "identity" },
@@ -20,7 +20,7 @@
       ],
       "good_follow_ups": [
         { "intent_id": "data.weather_forecast", "reason": "weather drives foot traffic" },
-        { "intent_id": "marketing.competitive_landscape", "reason": "competitive pricing pressure" },
+        { "intent_id": "shop.competitive_landscape", "reason": "competitive pricing pressure" },
         { "intent_id": "data.gov_civic", "reason": "local policy / civic events" }
       ],
       "bad_follow_ups": [
@@ -33,7 +33,7 @@
       "user_query": "Dig into competitor Acme Corp rising share",
       "steps": [
         {
-          "simulate_intent_id": "marketing.competitive_landscape",
+          "simulate_intent_id": "shop.competitive_landscape",
           "simulate_finding": "Acme Corp gained 8% share",
           "simulate_entities": [
             { "entity": "Company", "value": "Acme Corp", "kind": "identity" }
@@ -44,8 +44,8 @@
         }
       ],
       "good_follow_ups": [
-        { "intent_id": "media.social_data", "reason": "social intel on competitor" },
-        { "intent_id": "data.person_search", "reason": "leadership / people angle" }
+        { "intent_id": "social.social_data", "reason": "social intel on competitor" },
+        { "intent_id": "identity.person_search", "reason": "leadership / people angle" }
       ],
       "bad_follow_ups": [
         { "intent_id": "data.weather_forecast", "reason": "no Place held" }

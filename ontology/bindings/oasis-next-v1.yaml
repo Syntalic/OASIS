@@ -10,7 +10,7 @@ bindings:
     method: POST
     path: /person/search
     capabilities:
-      - data.person_search
+      - identity.person_search
   - origin: https://stabledomains.dev
     method: POST
     path: /api/check
@@ -60,7 +60,7 @@ bindings:
     method: GET
     path: /v1/marketing/competitive-landscape
     capabilities:
-      - marketing.competitive_landscape
+      - shop.competitive_landscape
   - origin: https://airquality.google.gateway-402.com
     method: POST
     path: /v1/forecast:lookup

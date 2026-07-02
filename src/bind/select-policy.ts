@@ -179,7 +179,7 @@ function breadthPenalty(ep: EndpointRecord): number {
 
 /** Domains that legitimately serve one another (symmetric; deliberately tight). */
 const DOMAIN_COMPAT: Record<string, readonly string[]> = {
-  travel: ["maps"], maps: ["travel"], finance: ["crypto"], crypto: ["finance"],
+  travel: ["maps"], maps: ["travel"], finance: ["blockchain"], blockchain: ["finance"],
 };
 const domainCompatible = (ed: string, id: string): boolean =>
   ed === id || (DOMAIN_COMPAT[id] ?? []).includes(ed);

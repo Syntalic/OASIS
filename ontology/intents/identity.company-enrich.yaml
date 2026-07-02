@@ -1,4 +1,4 @@
-id: data.company_enrich
+id: identity.company_enrich
 label: Enrich company data from a domain
 description: Look up company firmographics, industry, and metadata from a domain name. Use when an agent needs business context from a website domain for prospecting, due diligence, or CRM enrichment.
 aliases:
@@ -26,11 +26,11 @@ produces:
   - entity: Company
     role: payload
 facets:
-  domain: data
+  domain: identity
   action: lookup
 links:
   - type: sibling_of
-    to: media.social_data
+    to: social.social_data
     note: same identity family, differs by entity x purpose (Company firmographics vs social posts)
   - type: sibling_of
     to: data.whois_lookup

@@ -1,4 +1,4 @@
-id: finance.token_balance
+id: blockchain.token_balance
 label: Look up wallet token balances
 description: On-chain token and wallet balance lookups for EVM wallets. Use when an agent needs holdings, ERC-1155 balances, or wallet inventory before transfers, portfolio checks, or treasury reporting.
 aliases:
@@ -19,7 +19,7 @@ produces:
     role: payload
     format: json
 facets:
-  domain: finance
+  domain: blockchain
   action: lookup
   freshness: realtime
 links:

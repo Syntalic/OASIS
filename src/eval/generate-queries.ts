@@ -153,7 +153,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "marketing-landscape-1",
     query: "competitive pricing landscape for a category",
-    expect_intent: "marketing.competitive_landscape",
+    expect_intent: "shop.competitive_landscape",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -163,7 +163,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "analyst-inflation-1",
     query: "track price inflation in grocery category",
-    expect_intent: "analyst.inflation_tracker",
+    expect_intent: "shop.inflation_tracker",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -273,7 +273,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "analyst-inflation-2",
     query: "how much have grocery prices increased this year",
-    expect_intent: "analyst.inflation_tracker",
+    expect_intent: "shop.inflation_tracker",
     expect_endpoint: {
       origin: "https://api.syntalic.com",
       method: "GET",
@@ -313,7 +313,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "data-enrich-1",
     query: "enrich a company from its domain name",
-    expect_intent: "data.company_enrich",
+    expect_intent: "identity.company_enrich",
     expect_endpoint: {
       origin: "https://abstract-company-enrichment.mpp.paywithlocus.com",
       method: "POST",
@@ -323,7 +323,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "data-scrape-1",
     query: "scrape a webpage and extract content",
-    expect_intent: "data.web_scrape",
+    expect_intent: "web.scrape",
     expect_endpoint: {
       origin: "https://abstract-web-scraping.mpp.paywithlocus.com",
       method: "POST",
@@ -403,7 +403,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "storage-host-1",
     query: "host a static website file upload",
-    expect_intent: "storage.hosting",
+    expect_intent: "cloud.hosting",
     expect_endpoint: {
       origin: "https://stableupload.dev",
       method: "POST",

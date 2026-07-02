@@ -25,5 +25,5 @@ facets:
     - json
 links:
   - type: broader_of
-    to: data.ocr
+    to: ai.ocr
     note: document_extract parses full documents into structured fields; OCR is the narrower pixels-to-text variant

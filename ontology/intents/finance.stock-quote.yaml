@@ -23,5 +23,5 @@ facets:
   freshness: realtime
 links:
   - type: sibling_of
-    to: data.exchange_rates
+    to: finance.exchange_rates
     note: same lookup-a-live-quote family, differs only by entity (Ticker vs Currency)

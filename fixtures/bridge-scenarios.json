@@ -19,17 +19,8 @@
       "id": "company_competitor_social",
       "description": "Agent holds Company — social and people-search reachable",
       "held_entities": [{ "entity": "Company", "value": "Acme Corp" }],
-      "source_domain": "marketing",
-      "expect_intents": ["media.social_data", "data.person_search", "data.job_search"],
-      "min_hits": 2,
-      "must_cross_domain": true
-    },
-    {
-      "id": "product_category_competitive",
-      "description": "Agent holds a ProductCategory — competitive + inflation intel reachable cross-domain",
-      "held_entities": [{ "entity": "ProductCategory", "value": "consumer electronics" }],
       "source_domain": "shop",
-      "expect_intents": ["marketing.competitive_landscape", "analyst.inflation_tracker"],
+      "expect_intents": ["social.social_data", "identity.person_search", "data.job_search"],
       "min_hits": 2,
       "must_cross_domain": true
     },
@@ -38,7 +29,7 @@
       "description": "Agent holds a Person — social + people-search reachable cross-domain",
       "held_entities": [{ "entity": "Person", "value": "Jane Roe" }],
       "source_domain": "comms",
-      "expect_intents": ["data.person_search", "media.social_data", "social.influencer_search"],
+      "expect_intents": ["identity.person_search", "social.social_data", "social.influencer_search"],
       "min_hits": 2,
       "must_cross_domain": true
     },

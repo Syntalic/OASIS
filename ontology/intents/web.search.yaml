@@ -1,4 +1,4 @@
-id: search.web
+id: web.search
 label: Search the web for organic results
 description: Real-time web search returning organic links, snippets, knowledge panels, and related queries. Use when an agent needs current SERP results, source URLs, or quick fact-finding across the open web.
 aliases:
@@ -25,7 +25,7 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: search
+  domain: web
   action: search
   modality:
     - json
@@ -33,7 +33,7 @@ facets:
 links:
   - type: broader_of
     to: ai.web_research
-    note: search.web returns raw SERP links; web_research is the narrower cited-answer variant over the same query
+    note: web.search returns raw SERP links; web_research is the narrower cited-answer variant over the same query
   - type: pipes_to
-    to: data.web_scrape
+    to: web.scrape
     note: search the web, then fetch/scrape the result URLs

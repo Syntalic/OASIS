@@ -215,7 +215,7 @@ baseline search(q)                      control, for the three failing queries
 |---|---|---|---|
 | weather | `data.weather_forecast` #1 | 8/8 weather | ✓ clean |
 | bitcoin | `finance.crypto_spot_price` #1 | 8/8 crypto-spot | ✓ clean |
-| OCR | `data.ocr` #1 | OCR; `qr-code-decode` bleed @6 | ✓ (one wart) |
+| OCR | `ai.ocr` #1 | OCR; `qr-code-decode` bleed @6 | ✓ (one wart) |
 | PDF→audio | TTS #1, `ai.document_extract` #3, `ai.llm_complete` #6 | 10/10 `ai.text_to_speech` | ⚠ orchestration gap, not binding |
 | restaurant reviews | `travel.place_reviews` #1, `maps.places` #2 | product-review bleed @3/@8/@10 | ✗ binding precision |
 | register a domain | `cloud.domains` #1 | first registrar @8 | ✗ binding precision |
@@ -223,7 +223,7 @@ baseline search(q)                      control, for the three failing queries
 ### A.2 OASIS transcripts (condensed; `via` = bound intent)
 
 **register a domain name for my startup** — `search` → `cloud.domains` #1 ✓, then `data.whois_lookup`,
-`data.company_enrich`, `agent.marketplace`, `storage.hosting`, … `find` (all `via: cloud.domains`):
+`identity.company_enrich`, `agent.marketplace`, `cloud.hosting`, … `find` (all `via: cloud.domains`):
 
 ```
  1. GET  palmyr.ai/domains/pricing                       registration pricing (preflight)
@@ -263,7 +263,7 @@ work in this proposal does not address it.** (`oasis_search` exposes the legs; `
 where composition would have to live.)
 
 Baselines clean: `weather`→`data.weather_forecast` (8/8 weather; one aviation TAF); `bitcoin`→
-`finance.crypto_spot_price` (8/8 spot); `OCR`→`data.ocr` (OCR endpoints + one `qr-code-decode` at #6 — a
+`finance.crypto_spot_price` (8/8 spot); `OCR`→`ai.ocr` (OCR endpoints + one `qr-code-decode` at #6 — a
 small same-mechanism wart in an otherwise clean bucket, corroborating the thesis rather than denying it).
 
 ### A.3 Control — the vector-search baseline's `search` (the three failing queries)

@@ -1,4 +1,4 @@
-id: marketing.competitive_landscape
+id: shop.competitive_landscape
 label: Competitive pricing landscape for a category
 description: View all products in a category with competitive pricing across retailers. Use when an agent needs a category-wide market scan for competitive positioning, pricing research, or shelf analysis.
 aliases:
@@ -21,7 +21,7 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: marketing
+  domain: shop
   action: analyze
   freshness: realtime
 links:

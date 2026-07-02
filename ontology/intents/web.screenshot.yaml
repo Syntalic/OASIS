@@ -32,5 +32,5 @@ links:
     to: web.markdown_extract
     note: same fetch-a-URL family, different output modality (PNG vs markdown), not substitutable
   - type: sibling_of
-    to: data.web_scrape
+    to: web.scrape
     note: same fetch-a-URL family, different output modality (PNG vs HTML), not substitutable

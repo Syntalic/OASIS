@@ -6,8 +6,8 @@ export const TASKS = [
   { q: "what's one ether worth in dollars right now", expect: "finance.crypto_spot_price" },
   { q: "transcribe this earnings-call recording into text", expect: "ai.speech_to_text" },
   { q: "find the cheapest place to buy a Nintendo Switch", expect: "shop.compare_price" },
-  { q: "translate this support reply into Japanese", expect: "data.translate_text" },
-  { q: "before I email this list, which addresses will bounce", expect: "data.email_validate" },
+  { q: "translate this support reply into Japanese", expect: "ai.translate_text" },
+  { q: "before I email this list, which addresses will bounce", expect: "utility.email_validate" },
   { q: "give me a well-sourced summary of recent EU AI Act news with citations", expect: "ai.web_research" },
   { q: "pull the line items and totals out of this PDF invoice", expect: "ai.document_extract" },
   { q: "should I pack an umbrella in Lisbon this weekend", expect: "data.weather_forecast" },
@@ -19,5 +19,5 @@ export const TASKS = [
   { q: "find two-bedroom apartments for sale in Miami", expect: "realestate.property_lookup" },
   { q: "turn these product descriptions into vectors for semantic search", expect: "ai.embeddings" },
   { q: "what's Nvidia stock doing today", expect: "finance.stock_quote" },
-  { q: "scrape the full contents of this product page", expect: "data.web_scrape" },
+  { q: "scrape the full contents of this product page", expect: "web.scrape" },
 ];

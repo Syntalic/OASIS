@@ -22,7 +22,7 @@
   {
     "id": "messy-company-1",
     "query": "who runs stripe.com — industry, size, firmographics",
-    "expect_intent": "data.company_enrich",
+    "expect_intent": "identity.company_enrich",
     "expect_endpoint": {
       "origin": "https://abstract-company-enrichment.mpp.paywithlocus.com",
       "method": "POST",
@@ -32,7 +32,7 @@
   {
     "id": "messy-company-2",
     "query": "turn a corporate domain into structured company metadata",
-    "expect_intent": "data.company_enrich",
+    "expect_intent": "identity.company_enrich",
     "expect_endpoint": {
       "origin": "https://abstract-company-enrichment.mpp.paywithlocus.com",
       "method": "POST",
@@ -202,7 +202,7 @@
   {
     "id": "messy-inflation-1",
     "query": "did grocery prices inflate this year versus last",
-    "expect_intent": "analyst.inflation_tracker",
+    "expect_intent": "shop.inflation_tracker",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -212,7 +212,7 @@
   {
     "id": "messy-inflation-2",
     "query": "category-level CPI style trend for consumer goods",
-    "expect_intent": "analyst.inflation_tracker",
+    "expect_intent": "shop.inflation_tracker",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -222,7 +222,7 @@
   {
     "id": "messy-hosting-1",
     "query": "upload static assets and host a tiny landing page",
-    "expect_intent": "storage.hosting",
+    "expect_intent": "cloud.hosting",
     "expect_endpoint": {
       "origin": "https://stableupload.dev",
       "method": "POST",
@@ -232,7 +232,7 @@
   {
     "id": "messy-hosting-2",
     "query": "cheap file hosting for a side-project README site",
-    "expect_intent": "storage.hosting",
+    "expect_intent": "cloud.hosting",
     "expect_endpoint": {
       "origin": "https://stableupload.dev",
       "method": "POST",
@@ -322,7 +322,7 @@
   {
     "id": "messy-competitive-1",
     "query": "map competitor pricing across brands in running shoes",
-    "expect_intent": "marketing.competitive_landscape",
+    "expect_intent": "shop.competitive_landscape",
     "expect_endpoint": {
       "origin": "https://api.syntalic.com",
       "method": "GET",
@@ -392,7 +392,7 @@
   {
     "id": "messy-person-search-1",
     "query": "lookup public profiles for a person by name and city",
-    "expect_intent": "data.person_search",
+    "expect_intent": "identity.person_search",
     "expect_endpoint": {
       "origin": "https://api.paysponge.com/x402/purchase/svc_d5ymfernpzeh58gb8",
       "method": "POST",
@@ -412,7 +412,7 @@
   {
     "id": "messy-social-comments-1",
     "query": "fetch comments on a Facebook post for sentiment review",
-    "expect_intent": "media.social_data",
+    "expect_intent": "social.social_data",
     "expect_endpoint": {
       "origin": "https://stablesocial.dev",
       "method": "POST",
@@ -422,7 +422,7 @@
   {
     "id": "messy-token-balance-1",
     "query": "how many ERC-1155 tokens does this wallet hold",
-    "expect_intent": "finance.token_balance",
+    "expect_intent": "blockchain.token_balance",
     "expect_endpoint": {
       "origin": "https://api.onesource.io",
       "method": "GET",
@@ -442,7 +442,7 @@
   {
     "id": "messy-scrape-1",
     "query": "pull the HTML from a competitor's pricing page",
-    "expect_intent": "data.web_scrape",
+    "expect_intent": "web.scrape",
     "expect_endpoint": {
       "origin": "https://abstract-web-scraping.mpp.paywithlocus.com",
       "method": "POST",
@@ -492,7 +492,7 @@
   {
     "id": "messy-ocr-1",
     "query": "read the text in this photo of a street sign",
-    "expect_intent": "data.ocr",
+    "expect_intent": "ai.ocr",
     "expect_endpoint": {
       "origin": "https://ai.verifik.co",
       "method": "POST",
@@ -512,7 +512,7 @@
   {
     "id": "messy-translate-1",
     "query": "translate this product description from German to English",
-    "expect_intent": "data.translate_text",
+    "expect_intent": "ai.translate_text",
     "expect_endpoint": {
       "origin": "https://deepl.mpp.paywithlocus.com",
       "method": "POST",
@@ -552,7 +552,7 @@
   {
     "id": "messy-fx-1",
     "query": "convert 50000 JPY to USD at today's rate",
-    "expect_intent": "data.exchange_rates",
+    "expect_intent": "finance.exchange_rates",
     "expect_endpoint": {
       "origin": "https://abstract-exchange-rates.mpp.paywithlocus.com",
       "method": "POST",
@@ -562,7 +562,7 @@
   {
     "id": "messy-email-validate-1",
     "query": "is this signup email real or a disposable throwaway",
-    "expect_intent": "data.email_validate",
+    "expect_intent": "utility.email_validate",
     "expect_endpoint": {
       "origin": "https://abstract-email-reputation.mpp.paywithlocus.com",
       "method": "POST",
@@ -582,7 +582,7 @@
   {
     "id": "messy-wolfram-1",
     "query": "compute the definite integral of x^2 from 0 to 3 precisely",
-    "expect_intent": "data.compute_answer",
+    "expect_intent": "compute.compute_answer",
     "expect_endpoint": {
       "origin": "https://wolframalpha.x402.paysponge.com",
       "method": "GET",
@@ -592,7 +592,7 @@
   {
     "id": "messy-phone-validate-1",
     "query": "is this US mobile number real before we send OTP texts",
-    "expect_intent": "data.phone_validate",
+    "expect_intent": "utility.phone_validate",
     "expect_endpoint": {
       "origin": "https://abstract-phone-intelligence.mpp.paywithlocus.com",
       "method": "POST",
@@ -612,7 +612,7 @@
   {
     "id": "messy-web-search-1",
     "query": "google-style web results for recent OpenAI product announcements",
-    "expect_intent": "search.web",
+    "expect_intent": "web.search",
     "expect_endpoint": {
       "origin": "https://mpp.orthogonal.com/serper",
       "method": "POST",

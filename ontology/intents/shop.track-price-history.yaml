@@ -26,5 +26,5 @@ facets:
   freshness: historical
 links:
   - type: sibling_of
-    to: analyst.inflation_tracker
+    to: shop.inflation_tracker
     note: same pricing-intel family, differs by entity granularity (one Product vs a ProductCategory), both historical
