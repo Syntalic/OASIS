@@ -14,8 +14,8 @@ import { bazaarToEndpoint, fetchBazaar } from "./bazaar.js";
 import { fetchPayShProviders, payShOrigin } from "./paysh.js";
 import { SchemaCollector } from "./schema-store.js";
 
-const SPEC_VERSION = "0.2.0";
-const INDEX_VERSION = "0.2.0";
+const SPEC_VERSION = "0.3.0";
+const INDEX_VERSION = "0.3.0";
 const HTTP = new Set<HttpMethod>(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]);
 const hostOf = (origin: string): string => {
   try { return new URL(origin).hostname; } catch { return origin; }
@@ -70,6 +70,12 @@ async function gateAndWrite(merged: EndpointRecord[], outputDir: string, built: 
     JSON.stringify({ index_version: INDEX_VERSION, spec_version: SPEC_VERSION, built_at: built, stats: bundle.stats, endpoints: passing }, null, 2),
   );
   return bundle;
+}
+
+/** Write the content-addressed schema map to `outputDir/schemas.json`. */
+export async function writeSchemas(collector: SchemaCollector, outputDir: string): Promise<void> {
+  await mkdir(outputDir, { recursive: true });
+  await writeFile(path.join(outputDir, "schemas.json"), JSON.stringify(collector.toObject(), null, 2));
 }
 
 /** Strip ranking/debug substrate fields a snapshot may carry → clean EndpointRecord. */
@@ -168,8 +174,8 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
       if (!res.ok) return;
       const buf = await res.text();
       if (buf.length > 2_000_000) return;
-      const { records: recs, schemas: _sc } = parseOpenApi(JSON.parse(buf), { origin, builtAt: built });
-      if (recs.length) { enrichedByOrigin.set(origin, recs); ok++; }
+      const { records: recs, schemas: sc } = parseOpenApi(JSON.parse(buf), { origin, builtAt: built });
+      if (recs.length) { enrichedByOrigin.set(origin, recs); schemaCollector.merge(sc); ok++; }
     } catch {}
   };
   const worker = async (): Promise<void> => {
@@ -215,5 +221,7 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
   }
 
   // --- Gate → PASS corpus → bundle ---
-  return gateAndWrite(merged, opts.outputDir, built);
+  const bundle = await gateAndWrite(merged, opts.outputDir, built);
+  await writeSchemas(schemaCollector, opts.outputDir);
+  return bundle;
 }
