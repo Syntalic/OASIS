@@ -162,8 +162,14 @@ export async function safeFetch(url: string, opts: RequestInit = {}, resolver: R
     if (u.protocol !== "http:" && u.protocol !== "https:") throw new Error(`net-guard: scheme ${u.protocol}`);
     const vetted = await assertPublicHost(u.hostname, resolver);
     const pinned = vetted[0];
+    // Per-request Agent (one per hop) — bound its socket lifetime so the idle socket is reaped almost
+    // immediately after the caller consumes the body, letting the agent object GC promptly instead of
+    // relying on finalization. (No shared agent: the pinned-lookup must stay per-hop for SSRF safety.)
     const agent = new Agent({
       connect: { lookup: (_h, _o, cb) => cb(null, pinned, isIP(pinned) as 4 | 6) },
+      keepAliveTimeout: 1,
+      keepAliveMaxTimeout: 1,
+      pipelining: 0,
     });
     const res = await fetch(current, { ...opts, redirect: "manual", dispatcher: agent } as RequestInit);
     if (res.status >= 300 && res.status < 400 && res.headers.get("location")) {

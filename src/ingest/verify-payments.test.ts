@@ -114,6 +114,26 @@ describe('verifyPayments — reuses a fresh cached verdict', () => {
       assert.deepEqual(out[0].payment.live_challenge, X402_CHALLENGE);
     });
   });
+
+  it('stamps payment_verified_at from the ORIGINAL cache verified_at, not built', async () => {
+    await withDir(async (dir) => {
+      const CACHED_AT = new Date(NOW_MS - DAY_MS).toISOString(); // 1d old → fresh (7d TTL)
+      await saveVerdictCache(dir, {
+        A: { verdict: 'verified', reason: 'cached_x402', verified_at: CACHED_AT, challenge: X402_CHALLENGE },
+      });
+      const probe = async (): Promise<VerifyResult> => {
+        throw new Error('probe must not run for a fresh cache hit');
+      };
+      const out = await verifyPayments([makeEp({ id: 'A', origin: 'https://a.example' })], null, dir, BUILT, {
+        probe,
+        nowMs: NOW_MS,
+        schemaStore: {},
+      });
+      // Reuse keeps the ORIGINAL probe time — stamping `built` on a stale hit would lie about staleness.
+      assert.equal(out[0].payment_verified_at, CACHED_AT);
+      assert.notEqual(out[0].payment_verified_at, BUILT);
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------

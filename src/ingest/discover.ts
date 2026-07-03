@@ -365,6 +365,9 @@ export async function verifyPayments(
   const probedIds = new Set<string>();
   const seenIds = new Set<string>();
   const toProbe: EndpointRecord[] = [];
+  // id → the ORIGINAL probe time for verdicts reused from a fresh cache hit. Freshly-determined
+  // records get `built`; reused ones keep this so payment_verified_at doesn't lie about staleness.
+  const reusedVerifiedAt = new Map<string, string>();
 
   for (const ep of merged) {
     seenIds.add(ep.id);
@@ -379,6 +382,7 @@ export async function verifyPayments(
     const cached = cache[ep.id];
     if (cached && isFresh(cached, nowMs)) {
       results.set(ep.id, { verdict: cached.verdict, reason: cached.reason, challenge: cached.challenge });
+      reusedVerifiedAt.set(ep.id, cached.verified_at); // carry the original probe time through reuse
       continue; // reuse — do NOT probe
     }
     toProbe.push(ep);
@@ -439,6 +443,10 @@ export async function verifyPayments(
       } else {
         backoff.set(h, 0);
       }
+    } catch {
+      // A buggy/hostile probe must never reject Promise.all and abort the whole crawl — fail soft to
+      // `unknown` so this endpoint is simply left unverified (the end-of-scheduler pass won't overwrite it).
+      results.set(ep.id, { verdict: "unknown", reason: "probe_error" });
     } finally {
       inFlight.set(h, (inFlight.get(h) ?? 0) - 1);
     }
@@ -454,7 +462,9 @@ export async function verifyPayments(
       await new Promise((r) => setImmediate(r)); // hosts at cap — yield, then retry
     }
   };
-  const poolSize = Math.min(PROBE_CONCURRENCY, Math.max(1, toProbe.length));
+  // Never spawn more workers than can ever run at once: the per-host cap bounds runnable probes at
+  // hosts.length * PROBE_PER_HOST, so extra workers would only spin idle. Purely an efficiency cap.
+  const poolSize = Math.min(PROBE_CONCURRENCY, Math.max(1, hosts.length * PROBE_PER_HOST));
   await Promise.all(Array.from({ length: poolSize }, worker));
 
   // Any eligible endpoint skipped by host back-off never got a result → stamp unknown.
@@ -468,7 +478,8 @@ export async function verifyPayments(
     const res = results.get(ep.id);
     if (!res) continue;
     ep.payment_verified = res.verdict;
-    ep.payment_verified_at = built;
+    // Reused-from-cache verdicts keep their original probe time; everything else was determined now.
+    ep.payment_verified_at = reusedVerifiedAt.get(ep.id) ?? built;
     if (res.verdict === "verified" && res.challenge) ep.payment.live_challenge = res.challenge;
     verdictMap.set(ep.id, res.verdict);
   }
