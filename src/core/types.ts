@@ -7,6 +7,9 @@ export type HttpMethod =
   | "HEAD"
   | "OPTIONS";
 
+/** A JSON Schema (2020-12) object. Advisory: captured from a provider source, may be stale. */
+export type JsonSchema = Record<string, unknown>;
+
 export interface PaymentRail {
   protocol: "x402" | "mpp";
   version?: string;
@@ -170,6 +173,16 @@ export interface EndpointRecord {
   schema_missing?: boolean;
   guidance_available?: boolean;
   openapi_url?: string;
+  /** sha256 ref into dist/schemas.json for the normalized input schema (JSON Schema 2020-12). */
+  input_schema_ref?: string;
+  /** sha256 ref into dist/schemas.json for the normalized output (2xx) schema. */
+  output_schema_ref?: string;
+  /** Which crawled source the schema came from. */
+  schema_source?: "openapi" | "bazaar";
+  /** When the schema was captured (advisory freshness). */
+  schema_captured_at?: string;
+  /** True when the source schema exceeded the size/depth cap and was dropped. */
+  schema_truncated?: boolean;
   search_text: string;
   /** Ingest-time local keyphrases (spaCy noun-chunks/POS, lemmatized) — powers the serve-time
    *  keyword-relevance match (string ops only; no live model). See scripts/keyx/enrich_keyphrases.py. */
@@ -265,4 +278,7 @@ export interface SearchHit {
   price_usd?: number;
   payment_rails?: string[];
   provider_fqn?: string;
+  input_schema_ref?: string;
+  output_schema_ref?: string;
+  schema_source?: "openapi" | "bazaar";
 }

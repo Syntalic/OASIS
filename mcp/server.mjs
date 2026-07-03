@@ -24,4 +24,4 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
 });
 
 await server.connect(new StdioServerTransport());
-console.error("oasis MCP server ready (stdio): oasis_search, oasis_resolve");
+console.error(`oasis MCP server ready (stdio): ${MCP_TOOLS.map((t) => t.name).join(", ")}`);

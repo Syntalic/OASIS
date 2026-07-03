@@ -59,7 +59,7 @@ export async function fetchOpenApiForOrigin(
       const text = await res.text();
       const doc = parseOpenApiBody(text, contentType);
       if (!doc?.paths) continue;
-      const endpoints = parseOpenApi(doc, { origin, builtAt });
+      const { records: endpoints } = parseOpenApi(doc, { origin, builtAt });
       if (endpoints.length === 0) continue;
       for (const ep of endpoints) {
         ep.openapi_url = url;

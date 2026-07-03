@@ -12,6 +12,8 @@ import {
   parsePaymentOffers,
   parseServiceInfo,
 } from "./payment-spec.js";
+import { SchemaCollector } from "./schema-store.js";
+import { openApiEndpointSchemas } from "./endpoint-schemas.js";
 
 const HTTP_METHODS = new Set([
   "get",
@@ -262,7 +264,7 @@ export function parseOpenApi(
     builtAt: string;
     capabilityIds?: string[];
   },
-): EndpointRecord[] {
+): { records: EndpointRecord[]; schemas: SchemaCollector } {
   const origin = canonicalOrigin(
     normalizeOrigin(
       options.origin ??
@@ -278,6 +280,7 @@ export function parseOpenApi(
   const service = parseServiceInfo(doc["x-service-info"]);
   const openapiUrl = `${origin}/openapi.json`;
   const records: EndpointRecord[] = [];
+  const schemas = new SchemaCollector();
 
   for (const [path, pathItem] of Object.entries(doc.paths ?? {})) {
     if (!pathItem || typeof pathItem !== "object") continue;
@@ -335,6 +338,11 @@ export function parseOpenApi(
         guidance?.slice(0, 500),
       ]);
 
+      const oas30 = (doc.openapi ?? "3.0").startsWith("3.0");
+      const io = openApiEndpointSchemas(op, (ref) => resolveRef(doc, ref), oas30);
+      const input_schema_ref = io.input ? schemas.add(io.input) : undefined;
+      const output_schema_ref = io.output ? schemas.add(io.output) : undefined;
+
       records.push({
         id: endpointId(origin, httpMethod, path),
         origin,
@@ -352,11 +360,16 @@ export function parseOpenApi(
         schema_missing: schemaMissing,
         guidance_available: guidanceAvailable,
         openapi_url: openapiUrl,
+        input_schema_ref,
+        output_schema_ref,
+        schema_source: input_schema_ref || output_schema_ref ? "openapi" : undefined,
+        schema_captured_at: input_schema_ref || output_schema_ref ? options.builtAt : undefined,
+        schema_truncated: io.truncated || undefined,
         search_text: searchText,
         built_at: options.builtAt,
       });
     }
   }
 
-  return records;
+  return { records, schemas };
 }

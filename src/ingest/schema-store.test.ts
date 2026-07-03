@@ -1,0 +1,49 @@
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
+import { canonicalJson, schemaRef, SchemaCollector, resolveEndpointSchemas, assembleSchemaStore } from "./schema-store.js";
+
+describe("schema-store", () => {
+  it("canonicalJson is key-order independent", () => {
+    assert.equal(canonicalJson({ b: 1, a: [{ y: 2, x: 1 }] }), canonicalJson({ a: [{ x: 1, y: 2 }], b: 1 }));
+  });
+  it("schemaRef is a stable 64-hex hash, order-independent", () => {
+    const a = schemaRef({ type: "object", required: ["x"], properties: { x: { type: "string" } } });
+    const b = schemaRef({ properties: { x: { type: "string" } }, required: ["x"], type: "object" });
+    assert.match(a, /^[a-f0-9]{64}$/);
+    assert.equal(a, b);
+  });
+  it("collector dedupes identical schemas", () => {
+    const c = new SchemaCollector();
+    const r1 = c.add({ type: "string" });
+    const r2 = c.add({ type: "string" });
+    assert.equal(r1, r2);
+    assert.equal(c.size, 1);
+    assert.deepEqual(c.toObject()[r1], { type: "string" });
+  });
+  it("resolves refs against the store", () => {
+    const store = { deadbeef: { type: "object" } } as any;
+    const rec = { input_schema_ref: "deadbeef", schema_source: "openapi" } as any;
+    const r = resolveEndpointSchemas(rec, store);
+    assert.deepEqual(r.input_schema, { type: "object" });
+    assert.equal(r.input_schema_ref, "deadbeef");
+    assert.equal(r.output_schema, undefined);
+  });
+  it("missing ref → undefined schema", () => {
+    const r = resolveEndpointSchemas({ output_schema_ref: "nope" } as any, {} as any);
+    assert.equal(r.output_schema, undefined);
+    assert.equal(r.output_schema_ref, "nope");
+  });
+  it("assembleSchemaStore backfills carried-forward refs from prior, skips unresolvable", () => {
+    const records = [
+      { input_schema_ref: "A", output_schema_ref: "B" }, // A fresh this run, B carried-forward
+      { output_schema_ref: "C" }, // resolvable in neither store
+    ] as any;
+    const ownStore = { A: { type: "string" } } as any;
+    const priorStore = { B: { type: "number" } } as any;
+    const out = assembleSchemaStore(records, ownStore, priorStore);
+    assert.deepEqual(out.A, { type: "string" });
+    assert.deepEqual(out.B, { type: "number" });
+    assert.equal(out.C, undefined);
+    assert.deepEqual(Object.keys(out).sort(), ["A", "B"]);
+  });
+});

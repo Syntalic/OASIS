@@ -9,12 +9,13 @@ import { baseUnitsToUsd, parseAmountHint } from "../core/money.js";
 import { parseOpenApi } from "./openapi-parser.js";
 import { canonicalOrigin } from "./origin-aliases.js";
 import { gradeEndpoint } from "../bind/quality-gate.js";
-import type { EndpointRecord, HttpMethod, IndexBundle } from "../core/types.js";
+import type { EndpointRecord, HttpMethod, IndexBundle, JsonSchema } from "../core/types.js";
 import { bazaarToEndpoint, fetchBazaar } from "./bazaar.js";
 import { fetchPayShProviders, payShOrigin } from "./paysh.js";
+import { assembleSchemaStore, SchemaCollector } from "./schema-store.js";
 
-const SPEC_VERSION = "0.2.0";
-const INDEX_VERSION = "0.2.0";
+const SPEC_VERSION = "0.3.0";
+const INDEX_VERSION = "0.3.0";
 const HTTP = new Set<HttpMethod>(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]);
 const hostOf = (origin: string): string => {
   try { return new URL(origin).hostname; } catch { return origin; }
@@ -71,6 +72,12 @@ async function gateAndWrite(merged: EndpointRecord[], outputDir: string, built: 
   return bundle;
 }
 
+/** Write the content-addressed schema map to `outputDir/schemas.json`. */
+export async function writeSchemas(store: Record<string, JsonSchema>, outputDir: string): Promise<void> {
+  await mkdir(outputDir, { recursive: true });
+  await writeFile(path.join(outputDir, "schemas.json"), JSON.stringify(store, null, 2));
+}
+
 /** Strip ranking/debug substrate fields a snapshot may carry → clean EndpointRecord. */
 function cleanRecord(r: Record<string, unknown>): EndpointRecord {
   const { _source, _completeness, _flags, _wellknown, ...rest } = r;
@@ -91,6 +98,7 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
   }
 
   const conc = opts.enrichConcurrency ?? 16;
+  const schemaCollector = new SchemaCollector();
   const inlineByKey = new Map<string, EndpointRecord>();
   const originSource = new Map<string, string>();
   const addInline = (rec: EndpointRecord | null, src: string): void => {
@@ -106,7 +114,7 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
     maxPages: opts.bazaarMaxPages,
     onProgress: (n, t) => { if (n % 5000 === 0) console.error(`  bazaar ${n}/${t}`); },
   });
-  for (const r of bz) addInline(bazaarToEndpoint(r, built), "bazaar");
+  for (const r of bz) addInline(bazaarToEndpoint(r, built, schemaCollector), "bazaar");
 
   console.error("ingest: mpp.dev ...");
   let mppSvcs: MppService[] = [];
@@ -166,8 +174,8 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
       if (!res.ok) return;
       const buf = await res.text();
       if (buf.length > 2_000_000) return;
-      const recs = parseOpenApi(JSON.parse(buf), { origin, builtAt: built });
-      if (recs.length) { enrichedByOrigin.set(origin, recs); ok++; }
+      const { records: recs, schemas: sc } = parseOpenApi(JSON.parse(buf), { origin, builtAt: built });
+      if (recs.length) { enrichedByOrigin.set(origin, recs); schemaCollector.merge(sc); ok++; }
     } catch {}
   };
   const worker = async (): Promise<void> => {
@@ -213,5 +221,16 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
   }
 
   // --- Gate → PASS corpus → bundle ---
-  return gateAndWrite(merged, opts.outputDir, built);
+  const bundle = await gateAndWrite(merged, opts.outputDir, built);
+  // Persist a store covering EVERY schema ref on the written endpoints. This run's collector only
+  // holds schemas for freshly-probed origins; carried-forward endpoints still carry input/output
+  // refs from a prior crawl whose schemas live in the prior schemas.json. Backfill from it (fail-soft)
+  // so no written ref dangles (ref present on the record, schema missing from schemas.json).
+  let priorStore: Record<string, JsonSchema> = {};
+  const priorSchemasPath = path.join(opts.outputDir, "schemas.json");
+  if (existsSync(priorSchemasPath)) {
+    try { priorStore = JSON.parse(await readFile(priorSchemasPath, "utf8")) as Record<string, JsonSchema>; } catch {}
+  }
+  await writeSchemas(assembleSchemaStore(bundle.endpoints, schemaCollector.toObject(), priorStore), opts.outputDir);
+  return bundle;
 }
