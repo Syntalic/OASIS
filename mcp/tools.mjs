@@ -31,6 +31,20 @@ try {
   schemaStore = {};
 }
 
+// Contributed workflow recipes (dist/workflows.json): validated recipes + a goal-embedding for
+// query→workflow matching. Steps name intent IDs; endpoints resolve at serve time. Fail-soft to []
+// (the sidecar is absent on a pre-workflows snapshot — recommended_workflows is an additive extra).
+let workflows = [];
+try {
+  const w = JSON.parse(readFileSync(path.join(DIST, "workflows.json"), "utf8"));
+  workflows = Array.isArray(w) ? w : [];
+} catch {
+  workflows = [];
+}
+// Gemini embeddings have a high baseline cosine (unrelated queries reach ~0.55), so the match gate
+// sits well above it: measured true-positives land 0.78–0.82, false-positives ≤0.55. Env-tunable.
+const WF_THRESHOLD = Number(process.env.OASIS_WORKFLOW_THRESHOLD ?? 0.68);
+
 // Pull only the PRESENT schema-ref fields off a record/hit, for spreading onto an endpoint object.
 // Progressive disclosure: discover/resolve carry refs only; the full schema is served at the schema
 // step (oasis_schema / include_schema). Fields stay absent when the record has none (old snapshots).
@@ -121,7 +135,7 @@ const TOOLS = [
   {
     name: "oasis_discover",
     description:
-      "Find the paid HTTP API endpoints for a task — and what to do next — in ONE call. Returns `endpoints` (a ranked, host-deduped list: method, url, summary, price_usd, rails) plus `next_steps` — adjacent and cross-domain capabilities to chain into, each with a `why` and, where available, a callable endpoint. Start here whenever you're unsure which API to call.\n\nFor a multi-step task, run a loop: (1) call discover with your task as `query`; (2) invoke one of the returned endpoints; (3) call discover again with `finding` set to a plain-text note of what you just learned (e.g. \"registered acme.com for Acme Corp\") — it extracts the entities you now hold and folds cross-domain follow-ups into `next_steps`. Only `query` is needed on the first call; add `finding` on every follow-up.",
+      "Find the paid HTTP API endpoints for a task — and what to do next — in ONE call. Returns `endpoints` (a ranked, host-deduped list: method, url, summary, price_usd, rails) plus `next_steps` — adjacent and cross-domain capabilities to chain into, each with a `why` and, where available, a callable endpoint. When your task matches a known multi-step recipe, `recommended_workflows` also returns an ordered plan — each step's intent resolved to a live endpoint, with prices and any gates — for your agent to run (OASIS suggests; you execute). Start here whenever you're unsure which API to call.\n\nFor a multi-step task, run a loop: (1) call discover with your task as `query`; (2) invoke one of the returned endpoints; (3) call discover again with `finding` set to a plain-text note of what you just learned (e.g. \"registered acme.com for Acme Corp\") — it extracts the entities you now hold and folds cross-domain follow-ups into `next_steps`. Only `query` is needed on the first call; add `finding` on every follow-up.",
     schema: {
       type: "object",
       properties: {
@@ -336,6 +350,54 @@ async function buildNextSteps(caps, query, held = null) {
   return out;
 }
 
+function cosine(a, b) {
+  if (!a || !b || a.length !== b.length) return 0;
+  let dot = 0, na = 0, nb = 0;
+  for (let i = 0; i < a.length; i++) { dot += a[i] * b[i]; na += a[i] * a[i]; nb += b[i] * b[i]; }
+  return na && nb ? dot / (Math.sqrt(na) * Math.sqrt(nb)) : 0;
+}
+
+// Match the query against contributed workflow recipes (goal-embedding cosine); for the top match
+// above threshold, resolve each step's INTENT to its current top endpoint (serve-time resolution —
+// the recipe names intents, the index fills endpoints fresh). Additive to next_steps: OASIS suggests
+// the route, the agent decides whether to run it. Endpoints are never pinned in the recipe.
+function buildRecommendedWorkflows(queryVec) {
+  if (!workflows.length || !queryVec) return [];
+  const top = workflows
+    .map((w) => ({ w, score: cosine(queryVec, w.vector) }))
+    .filter((x) => x.score >= WF_THRESHOLD)
+    .sort((a, b) => b.score - a.score)[0];
+  if (!top) return [];
+  const { w, score } = top;
+  let total = 0;
+  const steps = w.steps.map((s, i) => {
+    const intent = capById.get(s.intent);
+    const e = intent ? resolveEndpointsForQuery(intent, bundle.endpoints, intent.label, 1)[0] : undefined;
+    if (e?.payment?.price_usd != null) total += e.payment.price_usd;
+    return {
+      n: i + 1,
+      intent_id: s.intent,
+      do: s.do,
+      ...(s.optional ? { optional: true } : {}),
+      ...(s.gate ? { gate: s.gate } : {}),
+      endpoint: e
+        ? { method: e.method, url: `${e.origin}${e.path}`, price_usd: e.payment?.price_usd, rails: (e.payment?.rails ?? []).map((r) => r.protocol), endpoint_id: e.id }
+        : null,
+    };
+  });
+  return [{
+    id: w.id,
+    goal: w.goal,
+    shape: w.shape,
+    match_score: Number(score.toFixed(4)),
+    source: "community",
+    steps,
+    total_price_usd: Number(total.toFixed(6)),
+    produces: w.produces,
+    note: "OASIS suggests this route; your agent executes it. Steps resolve to fresh endpoints each call.",
+  }];
+}
+
 // One-hop prototype: collapse search→resolve SERVER-side. Hybrid discovery (capability
 // vectors give recall on oblique queries) is expanded into a single FLAT, ranked endpoint
 // list with payment metadata inline, PLUS a next_steps map (buildNextSteps) — the agent
@@ -428,6 +490,9 @@ async function oasisDiscover({ query, finding, entities, limit = 12, include_sch
     held = (ex.entities ?? []).filter((e) => e.kind !== "observation");
   }
   const next_steps = await buildNextSteps(routedCaps, query, held);
+  // recommended_workflows: a contributed recipe matching this goal, with each step resolved to a live
+  // endpoint. Additive — the agent picks: run the workflow, hit one endpoint, or explore next_steps.
+  const recommended_workflows = buildRecommendedWorkflows(await getQueryVec());
   // matched_capabilities: the capabilities the RETURNED endpoints actually serve — a summary of what
   // discover found, NOT a parallel intent guess. The hybrid classifier pads its tail with homonym noise
   // (a real-estate query pulls in commerce.find_deals / commerce.compare_price on "$400K"/"deal"/"price" tokens);
@@ -461,7 +526,7 @@ async function oasisDiscover({ query, finding, entities, limit = 12, include_sch
       };
     });
   }
-  return { endpoints, next_steps, matched_capabilities };
+  return { endpoints, next_steps, matched_capabilities, ...(recommended_workflows.length ? { recommended_workflows } : {}) };
 }
 
 // oasis_find is a deprecated alias retained for back-compat; oasis_discover supersedes it (+ oasis_next).

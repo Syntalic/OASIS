@@ -21,6 +21,7 @@
   "scripts": {
     "build:ts": "tsc",
     "build:endpoint-index": "node scripts/build-endpoint-index.mjs",
+    "build:workflows": "node scripts/build-workflows.mjs",
     "ingest": "node dist/cli.js ingest",
     "enrich": "node dist/enrich-facets.js dist",
     "build": "pnpm run build:ts && pnpm run ingest && pnpm run enrich",
