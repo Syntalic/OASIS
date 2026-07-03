@@ -38,6 +38,19 @@ export interface PaymentInfo {
   offers?: PaymentOffer[];
   /** Currency of the offer used to derive price_usd. */
   currency?: string;
+  live_challenge?: LiveChallenge[];
+}
+
+/** A live payment requirement captured from an unpaid probe's 402 (advisory — re-fetch before paying). */
+export interface LiveAccept {
+  scheme?: string; network?: string; asset?: string; payTo?: string;
+  amount?: string; maxAmountRequired?: string; extra?: Record<string, unknown>;
+}
+export interface LiveChallenge {
+  protocol: "x402" | "mpp";
+  accepts?: LiveAccept[];          // x402: validated body accepts
+  www_authenticate?: string;       // mpp: raw WWW-Authenticate header (bounded)
+  method?: string; intent?: string; realm?: string; // mpp: parsed Payment-scheme params
 }
 
 /** Facet enum axes (mirror spec/ontology-source.schema.json). */
@@ -183,6 +196,10 @@ export interface EndpointRecord {
   schema_captured_at?: string;
   /** True when the source schema exceeded the size/depth cap and was dropped. */
   schema_truncated?: boolean;
+  /** Live-probe verdict: the endpoint actually issues (verified) / lies about (contradicted) /
+   *  couldn't be confirmed (unknown) a payment challenge. Advisory; runtime 402 authoritative. */
+  payment_verified?: "verified" | "contradicted" | "unknown";
+  payment_verified_at?: string;
   search_text: string;
   /** Ingest-time local keyphrases (spaCy noun-chunks/POS, lemmatized) — powers the serve-time
    *  keyword-relevance match (string ops only; no live model). See scripts/keyx/enrich_keyphrases.py. */

@@ -53,6 +53,8 @@
     "schema_source": { "type": "string", "enum": ["openapi", "bazaar"] },
     "schema_captured_at": { "type": "string", "format": "date-time" },
     "schema_truncated": { "type": "boolean" },
+    "payment_verified": { "enum": ["verified", "contradicted", "unknown"] },
+    "payment_verified_at": { "type": "string", "format": "date-time" },
     "search_text": { "type": "string" },
     "keyphrases": { "type": "array", "items": { "type": "string" } },
     "host_breadth": { "type": "number" },
@@ -138,6 +140,10 @@
         "offers": {
           "type": "array",
           "items": { "$ref": "#/$defs/PaymentOffer" }
+        },
+        "live_challenge": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LiveChallenge" }
         }
       }
     },
@@ -164,6 +170,33 @@
             "llms": { "type": "string" }
           }
         }
+      }
+    },
+    "LiveAccept": {
+      "type": "object",
+      "properties": {
+        "scheme": { "type": "string" },
+        "network": { "type": "string" },
+        "asset": { "type": "string" },
+        "payTo": { "type": "string" },
+        "amount": { "type": "string" },
+        "maxAmountRequired": { "type": "string" },
+        "extra": { "type": "object" }
+      }
+    },
+    "LiveChallenge": {
+      "type": "object",
+      "required": ["protocol"],
+      "properties": {
+        "protocol": { "type": "string", "enum": ["x402", "mpp"] },
+        "accepts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/LiveAccept" }
+        },
+        "www_authenticate": { "type": "string" },
+        "method": { "type": "string" },
+        "intent": { "type": "string" },
+        "realm": { "type": "string" }
       }
     }
   }
