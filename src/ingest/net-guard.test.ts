@@ -186,27 +186,32 @@ describe("safeFetch", () => {
       if (h === "internal.example.com") return Promise.resolve(["10.0.0.1"]);
       return Promise.reject(new Error(`unexpected host ${h}`));
     };
-    const originalFetch = globalThis.fetch;
     let fetchCalls = 0;
-    globalThis.fetch = (async () => {
+    const mockFetch = (async () => {
       fetchCalls++;
-      return new Response(null, {
-        status: 302,
-        headers: { location: "http://internal.example.com/" },
-      });
+      return new Response(null, { status: 302, headers: { location: "http://internal.example.com/" } });
     }) as typeof fetch;
+    await assert.rejects(
+      () => safeFetch("http://public.example.com/", {}, resolver, mockFetch),
+      (err: Error) => {
+        assert.ok(err.message.includes("not public"), `unexpected message: ${err.message}`);
+        return true;
+      },
+    );
+    // Only hop0 hit the (mock) network; the redirect target was rejected before hop1's fetch.
+    assert.equal(fetchCalls, 1);
+  });
+
+  it("drives the real undici dispatcher end-to-end (regression: global fetch → 'invalid onRequestStart method')", async () => {
+    // Exercises the DEFAULT fetchImpl (undici's own fetch) against a real public host. Network
+    // flakiness is tolerated (offline CI), but the undici-version/dispatcher mismatch — which
+    // silently broke every OpenAPI enrich + payment probe on the crawl — must never recur.
     try {
-      await assert.rejects(
-        () => safeFetch("http://public.example.com/", {}, resolver),
-        (err: Error) => {
-          assert.ok(err.message.includes("not public"), `unexpected message: ${err.message}`);
-          return true;
-        },
-      );
-      // Only hop0 hit the network; the redirect target was rejected before hop1's fetch.
-      assert.equal(fetchCalls, 1);
-    } finally {
-      globalThis.fetch = originalFetch;
+      const r = await safeFetch("https://example.com", { signal: AbortSignal.timeout(8000) });
+      assert.ok(r.status > 0, `expected a status, got ${r.status}`);
+    } catch (e) {
+      const msg = (e as Error).message + " " + ((e as { cause?: Error }).cause?.message ?? "");
+      assert.ok(!/onRequestStart|invalid ip address|invalid.*method/i.test(msg), `dispatcher mismatch (the bug): ${msg}`);
     }
   });
 });

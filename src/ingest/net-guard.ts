@@ -1,4 +1,4 @@
-import { Agent } from "undici";
+import { Agent, fetch as undiciFetch } from "undici";
 import { isIP } from "node:net";
 import { lookup as dnsLookupCb } from "node:dns";
 
@@ -160,7 +160,15 @@ export async function assertPublicHost(hostname: string, resolver: Resolver = de
 
 /** fetch() that (1) allows only http/https, (2) resolves+vets the host and pins the vetted IP for
  *  the connection (TLS/SNI/Host preserved), (3) manual redirects, ≤2 hops, re-vetting each hop. */
-export async function safeFetch(url: string, opts: RequestInit = {}, resolver: Resolver = defaultResolver): Promise<Response> {
+export async function safeFetch(
+  url: string,
+  opts: RequestInit = {},
+  resolver: Resolver = defaultResolver,
+  // Defaults to undici's OWN fetch — Node's global fetch bundles a different undici whose
+  // dispatcher-handler protocol differs (throws "invalid onRequestStart method" on connect).
+  // Injectable so tests can drive redirect/response behaviour without a real socket.
+  fetchImpl: typeof fetch = undiciFetch as unknown as typeof fetch,
+): Promise<Response> {
   let current = url;
   for (let hop = 0; hop <= 2; hop++) {
     const u = new URL(current);
@@ -170,13 +178,26 @@ export async function safeFetch(url: string, opts: RequestInit = {}, resolver: R
     // Per-request Agent (one per hop) — bound its socket lifetime so the idle socket is reaped almost
     // immediately after the caller consumes the body, letting the agent object GC promptly instead of
     // relying on finalization. (No shared agent: the pinned-lookup must stay per-hop for SSRF safety.)
+    const family = (isIP(pinned) || 4) as 4 | 6;
     const agent = new Agent({
-      connect: { lookup: (_h, _o, cb) => cb(null, pinned, isIP(pinned) as 4 | 6) },
+      // Pin the vetted IP via a custom lookup. undici 8 enables autoSelectFamily, which invokes the
+      // lookup in ALL-mode (expects an address array) — support both that and the single-address
+      // form so the pin holds regardless of how the connector calls it.
+      connect: {
+        lookup: (_h, o, cb) => {
+          // (Node's LookupFunction type only describes the single-address callback, hence the cast.)
+          if ((o as { all?: boolean }).all) {
+            (cb as unknown as (e: null, a: Array<{ address: string; family: number }>) => void)(null, [{ address: pinned, family }]);
+          } else {
+            cb(null, pinned, family);
+          }
+        },
+      },
       keepAliveTimeout: 1,
       keepAliveMaxTimeout: 1,
       pipelining: 0,
     });
-    const res = await fetch(current, { ...opts, redirect: "manual", dispatcher: agent } as RequestInit);
+    const res = await fetchImpl(current, { ...opts, redirect: "manual", dispatcher: agent } as RequestInit);
     if (res.status >= 300 && res.status < 400 && res.headers.get("location")) {
       current = new URL(res.headers.get("location")!, current).toString();
       continue; // re-vet next hop
