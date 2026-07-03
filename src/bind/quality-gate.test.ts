@@ -61,3 +61,39 @@ test("flags legacy payment on a passing record", () => {
 test("completeness() counts filled fields", () => {
   assert.equal(completeness(base({})), 6);
 });
+
+// Task 8: payment_verified gate + flags
+
+test("drops a contradicted endpoint (failed live payment verification)", () => {
+  const r = gradeEndpoint(base({ payment_verified: "contradicted" }));
+  assert.equal(r.verdict, "drop");
+  assert.ok(
+    r.reasons.some((x) => /payment verification/i.test(x)),
+    `expected reason about payment verification, got ${JSON.stringify(r.reasons)}`,
+  );
+});
+
+test("passes a verified endpoint and includes payment-verified flag", () => {
+  const r = gradeEndpoint(base({ payment_verified: "verified" }));
+  assert.equal(r.verdict, "pass");
+  assert.ok(
+    r.flags.includes("payment-verified"),
+    `expected payment-verified flag, got ${JSON.stringify(r.flags)}`,
+  );
+});
+
+test("passes an unknown-verified endpoint and includes payment-unverified flag", () => {
+  const r = gradeEndpoint(base({ payment_verified: "unknown" }));
+  assert.equal(r.verdict, "pass");
+  assert.ok(
+    r.flags.includes("payment-unverified"),
+    `expected payment-unverified flag, got ${JSON.stringify(r.flags)}`,
+  );
+});
+
+test("backward-compat: endpoint without payment_verified field passes unchanged", () => {
+  const r = gradeEndpoint(base({}));
+  assert.equal(r.verdict, "pass");
+  assert.ok(!r.flags.includes("payment-verified"), "should not have payment-verified flag");
+  assert.ok(!r.flags.includes("payment-unverified"), "should not have payment-unverified flag");
+});

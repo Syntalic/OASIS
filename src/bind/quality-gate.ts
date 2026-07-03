@@ -85,6 +85,9 @@ export function gradeEndpoint(ep: EndpointRecord): GateResult {
   if (isContentFree(summary) && isContentFree(ep.description)) return { verdict: "drop", reasons: ["content-free summary (boilerplate)"], flags: [], completeness: comp };
   // DROP — too thin to be useful.
   if (comp < MIN_FIELDS) return { verdict: "drop", reasons: [`thin: only ${comp}/${FLESH_MAX} fields filled`], flags: [], completeness: comp };
+  // DROP — live probe confirmed this endpoint does not enforce payment (affirmative liar).
+  if (ep.payment_verified === "contradicted")
+    return { verdict: "drop", reasons: ["failed live payment verification"], flags: [], completeness: comp };
 
   // PASS — quality flags drive ranking; they never exclude.
   const offers = ep.payment?.offers ?? [];
@@ -98,6 +101,8 @@ export function gradeEndpoint(ep: EndpointRecord): GateResult {
   }
   if (ep.schema_missing) flags.push("schema-missing");
   if (offers.length > 0 && ep.responses?.has402 === false) flags.push("no-402-declared");
+  if (ep.payment_verified === "verified") flags.push("payment-verified");
+  else if (ep.payment_verified === "unknown") flags.push("payment-unverified");
 
   return { verdict: "pass", reasons: [], flags, completeness: comp };
 }
