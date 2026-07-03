@@ -9,7 +9,7 @@ describe("bazaarToEndpoint schema capture", () => {
     const c = new SchemaCollector();
     const rec = bazaarToEndpoint({
       resource: "https://api.x.com/p", type: "http",
-      accepts: [{ amount: "1000", asset: "USDC", outputSchema: { input: { type: "object", properties: { a: {} } }, output: { type: "object", properties: { b: {} } } } }],
+      accepts: [{ amount: "1000", asset: "USDC", outputSchema: { input: { type: "http", method: "GET", queryParams: { a: { type: "string" } } }, output: { type: "object", properties: { b: {} } } } }],
     } as any, BUILT, c)!;
     assert.equal(rec.schema_source, "bazaar");
     assert.match(rec.input_schema_ref!, /^[a-f0-9]{64}$/);

@@ -8,7 +8,7 @@ import { baseUnitsToUsd } from "../core/money.js";
 import { canonicalOrigin } from "./origin-aliases.js";
 import type { EndpointRecord, HttpMethod, PaymentOffer, PaymentRail } from "../core/types.js";
 import { SchemaCollector } from "./schema-store.js";
-import { bazaarEndpointSchemas } from "./endpoint-schemas.js";
+import { bazaarEndpointSchemas, type EndpointSchemas } from "./endpoint-schemas.js";
 
 const BAZAAR_URL = "https://api.cdp.coinbase.com/platform/v2/x402/discovery/resources";
 const HTTP = new Set<HttpMethod>(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]);
@@ -80,7 +80,17 @@ export function bazaarToEndpoint(r: BazaarResource, builtAt: string, schemas?: S
     .sort((a, b) => a - b)[0];
   const rails: PaymentRail[] = [{ protocol: "x402", version: "2" }];
   const summary = (r.description || r.serviceName || path).slice(0, 200);
-  const io = schemas ? bazaarEndpointSchemas(r) : { input: undefined, output: undefined, truncated: false };
+  // Fail-soft: a malformed/malicious third-party schema must not abort the whole build
+  // (the ingest loop over Bazaar records is not otherwise guarded). Keep the endpoint, drop
+  // its schema on any error — mirroring the OpenAPI enrichment's try/catch.
+  let io: EndpointSchemas = { input: undefined, output: undefined, truncated: false };
+  if (schemas) {
+    try {
+      io = bazaarEndpointSchemas(r);
+    } catch {
+      io = { input: undefined, output: undefined, truncated: false };
+    }
+  }
   const input_schema_ref = io.input && schemas ? schemas.add(io.input) : undefined;
   const output_schema_ref = io.output && schemas ? schemas.add(io.output) : undefined;
   return {

@@ -37,11 +37,26 @@ describe("openApiEndpointSchemas", () => {
 });
 
 describe("bazaarEndpointSchemas", () => {
-  it("prefers accepts[].outputSchema", () => {
-    const r = { accepts: [{ outputSchema: { input: { type: "object", properties: { a: {} } }, output: { type: "object", properties: { b: {} } } } }] };
+  it("translates the x402 transport envelope input into a location-keyed schema (not the raw envelope)", () => {
+    const r = { accepts: [{ outputSchema: {
+      input: {
+        type: "http", method: "POST", discoverable: true,
+        queryParams: { symbol: { type: "string", description: "ticker", required: true } },
+        body: { note: { type: "string" } },
+      },
+      output: { type: "object", properties: { price: { type: "number" } } },
+    } }] };
     const { input, output } = bazaarEndpointSchemas(r as any);
-    assert.ok((input as any).properties.a);
-    assert.ok((output as any).properties.b);
+    assert.equal((input as any).type, "object");
+    assert.equal((input as any).properties.query.properties.symbol.type, "string");
+    assert.deepEqual((input as any).properties.query.required, ["symbol"]);
+    assert.equal((input as any).properties.body.properties.note.type, "string");
+    assert.ok(!JSON.stringify(input).includes('"http"'), "raw transport envelope must not leak into the schema");
+    assert.equal((output as any).properties.price.type, "number");
+  });
+  it("omits input for a param-less request (never stores the bare envelope)", () => {
+    const r = { accepts: [{ outputSchema: { input: { type: "http", method: "GET", discoverable: true }, output: { type: "object" } } }] };
+    assert.equal(bazaarEndpointSchemas(r as any).input, undefined);
   });
   it("falls back to extensions.bazaar.schema, omits when only info", () => {
     const r = { extensions: { bazaar: { schema: { type: "object", properties: { z: {} } }, info: { output: { example: {} } } } } };

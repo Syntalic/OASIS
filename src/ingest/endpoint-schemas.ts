@@ -59,6 +59,42 @@ export function openApiEndpointSchemas(
   return { input, output, truncated };
 }
 
+/**
+ * The x402 Bazaar `outputSchema.input` is NOT a JSON Schema — it is a transport
+ * envelope: `{ type: "http", method, discoverable, queryParams?, body?/bodyFields? }`
+ * where queryParams/body map a param name → `{ type, description?, required? }`.
+ * Translate it into the same location-keyed object schema the OpenAPI path emits,
+ * instead of normalizing the envelope directly (which would store `type:"http"` and
+ * bury the real params under non-keyword fields).
+ */
+function paramMapToSchema(params: unknown): JsonSchema | undefined {
+  if (!params || typeof params !== "object" || Array.isArray(params)) return undefined;
+  const properties: Record<string, JsonSchema> = {};
+  const required: string[] = [];
+  for (const [name, raw] of Object.entries(params as Record<string, unknown>)) {
+    const spec = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+    const prop: JsonSchema = {};
+    if (typeof spec.type === "string") prop.type = spec.type;
+    if (typeof spec.description === "string") prop.description = spec.description;
+    properties[name] = prop;
+    if (spec.required === true) required.push(name);
+  }
+  if (!Object.keys(properties).length) return undefined;
+  return { type: "object", properties, ...(required.length ? { required } : {}) };
+}
+
+function bazaarInputToSchema(input: unknown): JsonSchema | undefined {
+  if (!input || typeof input !== "object" || Array.isArray(input)) return undefined;
+  const env = input as Record<string, unknown>;
+  const props: Record<string, JsonSchema> = {};
+  const query = paramMapToSchema(env.queryParams);
+  const body = paramMapToSchema(env.body ?? env.bodyFields);
+  if (query) props.query = query;
+  if (body) props.body = body;
+  if (!Object.keys(props).length) return undefined; // param-less request → no input contract
+  return { $schema: "https://json-schema.org/draft/2020-12/schema", type: "object", properties: props };
+}
+
 export function bazaarEndpointSchemas(resource: { accepts?: Array<Record<string, any>>; extensions?: any }): EndpointSchemas {
   let truncated = false;
   const norm = (s: JsonSchema): JsonSchema => {
@@ -66,7 +102,10 @@ export function bazaarEndpointSchemas(resource: { accepts?: Array<Record<string,
   };
   const os = resource.accepts?.find((a) => a.outputSchema)?.outputSchema;
   const bschema = resource.extensions?.bazaar?.schema as JsonSchema | undefined;
-  const inRaw = os?.input;
-  const outRaw = os?.output ?? bschema;
-  return { input: inRaw ? norm(inRaw) : undefined, output: outRaw ? norm(outRaw) : undefined, truncated };
+  const outRaw = os?.output ?? bschema; // output IS a JSON Schema (the response shape)
+  return {
+    input: bazaarInputToSchema(os?.input), // envelope → location-keyed schema (never normalized directly)
+    output: outRaw ? norm(outRaw) : undefined,
+    truncated,
+  };
 }

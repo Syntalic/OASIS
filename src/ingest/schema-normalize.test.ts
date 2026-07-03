@@ -38,4 +38,13 @@ describe("schema-normalize", () => {
     const { truncated } = normalizeSchema(deep);
     assert.equal(truncated, true);
   });
+  it("caps deep ARRAY nesting without overflowing the stack (HIGH-2 regression)", () => {
+    // Arrays used to recurse uncounted, bypassing the node cap and overflowing the stack.
+    // The cap/depth guard must fire (truncate) instead of throwing.
+    let deep: any = { type: "string" };
+    for (let i = 0; i < 10000; i++) deep = [deep];
+    let truncated = false;
+    assert.doesNotThrow(() => { truncated = normalizeSchema(deep).truncated; });
+    assert.equal(truncated, true);
+  });
 });

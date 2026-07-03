@@ -84,6 +84,25 @@ function cleanRecord(r: Record<string, unknown>): EndpointRecord {
   return rest as unknown as EndpointRecord;
 }
 
+/**
+ * Write dist/schemas.json = fresh schemas + the prior store carried forward, pruned to what the
+ * endpoints still reference (so no schema ref dangles). Fail-soft on a missing/broken prior store.
+ * Shared by the full crawl AND the no-crawl snapshot rebuild — the snapshot path previously skipped
+ * this, so a reproduced index carried refs but no schemas.json (every ref dangled).
+ */
+async function writeSchemaStore(
+  bundle: IndexBundle,
+  freshStore: Record<string, JsonSchema>,
+  outputDir: string,
+): Promise<void> {
+  let priorStore: Record<string, JsonSchema> = {};
+  const priorSchemasPath = path.join(outputDir, "schemas.json");
+  if (existsSync(priorSchemasPath)) {
+    try { priorStore = JSON.parse(await readFile(priorSchemasPath, "utf8")) as Record<string, JsonSchema>; } catch {}
+  }
+  await writeSchemas(assembleSchemaStore(bundle.endpoints, freshStore, priorStore), outputDir);
+}
+
 export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
   const built = opts.builtAt;
 
@@ -94,7 +113,10 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
     const raw = JSON.parse(await readFile(opts.snapshotPath, "utf8")) as unknown;
     const recs = (Array.isArray(raw) ? raw : ((raw as { endpoints?: unknown[]; records?: unknown[] }).endpoints ?? (raw as { records?: unknown[] }).records ?? [])) as Record<string, unknown>[];
     console.error(`ingest: snapshot ${path.basename(opts.snapshotPath)} → ${recs.length} merged records (no crawl)`);
-    return gateAndWrite(recs.map(cleanRecord), opts.outputDir, built);
+    const snap = await gateAndWrite(recs.map(cleanRecord), opts.outputDir, built);
+    // Carry forward the prior schemas.json so the snapshot records' schema refs don't dangle.
+    await writeSchemaStore(snap, {}, opts.outputDir);
+    return snap;
   }
 
   const conc = opts.enrichConcurrency ?? 16;
@@ -223,14 +245,6 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
   // --- Gate → PASS corpus → bundle ---
   const bundle = await gateAndWrite(merged, opts.outputDir, built);
   // Persist a store covering EVERY schema ref on the written endpoints. This run's collector only
-  // holds schemas for freshly-probed origins; carried-forward endpoints still carry input/output
-  // refs from a prior crawl whose schemas live in the prior schemas.json. Backfill from it (fail-soft)
-  // so no written ref dangles (ref present on the record, schema missing from schemas.json).
-  let priorStore: Record<string, JsonSchema> = {};
-  const priorSchemasPath = path.join(opts.outputDir, "schemas.json");
-  if (existsSync(priorSchemasPath)) {
-    try { priorStore = JSON.parse(await readFile(priorSchemasPath, "utf8")) as Record<string, JsonSchema>; } catch {}
-  }
-  await writeSchemas(assembleSchemaStore(bundle.endpoints, schemaCollector.toObject(), priorStore), opts.outputDir);
+  await writeSchemaStore(bundle, schemaCollector.toObject(), opts.outputDir);
   return bundle;
 }
