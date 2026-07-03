@@ -232,6 +232,30 @@ program
   });
 
 program
+  .command("validate-workflow [file]")
+  .description("Validate a workflow recipe YAML (or all ontology/workflows) against the schema + the intent graph")
+  .action(async (file?: string) => {
+    const { validateWorkflowFile, validateAllWorkflows } = await import("./ontology/validate-workflow.js");
+    const results = file
+      ? [{ file, result: await validateWorkflowFile(file) }]
+      : await validateAllWorkflows();
+    let failed = 0;
+    for (const { file: f, result } of results) {
+      for (const e of result.errors) {
+        console.error(`✗ ${f}: ${e}`);
+        failed += 1;
+      }
+      for (const w of result.warnings) console.error(`⚠ ${f}: ${w}`);
+    }
+    if (failed > 0) {
+      console.error(`\n${failed} validation error(s)`);
+      process.exitCode = 1;
+      return;
+    }
+    console.log(`${results.length} workflow(s) valid`);
+  });
+
+program
   .command("taxonomy")
   .description("Dump the controlled vocabulary (capabilities + facet enums + entity vocab) to bind into")
   .option("--json", "Full JSON (default: summary)")

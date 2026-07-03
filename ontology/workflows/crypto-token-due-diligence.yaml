@@ -1,0 +1,21 @@
+id: workflow.crypto_token_due_diligence
+goal: Decide whether to buy a crypto token — safety, fundamentals, and market in one pass
+shape: fanout
+aliases:
+  - is this token safe to buy
+  - crypto token due diligence before aping in
+  - vet a token contract before investing
+  - should I buy this coin
+  - full due diligence on a crypto token
+steps:
+  - intent: blockchain.token_security
+    do: Scan the contract for honeypot / rug / mint / tax risk
+    gate: if risk is high, stop — do not proceed to a buy
+  - intent: blockchain.token_research
+    do: Pull the due-diligence dossier — tokenomics, holders, project fundamentals
+  - intent: blockchain.market_intel
+    do: Add market sentiment and momentum context
+    optional: true
+  - intent: blockchain.spot_price
+    do: Fetch the current spot price to size the entry
+produces: A synthesized buy / avoid decision — the agent combines the four step outputs; OASIS does not execute or pay.
