@@ -15,7 +15,7 @@ consumes:
   - entity: Document
     role: identifier
 produces:
-  - entity: Document
+  - entity: Answer
     role: payload
     format: json
 facets:

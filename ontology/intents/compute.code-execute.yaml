@@ -1,0 +1,38 @@
+id: compute.code_execute
+label: Execute code in a sandbox
+description: Run arbitrary agent-supplied code (Python, JavaScript, Bash) in an isolated ephemeral sandbox and return stdout, stderr, and exit code, following a create/exec/status lifecycle. Use when an agent needs to actually run a program or command it wrote — not evaluate a fixed math or knowledge expression (compute.compute_answer), which computes a closed-form answer and never runs caller-supplied code.
+aliases:
+  - run Python code in a sandbox
+  - execute JavaScript in an isolated sandbox
+  - run this script and return stdout
+  - remote code execution sandbox API
+  - create a sandbox and run a command
+  - execute bash in an ephemeral container
+  - run untrusted code safely
+  - get stdout stderr and exit code from code
+  - spin up a sandbox for code execution
+  - run agent-generated code remotely
+  - execute code and capture output
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+facets:
+  domain: compute
+  action: execute
+  modality:
+    - text
+    - json
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: compute.compute_answer
+    note: code_execute runs arbitrary caller-supplied programs; compute_answer evaluates a fixed math/knowledge expression and never executes user code
+  - type: alternative_of
+    to: devtools.code_repository
+    note: a dev-tooling cousin an agent may confuse — code_repository reads hosted repo history/contents; code_execute runs code, it does not inspect repositories
+  - type: pipes_to
+    to: cloud.hosting
+    note: run a build or generate artifacts in a sandbox, then publish the output as files or a static site

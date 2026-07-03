@@ -10,12 +10,12 @@ aliases:
   - jurisdiction lookup for an address
   - federal data for a place
   - sitting representatives for a location
-  - toxic release inventory data
+  - census demographics for a ZIP code
+  - ACS demographics for a location
+  - population and median income for an area
   - EPA toxic release inventory data
-  - environmental data for US county
-  - national environmental context county
-  - pollution exposure county lookup
-  - environmental geospatial context
+  - pollution exposure for a US county
+  - environmental data for a location
 consumes:
   - entity: Place
     role: identifier

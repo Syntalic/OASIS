@@ -1,0 +1,38 @@
+id: gov.compliance_screen
+label: Screen an entity for AML/sanctions compliance risk
+description: AML, sanctions, and watchlist screening of a party — screen a named person or company against OFAC and other sanctions lists, PEP databases, and adverse-media sources, returning a graded compliance risk determination (match confidence, hits, risk score). Use when an agent assesses financial-crime risk for a counterparty, not plain identity or registry verification (gov.records) or open-web profile discovery (identity.person_search).
+aliases:
+  - AML sanctions risk screening
+  - screen a party against sanctions and watchlists
+  - OFAC sanctions list check
+  - PEP and adverse media screening
+  - check if a company or person is sanctioned
+  - AML compliance risk assessment
+  - politically exposed person risk scoring
+  - counterparty financial crime risk screen
+  - run a compliance risk screen on an entity
+  - watchlist match risk score
+  - adverse media screening for a party
+  - assess sanctions exposure of a counterparty
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: GovernmentService
+    role: payload
+facets:
+  domain: gov
+  action: analyze
+  modality:
+    - json
+  freshness: realtime
+links:
+  - type: narrower_of
+    to: gov.records
+    note: compliance_screen is the dedicated AML/sanctions/PEP risk screen; gov_records is broader identity and public-record verification (KYC/KYB/registry)
+  - type: sibling_of
+    to: identity.person_search
+    note: compliance_screen matches a party against sanctions and watchlists; person_search discovers public profiles for a person
+  - type: sibling_of
+    to: gov.lei_lookup
+    note: compliance_screen returns AML/sanctions risk for a party; lei_lookup returns legal-entity identifiers and corporate hierarchy

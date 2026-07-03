@@ -1,0 +1,34 @@
+id: realestate.property_records
+label: Look up property public records for an address
+description: Retrieve official public records about a specific property — recorded deeds and chain of title, parcel/tax-lot attributes, assessed value, property-tax history, and current ownership — keyed by street address or parcel identifier. Use when an agent needs authoritative government-sourced records about a known property. Not listing search or home-value estimates from listing aggregators (realestate.property_lookup), and not identity verification of a person or company against registries (gov.records).
+aliases:
+  - property public records for an address
+  - recorded deed and mortgage history
+  - who owns this property
+  - property ownership records lookup
+  - parcel lookup by address
+  - tax lot record for a property
+  - property tax record and assessment history
+  - assessed value of a home
+  - chain of title for an address
+  - land records lookup by parcel
+  - property assessment record
+consumes:
+  - entity: Place
+    role: identifier
+produces:
+  - entity: GovernmentService
+    role: payload
+facets:
+  domain: realestate
+  action: lookup
+  modality:
+    - json
+  freshness: recent
+links:
+  - type: sibling_of
+    to: realestate.property_lookup
+    note: property_records returns official deeds/parcel/tax/ownership records for a known property; property_lookup returns MLS listings and home-value estimates from listing aggregators
+  - type: sibling_of
+    to: gov.records
+    note: same public-record source axis — property_records retrieves government records about a property, gov_records verifies a person or company against government registries

@@ -1,0 +1,28 @@
+id: blockchain.prediction_markets
+label: Browse prediction and event markets
+description: Query prediction and event markets — list markets, event outcomes, current odds and outcome prices, resolution status, plus market microstructure and analytics (orderbook liquidity, holder concentration). Covers venues such as Kalshi and Polymarket. Use when an agent wants the market-implied probability or price of a real-world event outcome — not crypto spot prices (blockchain.spot_price), equity quotes (finance.stock_quote), or wallet flows (blockchain.onchain_analytics).
+aliases:
+  - prediction markets
+  - event markets
+  - market-implied probability of an event
+  - event market outcome prices
+  - betting market odds API
+  - what are the odds on this outcome
+  - browse prediction market events
+  - Kalshi market data
+  - Polymarket market data
+  - prediction market orderbook
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: PredictionMarket
+    role: payload
+    cardinality: many
+facets:
+  domain: blockchain
+  action: lookup
+links:
+  - type: sibling_of
+    to: finance.trading_signals
+    note: both speculative-market data, not substitutable — prediction markets price event outcomes, trading signals call entries/exits on assets

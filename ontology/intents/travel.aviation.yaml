@@ -1,6 +1,6 @@
 id: travel.aviation
 label: Search flights, airports, and aviation data
-description: Flight status tracking, airport directory lookups, route search, and aviation schedules. Use when an agent plans travel logistics or tracks flights — not general POI or restaurant search (maps.places) or hotel review lookup (travel.place_reviews).
+description: Flight status tracking, airport directory lookups, route search, aviation schedules, aircraft-registry lookups (tail/N-number/ICAO24 → make/model + owner), and nearby-airport search by coordinate. Use when an agent plans travel logistics, tracks flights, or identifies an aircraft — not general POI or restaurant search (maps.places) or hotel review lookup (travel.place_reviews).
 aliases:
   - flight tracking API
   - track a flight status
@@ -12,6 +12,11 @@ aliases:
   - flight search by route and date
   - flight departure arrival times
   - airline route lookup
+  - aircraft registry lookup
+  - tail number lookup
+  - N-number registration lookup
+  - ICAO24 aircraft lookup
+  - nearby airports by coordinate
 consumes:
   - entity: Place
     role: identifier

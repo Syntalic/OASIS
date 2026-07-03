@@ -1,0 +1,34 @@
+id: maps.directions
+label: Get directions and travel time between locations
+description: Compute a route between an origin and a destination — turn-by-turn directions, distance, and estimated travel time (ETA) — optionally by driving, walking, cycling, or public transit. Use when an agent needs the path or trip duration connecting two or more points, not for resolving a single address to coordinates (maps.geocode) and not for discovering nearby businesses at a point (maps.places).
+aliases:
+  - get driving directions between two addresses
+  - how long to drive from A to B
+  - route and travel time between locations
+  - estimated time of arrival for a trip
+  - turn by turn directions API
+  - transit trip planner between two stops
+  - walking route distance and duration
+  - directions with live traffic ETA
+  - distance and bearing between two coordinates
+  - plan a route through multiple waypoints
+consumes:
+  - entity: Place
+    role: identifier
+    cardinality: many
+produces:
+  - entity: Answer
+    role: payload
+facets:
+  domain: maps
+  action: lookup
+  modality:
+    - json
+  freshness: realtime
+links:
+  - type: fed_by
+    to: maps.geocode
+    note: geocode resolves each address to coordinates first, then directions routes between those points
+  - type: sibling_of
+    to: maps.places
+    note: same maps domain but not substitutable — directions computes the route/ETA between points, places finds businesses at a single point

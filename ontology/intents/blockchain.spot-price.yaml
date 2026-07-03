@@ -1,4 +1,4 @@
-id: finance.crypto_spot_price
+id: blockchain.spot_price
 label: Get cryptocurrency spot price
 description: Fetch the current spot price for one or more crypto assets. Use when an agent needs a live fiat-denominated spot quote for trading, portfolio valuation, or price-aware routing — not trading signals (finance.trading_signals), risk or on-chain flow analytics (blockchain.onchain_analytics), prediction markets, or news. Spot price only.
 aliases:
@@ -24,7 +24,7 @@ produces:
   - entity: MarketQuote
     role: payload
 facets:
-  domain: finance
+  domain: blockchain
   action: lookup
   freshness: realtime
 links:

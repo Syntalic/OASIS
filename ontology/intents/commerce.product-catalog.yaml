@@ -1,0 +1,39 @@
+id: commerce.product_catalog
+label: Search and retrieve retail product catalog data
+description: Search a retail product catalog by keyword or look up a specific product by identifier (SKU, product id, or URL), returning structured product records — title, brand, price, list price, availability, ratings, and images. Use when an agent needs the catalog record itself; not ranking the single lowest price across retailers (commerce.compare_price).
+aliases:
+  - product catalog search
+  - search retail products
+  - look up product details by id
+  - structured product data
+  - get product info by SKU
+  - retrieve product listing
+  - product metadata lookup
+  - find products by keyword
+  - product record by identifier
+  - catalog product attributes and availability
+  - search a store catalog
+  - fetch product details by URL
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: Product
+    role: payload
+    cardinality: many
+facets:
+  domain: commerce
+  action: search
+  modality:
+    - json
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: commerce.compare_price
+    note: product_catalog retrieves the structured catalog record; compare_price ranks the lowest price for one product across retailers
+  - type: sibling_of
+    to: commerce.track_price_history
+    note: product_catalog returns the current catalog snapshot; track_price_history returns the historical price series for a product
+  - type: broader_of
+    to: commerce.tcg_catalog
+    note: product_catalog is the general retail catalog; tcg_catalog is the narrower collectible trading-card catalog

@@ -1,0 +1,37 @@
+id: data.country_lookup
+label: Look up country reference metadata
+description: Country reference metadata by name, ISO 3166 code, or capital — official and common name, alpha-2/alpha-3 codes, capital, currency, calling code, region and subregion, population, and flag. Use when an agent resolves or enriches a country identifier against static reference data, not date-specific holiday calendars for a country (data.holidays_lookup).
+aliases:
+  - look up country by ISO code
+  - country metadata by name
+  - ISO 3166 country lookup
+  - capital city of a country
+  - currency and calling code for a country
+  - country population and region
+  - alpha-2 to alpha-3 country code
+  - what currency does a country use
+  - resolve country name to ISO code
+  - country info by capital city
+  - flag and region for a country
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+facets:
+  domain: data
+  action: lookup
+  modality:
+    - json
+  freshness: static
+links:
+  - type: sibling_of
+    to: data.holidays_lookup
+    note: both keyed by country, but country_lookup is static ISO reference metadata while holidays_lookup returns date-specific holiday calendars
+  - type: sibling_of
+    to: maps.geocode
+    note: across the data/maps seam — country_lookup returns administrative ISO country facts by name or code, geocode resolves a place string to coordinates
+  - type: sibling_of
+    to: gov.civic
+    note: country_lookup is global ISO country reference data; gov.civic surfaces jurisdiction-level civic and government service information

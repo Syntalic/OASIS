@@ -1,6 +1,6 @@
 id: devtools.code_repository
 label: Look up source code repository data
-description: Read hosted source-code repository data — repository metadata, commits, pull requests, issues, releases, tags, and programming-language breakdown by owner and name. Use when an agent inspects a code repository's history or contents, not general web pages (web.scrape) or web search (web.search).
+description: Read hosted source-code repository data — repository metadata, commits, pull requests, issues, releases, tags, programming-language breakdown, and developer-platform user/organization profiles, trending repositories, and star-history by owner and name. Use when an agent inspects a code repository's history or contents, not general web pages (web.scrape) or web search (web.search).
 aliases:
   - look up a public code repository by owner and name
   - list issues for a repository
@@ -9,6 +9,9 @@ aliases:
   - repository releases and version tags
   - programming-language breakdown of a repository
   - source code repository metadata
+  - GitHub user or organization profile
+  - trending GitHub repositories
+  - GitHub repository star history
 consumes:
   - entity: Query
     role: identifier

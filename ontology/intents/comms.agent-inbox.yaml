@@ -7,14 +7,12 @@ aliases:
   - create agent inbox
   - dedicated agent email inbox
   - programmatic inbox
-  - mailbox my bot can poll
   - dedicated inbox for autonomous agent
   - provision agent email
   - set up email for my AI agent
   - bot email address to receive mail
   - create mailbox for autonomous bot
   - agent email account setup
-  - polling inbox for AI workflows
 produces:
   - entity: Mailbox
     role: identifier

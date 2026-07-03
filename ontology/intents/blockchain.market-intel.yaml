@@ -1,14 +1,18 @@
-id: finance.crypto_market_intel
+id: blockchain.market_intel
 label: Get crypto market intelligence and sentiment
 description: Crypto market intelligence beyond a single quote — trending altcoins, market sentiment and momentum, trade history, and cross-chain token context. Use when an agent monitors market narrative or portfolio activity, not raw protocol TVL (blockchain.defi_analytics) or actionable trade signals (finance.trading_signals).
 aliases:
   - trending altcoins list
-  - crypto trade history lookup
-  - crypto transaction history API
+  - market trade/tick history
+  - recent trades feed
   - altcoin trending scanner
   - crypto market sentiment
   - crypto market overview
   - trending crypto tokens
+  - crypto fear and greed index
+  - fear & greed index history
+  - market regime signal
+  - market sentiment index
 consumes:
   - entity: Query
     role: identifier
@@ -17,12 +21,12 @@ produces:
     role: payload
     cardinality: many
 facets:
-  domain: finance
+  domain: blockchain
   action: lookup
   freshness: realtime
 links:
   - type: sibling_of
-    to: finance.crypto_spot_price
+    to: blockchain.spot_price
     note: crypto_market_intel is contextual market activity; crypto_spot_price is a point-in-time quote
   - type: sibling_of
     to: finance.trading_signals

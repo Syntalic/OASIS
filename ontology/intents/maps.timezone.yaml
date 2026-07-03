@@ -1,0 +1,36 @@
+id: maps.timezone
+label: Resolve a location to its time zone
+description: Map a set of coordinates or a place identifier to its IANA time zone id, current UTC offset, and daylight-saving-time state. Use when an agent needs to know what time zone a point on the map falls in, or the local offset for a lat/long — not for resolving a street address to coordinates in the first place (maps.geocode), and not for static country reference metadata like currency or calling code (data.country_lookup).
+aliases:
+  - what time zone is this location in
+  - get the IANA timezone for these coordinates
+  - convert latitude longitude to a time zone
+  - timezone lookup for a city
+  - what is the UTC offset at this place
+  - is daylight saving time in effect here right now
+  - resolve coordinates to an IANA time zone id
+  - current utc offset for a lat long pair
+  - time zone and DST for a location
+  - which timezone does this address fall in
+consumes:
+  - entity: Place
+    role: identifier
+produces:
+  - entity: Place
+    role: payload
+facets:
+  domain: maps
+  action: lookup
+  modality:
+    - json
+  freshness: static
+links:
+  - type: fed_by
+    to: maps.geocode
+    note: geocode resolves an address to coordinates, which this then maps to the IANA time zone at that point
+  - type: sibling_of
+    to: maps.places
+    note: same maps domain but not substitutable — places finds nearby businesses, this returns the time zone and offset for a location
+  - type: sibling_of
+    to: data.country_lookup
+    note: cross-domain sibling across the location seam — country_lookup returns static country reference (currency, calling code, region), this returns a point's time zone and UTC offset

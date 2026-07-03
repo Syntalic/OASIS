@@ -13,6 +13,10 @@ aliases:
   - cited web research API
   - topical news digest with sources
   - deep research with citations
+  - what has happened on a topic since a date
+  - topic knowledge delta
+  - cited source links for a topic
+  - ranked deduplicated news since date
 consumes:
   - entity: Query
     role: identifier

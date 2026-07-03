@@ -3,7 +3,7 @@
 // compare.mjs (OASIS vs baseline discovery methods, end-to-end through an agent).
 export const TASKS = [
   { q: "grab a screenshot of competitor.com's pricing page for a slide deck", expect: "web.screenshot" },
-  { q: "what's one ether worth in dollars right now", expect: "finance.crypto_spot_price" },
+  { q: "what's one ether worth in dollars right now", expect: "blockchain.spot_price" },
   { q: "transcribe this earnings-call recording into text", expect: "ai.speech_to_text" },
   { q: "find the cheapest place to buy a Nintendo Switch", expect: "commerce.compare_price" },
   { q: "translate this support reply into Japanese", expect: "ai.translate_text" },

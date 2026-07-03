@@ -1,5 +1,5 @@
 id: social.social_data
-label: Fetch social media posts and comments
+label: Fetch social media profiles, posts, and engagement
 description: Retrieve profiles, posts, comments, and engagement from major social platforms. Use when an agent monitors brand sentiment, analyzes creator content, or pulls thread data for research — not e-commerce product or marketplace listings (commerce).
 aliases:
   - social media data
@@ -21,6 +21,18 @@ aliases:
   - social listening API
   - creator content lookup
   - sentiment from social posts
+  - twitter profile by handle
+  - x profile snapshot followers bio verified
+  - bluesky profile lookup
+  - tiktok profile lookup
+  - instagram profile lookup
+  - threads profile lookup
+  - profile by platform and username
+  - follower count lookup
+  - user followers list
+  - social graph followers
+  - twitter trends by location (WOEID)
+  - brand mentions monitoring feed
 consumes:
   - entity: Company
     role: identifier
@@ -30,6 +42,10 @@ consumes:
     role: identifier
 produces:
   - entity: SocialProfile
+    role: payload
+    format: json
+    cardinality: many
+  - entity: WebContent
     role: payload
     format: json
     cardinality: many

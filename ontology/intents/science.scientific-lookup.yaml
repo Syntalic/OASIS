@@ -10,6 +10,10 @@ aliases:
   - bioinformatics reference data
   - compound lookup by identifier
   - taxonomy name resolver
+  - genetic variant lookup
+  - ClinVar variant search
+  - species occurrence records
+  - biodiversity occurrence data (GBIF)
 consumes:
   - entity: Query
     role: identifier

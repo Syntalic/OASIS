@@ -13,6 +13,7 @@ consumes:
 produces:
   - entity: Answer
     role: payload
+    cardinality: many
 facets:
   domain: media
   action: lookup

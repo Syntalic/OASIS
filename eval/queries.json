@@ -102,7 +102,7 @@
   {
     "id": "finance-crypto-1",
     "query": "bitcoin spot price usd",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://stablecrypto.dev",
       "method": "POST",
@@ -192,7 +192,7 @@
   {
     "id": "finance-crypto-2",
     "query": "what is the current eth price",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://stablecrypto.dev",
       "method": "POST",
@@ -513,7 +513,7 @@
   {
     "id": "finance-crypto-spot-price-1",
     "query": "Get cryptocurrency spot price",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://stablecrypto.dev",
       "method": "POST",
@@ -523,7 +523,7 @@
   {
     "id": "finance-crypto-spot-price-2",
     "query": "Get cryptocurrency spot price via micropayment",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://stablecrypto.dev",
       "method": "POST",
@@ -533,7 +533,7 @@
   {
     "id": "finance-crypto-spot-price-3",
     "query": "I need to Get cryptocurrency spot price",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://stablecrypto.dev",
       "method": "POST",
@@ -941,7 +941,7 @@
   {
     "id": "finance-coingecko-1",
     "query": "CoinGecko Onchain DEX API",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://pro-api.coingecko.com/api/v3/x402/onchain",
       "method": "GET",
@@ -952,7 +952,7 @@
   {
     "id": "finance-coingecko-2",
     "query": "CoinGecko Onchain DEX API via micropayment",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://pro-api.coingecko.com/api/v3/x402/onchain",
       "method": "GET",
@@ -963,7 +963,7 @@
   {
     "id": "finance-coingecko-3",
     "query": "I need to CoinGecko Onchain DEX API",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://pro-api.coingecko.com/api/v3/x402/onchain",
       "method": "GET",
@@ -2936,7 +2936,7 @@
   {
     "id": "blockchain-allium-1",
     "query": "Get latest token prices",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://agents.allium.so",
       "method": "POST",
@@ -2947,7 +2947,7 @@
   {
     "id": "blockchain-allium-2",
     "query": "Get latest token prices via micropayment",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://agents.allium.so",
       "method": "POST",
@@ -2958,7 +2958,7 @@
   {
     "id": "blockchain-allium-3",
     "query": "I need to Get latest token prices",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://agents.allium.so",
       "method": "POST",
@@ -3518,7 +3518,7 @@
   {
     "id": "data-coingecko-1",
     "query": "categories coingecko coingecko data",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://coingecko.mpp.paywithlocus.com",
       "method": "POST",
@@ -3529,7 +3529,7 @@
   {
     "id": "data-coingecko-2",
     "query": "categories coingecko coingecko data via micropayment",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://coingecko.mpp.paywithlocus.com",
       "method": "POST",
@@ -3540,7 +3540,7 @@
   {
     "id": "data-coingecko-3",
     "query": "I need to categories coingecko coingecko data",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://coingecko.mpp.paywithlocus.com",
       "method": "POST",

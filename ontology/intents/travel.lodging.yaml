@@ -1,0 +1,37 @@
+id: travel.lodging
+label: Search hotels and short-term stays for rates, availability, and booking
+description: Search accommodations — hotels, motels, resorts, and short-term rentals — by destination and dates for room rates, availability, and offers, and book a stay. Use when an agent finds or prices places to stay overnight — not traveler review and rating lookup for venues (travel.place_reviews) or flight and airport logistics (travel.aviation).
+aliases:
+  - search hotels by destination
+  - find a place to stay
+  - hotel availability and nightly rates
+  - book a hotel room
+  - short-term rental search
+  - compare room rates by date
+  - accommodation search API
+  - find lodging for my travel dates
+  - vacation rental availability lookup
+  - cheapest hotel offers for a city
+consumes:
+  - entity: Place
+    role: identifier
+produces:
+  - entity: SearchResults
+    role: payload
+    cardinality: many
+facets:
+  domain: travel
+  action: search
+  modality:
+    - json
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: travel.place_reviews
+    note: lodging finds and prices stays to book; place_reviews returns traveler ratings and feedback for venues
+  - type: sibling_of
+    to: travel.aviation
+    note: lodging is where to stay; aviation is flights, airports, and transport logistics
+  - type: sibling_of
+    to: maps.places
+    note: lodging is bookable stays with rates; maps.places is general local businesses and POIs

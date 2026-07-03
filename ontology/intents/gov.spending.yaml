@@ -1,0 +1,39 @@
+id: gov.spending
+label: Search government spending, contracts, grants, and procurement
+description: Public-sector award and procurement data — federal contract and grant awards by recipient, contract and award history, active solicitations and tenders, grant-program search and matching, and agency budget rankings. Use when an agent needs who the government paid or is buying from, not the statutes and rulemaking that govern it (gov.regulatory) and not economy-wide fiscal or macro series like Treasury debt, interest rates, or GDP (finance.economic_data).
+aliases:
+  - federal contract awards for a company
+  - government contracts won by a recipient
+  - government contract and award history
+  - active government solicitations search
+  - public procurement opportunities and tenders
+  - federal grant program search
+  - grant matching for eligibility
+  - largest federal awards feed
+  - government spending by recipient
+  - top federal agencies by budget
+  - who won a government contract
+  - government procurement award lookup
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: GovernmentService
+    role: payload
+    cardinality: many
+facets:
+  domain: gov
+  action: search
+  modality:
+    - json
+  freshness: recent
+links:
+  - type: sibling_of
+    to: gov.records
+    note: spending is award, contract, and procurement data; records is identity and public-registry verification
+  - type: sibling_of
+    to: gov.civic
+    note: spending is government award and procurement records by recipient; civic is location-tied government and civic data for an address
+  - type: sibling_of
+    to: finance.economic_data
+    note: fiscal cross-cut, not substitutable — spending is per-recipient awards, contracts, and grants; economic_data is economy-wide fiscal and macro series like Treasury debt, rates, and GDP

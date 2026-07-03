@@ -12,8 +12,11 @@ aliases:
   - live web results
   - people also ask search
   - general web search engine results
-  - recent product announcements search
   - organic SERP results
+  - Google search results scraper
+  - SERP scraper
+  - search engine results scraper
+  - neural web search
 consumes:
   - entity: Query
     role: identifier

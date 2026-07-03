@@ -9,7 +9,11 @@ aliases:
   - yaml to json converter
   - convert XML to JSON
   - csv to json
+  - parse CSV to JSON
+  - CSV parser to JSON
   - json to csv
+  - JSON to Excel
+  - JSON array to XLSX spreadsheet
   - convert xml to word document
   - excel to csv
   - convert image format

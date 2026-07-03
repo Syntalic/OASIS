@@ -1,0 +1,39 @@
+id: devtools.package_intel
+label: Look up software package and dependency intelligence
+description: Registry intelligence for a software package or dependency — versions and release history, download statistics, declared dependencies and dependents, maintainers and ownership, deprecation status, and license, keyed by package name or coordinate on a package registry (npm, PyPI, crates, and similar). Use when an agent inspects a published package's registry facts, not source-code repository history (code_repository) and not the vulnerability advisory database itself (cve_lookup).
+aliases:
+  - look up a package on a registry
+  - latest published version of a package
+  - package download statistics
+  - list a package's declared dependencies
+  - which packages depend on this one
+  - is this package deprecated
+  - who maintains this package
+  - package release history and versions
+  - check a package's license
+  - package registry metadata by name
+  - dependency intelligence for a library
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+    format: json
+    cardinality: many
+facets:
+  domain: devtools
+  action: lookup
+  modality:
+    - json
+  freshness: recent
+links:
+  - type: sibling_of
+    to: devtools.code_repository
+    note: same devtools family, differs by subject — package_intel reads the package-registry record (versions, downloads, deps), code_repository reads the source repo (commits, PRs, issues)
+  - type: alternative_of
+    to: devtools.cve_lookup
+    note: overlapping vuln cross-cut — package_intel surfaces a package's deprecation and advisory flags, cve_lookup is the dedicated CVE/vulnerability database queried by identifier
+  - type: sibling_of
+    to: devtools.generate_secret
+    note: both devtools utilities but distinct — package_intel reads existing registry facts, generate_secret mints new random ids and secrets

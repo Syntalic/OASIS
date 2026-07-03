@@ -42,7 +42,7 @@
   {
     "id": "messy-crypto-price-1",
     "query": "what is ETH trading at right now in USD",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://stablecrypto.dev",
       "method": "POST",
@@ -52,7 +52,7 @@
   {
     "id": "messy-crypto-price-2",
     "query": "spot quote for bitcoin without an exchange API key",
-    "expect_intent": "finance.crypto_spot_price",
+    "expect_intent": "blockchain.spot_price",
     "expect_endpoint": {
       "origin": "https://stablecrypto.dev",
       "method": "POST",

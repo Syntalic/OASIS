@@ -1,0 +1,39 @@
+id: web.crawl
+label: Crawl an entire website
+description: Traverse and harvest content from many pages of a site starting from a seed URL, following links across the domain and returning the aggregated pages. Use for whole-site ingestion, sitemap-wide harvesting, or multi-page collection jobs — not single-page web.scrape, which fetches exactly one URL and stops.
+aliases:
+  - crawl an entire website
+  - crawl all pages of a site
+  - spider a website
+  - traverse a whole domain
+  - harvest every page on a site
+  - multi-page website crawl
+  - follow links and collect pages
+  - site-wide content ingestion
+  - recursively fetch a website
+  - crawl a site starting from a seed URL
+consumes:
+  - entity: Webpage
+    role: identifier
+produces:
+  - entity: WebContent
+    role: payload
+    cardinality: many
+facets:
+  domain: web
+  action: extract
+  modality:
+    - html
+    - markdown
+    - json
+  freshness: realtime
+links:
+  - type: broader_of
+    to: web.scrape
+    note: web.crawl expands across many linked pages of a site; web.scrape fetches exactly one URL and stops
+  - type: sibling_of
+    to: web.markdown_extract
+    note: both harvest page content, but crawl spans a whole site while markdown_extract cleans a single page to markdown
+  - type: fed_by
+    to: web.search
+    note: web.search surfaces the seed URLs that a crawl then expands across the target site

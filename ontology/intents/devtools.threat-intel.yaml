@@ -1,0 +1,40 @@
+id: devtools.threat_intel
+label: Look up threat intelligence and IOC reputation
+description: Reputation and threat classification for an indicator of compromise (IOC) — an IP address, domain, or file/URL hash. Returns a malicious-or-benign verdict, risk score, and known abuse signals (malware, phishing, botnet, spam) from aggregated threat feeds. Use when an agent screens traffic, enriches a security event, or vets an entity before trusting it — not plain geolocation/ISP metadata for an IP (devtools.ip_lookup), and not registrar/DNS records (devtools.whois_lookup).
+aliases:
+  - threat intelligence lookup
+  - check if an IP is malicious
+  - IOC reputation lookup
+  - is this domain a phishing site
+  - file hash reputation check
+  - IP reputation and abuse score
+  - domain reputation lookup
+  - block list check for IP or domain
+  - malware indicator lookup
+  - screen an indicator of compromise
+  - abuse and blocklist signals for an IP
+consumes:
+  - entity: IpAddress
+    role: identifier
+  - entity: Domain
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+facets:
+  domain: devtools
+  action: lookup
+  modality:
+    - json
+    - text
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: devtools.ip_lookup
+    note: same IOC identifier family, differs by output — ip_lookup returns geo/ISP context for any IP, this returns a malicious-or-benign reputation verdict
+  - type: sibling_of
+    to: devtools.whois_lookup
+    note: both enrich a domain, differs by output — whois_lookup returns registrar/DNS ownership records, this returns reputation and abuse signals
+  - type: alternative_of
+    to: devtools.cve_lookup
+    note: adjacent security lookup, differs by subject — cve_lookup enumerates published software vulnerabilities, this scores live IP/domain/hash indicators

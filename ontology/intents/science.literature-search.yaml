@@ -1,0 +1,38 @@
+id: science.literature_search
+label: Search scholarly / scientific literature
+description: Search scholarly publications by topic or keyword and return ranked paper records — titles, authors, abstracts, and DOIs — across preprint, biomedical, and cross-field corpora (arXiv, PubMed, Crossref, Semantic Scholar). Use when an agent needs to discover papers on a subject, not to resolve a single named entity (science.scientific_lookup) and not to get an open-web cited answer (ai.web_research).
+aliases:
+  - search scientific papers by topic
+  - find scholarly articles on a subject
+  - search academic literature by keyword
+  - find peer-reviewed publications
+  - arXiv preprint search by query
+  - biomedical literature search
+  - find research papers with abstracts and DOIs
+  - search across arXiv PubMed and Semantic Scholar
+  - academic paper discovery by query
+  - find publications on a research topic
+  - scholarly citation search
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: SearchResults
+    role: payload
+facets:
+  domain: science
+  action: search
+  modality:
+    - json
+    - text
+  freshness: recent
+links:
+  - type: sibling_of
+    to: science.scientific_lookup
+    note: literature_search ranks papers by topic; scientific_lookup resolves a single named entity (gene, protein, compound, organism)
+  - type: sibling_of
+    to: science.drug_label
+    note: both are science-domain retrieval, but drug_label returns regulatory medication labels, not scholarly papers
+  - type: alternative_of
+    to: gov.ip_registry
+    note: patent registries are an alternative prior-art corpus for the same paper-discovery task

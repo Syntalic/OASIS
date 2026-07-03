@@ -203,7 +203,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "finance-crypto-1",
     query: "bitcoin spot price usd",
-    expect_intent: "finance.crypto_spot_price",
+    expect_intent: "blockchain.spot_price",
     expect_endpoint: {
       origin: "https://stablecrypto.dev",
       method: "POST",
@@ -293,7 +293,7 @@ const HAND_CURATED: EvalQuery[] = [
   {
     id: "finance-crypto-2",
     query: "what is the current eth price",
-    expect_intent: "finance.crypto_spot_price",
+    expect_intent: "blockchain.spot_price",
     expect_endpoint: {
       origin: "https://stablecrypto.dev",
       method: "POST",

@@ -1,0 +1,39 @@
+id: gov.ip_registry
+label: Search patent and trademark registries
+description: Search official patent and trademark registries — patent grants and applications, trademark filings, legal-status and IP events, classification codes, assignee and inventor records, and cited prior-art references from national and regional patent offices (e.g. USPTO, EPO, EUIPO) and consolidated patent search services. Use when an agent looks up or searches intellectual-property registry records — not identity/KYB verification and public-record checks against government databases (gov.records).
+aliases:
+  - patent search API
+  - search a patent registry
+  - trademark registry lookup
+  - look up a patent by number
+  - patent application status
+  - trademark filing search
+  - find patents by assignee or inventor
+  - patent classification code search
+  - prior art patent search
+  - check a trademark filing
+  - intellectual property registry search
+  - patent grant and application lookup
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: GovernmentService
+    role: payload
+facets:
+  domain: gov
+  action: search
+  modality:
+    - text
+    - json
+  freshness: recent
+links:
+  - type: sibling_of
+    to: gov.records
+    note: ip_registry searches patent/trademark IP records; gov_records verifies identity and public records against government databases
+  - type: pipes_to
+    to: science.literature_search
+    note: patent hits feed a scholarly prior-art search; literature_search retrieves the papers, not the patent filings themselves
+  - type: pipes_to
+    to: identity.company_enrich
+    note: a patent/trademark assignee flows into firmographic enrichment; company_enrich returns company profile data, not IP filings

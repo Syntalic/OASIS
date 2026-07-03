@@ -16,6 +16,9 @@ aliases:
   - compute integral from 0 to 3
   - evaluate a math expression
   - answer a science question
+  - descriptive statistics calculator
+  - mean median standard deviation variance
+  - full results computation
 consumes:
   - { entity: Query, role: identifier }
 produces:

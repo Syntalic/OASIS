@@ -159,7 +159,7 @@
     {
       "from": "blockchain.token_balance",
       "type": "pipes_to",
-      "to": "finance.crypto_spot_price",
+      "to": "blockchain.spot_price",
       "why": "price the held tokens for valuation",
       "votes": 3
     },
@@ -374,7 +374,7 @@
       "votes": 2
     },
     {
-      "from": "finance.crypto_spot_price",
+      "from": "blockchain.spot_price",
       "type": "pipes_to",
       "to": "blockchain.token_balance",
       "why": "value holdings at the current spot price",
@@ -390,12 +390,12 @@
     {
       "from": "blockchain.onchain_analytics",
       "type": "pipes_to",
-      "to": "finance.crypto_spot_price",
+      "to": "blockchain.spot_price",
       "why": "value tracked flows at spot price",
       "votes": 2
     },
     {
-      "from": "finance.prediction_markets",
+      "from": "blockchain.prediction_markets",
       "type": "pipes_to",
       "to": "ai.web_research",
       "why": "research news driving an event's odds",
@@ -418,7 +418,7 @@
     {
       "from": "finance.trading_signals",
       "type": "pipes_to",
-      "to": "finance.crypto_spot_price",
+      "to": "blockchain.spot_price",
       "why": "confirm crypto price before acting on signal",
       "votes": 2
     },

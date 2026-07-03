@@ -1,0 +1,36 @@
+id: data.natural_hazards
+label: Get natural hazard alerts and events by location
+description: Real-time geophysical and severe-condition hazard events for a location — recent nearby earthquakes, active flood-gauge and flood warnings, space-weather (geomagnetic) alerts, and monsoon/severe-storm advisories, keyed by coordinates or region. Use when an agent needs discrete hazard events and warnings, not general conditions or multi-day meteorological forecasts (data.weather_forecast).
+aliases:
+  - recent earthquakes near a location
+  - active flood warnings and gauge levels
+  - space weather geomagnetic storm alerts
+  - natural disaster alert feed by coordinates
+  - severe weather and hazard advisories for lat lon
+  - is there a flood or quake warning here
+  - real-time hazard events for a region
+  - monsoon and severe storm alerts
+  - earthquake and flood alert API
+consumes:
+  - entity: Place
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+    cardinality: many
+facets:
+  domain: data
+  action: lookup
+  modality:
+    - json
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: data.weather_forecast
+    note: natural_hazards is discrete hazard events and warnings (quakes, floods, space weather); weather_forecast is current conditions and multi-day meteorological forecasts
+  - type: sibling_of
+    to: science.scientific_lookup
+    note: natural_hazards streams real-time geophysical events by location; scientific_lookup resolves static reference entities (genes, proteins, chemicals, organisms)
+  - type: sibling_of
+    to: science.agriculture_stats
+    note: both draw on official government science agencies, but agriculture_stats is historical US farm commodity statistics while natural_hazards is live geophysical hazard alerts

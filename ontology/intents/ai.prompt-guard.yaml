@@ -1,0 +1,41 @@
+id: ai.prompt_guard
+label: Detect prompt injection and jailbreaks in LLM I/O
+description: Screen a prompt, user message, or tool/model output for adversarial content — prompt-injection payloads, jailbreak and system-prompt-override attempts, and instructions smuggled into retrieved or tool-returned text — returned as a risk verdict with matched signals. Use when an agent firewalls its LLM inputs and outputs against manipulation, not toxicity/NSFW/hate screening (ai.moderate_content) or finding sensitive identifiers in text (data.pii_detect).
+aliases:
+  - detect prompt injection
+  - prompt injection detection
+  - jailbreak detection
+  - is this prompt a jailbreak
+  - screen a prompt for injection
+  - LLM input firewall
+  - guard against prompt injection
+  - detect adversarial instructions in text
+  - sanitize tool output for injected instructions
+  - scan model input for malicious instructions
+  - flag jailbreak attempts
+consumes:
+  - entity: Text
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+    format: json
+facets:
+  domain: ai
+  action: analyze
+  modality:
+    - text
+  freshness: static
+links:
+  - type: sibling_of
+    to: ai.moderate_content
+    note: both screen text around an LLM, but prompt_guard flags adversarial injection/jailbreak attempts while moderate_content flags toxic, hateful, or NSFW content
+  - type: sibling_of
+    to: data.pii_detect
+    note: both classify text for safety before it flows on; pii_detect finds sensitive personal identifiers, prompt_guard finds smuggled adversarial instructions
+  - type: alternative_of
+    to: blockchain.token_security
+    note: security-mesh sibling — contract-level risk scan for an on-chain token vs adversarial-input scan for an LLM prompt or tool output
+  - type: alternative_of
+    to: devtools.cve_lookup
+    note: security-mesh sibling — disclosed-vulnerability intelligence for software vs runtime injection/jailbreak detection for LLM I/O

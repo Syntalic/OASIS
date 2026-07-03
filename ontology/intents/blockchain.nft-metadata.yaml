@@ -19,7 +19,8 @@ produces:
 facets:
   domain: blockchain
   action: lookup
+  freshness: recent
 links:
   - type: sibling_of
-    to: finance.crypto_spot_price
+    to: blockchain.spot_price
     note: nft_metadata is non-fungible collection assets; crypto_spot_price is fungible token quotes

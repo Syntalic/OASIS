@@ -14,8 +14,12 @@ aliases:
 consumes:
   - { entity: Contact, role: identifier, format: email }
 produces:
-  - { entity: Contact, role: payload }
+  - { entity: Answer, role: payload }
 
 facets:
   domain: utility
   action: validate
+links:
+  - type: pipes_to
+    to: comms.send_email
+    note: validating deliverability gates sending; a clean verdict feeds an email send
