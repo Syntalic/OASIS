@@ -7,6 +7,8 @@ import { endpointId } from "../core/id.js";
 import { baseUnitsToUsd } from "../core/money.js";
 import { canonicalOrigin } from "./origin-aliases.js";
 import type { EndpointRecord, HttpMethod, PaymentOffer, PaymentRail } from "../core/types.js";
+import { SchemaCollector } from "./schema-store.js";
+import { bazaarEndpointSchemas } from "./endpoint-schemas.js";
 
 const BAZAAR_URL = "https://api.cdp.coinbase.com/platform/v2/x402/discovery/resources";
 const HTTP = new Set<HttpMethod>(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]);
@@ -18,6 +20,8 @@ export interface BazaarAccept {
   payTo?: string;
   scheme?: string;
   extra?: Record<string, unknown>;
+  outputSchema?: Record<string, unknown>;
+  mimeType?: string;
 }
 export interface BazaarQuality {
   l30DaysTotalCalls?: number;
@@ -34,7 +38,7 @@ export interface BazaarResource {
   quality?: BazaarQuality;
   iconUrl?: string;
   lastUpdated?: string;
-  extensions?: { bazaar?: { info?: { input?: { method?: string } } } };
+  extensions?: { bazaar?: { info?: { input?: { method?: string } }; schema?: Record<string, unknown> } };
   x402Version?: number;
 }
 
@@ -58,7 +62,7 @@ function offersFromAccepts(accepts: BazaarAccept[]): PaymentOffer[] {
  * Normalize a Bazaar resource into an EndpointRecord (pre-enrichment — an OpenAPI hop can
  * later supersede it for the same origin). Returns null for non-http or unusable entries.
  */
-export function bazaarToEndpoint(r: BazaarResource, builtAt: string): EndpointRecord | null {
+export function bazaarToEndpoint(r: BazaarResource, builtAt: string, schemas?: SchemaCollector): EndpointRecord | null {
   if (r.type && r.type !== "http") return null; // skip mcp etc.
   let u: URL;
   try {
@@ -76,6 +80,9 @@ export function bazaarToEndpoint(r: BazaarResource, builtAt: string): EndpointRe
     .sort((a, b) => a - b)[0];
   const rails: PaymentRail[] = [{ protocol: "x402", version: "2" }];
   const summary = (r.description || r.serviceName || path).slice(0, 200);
+  const io = schemas ? bazaarEndpointSchemas(r) : { input: undefined, output: undefined, truncated: false };
+  const input_schema_ref = io.input && schemas ? schemas.add(io.input) : undefined;
+  const output_schema_ref = io.output && schemas ? schemas.add(io.output) : undefined;
   return {
     id: endpointId(origin, method, path),
     origin,
@@ -93,6 +100,11 @@ export function bazaarToEndpoint(r: BazaarResource, builtAt: string): EndpointRe
       .join(" ")
       .toLowerCase(),
     built_at: builtAt,
+    input_schema_ref,
+    output_schema_ref,
+    schema_source: input_schema_ref || output_schema_ref ? "bazaar" : undefined,
+    schema_captured_at: input_schema_ref || output_schema_ref ? builtAt : undefined,
+    schema_truncated: io.truncated || undefined,
   };
 }
 

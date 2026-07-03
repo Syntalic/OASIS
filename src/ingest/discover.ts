@@ -12,6 +12,7 @@ import { gradeEndpoint } from "../bind/quality-gate.js";
 import type { EndpointRecord, HttpMethod, IndexBundle } from "../core/types.js";
 import { bazaarToEndpoint, fetchBazaar } from "./bazaar.js";
 import { fetchPayShProviders, payShOrigin } from "./paysh.js";
+import { SchemaCollector } from "./schema-store.js";
 
 const SPEC_VERSION = "0.2.0";
 const INDEX_VERSION = "0.2.0";
@@ -91,6 +92,7 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
   }
 
   const conc = opts.enrichConcurrency ?? 16;
+  const schemaCollector = new SchemaCollector();
   const inlineByKey = new Map<string, EndpointRecord>();
   const originSource = new Map<string, string>();
   const addInline = (rec: EndpointRecord | null, src: string): void => {
@@ -106,7 +108,7 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
     maxPages: opts.bazaarMaxPages,
     onProgress: (n, t) => { if (n % 5000 === 0) console.error(`  bazaar ${n}/${t}`); },
   });
-  for (const r of bz) addInline(bazaarToEndpoint(r, built), "bazaar");
+  for (const r of bz) addInline(bazaarToEndpoint(r, built, schemaCollector), "bazaar");
 
   console.error("ingest: mpp.dev ...");
   let mppSvcs: MppService[] = [];
