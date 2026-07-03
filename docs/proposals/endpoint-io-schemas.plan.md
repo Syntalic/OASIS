@@ -29,7 +29,7 @@ feed the two ingest parsers, which set 64-hex refs on each `EndpointRecord` and 
 - `SPEC_VERSION`/`INDEX_VERSION` bump `0.2.0` → `0.3.0` (`src/ingest/discover.ts:16-17`).
 - Tests: `node:test`, `node:assert/strict`, co-located `*.test.ts`, deterministic `builtAt`
   constant, **no network**.
-- Validation gate per task-group: `pnpm run build && pnpm test && pnpm exec capindex validate`.
+- Validation gate per task-group: `pnpm run build:ts && pnpm test && node dist/cli.js validate`.
 - Schemas are **advisory** — field docs say "may be wrong or stale; the runtime 402 is
   authoritative; validate the live response at the boundary."
 
@@ -139,7 +139,7 @@ And in `SearchHit`, after `provider_fqn?: string;` (`:267`):
   schema_source?: "openapi" | "bazaar";
 ```
 
-- [ ] **Step 5 — run, expect PASS.** `pnpm run build:ts && node --test dist/core/endpoint-record-schema.test.js` → all pass. Then `pnpm exec capindex validate` → still passes.
+- [ ] **Step 5 — run, expect PASS.** `pnpm run build:ts && node --test dist/core/endpoint-record-schema.test.js` → all pass. Then `node dist/cli.js validate` → still passes.
 
 - [ ] **Step 6 — commit.** `git add src/core/types.ts spec/endpoint-record.schema.json src/core/endpoint-record-schema.test.ts && git commit -S -m "feat(schema): add optional I/O schema refs to the endpoint record"`
 
@@ -592,7 +592,7 @@ Update the file's other `parseOpenApi(...)` calls to destructure `{ records }` (
     `const { records: recs, schemas: sc } = parseOpenApi(JSON.parse(buf), { origin, builtAt: built });`
     and (temporary until Task 7) keep behavior: `if (recs.length) { enrichedByOrigin.set(origin, recs); ok++; }` — leave `sc` unused this task or eslint-ignore; Task 7 threads it.
 
-- [ ] **Step 4 — run, expect PASS:** `pnpm run build && pnpm test` (parser test group green; whole suite still green).
+- [ ] **Step 4 — run, expect PASS:** `pnpm run build:ts && pnpm test` (parser test group green; whole suite still green).
 - [ ] **Step 5 — commit.** `git commit -S -m "feat(schema): capture I/O schemas in the OpenAPI parser"`
 
 ---
@@ -668,7 +668,7 @@ describe("bazaarToEndpoint schema capture", () => {
     (declare `schemaCollector` in Task 7; for this task, add
     `const schemaCollector = new SchemaCollector();` near the top of `runIngest` and import it.)
 
-- [ ] **Step 4 — run, expect PASS:** `pnpm run build && pnpm test`.
+- [ ] **Step 4 — run, expect PASS:** `pnpm run build:ts && pnpm test`.
 - [ ] **Step 5 — commit.** `git commit -S -m "feat(schema): capture I/O schemas from the Bazaar snapshot"`
 
 ---
@@ -726,7 +726,7 @@ export async function writeSchemas(collector: SchemaCollector, outputDir: string
     `await writeSchemas(schemaCollector, opts.outputDir);` (the snapshot no-crawl branch may skip it —
     only the crawl produces schemas).
 
-- [ ] **Step 4 — run, expect PASS:** `pnpm run build && pnpm test`.
+- [ ] **Step 4 — run, expect PASS:** `pnpm run build:ts && pnpm test`.
 - [ ] **Step 5 — commit.** `git commit -S -m "feat(schema): write dist/schemas.json + bump spec_version to 0.3.0"`
 
 ---
@@ -794,7 +794,7 @@ export function resolveEndpointSchemas(rec: Partial<EndpointRecord>, store: Reco
 - [ ] **Step 3d — docs** (`spec/traversal.md`): update the step-3 row to
   `Origin + path | Request/response JSON Schema | **OASIS `oasis_schema` / `capindex schema`** (fallback: origin `openapi.json`)` and adjust the step-3 prose to note OASIS now serves the normalized schema.
 
-- [ ] **Step 4 — run, expect PASS:** `pnpm run build && pnpm test && pnpm exec capindex validate`.
+- [ ] **Step 4 — run, expect PASS:** `pnpm run build:ts && pnpm test && node dist/cli.js validate`.
   Manually: `node dist/cli.js schema <known-id>` prints schemas; `oasis_discover` default response
   has refs but no full schema; `include_schema=true` inlines.
 
