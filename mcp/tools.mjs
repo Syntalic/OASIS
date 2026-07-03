@@ -372,7 +372,9 @@ function buildRecommendedWorkflows(queryVec) {
   let total = 0;
   const steps = w.steps.map((s, i) => {
     const intent = capById.get(s.intent);
-    const e = intent ? resolveEndpointsForQuery(intent, bundle.endpoints, intent.label, 1)[0] : undefined;
+    // Rank the intent's endpoints by the STEP's specific need (its `do` text), not the generic intent
+    // label — so a "find flights" step surfaces a flight search, not any aviation endpoint.
+    const e = intent ? resolveEndpointsForQuery(intent, bundle.endpoints, s.do || intent.label, 1)[0] : undefined;
     if (e?.payment?.price_usd != null) total += e.payment.price_usd;
     return {
       n: i + 1,
