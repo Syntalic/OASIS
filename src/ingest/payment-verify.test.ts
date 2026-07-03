@@ -186,4 +186,118 @@ describe('classifyProbe', () => {
     const result = classifyProbe({ networkError: true }, ctx());
     assert.equal(result.verdict, 'unknown');
   });
+
+  // -------------------------------------------------------------------------
+  // FIX 1: non-JSON / empty body must never reach contradicted
+  // -------------------------------------------------------------------------
+
+  // 17. 200 empty body with permissive validator → unknown (failed before FIX 1)
+  it('200 empty body with permissive validateOutput → unknown (FIX 1)', () => {
+    const r = resp(200, '', 'GET');
+    const validateOutput = () => true;
+    const result = classifyProbe(r, ctx({ declaredMethod: 'GET', priceDynamic: false, validateOutput }));
+    assert.equal(result.verdict, 'unknown');
+    assert.match(result.reason, /served_2xx_ambiguous/);
+  });
+
+  // 18. 200 HTML body with permissive validator → unknown (failed before FIX 1)
+  it('200 HTML body with permissive validateOutput → unknown (FIX 1)', () => {
+    const r = resp(200, '<html>ok</html>', 'GET');
+    const validateOutput = () => true;
+    const result = classifyProbe(r, ctx({ declaredMethod: 'GET', priceDynamic: false, validateOutput }));
+    assert.equal(result.verdict, 'unknown');
+    assert.match(result.reason, /served_2xx_ambiguous/);
+  });
+
+  // -------------------------------------------------------------------------
+  // FIX 2: case-insensitive WWW-Authenticate lookup
+  // -------------------------------------------------------------------------
+
+  // 19. MPP with mixed-case header key Www-Authenticate → verified (proves FIX 2)
+  it('MPP with mixed-case header key Www-Authenticate → verified (FIX 2)', () => {
+    const r = resp(402, '', 'GET', {
+      'Www-Authenticate': 'Payment id="a" realm="r"',
+    });
+    const result = classifyProbe(r, ctx({ rails: ['mpp'] }));
+    assert.equal(result.verdict, 'verified');
+    assert.ok(result.challenge);
+    assert.equal(result.challenge[0].protocol, 'mpp');
+  });
+
+  // 20. MPP with WWW-Authenticate Bearer (wrong scheme) → unknown
+  it('MPP WWW-Authenticate: Bearer → unknown (wrong scheme)', () => {
+    const r = resp(402, '', 'GET', {
+      'www-authenticate': 'Bearer realm="x"',
+    });
+    const result = classifyProbe(r, ctx({ rails: ['mpp'] }));
+    assert.equal(result.verdict, 'unknown');
+  });
+
+  // -------------------------------------------------------------------------
+  // FIX 3: validateOutput that throws must not escape classifyProbe
+  // -------------------------------------------------------------------------
+
+  // 21. validateOutput throwing → unknown (not an exception bubble)
+  it('validateOutput that throws → unknown (FIX 3)', () => {
+    const r = resp(200, JSON.stringify({ id: 1 }), 'GET');
+    const validateOutput = (): boolean => { throw new Error('hostile validator'); };
+    const result = classifyProbe(r, ctx({ declaredMethod: 'GET', priceDynamic: false, validateOutput }));
+    assert.equal(result.verdict, 'unknown');
+    assert.match(result.reason, /served_2xx_ambiguous/);
+  });
+
+  // -------------------------------------------------------------------------
+  // x402 edge cases
+  // -------------------------------------------------------------------------
+
+  // 22. 402 with accepts: [] (empty array) → unknown
+  it('402 with accepts:[] → unknown', () => {
+    const r = resp(402, JSON.stringify({ accepts: [] }));
+    const result = classifyProbe(r, ctx({ rails: ['x402'] }));
+    assert.equal(result.verdict, 'unknown');
+  });
+
+  // 23. 402 with no accepts field → unknown
+  it('402 with no accepts field → unknown', () => {
+    const r = resp(402, JSON.stringify({ version: '1.0' }));
+    const result = classifyProbe(r, ctx({ rails: ['x402'] }));
+    assert.equal(result.verdict, 'unknown');
+  });
+
+  // 24. 402 with accepts not an array → unknown
+  it('402 with accepts not-an-array → unknown', () => {
+    const r = resp(402, JSON.stringify({ accepts: { scheme: 'exact', network: 'base', payTo: '0x', amount: '1' } }));
+    const result = classifyProbe(r, ctx({ rails: ['x402'] }));
+    assert.equal(result.verdict, 'unknown');
+  });
+
+  // -------------------------------------------------------------------------
+  // Stored accepts field-whitelist: extra keys must be stripped
+  // -------------------------------------------------------------------------
+
+  // 25. x402 verified with crafted extra field → stored entry has no evil key
+  it('x402 accepts entry: extra keys are not stored on LiveAccept (whitelist)', () => {
+    const crafted = JSON.stringify({
+      accepts: [
+        {
+          scheme: 'exact',
+          network: 'base',
+          payTo: '0xABCDEF',
+          amount: '1000',
+          evil: 'injected',
+        },
+      ],
+    });
+    const r = resp(402, crafted);
+    const result = classifyProbe(r, ctx({ rails: ['x402'] }));
+    assert.equal(result.verdict, 'verified');
+    assert.ok(result.challenge?.[0].accepts?.[0]);
+    const stored = result.challenge![0].accepts![0] as Record<string, unknown>;
+    assert.ok(!Object.prototype.hasOwnProperty.call(stored, 'evil'), 'evil key must not be present');
+    // Whitelisted fields are present
+    assert.equal(stored['scheme'], 'exact');
+    assert.equal(stored['network'], 'base');
+    assert.equal(stored['payTo'], '0xABCDEF');
+    assert.equal(stored['amount'], '1000');
+  });
 });

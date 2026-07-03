@@ -61,7 +61,8 @@ export function classifyProbe(
     if (x402Result) return x402Result;
 
     // ---- MPP ----
-    const wwwAuth = headers['www-authenticate'] ?? headers['WWW-Authenticate'];
+    const wwwAuthKey = Object.keys(headers).find((k) => k.toLowerCase() === 'www-authenticate');
+    const wwwAuth = wwwAuthKey ? headers[wwwAuthKey] : undefined;
     if (wwwAuth) {
       const mppResult = tryMpp(wwwAuth);
       if (mppResult) return mppResult;
@@ -194,19 +195,25 @@ function classify2xx(
   // Leg (d): validateOutput must be provided (schema-less → inconclusive)
   if (!ctx.validateOutput) return AMBIGUOUS;
 
-  // Parse body for legs (b) and (d)
+  // Parse body for legs (b) and (d) — non-JSON can never be an affirmative lie
   let parsed: unknown;
   try {
     parsed = JSON.parse(body);
   } catch {
-    parsed = undefined;
+    return AMBIGUOUS;
   }
 
   // Leg (b): must not be a structured error
   if (isStructuredError(parsed, body)) return AMBIGUOUS;
 
-  // Leg (d): schema must validate
-  if (!ctx.validateOutput(parsed)) return AMBIGUOUS;
+  // Leg (d): schema must validate; guard against hostile validators throwing
+  let validates: boolean;
+  try {
+    validates = ctx.validateOutput(parsed);
+  } catch {
+    validates = false;
+  }
+  if (!validates) return AMBIGUOUS;
 
   // All 4 legs pass — affirmative lie
   return { verdict: 'contradicted', reason: 'served_2xx_verified_content' };
