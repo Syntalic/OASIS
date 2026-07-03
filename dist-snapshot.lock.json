@@ -1,7 +1,9 @@
 {
-  "release_tag": "oasis-index-20260703-9de45e5",
+  "release_tag": "oasis-index-20260703-cf7ba80",
   "asset": "index.json.gz",
-  "sha256": "4c9e4de33646161e9b84f681323b1b91127a7686570fc607d139a570b0f1d64a",
-  "built_from_commit": "9de45e5759e55af7fde1451fc840475e178f959d",
+  "schemas_asset": "schemas.json.gz",
+  "schemas_sha256": "5543be3d503b2b0f0ca4001d23f9816268cd1459f65d1083a5a6b3e78e22be46",
+  "sha256": "d12a7dc9d56ba562f7aa74487b2e1a3c11d136aa7ab2750a50d0cc56cb97de0e",
+  "built_from_commit": "cf7ba8086f2fac8360d806453480d4c5fdf7c7d2",
   "pinned_at": "20260703"
 }
