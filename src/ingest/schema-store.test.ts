@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { canonicalJson, schemaRef, SchemaCollector } from "./schema-store.js";
+import { canonicalJson, schemaRef, SchemaCollector, resolveEndpointSchemas } from "./schema-store.js";
 
 describe("schema-store", () => {
   it("canonicalJson is key-order independent", () => {
@@ -19,5 +19,18 @@ describe("schema-store", () => {
     assert.equal(r1, r2);
     assert.equal(c.size, 1);
     assert.deepEqual(c.toObject()[r1], { type: "string" });
+  });
+  it("resolves refs against the store", () => {
+    const store = { deadbeef: { type: "object" } } as any;
+    const rec = { input_schema_ref: "deadbeef", schema_source: "openapi" } as any;
+    const r = resolveEndpointSchemas(rec, store);
+    assert.deepEqual(r.input_schema, { type: "object" });
+    assert.equal(r.input_schema_ref, "deadbeef");
+    assert.equal(r.output_schema, undefined);
+  });
+  it("missing ref → undefined schema", () => {
+    const r = resolveEndpointSchemas({ output_schema_ref: "nope" } as any, {} as any);
+    assert.equal(r.output_schema, undefined);
+    assert.equal(r.output_schema_ref, "nope");
   });
 });

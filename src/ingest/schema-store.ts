@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import type { JsonSchema } from "../core/types.js";
+import type { EndpointRecord, JsonSchema } from "../core/types.js";
 
 /** Deterministic JSON: object keys sorted recursively (RFC 8785 JCS semantics, sufficient for
  *  schema objects). Arrays keep order (significant in JSON Schema). */
@@ -34,4 +34,20 @@ export class SchemaCollector {
   get size(): number {
     return this.map.size;
   }
+}
+
+/** Inline a record's I/O schema refs against a ref→schema store (the delivery/schema step).
+ *  Returns the full schemas (when the ref resolves) alongside the refs + source, for the
+ *  `oasis_schema` MCP tool, `capindex schema`, and `oasis_discover`'s `include_schema`. */
+export function resolveEndpointSchemas(
+  rec: Partial<EndpointRecord>,
+  store: Record<string, JsonSchema>,
+) {
+  return {
+    input_schema: rec.input_schema_ref ? store[rec.input_schema_ref] : undefined,
+    output_schema: rec.output_schema_ref ? store[rec.output_schema_ref] : undefined,
+    input_schema_ref: rec.input_schema_ref,
+    output_schema_ref: rec.output_schema_ref,
+    schema_source: rec.schema_source,
+  };
 }

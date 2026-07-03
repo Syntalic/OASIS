@@ -16,11 +16,31 @@ import { defaultLanceDir } from "../dist/embed/lance-index.js";
 import { getTaxonomy } from "../dist/ontology/taxonomy.js";
 import { validateSourceIntent } from "../dist/ontology/validate-source.js";
 import { validateBinding } from "../dist/bind/binding.js";
+import { resolveEndpointSchemas } from "../dist/ingest/schema-store.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST = path.join(__dirname, "..", "dist");
 
 const bundle = JSON.parse(readFileSync(path.join(DIST, "index.json"), "utf8"));
+// The content-addressed ref→schema map beside the index. Fail-soft to {} — the pinned snapshot may
+// predate schema capture (schemas.json absent), and refs/schemas are advisory extras, never required.
+let schemaStore = {};
+try {
+  schemaStore = JSON.parse(readFileSync(path.join(DIST, "schemas.json"), "utf8"));
+} catch {
+  schemaStore = {};
+}
+
+// Pull only the PRESENT schema-ref fields off a record/hit, for spreading onto an endpoint object.
+// Progressive disclosure: discover/resolve carry refs only; the full schema is served at the schema
+// step (oasis_schema / include_schema). Fields stay absent when the record has none (old snapshots).
+function schemaRefsOf(rec) {
+  const r = {};
+  if (rec?.input_schema_ref) r.input_schema_ref = rec.input_schema_ref;
+  if (rec?.output_schema_ref) r.output_schema_ref = rec.output_schema_ref;
+  if (rec?.schema_source) r.schema_source = rec.schema_source;
+  return r;
+}
 // OASIS_GATE=1 — spec-completeness quality bar: drop endpoints with NO real published surface
 // (no declared 200, no captured inputs) — the thin aggregator-only rows that
 // pollute rank-1 (e.g. billboard "Get Price"). Env-gated to A/B the precision/distinct tradeoff.
@@ -83,10 +103,10 @@ if (endpointArm.ready) {
   console.error(`[oasis] endpoint arm ready (${endpointArm.size} endpoints, ${endpointArm.source}); gate: margin<${MARGIN_GATE} or (margin<${ARM_CONSIDER_MARGIN} & arm beats conc by ${ARM_BEATS_DELTA})`);
 }
 
-// The PUBLIC tool surface: 1 core (oasis_discover) + 3 utilities (search/taxonomy/validate). Derived into
-// MCP / Anthropic / OpenAI shapes below. oasis_find / oasis_next / oasis_resolve / oasis_validate_binding
-// remain in handleTool as deprecated aliases but are intentionally NOT exposed here. See
-// docs/proposals/oasis-discover.md.
+// The PUBLIC tool surface: 1 core (oasis_discover) + oasis_schema (the schema step) + 3 utilities
+// (search/taxonomy/validate). Derived into MCP / Anthropic / OpenAI shapes below. oasis_find /
+// oasis_next / oasis_resolve / oasis_validate_binding remain in handleTool as deprecated aliases but
+// are intentionally NOT exposed here. See docs/proposals/oasis-discover.md.
 const ENTITY_ITEMS = {
   type: "object",
   properties: {
@@ -109,8 +129,21 @@ const TOOLS = [
         finding: { type: "string", description: "What you just learned from the last endpoint you called — plain text; pass it on every follow-up call to get cross-domain next steps about what you now hold." },
         entities: { type: "array", description: "Typed entities you hold (structured alternative to `finding`, for programmatic callers).", items: ENTITY_ITEMS },
         limit: { type: "number", description: "Max endpoints (default 12)." },
+        include_schema: { type: "boolean", description: "Inline each endpoint's full input/output JSON Schema (default false — only content-addressed refs are returned; fetch the full schema at the schema step via `oasis_schema`)." },
       },
       required: ["query"],
+    },
+  },
+  {
+    name: "oasis_schema",
+    description:
+      "The discovery `schema` step: fetch one endpoint's normalized request/response JSON Schema (2020-12). Pass the `endpoint_id` from a discover/search/resolve result; returns the full inlined `input_schema` (location-keyed: path/query/headers/body) + `output_schema` alongside their content-addressed refs and `schema_source`. Advisory — captured from the provider spec, may be stale; the runtime 402 is authoritative, so validate the live response at the boundary.",
+    schema: {
+      type: "object",
+      properties: {
+        endpoint_id: { type: "string", description: "The endpoint's SHA-256 id (from a discover/search/resolve result)." },
+      },
+      required: ["endpoint_id"],
     },
   },
   {
@@ -231,6 +264,7 @@ function oasisResolve({ intent_id, query, limit = 8 }) {
       price_usd: e.payment?.price_usd,
       inputs: (e.inputs ?? []).slice(0, 8),
       rails: (e.payment?.rails ?? []).map((r) => r.protocol),
+      ...schemaRefsOf(e),
     }),
   );
   const related = relatedOptions(intent, bundle).map((r) => ({
@@ -239,6 +273,15 @@ function oasisResolve({ intent_id, query, limit = 8 }) {
     label: r.label,
   }));
   return { intent: { id: intent.id, label: intent.label }, endpoints, related };
+}
+
+// The schema step: resolve one endpoint's normalized input/output JSON Schema (2020-12) against the
+// content-addressed store — full inlined schemas + refs + source. Advisory; runtime 402 is authoritative.
+function oasisSchema({ endpoint_id }) {
+  if (!endpoint_id || !String(endpoint_id).trim()) return { error: "endpoint_id is required" };
+  const rec = bundle.endpoints.find((e) => e.id === endpoint_id);
+  if (!rec) return { error: `unknown endpoint_id: ${endpoint_id}` };
+  return resolveEndpointSchemas(rec, schemaStore);
 }
 
 // Unified next_steps for oasis_find: the data-driven entity-flow CLUSTER (everything that consumes an
@@ -296,7 +339,7 @@ async function buildNextSteps(caps, query, held = null) {
 // vectors give recall on oblique queries) is expanded into a single FLAT, ranked endpoint
 // list with payment metadata inline, PLUS a next_steps map (buildNextSteps) — the agent
 // makes ONE call and gets "here's an endpoint, and here's what you can do next".
-async function oasisDiscover({ query, finding, entities, limit = 12 }) {
+async function oasisDiscover({ query, finding, entities, limit = 12, include_schema = false }) {
   if (!query || !String(query).trim()) return { error: "query is required" };
   const hits = await searchHybridWithFallback(query, bundle, lanceDir, 12);
   // The query embedding is the ONE live model call (memoized) — shared by the semantic
@@ -312,14 +355,14 @@ async function oasisDiscover({ query, finding, entities, limit = 12 }) {
   }
   const out = [];
   const seen = new Set();
-  const add = (method, origin, path, summary, price_usd, rails, via) => {
+  const add = (method, origin, path, summary, price_usd, rails, via, refs) => {
     const k = `${method} ${origin}${path}`;
     if (seen.has(k)) return;
     seen.add(k);
-    out.push({ method, url: `${origin}${path}`, summary, price_usd, rails, via });
+    out.push({ method, url: `${origin}${path}`, summary, price_usd, rails, via, ...(refs ?? {}) });
   };
   for (const h of hits) {
-    if (h.kind === "endpoint") add(h.method, h.origin, h.path, h.label, h.price_usd, undefined, "match");
+    if (h.kind === "endpoint") add(h.method, h.origin, h.path, h.label, h.price_usd, undefined, "match", schemaRefsOf(h));
   }
   // Concentrate on the TOP-routed intent — return many of ITS providers — and pull only
   // a couple from each subsequent intent as a fallback (mainly when the top is thin).
@@ -337,7 +380,7 @@ async function oasisDiscover({ query, finding, entities, limit = 12 }) {
     // Semantic rescue applies to the concentrated top bucket only — where the rank-1 gap lives.
     const pool = resolveEndpointsForQuery(intent, bundle.endpoints, query, i === 0 ? limit * 3 : 4, i === 0 ? semanticOf : undefined);
     const addEp = (e) =>
-      add(e.method, e.origin, e.path, e.summary, e.payment?.price_usd, (e.payment?.rails ?? []).map((r) => r.protocol), h.capability_id);
+      add(e.method, e.origin, e.path, e.summary, e.payment?.price_usd, (e.payment?.rails ?? []).map((r) => r.protocol), h.capability_id, schemaRefsOf(e));
     if (i === 0) {
       const seenHost = new Set();
       for (const e of pool) { if (out.length >= limit) break; const ho = hostOf(e.origin); if (seenHost.has(ho)) continue; seenHost.add(ho); addEp(e); }
@@ -362,7 +405,7 @@ async function oasisDiscover({ query, finding, entities, limit = 12 }) {
     const list = [];
     const sh = new Set();
     const push = (e) => { const ho = hostOf(e.url); if (sh.has(ho) || list.some((x) => x.url === e.url)) return; sh.add(ho); list.push(e); };
-    const armEp = (a) => ({ method: a.ep.method, url: `${a.ep.origin}${a.ep.path}`, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: "arm" });
+    const armEp = (a) => ({ method: a.ep.method, url: `${a.ep.origin}${a.ep.path}`, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: "arm", ...schemaRefsOf(a.ep) });
     for (const a of armHits) { if (list.length >= limit) break; push(armEp(a)); }
     for (const a of armHits) { if (list.length >= limit) break; const e = armEp(a); if (!list.some((x) => x.url === e.url)) list.push(e); } // same-host backfill if short
     endpoints = list.slice(0, limit);
@@ -405,6 +448,18 @@ async function oasisDiscover({ query, finding, entities, limit = 12 }) {
       return m;
     })
     .filter(Boolean);
+  // Opt-in progressive disclosure: inline each endpoint's full input/output schema (default off — the
+  // returned objects carry only refs; the schema step / oasis_schema serves the full document).
+  if (include_schema) {
+    endpoints = endpoints.map((e) => {
+      const r = resolveEndpointSchemas(e, schemaStore);
+      return {
+        ...e,
+        ...(r.input_schema ? { input_schema: r.input_schema } : {}),
+        ...(r.output_schema ? { output_schema: r.output_schema } : {}),
+      };
+    });
+  }
   return { endpoints, next_steps, matched_capabilities };
 }
 
@@ -559,8 +614,9 @@ async function oasisNext({
 }
 
 export async function handleTool(name, args) {
-  // Public surface: 1 core + 3 utilities.
+  // Public surface: 1 core + oasis_schema (schema step) + 3 utilities.
   if (name === "oasis_discover") return oasisDiscover(args ?? {});
+  if (name === "oasis_schema") return oasisSchema(args ?? {});
   if (name === "oasis_search") return oasisSearch(args ?? {});
   if (name === "oasis_taxonomy") return getTaxonomy();
   if (name === "oasis_validate") {

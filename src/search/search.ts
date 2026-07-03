@@ -243,6 +243,9 @@ export function searchIndex(
       price_usd: ep.payment.price_usd,
       payment_rails: ep.payment.rails.map((r) => r.protocol),
       provider_fqn: ep.provider_fqn,
+      input_schema_ref: ep.input_schema_ref,
+      output_schema_ref: ep.output_schema_ref,
+      schema_source: ep.schema_source,
     });
   }
 
