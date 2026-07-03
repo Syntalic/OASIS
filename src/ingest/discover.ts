@@ -3,6 +3,7 @@
 // binder (enrich-facets) runs next in the build to bind endpoints to intents + materialize.
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { endpointId } from "../core/id.js";
 import { baseUnitsToUsd, parseAmountHint } from "../core/money.js";
@@ -13,9 +14,28 @@ import type { EndpointRecord, HttpMethod, IndexBundle, JsonSchema } from "../cor
 import { bazaarToEndpoint, fetchBazaar } from "./bazaar.js";
 import { fetchPayShProviders, payShOrigin } from "./paysh.js";
 import { assembleSchemaStore, SchemaCollector } from "./schema-store.js";
+import {
+  applyCircuitBreaker,
+  probePaymentLiveness,
+  type Verdict,
+  type VerifyResult,
+} from "./payment-verify.js";
+import {
+  isFresh,
+  loadVerdictCache,
+  pruneCache,
+  saveVerdictCache,
+  type CachedVerdict,
+} from "./verdict-cache.js";
 
-const SPEC_VERSION = "0.3.0";
-const INDEX_VERSION = "0.3.0";
+// AJV (CJS) via createRequire — same pattern as src/ingest/payment-spec.ts. Used to compile a
+// provider's declared output schema into the `validateOutput` discriminator for the 2xx probe leg.
+const require = createRequire(import.meta.url);
+const Ajv = require("ajv") as typeof import("ajv").default;
+const addFormats = require("ajv-formats") as (ajv: InstanceType<typeof Ajv>) => void;
+
+const SPEC_VERSION = "0.4.0";
+const INDEX_VERSION = "0.4.0";
 const HTTP = new Set<HttpMethod>(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]);
 const hostOf = (origin: string): string => {
   try { return new URL(origin).hostname; } catch { return origin; }
@@ -211,7 +231,7 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
   console.error(`  enriched ${ok} origins`);
 
   // --- Merge: openapi enrichment overrides registry inline per origin; tag discovery source ---
-  const merged: EndpointRecord[] = [];
+  let merged: EndpointRecord[] = [];
   for (const [origin, recs] of enrichedByOrigin) {
     const src = originSource.get(origin) ?? "openapi";
     for (const r of recs) {
@@ -242,9 +262,270 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
     console.error(`  carry-forward: +${carried} prior endpoints re-added (origins that didn't re-probe this run); evicted ${evicted} stale > ${staleDays}d`);
   }
 
+  // --- Live payment verification (crawl-path only; NEVER the snapshot rebuild) ---
+  // Probe each claimed-paid endpoint unpaid, stamp payment_verified, apply the mass-drop
+  // circuit-breaker. Membership is unchanged here — the gate drops `contradicted` records next.
+  merged = await verifyPayments(merged, prior, opts.outputDir, built);
+
   // --- Gate → PASS corpus → bundle ---
   const bundle = await gateAndWrite(merged, opts.outputDir, built);
   // Persist a store covering EVERY schema ref on the written endpoints. This run's collector only
   await writeSchemaStore(bundle, schemaCollector.toObject(), opts.outputDir);
   return bundle;
+}
+
+// ---------------------------------------------------------------------------
+// Live payment verification (Task 7)
+// ---------------------------------------------------------------------------
+
+/** Methods we never probe (mutation risk) — stamped `unknown` without a network hop. */
+const NO_PROBE_METHODS = new Set<string>(["DELETE", "PUT", "PATCH"]);
+
+/** Claimed-paid = the record asserts payment (paid flag OR at least one declared rail). */
+function isClaimedPaid(e: EndpointRecord): boolean {
+  return e.payment?.paid === true || (Array.isArray(e.payment?.rails) && e.payment.rails.length > 0);
+}
+
+/** Read `outputDir/schemas.json` (fail-soft `{}`) — the prior store; this run's is written post-gate. */
+async function loadSchemaStore(outputDir: string): Promise<Record<string, JsonSchema>> {
+  try {
+    return JSON.parse(await readFile(path.join(outputDir, "schemas.json"), "utf8")) as Record<
+      string,
+      JsonSchema
+    >;
+  } catch {
+    return {};
+  }
+}
+
+/** Resolve `ep.output_schema_ref` → an Ajv validator (compiled once per ref, cached). Fail-soft:
+ *  no ref / no schema / uncompilable → undefined (the classifier treats schema-less as inconclusive). */
+function makeValidatorResolver(
+  schemaStore: Record<string, JsonSchema>,
+): (ep: EndpointRecord) => ((b: unknown) => boolean) | undefined {
+  const ajv = new Ajv({ strict: false, validateSchema: false, allErrors: false });
+  addFormats(ajv);
+  const cache = new Map<string, ((b: unknown) => boolean) | undefined>();
+  return (ep) => {
+    const ref = ep.output_schema_ref;
+    if (!ref) return undefined;
+    if (cache.has(ref)) return cache.get(ref);
+    const schema = schemaStore[ref];
+    let validate: ((b: unknown) => boolean) | undefined;
+    if (schema) {
+      try {
+        const compiled = ajv.compile(schema);
+        validate = (b: unknown) => compiled(b) === true;
+      } catch {
+        validate = undefined;
+      }
+    }
+    cache.set(ref, validate);
+    return validate;
+  };
+}
+
+/**
+ * Verify claimed-paid endpoints against live behaviour (crawl-path only).
+ *
+ * Stamps `payment_verified`/`payment_verified_at` (+ `payment.live_challenge` on `verified`) on every
+ * record, applies the catalog-delta circuit-breaker, refreshes+prunes the verdict cache, and emits
+ * metrics. Membership is unchanged — the caller's gate drops the `contradicted` verdict downstream.
+ *
+ * Scheduling is host-aware: probes run at a global concurrency (`PROBE_CONCURRENCY`, default 16) with
+ * a per-host in-flight cap (`PROBE_PER_HOST`, default 2), round-robin across hosts so one slow/large
+ * host cannot head-of-line-block the rest; a host is backed off after repeated 429/403.
+ */
+export async function verifyPayments(
+  merged: EndpointRecord[],
+  prior: IndexBundle | null,
+  outputDir: string,
+  built: string,
+  deps: {
+    probe?: typeof probePaymentLiveness;
+    schemaStore?: Record<string, JsonSchema>;
+    nowMs?: number;
+  } = {},
+): Promise<EndpointRecord[]> {
+  // (1) Kill-switch — leave the corpus untouched (used for deterministic offline rebuilds/tests).
+  if (process.env.INGEST_NO_VERIFY) return merged;
+
+  const probe = deps.probe ?? probePaymentLiveness;
+  const nowMs = deps.nowMs ?? Date.now();
+
+  // (2) Load the verdict cache + the schema store (for the 2xx output-schema discriminator).
+  const cache = await loadVerdictCache(outputDir);
+  const schemaStore = deps.schemaStore ?? (await loadSchemaStore(outputDir));
+  const resolveOutputValidator = makeValidatorResolver(schemaStore);
+
+  // (3) Partition: not-paid / write-method → stamp unknown w/o probing; eligible w/ a fresh cached
+  //     verdict → reuse (no probe); the rest → probe queue.
+  const results = new Map<string, VerifyResult>(); // endpoint id → verdict
+  const probedIds = new Set<string>();
+  const seenIds = new Set<string>();
+  const toProbe: EndpointRecord[] = [];
+
+  for (const ep of merged) {
+    seenIds.add(ep.id);
+    if (!isClaimedPaid(ep)) {
+      results.set(ep.id, { verdict: "unknown", reason: "not_paid" });
+      continue;
+    }
+    if (NO_PROBE_METHODS.has(ep.method)) {
+      results.set(ep.id, { verdict: "unknown", reason: "unprobed_write_method" });
+      continue;
+    }
+    const cached = cache[ep.id];
+    if (cached && isFresh(cached, nowMs)) {
+      results.set(ep.id, { verdict: cached.verdict, reason: cached.reason, challenge: cached.challenge });
+      continue; // reuse — do NOT probe
+    }
+    toProbe.push(ep);
+  }
+
+  // --- (3b) Host-aware scheduler over the probe queue ---
+  const PROBE_CONCURRENCY = Number(process.env.PROBE_CONCURRENCY) || 16;
+  const PROBE_PER_HOST = Number(process.env.PROBE_PER_HOST) || 2;
+  const BACKOFF_THRESHOLD = 3; // consecutive 429/403 on a host → skip its remaining probes
+
+  const byHost = new Map<string, EndpointRecord[]>();
+  for (const ep of toProbe) {
+    const h = hostOf(ep.origin);
+    let arr = byHost.get(h);
+    if (!arr) byHost.set(h, (arr = []));
+    arr.push(ep);
+  }
+  const hosts = [...byHost.keys()];
+  const cursor = new Map<string, number>(hosts.map((h) => [h, 0]));
+  const inFlight = new Map<string, number>(hosts.map((h) => [h, 0]));
+  const backoff = new Map<string, number>(hosts.map((h) => [h, 0]));
+  let rr = 0;
+
+  // Claim the next probe-able endpoint: round-robin across hosts, skipping exhausted / at-cap /
+  // backed-off hosts. Returns null when nothing is claimable right now (caller yields + retries).
+  const nextEndpoint = (): EndpointRecord | null => {
+    for (let scan = 0; scan < hosts.length; scan++) {
+      const hi = (rr + scan) % hosts.length;
+      const h = hosts[hi];
+      if ((backoff.get(h) ?? 0) >= BACKOFF_THRESHOLD) continue;
+      const arr = byHost.get(h)!;
+      const idx = cursor.get(h)!;
+      if (idx >= arr.length) continue; // exhausted
+      if ((inFlight.get(h) ?? 0) >= PROBE_PER_HOST) continue; // at per-host cap
+      cursor.set(h, idx + 1);
+      inFlight.set(h, (inFlight.get(h) ?? 0) + 1);
+      rr = hi + 1;
+      return arr[idx];
+    }
+    return null;
+  };
+  const remainingWork = (): boolean => {
+    for (const h of hosts) {
+      if ((backoff.get(h) ?? 0) >= BACKOFF_THRESHOLD) continue; // backed-off → no more work
+      if (cursor.get(h)! < byHost.get(h)!.length) return true;
+    }
+    return false;
+  };
+  const runOne = async (ep: EndpointRecord): Promise<void> => {
+    const h = hostOf(ep.origin);
+    try {
+      const res = await probe(ep, { resolveOutputValidator });
+      results.set(ep.id, res);
+      probedIds.add(ep.id);
+      // Best-effort back-off: throttle a host that keeps rejecting us.
+      if (res.reason === "http_429" || res.reason === "http_403") {
+        backoff.set(h, (backoff.get(h) ?? 0) + 1);
+      } else {
+        backoff.set(h, 0);
+      }
+    } finally {
+      inFlight.set(h, (inFlight.get(h) ?? 0) - 1);
+    }
+  };
+  const worker = async (): Promise<void> => {
+    for (;;) {
+      const ep = nextEndpoint();
+      if (ep) {
+        await runOne(ep);
+        continue;
+      }
+      if (!remainingWork()) return; // truly done (vs momentarily at-cap)
+      await new Promise((r) => setImmediate(r)); // hosts at cap — yield, then retry
+    }
+  };
+  const poolSize = Math.min(PROBE_CONCURRENCY, Math.max(1, toProbe.length));
+  await Promise.all(Array.from({ length: poolSize }, worker));
+
+  // Any eligible endpoint skipped by host back-off never got a result → stamp unknown.
+  for (const ep of toProbe) {
+    if (!results.has(ep.id)) results.set(ep.id, { verdict: "unknown", reason: "host_backoff" });
+  }
+
+  // (4) Stamp every record from its result + build the verdict map for the breaker.
+  const verdictMap = new Map<string, Verdict>();
+  for (const ep of merged) {
+    const res = results.get(ep.id);
+    if (!res) continue;
+    ep.payment_verified = res.verdict;
+    ep.payment_verified_at = built;
+    if (res.verdict === "verified" && res.challenge) ep.payment.live_challenge = res.challenge;
+    verdictMap.set(ep.id, res.verdict);
+  }
+  // Refresh the cache for freshly-probed endpoints only (reused entries keep their original age).
+  for (const id of probedIds) {
+    const res = results.get(id)!;
+    const entry: CachedVerdict = { verdict: res.verdict, reason: res.reason, verified_at: built };
+    if (res.challenge) entry.challenge = res.challenge;
+    cache[id] = entry;
+  }
+
+  // (5) Circuit-breaker over the catalog delta vs the prior index.
+  const priorIds = new Set(prior?.endpoints.map((e) => e.id) ?? []);
+  const priorClaimedPaid = prior?.endpoints.filter(isClaimedPaid).length ?? 0;
+  const { tripped, newlyDropped } = applyCircuitBreaker(verdictMap, priorIds, priorClaimedPaid);
+
+  // Reason histogram over the claimed-paid surface (stable across a downgrade — reasons don't change).
+  const reasons: Record<string, number> = {};
+  for (const ep of merged) {
+    if (!isClaimedPaid(ep)) continue;
+    const res = results.get(ep.id);
+    if (res) reasons[res.reason] = (reasons[res.reason] ?? 0) + 1;
+  }
+
+  if (tripped) {
+    let downgraded = 0;
+    for (const ep of merged) {
+      if (ep.payment_verified === "contradicted") {
+        ep.payment_verified = "unknown";
+        delete cache[ep.id]; // never persist a contradicted verdict from a tripped run
+        downgraded++;
+      }
+    }
+    console.error(
+      `verify: !!! CIRCUIT BREAKER TRIPPED !!! newlyDropped=${newlyDropped} / priorClaimedPaid=${priorClaimedPaid} ` +
+        `exceeded threshold — downgraded ${downgraded} contradicted→unknown (not cached). reasons=${JSON.stringify(reasons)}`,
+    );
+    process.exitCode = 1;
+  }
+
+  // Prune the cache to the seen-id set (+ absolute age cap) and persist.
+  await saveVerdictCache(outputDir, pruneCache(cache, seenIds, nowMs));
+
+  // (6) Metrics — verdict counts over claimed-paid + reason histogram + newlyDropped delta.
+  let verified = 0;
+  let contradicted = 0;
+  let unknown = 0;
+  for (const ep of merged) {
+    if (!isClaimedPaid(ep)) continue;
+    if (ep.payment_verified === "verified") verified++;
+    else if (ep.payment_verified === "contradicted") contradicted++;
+    else unknown++;
+  }
+  console.error(
+    `verify: ${verified} verified / ${contradicted} contradicted / ${unknown} unknown ` +
+      `(of ${verified + contradicted + unknown} claimed-paid); probed ${probedIds.size}; ` +
+      `newlyDropped=${newlyDropped}; reasons=${JSON.stringify(reasons)}`,
+  );
+
+  return merged;
 }
