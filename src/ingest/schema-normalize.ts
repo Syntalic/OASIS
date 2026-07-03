@@ -60,7 +60,7 @@ export function normalizeSchema(
 ): { schema: JsonSchema; truncated: boolean } {
   const ctx: Ctx = { resolve: opts.resolve, oas30: opts.oas30 ?? false, defs: {}, seen: new Set(), nodes: 0, truncated: false };
   const body = walk(schema, ctx) as Record<string, unknown>;
-  const result: JsonSchema = { $schema: DIALECT_2020_12, ...body };
+  const result: JsonSchema = { ...body, $schema: DIALECT_2020_12 };
   if (Object.keys(ctx.defs).length) result.$defs = { ...(result.$defs as object ?? {}), ...ctx.defs };
   return { schema: result, truncated: ctx.truncated };
 }

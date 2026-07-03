@@ -25,6 +25,12 @@ describe("schema-normalize", () => {
     const { schema } = normalizeSchema({ $ref: "#/components/schemas/Node" } as any, { resolve });
     assert.ok((schema.$defs as any).Node);
   });
+  it("stamps 2020-12 dialect even when source carries its own $schema", () => {
+    const { schema } = normalizeSchema(
+      { $schema: "http://json-schema.org/draft-07/schema#", type: "object" } as any,
+    );
+    assert.equal(schema.$schema, DIALECT_2020_12);
+  });
   it("flags truncation when over the node cap", () => {
     const deep: any = {};
     let cur = deep;
