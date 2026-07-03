@@ -1,0 +1,23 @@
+id: workflow.cpg_competitive_research
+goal: Build a full competitive intelligence brief for a consumer product — catalog spread, rival landscape, price history over time, and category inflation
+shape: fanout
+aliases:
+  - full competitive intelligence brief for a consumer product
+  - benchmark a brand across the retail landscape and over time
+  - deep competitive analysis report for a product category
+  - market positioning research for a consumer packaged good
+  - cpg competitor and pricing intelligence report
+steps:
+  - intent: commerce.product_catalog
+    do: Find the product and its variants across retailers
+  - intent: commerce.competitive_landscape
+    do: Map the competitive pricing landscape for the category
+  - intent: commerce.track_price_history
+    do: Pull historical price trends over time
+  - intent: commerce.compare_price
+    do: Compare the product price across stores
+    optional: true
+  - intent: commerce.inflation_tracker
+    do: Add category inflation context
+    optional: true
+produces: A competitive intelligence brief — catalog spread, rival landscape, and price movement over time. The agent writes the analysis.

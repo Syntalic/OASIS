@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 
-import type { FindResult } from "@/types/graph";
+import type { FindResult, RecommendedWorkflow } from "@/types/graph";
 
 /**
  * The live oasis_discover result for the current question — the real paid
@@ -15,3 +15,10 @@ export const findAtom = atom<FindResult | null>(null);
  * button). Null until a query resolves, or if the MCP was unreachable.
  */
 export const rawDiscoverAtom = atom<unknown>(null);
+
+/**
+ * The recommended workflow recipe(s) for the current question — matched multi-step
+ * plans, each step resolved to a live endpoint. Empty until a query matches a recipe.
+ * Rendered as the recipe card (detail panel) + the workflow node-tree on the canvas.
+ */
+export const recommendedWorkflowsAtom = atom<RecommendedWorkflow[]>([]);

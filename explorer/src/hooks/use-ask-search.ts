@@ -4,9 +4,9 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 
 import { capById, matchCapabilities, type MatchResult } from "@/lib/ontology";
-import { findAtom, rawDiscoverAtom } from "@/stores/ask";
+import { findAtom, rawDiscoverAtom, recommendedWorkflowsAtom } from "@/stores/ask";
 import { matchesAtom, modeAtom, queryAtom, searchingAtom } from "@/stores/query";
-import type { FindEndpoint, NextStep } from "@/types/graph";
+import type { FindEndpoint, NextStep, RecommendedWorkflow } from "@/types/graph";
 
 async function callOasis<T>(tool: string, args: Record<string, unknown>): Promise<T | null> {
   try {
@@ -45,6 +45,7 @@ interface DiscoverResult {
   matched_capabilities?: { intent_id: string; label?: string; score?: number }[];
   endpoints?: FindEndpoint[];
   next_steps?: NextStep[];
+  recommended_workflows?: RecommendedWorkflow[];
 }
 
 /**
@@ -59,6 +60,7 @@ export function useAskSearch() {
   const setMatches = useSetAtom(matchesAtom);
   const setFind = useSetAtom(findAtom);
   const setRaw = useSetAtom(rawDiscoverAtom);
+  const setWorkflows = useSetAtom(recommendedWorkflowsAtom);
   const setSearching = useSetAtom(searchingAtom);
 
   useEffect(() => {
@@ -68,6 +70,7 @@ export function useAskSearch() {
         setMatches([]);
         setFind(null);
         setRaw(null);
+        setWorkflows([]);
         setSearching(false);
         return;
       }
@@ -81,16 +84,18 @@ export function useAskSearch() {
         data?.endpoints?.length || data?.next_steps?.length
           ? { endpoints: data.endpoints ?? [], nextSteps: data.next_steps ?? [] }
           : null;
+      const workflows = data?.recommended_workflows ?? [];
 
       if (!cancelled) {
         setMatches(matches);
         setFind(find);
         setRaw(data ?? null);
+        setWorkflows(workflows);
         setSearching(false);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [mode, query, setMatches, setFind, setRaw, setSearching]);
+  }, [mode, query, setMatches, setFind, setRaw, setWorkflows, setSearching]);
 }

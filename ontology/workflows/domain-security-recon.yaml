@@ -1,0 +1,22 @@
+id: workflow.domain_security_recon
+goal: Investigate a domain's security posture — DNS/WHOIS, TLS, IP intel, and threat reputation
+shape: fanout
+aliases:
+  - security recon on a domain
+  - investigate a domain for threats
+  - check a website's security posture
+  - dns tls and threat intel for a host
+  - is this domain safe
+steps:
+  - intent: devtools.whois_lookup
+    do: Pull DNS records and WHOIS registration
+  - intent: devtools.tls_inspect
+    do: Inspect the TLS/SSL certificate and endpoint health
+  - intent: devtools.ip_lookup
+    do: Look up the resolved IP intelligence
+  - intent: devtools.threat_intel
+    do: Check threat and IOC reputation
+  - intent: devtools.cve_lookup
+    do: Surface known CVEs for detected software
+    optional: true
+produces: A security posture report — registration, TLS health, IP intel, and threat reputation. The agent flags risks.

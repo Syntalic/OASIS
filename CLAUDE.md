@@ -52,6 +52,7 @@ set -a; . ./.env; set +a
 pnpm run build                 # tsc → ingest (crawl) → enrich-facets (bind + host_breadth)
 pnpm run embed                 # LanceDB curated-capability vectors
 pnpm run build:endpoint-index  # quantized int8 endpoint-arm index
+pnpm run build:workflows       # dist/workflows.json (recipes + goal embeddings for recommended_workflows)
 
 # 2. (optional) validate before shipping — CI gate + your eval harness
 

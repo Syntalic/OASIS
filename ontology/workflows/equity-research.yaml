@@ -1,0 +1,22 @@
+id: workflow.equity_research
+goal: Research a public stock before investing — fundamentals, price, analyst view, and news
+shape: fanout
+aliases:
+  - research a stock before buying
+  - full due diligence on a public company
+  - should I invest in this stock
+  - equity research report for a ticker
+  - analyze a company's financials and outlook
+steps:
+  - intent: finance.company_fundamentals
+    do: Pull financials, SEC filings, and corporate data
+  - intent: finance.stock_quote
+    do: Get the current price quote
+  - intent: finance.equity_research
+    do: Add analyst / investment research on the stock
+  - intent: media.news_headlines
+    do: Surface recent news on the company
+  - intent: finance.economic_data
+    do: Add macro context relevant to the sector
+    optional: true
+produces: A synthesized investment view — fundamentals, price, analyst consensus, news, and macro context. The agent forms the thesis.

@@ -1,0 +1,22 @@
+id: workflow.publish_website
+goal: Create and publish a website — write copy, generate images, register a domain, and host it
+shape: chain
+aliases:
+  - build and launch a website
+  - generate a website and host it
+  - create a landing page with content and publish
+  - spin up a site with copy and images
+  - make me a website
+steps:
+  - intent: ai.web_research
+    do: Research the topic to ground the content
+    optional: true
+  - intent: ai.llm_complete
+    do: Write the site copy and page content
+  - intent: ai.image_generate
+    do: Generate hero and section images
+  - intent: cloud.domains
+    do: Register a domain name for the site
+  - intent: cloud.hosting
+    do: Host and publish the static site
+produces: A published website — copy plus images on a registered domain. The agent runs the pipeline and wires the pieces.

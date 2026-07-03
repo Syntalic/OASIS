@@ -1,17 +1,19 @@
 /** View-layer types for the React Flow graph (distinct from the ontology data model). */
 
-export type NodeKind = "domain" | "capability" | "entity" | "query" | "endpoint";
+export type NodeKind = "domain" | "capability" | "entity" | "query" | "endpoint" | "workflow" | "workflowStep";
 
 export type EdgeKind =
   | "membership" // capability → domain
   | "consumes" // entity → capability
   | "produces" // capability → entity
   | "match" // question → capability
-  | "serves"; // capability → endpoint
+  | "serves" // capability → endpoint
+  | "recommends" // question → recommended workflow
+  | "workflow"; // workflow root → step, or step(n) → step(n+1) in a chain
 
 export type Mode = "explore" | "ask";
 
-export type LayoutEngine = "grouped" | "layered" | "radial";
+export type LayoutEngine = "grouped" | "layered" | "radial" | "workflow";
 
 /** oasis_find result shapes. */
 export interface FindEndpoint {
@@ -41,6 +43,8 @@ export const RELATION_META: Record<EdgeKind, { label: string }> = {
   produces: { label: "produces" },
   match: { label: "matches" },
   serves: { label: "served by" },
+  recommends: { label: "recommends" },
+  workflow: { label: "step" },
 };
 
 interface CommonNodeData {
@@ -101,9 +105,51 @@ export interface EndpointNodeData extends CommonNodeData {
   rails?: string[];
 }
 
+/** oasis_discover recommended_workflows shape (mirrors mcp/tools.mjs + spec/workflow.schema.json). */
+export interface WorkflowEndpoint {
+  method: string;
+  url: string;
+  price_usd?: number;
+  rails?: string[];
+  endpoint_id?: string;
+}
+export interface RecommendedWorkflowStep {
+  n: number;
+  intent_id: string;
+  do: string;
+  optional?: boolean;
+  gate?: string;
+  endpoint: WorkflowEndpoint | null;
+}
+export interface RecommendedWorkflow {
+  id: string;
+  goal: string;
+  shape: "chain" | "fanout";
+  match_score: number;
+  source: string;
+  total_price_usd: number;
+  produces: string;
+  steps: RecommendedWorkflowStep[];
+}
+
+export interface WorkflowNodeData extends CommonNodeData {
+  kind: "workflow";
+  workflow: RecommendedWorkflow;
+  color: string;
+}
+export interface WorkflowStepNodeData extends CommonNodeData {
+  kind: "workflowStep";
+  workflowId: string;
+  step: RecommendedWorkflowStep;
+  label: string;
+  color: string;
+}
+
 export type AnyNodeData =
   | DomainNodeData
   | CapabilityNodeData
   | EntityNodeData
   | QueryNodeData
-  | EndpointNodeData;
+  | EndpointNodeData
+  | WorkflowNodeData
+  | WorkflowStepNodeData;

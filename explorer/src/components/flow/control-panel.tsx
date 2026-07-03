@@ -114,7 +114,7 @@ export function ControlPanel() {
           }
         />
         <DropdownMenuContent align="start">
-          {ENGINES.map((e) => (
+          {(mode === "ask" ? [...ENGINES, "workflow" as LayoutEngine] : ENGINES).map((e) => (
             <DropdownMenuItem key={e} onClick={() => setEngine(e)}>
               {LAYOUT_LABELS[e]}
             </DropdownMenuItem>
