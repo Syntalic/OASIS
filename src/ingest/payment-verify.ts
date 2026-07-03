@@ -304,9 +304,29 @@ export async function probePaymentLiveness(
       signal: AbortSignal.timeout(timeoutMs),
     });
 
-    // Cap body at bodyMax to bound memory usage on large responses
-    const rawBody = await res.text();
-    const body = rawBody.slice(0, bodyMax);
+    // Stream-cap body at bodyMax bytes to bound memory vs a hostile provider
+    // that streams a multi-GB response (AbortSignal only partially bounds a fast sender).
+    const chunks: Uint8Array[] = [];
+    let bytesRead = 0;
+    const reader = res.body?.getReader();
+    if (reader) {
+      try {
+        while (bytesRead < bodyMax) {
+          const { done, value } = await reader.read();
+          if (done || !value) break;
+          const canTake = Math.min(value.byteLength, bodyMax - bytesRead);
+          chunks.push(value.subarray(0, canTake));
+          bytesRead += canTake;
+          if (bytesRead >= bodyMax) { await reader.cancel(); break; }
+        }
+      } catch { /* absorbed; outer try/catch handles probe-level errors */ } finally {
+        reader.releaseLock();
+      }
+    }
+    // chunks empty (e.g. 204 null body) → body = '' → classifyProbe treats non-JSON as unknown
+    const body = new TextDecoder().decode(
+      chunks.length === 1 ? chunks[0] : Buffer.concat(chunks.map((c) => Buffer.from(c))),
+    );
 
     // Normalise header keys to lowercase (Fetch API already does this, but be explicit)
     const headers: Record<string, string> = {};

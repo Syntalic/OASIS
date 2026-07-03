@@ -502,4 +502,57 @@ describe('probePaymentLiveness', () => {
     // If truncation were skipped the full body would give 'verified'; truncation → unknown
     assert.equal(result.verdict, 'unknown');
   });
+
+  // -------------------------------------------------------------------------
+  // 6. Streaming reader: huge infinite stream is cancelled at bodyMax, no hang
+  // -------------------------------------------------------------------------
+
+  it('streaming ReadableStream >bodyMax: reader cancels at cap, no hang → unknown', async () => {
+    // A ReadableStream that yields 64 bytes per pull and never closes.
+    // The streaming reader must cancel() it at bodyMax=32, not hang.
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        controller.enqueue(new TextEncoder().encode('x'.repeat(64)));
+        // No close() — proves the reader's cancel() terminates the read loop
+      },
+    });
+    const fetchImpl = async (_url: string, _opts?: RequestInit): Promise<Response> =>
+      new Response(stream as unknown as BodyInit, { status: 402 }) as Response;
+    const result = await probePaymentLiveness(makeEp('GET'), { fetchImpl, bodyMax: 32 });
+    // 32 bytes of 'x' is not valid x402 JSON → classifyProbe → unknown
+    assert.equal(result.verdict, 'unknown');
+    // Test completing without timeout proves no hang
+  });
+
+  // -------------------------------------------------------------------------
+  // 7. Streaming reader: valid x402 JSON fits within bodyMax; huge tail cancelled
+  // -------------------------------------------------------------------------
+
+  it('streaming ReadableStream: valid JSON chunk < bodyMax, infinite tail cancelled → verified', async () => {
+    // Stream phase 0: valid x402 JSON (83 bytes). Phase 1+: 1 KB chunks of garbage.
+    // bodyMax = VALID_X402.length so after phase 0 bytesRead >= bodyMax → cancel().
+    const enc = new TextEncoder();
+    const validChunk = enc.encode(VALID_X402);
+    let phase = 0;
+    const stream = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        if (phase === 0) {
+          controller.enqueue(validChunk);
+          phase = 1;
+        } else {
+          // Garbage tail — reader must cancel before consuming any of this
+          controller.enqueue(enc.encode('x'.repeat(1024)));
+        }
+      },
+    });
+    const fetchImpl = async (_url: string, _opts?: RequestInit): Promise<Response> =>
+      new Response(stream as unknown as BodyInit, { status: 402 }) as Response;
+    // bodyMax = exact JSON length: after phase-0 chunk bytesRead >= bodyMax → cancel()
+    const result = await probePaymentLiveness(makeEp('GET'), {
+      fetchImpl,
+      bodyMax: validChunk.byteLength,
+    });
+    assert.equal(result.verdict, 'verified');
+    assert.equal(result.challenge?.[0].protocol, 'x402');
+  });
 });
