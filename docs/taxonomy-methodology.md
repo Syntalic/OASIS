@@ -177,3 +177,36 @@ Genuine judgment calls (defensible either way — don't reopen without new evide
 is gov-sourced; the `produces` rung kept it in finance) · `natural_hazards` data vs science ·
 `country_lookup` data vs utility · `ip_registry` gov vs science/identity · `paid_api_preflight`
 agent vs devtools.
+
+### Collectibles — a cross-cutting concern, parked as a connector (not yet a domain)
+
+`commerce.tcg_catalog` (trading-card catalog data) raised whether a `collectibles` domain should
+exist — one that would also pull in NFTs and, later, rare coins, stamps, graded sports cards, comics.
+
+**Decision (current):** No `collectibles` domain. It is a cross-cutting *attribute* (an item's
+collectibility), not a subject — its members' true subjects scatter across domains (a TCG card →
+game/entertainment IP, an NFT → on-chain asset/`blockchain`, a numismatic coin → currency, a sneaker
+→ retail). That is the same "unity of attribute, diversity of subject" signature that kept `security`
+out of the domain set. So each collectible homes in its **subject** (NFTs stay `blockchain` per the
+asset-form rule; `tcg_catalog` stays `commerce` for now), and collectibility is the connective tissue
+— not a home. (Aside: `tcg_catalog`'s `produces: Product` is a mis-frame — it returns
+name/set/rarity/image *reference* metadata, not a buyable SKU — and should be `Answer`.)
+
+**Mechanism = the cross-cutting *view*, not substitution links.** Do NOT wire `tcg_catalog`
+`alternative_of` `nft_metadata`: a card lookup is not a *substitute* for an NFT lookup, so
+`alternative_of` would overstate the relationship (the exact conflation to avoid). The correct tool
+is the (still-unbuilt) `concern:` facet tag + an explorer filter — the same mechanism the security
+family needs — which surfaces collectibles together *only under that lens*, without merging them.
+
+**Real-world precedent (Amazon browse nodes).** Amazon runs *both* axes at once and cross-lists a
+card under each: `Toys & Games › Games & Accessories › Card Games › Collectible Card Games` (play
+axis) **and** a real top-level `Collectibles & Fine Arts › {Entertainment › Trading Cards, Sports ›
+Trading Cards, Collectible Currencies (coins), Fine Art}` (collect axis). So the *concept* is
+coherent and precedented — OASIS simply can't cross-list (one home per intent).
+
+**Revisit trigger → promote to a domain when** the corpus gains real collectible supply: ≥3
+independent providers across multiple *non-crypto* collectible types (numismatic coins, stamps,
+graded sports cards, comics), not the current TCG monoculture (97% one provider) and not the "coins"
+that are actually crypto. Then a first-class `collectibles` domain is justified — Amazon's tree as
+the naming precedent (`collectibles.{trading_cards, coins, …}`); NFTs stay `blockchain` but join the
+collectibles view via the concern tag.
