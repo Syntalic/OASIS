@@ -4,7 +4,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 
 import { capById, matchCapabilities, type MatchResult } from "@/lib/ontology";
-import { findAtom } from "@/stores/ask";
+import { findAtom, rawDiscoverAtom } from "@/stores/ask";
 import { matchesAtom, modeAtom, queryAtom, searchingAtom } from "@/stores/query";
 import type { FindEndpoint, NextStep } from "@/types/graph";
 
@@ -58,6 +58,7 @@ export function useAskSearch() {
   const query = useAtomValue(queryAtom);
   const setMatches = useSetAtom(matchesAtom);
   const setFind = useSetAtom(findAtom);
+  const setRaw = useSetAtom(rawDiscoverAtom);
   const setSearching = useSetAtom(searchingAtom);
 
   useEffect(() => {
@@ -66,6 +67,7 @@ export function useAskSearch() {
       if (mode !== "ask" || !query) {
         setMatches([]);
         setFind(null);
+        setRaw(null);
         setSearching(false);
         return;
       }
@@ -83,11 +85,12 @@ export function useAskSearch() {
       if (!cancelled) {
         setMatches(matches);
         setFind(find);
+        setRaw(data ?? null);
         setSearching(false);
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [mode, query, setMatches, setFind, setSearching]);
+  }, [mode, query, setMatches, setFind, setRaw, setSearching]);
 }

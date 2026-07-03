@@ -17,6 +17,7 @@ import { edgeTypes } from "@/components/flow/edges";
 import { nodeTypes } from "@/components/flow/nodes";
 import { useFlow } from "@/hooks/use-flow";
 import { graphKeyAtom } from "@/stores/graph";
+import { modeAtom } from "@/stores/query";
 import { showMinimapAtom } from "@/stores/ui";
 
 export function FlowCanvas() {
@@ -24,6 +25,7 @@ export function FlowCanvas() {
     useFlow();
   const graphKey = useAtomValue(graphKeyAtom);
   const showMinimap = useAtomValue(showMinimapAtom);
+  const mode = useAtomValue(modeAtom);
   const { fitView } = useReactFlow();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -86,7 +88,7 @@ export function FlowCanvas() {
         <Panel position="top-left">
           <ControlPanel />
         </Panel>
-        {showMinimap && nodes.length > 14 && (
+        {showMinimap && mode !== "ask" && nodes.length > 14 && (
           <MiniMap
             position="top-right"
             pannable

@@ -3,6 +3,7 @@
 import { useReactFlow } from "@xyflow/react";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import {
+  Braces,
   Info,
   Map as MapIcon,
   Maximize2,
@@ -14,6 +15,8 @@ import {
 } from "lucide-react";
 import { useMemo } from "react";
 
+import { RawJsonPanel } from "@/components/flow/raw-json-panel";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +27,13 @@ import { cn } from "@/lib/utils";
 import { nodesAtom } from "@/stores/graph";
 import { layoutEngineAtom } from "@/stores/options";
 import { modeAtom } from "@/stores/query";
-import { legendOpenAtom, relayoutNonceAtom, showMinimapAtom, sidebarCollapsedAtom } from "@/stores/ui";
+import {
+  legendOpenAtom,
+  rawJsonOpenAtom,
+  relayoutNonceAtom,
+  showMinimapAtom,
+  sidebarCollapsedAtom,
+} from "@/stores/ui";
 import type { LayoutEngine } from "@/types/graph";
 import { LAYOUT_LABELS } from "@/utils/layout";
 
@@ -61,6 +70,7 @@ export function ControlPanel() {
   const [engine, setEngine] = useAtom(layoutEngineAtom);
   const [showMinimap, setShowMinimap] = useAtom(showMinimapAtom);
   const [legendOpen, setLegendOpen] = useAtom(legendOpenAtom);
+  const [rawJsonOpen, setRawJsonOpen] = useAtom(rawJsonOpenAtom);
   const setRelayout = useSetAtom(relayoutNonceAtom);
   const [collapsed, setCollapsed] = useAtom(sidebarCollapsedAtom);
   const mode = useAtomValue(modeAtom);
@@ -114,14 +124,35 @@ export function ControlPanel() {
 
       <Divider />
 
-      <ToolButton label="Toggle minimap" active={showMinimap} onClick={() => setShowMinimap((s) => !s)}>
-        <MapIcon size={14} />
-      </ToolButton>
-      <ToolButton label="Legend" active={legendOpen} onClick={() => setLegendOpen((s) => !s)}>
+      {mode === "ask" ? (
+        <ToolButton
+          label="Raw discover response (JSON)"
+          active={rawJsonOpen}
+          onClick={() => {
+            setRawJsonOpen((s) => !s);
+            setLegendOpen(false);
+          }}
+        >
+          <Braces size={14} />
+        </ToolButton>
+      ) : (
+        <ToolButton label="Toggle minimap" active={showMinimap} onClick={() => setShowMinimap((s) => !s)}>
+          <MapIcon size={14} />
+        </ToolButton>
+      )}
+      <ToolButton
+        label="Legend"
+        active={legendOpen}
+        onClick={() => {
+          setLegendOpen((s) => !s);
+          setRawJsonOpen(false);
+        }}
+      >
         <Info size={14} />
       </ToolButton>
 
       {legendOpen && <Legend isAsk={mode === "ask"} />}
+      {mode === "ask" && rawJsonOpen && <RawJsonPanel />}
     </div>
   );
 }
