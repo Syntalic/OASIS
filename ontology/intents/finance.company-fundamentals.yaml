@@ -1,0 +1,42 @@
+id: finance.company_fundamentals
+label: Get company financials, SEC filings, and corporate disclosures
+description: Company-level fundamentals sourced from statutory filing registries — income statement, balance sheet and cash flow, XBRL financial concepts, periodic filings (10-K, 10-Q, 8-K), insider Form 4 activity, and beneficial-ownership disclosures, keyed by ticker or company identifier. Use when an agent needs a company's reported financials and disclosures, not a live equity price quote (finance.stock_quote) or economy-wide macro indicators (finance.economic_data).
+aliases:
+  - company financial statements
+  - SEC filings lookup by ticker
+  - 10-K and 10-Q filings
+  - income statement balance sheet cash flow
+  - company revenue and earnings data
+  - insider trading Form 4 activity
+  - beneficial ownership 13D 13G disclosures
+  - corporate disclosures for a company
+  - annual report fundamentals
+  - fundamentals by ticker or CIK
+  - EDGAR filing lookup
+consumes:
+  - entity: Ticker
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+    cardinality: many
+facets:
+  domain: finance
+  action: lookup
+  modality:
+    - json
+    - timeseries
+  freshness: recent
+links:
+  - type: sibling_of
+    to: finance.stock_quote
+    note: same ticker-keyed finance family; company_fundamentals is reported statements and filings, stock_quote is a single live equity price
+  - type: sibling_of
+    to: finance.economic_data
+    note: adjacent finance reference data; economic_data is economy-wide macro indicators, company_fundamentals is one company's reported financials
+  - type: sibling_of
+    to: identity.company_enrich
+    note: both describe a company; company_enrich returns firmographics from a domain, company_fundamentals returns audited financials and filings by ticker
+  - type: fed_by
+    to: gov.records
+    note: fundamentals derive from statutory government filing registries (SEC/EDGAR) that gov.records verifies identities against

@@ -1,0 +1,41 @@
+id: gov.regulatory
+label: Look up regulatory and legal reference text and track rulemaking
+description: Authoritative statute and regulation text plus rulemaking change tracking — Code of Federal Regulations sections by citation, statute and case-law text, Federal Register rulemaking, and recent regulatory-change feeds from securities and central-bank authorities. Use when an agent needs the text of a law or regulation or a feed of what changed, not location-tied civic government data (gov.civic) or identity and registry verification (gov.records).
+aliases:
+  - Code of Federal Regulations section text
+  - CFR section by title and number
+  - authoritative statute text lookup
+  - look up a regulation by citation
+  - recent Federal Register rulemaking changes
+  - track regulatory changes
+  - regulatory change feed
+  - recent SEC regulatory filings
+  - central bank regulatory alerts
+  - rulemaking tracking feed
+  - case law and regulatory text
+  - statute and regulation reference
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: Document
+    role: payload
+  - entity: GovernmentService
+    role: payload
+    cardinality: many
+facets:
+  domain: gov
+  action: lookup
+  modality:
+    - text
+  freshness: recent
+links:
+  - type: sibling_of
+    to: gov.civic
+    note: regulatory is statute and regulation text plus rulemaking tracking; civic is location-tied government and civic data for an address
+  - type: sibling_of
+    to: gov.records
+    note: regulatory is legal reference text and change feeds; records is identity and public-registry verification
+  - type: sibling_of
+    to: gov.spending
+    note: regulatory is the rules and statutes themselves; spending is government contracts, grants, and award data

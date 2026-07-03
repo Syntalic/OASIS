@@ -16,8 +16,14 @@ aliases:
   - smart money leaderboard
   - wallet profit and loss (PnL)
   - token holder concentration
+  - token holder monitor
+  - top token holders
+  - holder concentration by token
+  - whale distribution for a token
 consumes:
   - entity: WalletAddress
+    role: identifier
+  - entity: CryptoAsset
     role: identifier
 produces:
   - entity: Answer

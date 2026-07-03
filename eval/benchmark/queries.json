@@ -846,37 +846,37 @@
     "qid": 141
   },
   {
-    "intent_id": "finance.crypto_market_intel",
+    "intent_id": "blockchain.market_intel",
     "query": "crypto market sentiment analysis",
     "style": "terse",
     "qid": 142
   },
   {
-    "intent_id": "finance.crypto_market_intel",
+    "intent_id": "blockchain.market_intel",
     "query": "Where can I get deep insights and historical context on cryptocurrency market trends?",
     "style": "conversational",
     "qid": 143
   },
   {
-    "intent_id": "finance.crypto_market_intel",
+    "intent_id": "blockchain.market_intel",
     "query": "I want to track the social media sentiment and order book depth for Ethereum before the upcoming upgrade.",
     "style": "contextual",
     "qid": 144
   },
   {
-    "intent_id": "finance.crypto_spot_price",
+    "intent_id": "blockchain.spot_price",
     "query": "bitcoin price live",
     "style": "terse",
     "qid": 145
   },
   {
-    "intent_id": "finance.crypto_spot_price",
+    "intent_id": "blockchain.spot_price",
     "query": "What is the current exchange rate for popular cryptocurrencies in US dollars?",
     "style": "conversational",
     "qid": 146
   },
   {
-    "intent_id": "finance.crypto_spot_price",
+    "intent_id": "blockchain.spot_price",
     "query": "I need to get the exact spot price of Solana in EUR right now.",
     "style": "contextual",
     "qid": 147
@@ -954,19 +954,19 @@
     "qid": 159
   },
   {
-    "intent_id": "finance.prediction_markets",
+    "intent_id": "blockchain.prediction_markets",
     "query": "betting odds prediction markets",
     "style": "terse",
     "qid": 160
   },
   {
-    "intent_id": "finance.prediction_markets",
+    "intent_id": "blockchain.prediction_markets",
     "query": "Where can I find the current probability and betting volume for upcoming global events?",
     "style": "conversational",
     "qid": 161
   },
   {
-    "intent_id": "finance.prediction_markets",
+    "intent_id": "blockchain.prediction_markets",
     "query": "What are the latest odds on Polymarket for the upcoming US presidential election?",
     "style": "contextual",
     "qid": 162
@@ -1008,37 +1008,37 @@
     "qid": 168
   },
   {
-    "intent_id": "finance.market_data",
+    "intent_id": "finance.trader_positioning",
     "query": "market positioning reports COT",
     "style": "terse",
     "qid": 169
   },
   {
-    "intent_id": "finance.market_data",
+    "intent_id": "finance.trader_positioning",
     "query": "How can I access institutional positioning reports and overall market sentiment data?",
     "style": "conversational",
     "qid": 170
   },
   {
-    "intent_id": "finance.market_data",
+    "intent_id": "finance.trader_positioning",
     "query": "Get the latest Commitments of Traders report for Chicago Mercantile Exchange gold futures.",
     "style": "contextual",
     "qid": 171
   },
   {
-    "intent_id": "finance.stablecoin_monitor",
+    "intent_id": "blockchain.stablecoin_monitor",
     "query": "stablecoin peg tracking supply",
     "style": "terse",
     "qid": 172
   },
   {
-    "intent_id": "finance.stablecoin_monitor",
+    "intent_id": "blockchain.stablecoin_monitor",
     "query": "I need to monitor whether dollar-pegged digital currencies are losing their 1:1 ratio.",
     "style": "conversational",
     "qid": 173
   },
   {
-    "intent_id": "finance.stablecoin_monitor",
+    "intent_id": "blockchain.stablecoin_monitor",
     "query": "Track the daily minting volume and peg stability of Tether on the Tron network.",
     "style": "contextual",
     "qid": 174

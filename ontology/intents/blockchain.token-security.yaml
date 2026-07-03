@@ -1,0 +1,42 @@
+id: blockchain.token_security
+label: Scan a token or smart contract for security risks
+description: Contract-level risk analysis for a token or smart-contract address — honeypot and sell-restriction detection, buy/sell tax, mint and blacklist functions, hidden or renounced ownership, proxy/upgradeable patterns, and holder-concentration flags, returned as a risk report. Use when an agent screens a specific contract address before trading or interacting, not analyzing a wallet's flows and accumulation (blockchain.onchain_analytics) or reading a wallet's token holdings (blockchain.token_balance).
+aliases:
+  - is this token a honeypot
+  - scan token contract for risk
+  - smart contract security check
+  - token rug pull risk
+  - detect honeypot and sell tax
+  - check contract for mint and blacklist functions
+  - is this contract safe to buy
+  - token risk report
+  - contract ownership and proxy check
+  - screen a token before buying
+  - honeypot detection for a token address
+  - analyze token contract security
+consumes:
+  - entity: CryptoAsset
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+    format: json
+facets:
+  domain: blockchain
+  action: analyze
+  modality:
+    - json
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: blockchain.onchain_analytics
+    note: token_security scans one contract's code for risk; onchain_analytics analyzes wallet flows, accumulation, and smart-money activity
+  - type: sibling_of
+    to: blockchain.token_balance
+    note: same token family, differs by action (assess contract risk vs read a wallet's holdings)
+  - type: alternative_of
+    to: ai.prompt_guard
+    note: cross-domain security screening — prompt_guard guards adversarial model inputs; token_security guards adversarial on-chain contracts
+  - type: alternative_of
+    to: devtools.cve_lookup
+    note: both are security-risk enrichment — cve_lookup resolves a disclosed CVE by id; token_security scans live contract code for risk signals

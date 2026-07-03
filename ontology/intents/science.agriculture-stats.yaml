@@ -1,20 +1,19 @@
 id: science.agriculture_stats
-label: Look up US agricultural statistics
-description: USDA and NASS agricultural statistics — crop production, yields, prices, and county or state-level farm data from official government sources. Use when an agent needs authoritative US agriculture figures, not general civic address data (gov.civic).
+label: Look up agricultural statistics
+description: Agricultural statistics — crop production, yields, prices, and county or state-level farm data from official sources (USDA/NASS in the US; FAOSTAT and Eurostat internationally). Use when an agent needs authoritative agriculture figures, not general civic address data (gov.civic).
 aliases:
-  - US agricultural statistics lookup
   - USDA NASS QuickStats lookup
-  - US agricultural production statistics
   - crop yield data by county
   - farm commodity statistics API
   - agriculture census data lookup
-  - national agricultural stats API
   - NASS agricultural stats API
+  - crop production statistics
+  - agricultural commodity statistics
 consumes:
   - entity: Query
     role: identifier
 produces:
-  - entity: EconomicIndicator
+  - entity: Answer
     role: payload
     cardinality: many
 facets:

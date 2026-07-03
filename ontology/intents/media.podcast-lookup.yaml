@@ -1,0 +1,37 @@
+id: media.podcast_lookup
+label: Search podcasts and look up show/episode metadata
+description: Podcast directory search and show/episode metadata lookup by name, feed URL, or free-text query — matching shows, host and listener details, recent episodes, and RSS/iTunes feed records. Use when an agent resolves podcast identity or enriches an episode list, not transcribing episode audio into text (media.speech_to_text).
+aliases:
+  - search podcasts by name
+  - podcast directory search
+  - podcast episode metadata lookup
+  - podcast RSS feed parser
+  - podcast show metadata API
+  - find recent podcast episodes
+  - podcast metadata by feed URL
+  - look up podcast show details
+  - podcast directory feed lookup
+consumes:
+  - entity: Query
+    role: identifier
+produces:
+  - entity: SearchResults
+    role: payload
+    cardinality: many
+facets:
+  domain: media
+  action: lookup
+  modality:
+    - json
+    - text
+  freshness: recent
+links:
+  - type: sibling_of
+    to: media.movie_lookup
+    note: podcast_lookup resolves audio show/episode metadata; movie_lookup resolves film catalog records
+  - type: sibling_of
+    to: media.book_lookup
+    note: podcast_lookup is podcast directory/RSS metadata; book_lookup is bibliographic records by title/author/ISBN
+  - type: sibling_of
+    to: media.news_headlines
+    note: podcast_lookup returns show/episode metadata by identity; news_headlines returns current topical headline feeds

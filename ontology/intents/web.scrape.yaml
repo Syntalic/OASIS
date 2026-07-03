@@ -5,12 +5,14 @@ aliases:
   - scrape a URL
   - web scrape
   - fetch page content
-  - crawl a webpage
   - pull HTML from URL
   - scrape website content
   - fetch live page data
   - get webpage HTML
   - scrape public site
+  - extract all links from a URL
+  - list page links
+  - page metadata / page context
 consumes:
   - entity: Webpage
     role: identifier
@@ -27,3 +29,6 @@ links:
   - type: broader_of
     to: web.markdown_extract
     note: web_scrape returns raw HTML; markdown_extract is the narrower clean-markdown variant
+  - type: narrower_of
+    to: web.crawl
+    note: web_scrape is a single-page fetch; web.crawl is the broader multi-page site crawl (moved the 'crawl a webpage' phrasing there)

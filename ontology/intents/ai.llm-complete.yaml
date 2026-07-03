@@ -16,6 +16,10 @@ aliases:
   - paraphrase or reword a paragraph
   - make this writing more formal or polished
   - summarize or edit a passage of text
+  - brainstorm ideas on a topic
+  - generate ideas
+  - tldr summary of an article
+  - draft a first version
 consumes:
   - { entity: Text, role: identifier }
 produces:

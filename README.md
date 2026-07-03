@@ -18,7 +18,7 @@ discovery mechanism — so we built OASIS and open-sourced it.
 
 | Artifact | Purpose |
 |---|---|
-| `ontology/intents/` | Curated task capabilities — the controlled vocabulary agents route to (87 intents across 20 domains) |
+| `ontology/intents/` | Curated task capabilities — the controlled vocabulary agents route to (111 intents across 20 domains) |
 | `dist/index.json` (+ `endpoints` / `capabilities`) | The unified, payment-aware paid-endpoint index (~19k gated endpoints) |
 | `spec/` | JSON schemas + entity vocab + [agent traversal protocol](spec/traversal.md) |
 | `mcp/` | Reference MCP server (`oasis_discover` + contribution tools) + drop-in agent skill |
@@ -56,7 +56,7 @@ No build needed to search or resolve — download `dist/index.json` (and sibling
 ```bash
 git clone https://github.com/Syntalic/OASIS.git && cd OASIS && pnpm install
 pnpm run build    # federated ingest → quality gate → semantic bind (needs network; GOOGLE_API_KEY for gemini binding)
-pnpm run embed    # vector index (87 curated intents, gemini-embedding-001)
+pnpm run embed    # vector index (111 curated intents, gemini-embedding-001)
 pnpm test
 ```
 
@@ -91,6 +91,7 @@ a discoverable spec that passes the quality gate and ranks well).
 ## Documentation
 
 - **[docs/concepts.md](docs/concepts.md)** — start here: the data model + glossary (taxonomy, ontology, capability, domain, facet, entity, link, endpoint, binding)
+- **[docs/taxonomy-methodology.md](docs/taxonomy-methodology.md)** — how an intent is assigned to a domain (the finance↔blockchain rule, when a domain is justified, the tie-breaker ladder)
 - **[ARCHITECTURE.md](ARCHITECTURE.md)** — index-build pipeline, search/retrieval, ontology→endpoint wiring
 - **[spec/traversal.md](spec/traversal.md)** — agent protocol: search → resolve → schema → execute
 - **[docs/scaling.md](docs/scaling.md)** — the endpoint-atomic direction and why it scales

@@ -7,15 +7,14 @@ aliases:
   - hiring feed
   - ATS job listings
   - search job postings
-  - new jobs by title
   - career page jobs
   - job board search
   - filter jobs by role
-  - backend engineer jobs
-  - new roles posted today
-  - jobs posted in the last day
-  - engineering job listings
   - fresh ATS job feed
+  - linkedin jobs scraper
+  - scrape job postings
+  - job listings scraper
+  - scrape jobs from job board
 consumes:
   - { entity: Query, role: identifier }
   - { entity: Company, role: identifier }

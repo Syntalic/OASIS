@@ -1,6 +1,6 @@
 id: realestate.property_lookup
 label: Search homes for sale and rentals
-description: Find property listings, rental comps, and home value estimates in the US. Use when an agent needs residential sale or rental listings for a city, zip, or neighborhood to answer relocation, investment, or housing budget questions.
+description: Find property listings, rental comps, and home value estimates. Use when an agent needs residential sale or rental listings for a city, zip, or neighborhood to answer relocation, investment, or housing budget questions.
 aliases:
   - homes for sale
   - property listings
@@ -10,17 +10,22 @@ aliases:
   - houses for sale in
   - MLS listings
   - residential listings near zip
-  - Austin TX homes listed
   - homes for sale near me
   - rental listings by city
   - property search by zip code
   - list houses in a neighborhood
   - home value estimate
   - what is this home worth
+  - Zillow property details
+  - Redfin property detail
+  - scrape property listing
+  - property listing details by URL
+  - MLS listing detail
 consumes:
   - { entity: Place, role: identifier }
 produces:
   - { entity: Place, role: payload }
+  - { entity: PriceSignal, role: payload }
 facets:
   domain: realestate
   action: search

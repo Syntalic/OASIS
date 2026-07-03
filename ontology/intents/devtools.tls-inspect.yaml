@@ -1,0 +1,34 @@
+id: devtools.tls_inspect
+label: Inspect a host's TLS/SSL certificate and endpoint health
+description: Live TLS/SSL certificate details and endpoint health for a hostname — certificate chain, issuer, validity window, expiry, and HTTPS reachability probed at call time. Use when an agent checks a site's SSL cert, verifies TLS configuration, or watches for certificate expiry. Not DNS/WHOIS registration data (whois_lookup) — this opens a live TLS handshake against the host and reports its certificate and infra health.
+aliases:
+  - check SSL certificate expiry
+  - TLS certificate details for a host
+  - is this site's SSL cert valid
+  - when does this domain's SSL certificate expire
+  - SSL certificate checker
+  - verify TLS configuration for a hostname
+  - inspect the HTTPS certificate chain
+  - check certificate issuer and validity
+  - endpoint HTTPS health check
+  - SSL cert expiration monitor
+consumes:
+  - { entity: Domain, role: identifier }
+produces:
+  - { entity: Answer, role: payload }
+facets:
+  domain: devtools
+  action: analyze
+  modality:
+    - json
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: devtools.whois_lookup
+    note: same host-intelligence family; whois_lookup reads DNS/WHOIS registration records, tls_inspect probes the live TLS certificate and endpoint health
+  - type: sibling_of
+    to: devtools.ip_lookup
+    note: same family, differs by key; ip_lookup enriches an IP address with geo/ISP context, tls_inspect inspects a hostname's certificate and reachability
+  - type: pipes_to
+    to: devtools.threat_intel
+    note: certificate and endpoint-health findings feed a broader threat assessment; threat_intel scores reputation/maliciousness rather than reading the cert

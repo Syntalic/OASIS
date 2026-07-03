@@ -8,11 +8,15 @@ aliases:
   - VAT registration lookup
   - EU VAT validation API
   - business tax ID verification
+  - GSTIN validation
+  - GST number check
+  - validate GSTIN
+  - India GST tax ID validation
 consumes:
-  - entity: Query
+  - entity: Company
     role: identifier
 produces:
-  - entity: Answer
+  - entity: Company
     role: payload
 facets:
   domain: utility

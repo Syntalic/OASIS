@@ -14,6 +14,8 @@ consumes:
   - entity: Query
     role: identifier
 produces:
+  - entity: Answer
+    role: payload
   - entity: Text
     role: payload
 facets:

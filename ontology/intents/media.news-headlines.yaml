@@ -9,6 +9,10 @@ aliases:
   - business news headlines
   - crypto news headlines
   - current events headline feed
+  - news feed API
+  - news article search
+  - real-time news data feed
+  - news search API
 consumes:
   - entity: Query
     role: identifier

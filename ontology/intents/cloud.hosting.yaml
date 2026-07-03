@@ -1,21 +1,17 @@
 id: cloud.hosting
 label: Host files and static websites
-description: Upload files or deploy static websites with permanent CDN URLs via micropayment. Use when an agent needs to publish assets or a static site and return a permanent public URL without managing cloud storage accounts.
+description: Upload files, deploy static websites, or ship a web app from a Git repo or build config to a hosted URL via micropayment. Use when an agent needs to publish assets, deploy a site or app, and return a permanent public URL without managing cloud storage or hosting accounts.
 aliases:
   - file upload
-  - static website
-  - host website
-  - static site hosting
-  - upload files
-  - host a static website
   - upload file get public URL
+  - host a static website
   - deploy static site to CDN
   - host HTML page permanently
-  - permanent file link upload
-  - put asset on CDN
-  - static page hosting for agent
   - share file via hosted URL
-  - micropay file storage
+  - deploy app from GitHub repo
+  - trigger a deployment
+  - deploy project from build config
+  - ship app to hosted URL
 consumes:
   - { entity: Document, role: identifier }
 produces:

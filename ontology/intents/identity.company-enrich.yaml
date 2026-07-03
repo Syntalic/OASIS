@@ -17,8 +17,13 @@ aliases:
   - what company owns this domain
   - enrich company from email domain
   - b2b company data enrichment
+  - company lookup by name
+  - firmographics by company name
+  - KYB firmographics lookup
 consumes:
   - entity: Domain
+    role: identifier
+  - entity: Company
     role: identifier
 produces:
   - entity: Company

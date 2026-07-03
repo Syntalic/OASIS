@@ -1,0 +1,36 @@
+id: agent.paid_api_preflight
+label: Vet and preflight a paid API endpoint before calling
+description: Pre-payment safety assessment of an untrusted paid HTTP endpoint (x402 / MPP) — probe the endpoint, inspect its OpenAPI spec and declared payment terms, and return a go/no-go verdict with a risk score, agent-readiness signals, and attestation before the agent spends. Use when an autonomous agent vets a paid service it has never called and gates payment on the result. Not agent-to-agent reputation and reviews (agent.marketplace), not IOC malicious-or-benign scoring of an IP/domain/hash from threat feeds (devtools.threat_intel), and not a bare TLS certificate handshake (devtools.tls_inspect) — this evaluates the paid API contract itself before the first payment.
+aliases:
+  - vet an x402 service before paying it
+  - preflight a paid API endpoint before calling
+  - is this paid endpoint safe to call
+  - pre-action gate for an agent payment
+  - risk-score a paid HTTP API before spending
+  - check an endpoint's agent-readiness before paying
+  - guard and attest a paid service before the first call
+  - review payment terms of an untrusted API
+  - screen a paid x402 endpoint for risks
+  - go/no-go check before an agent buys an API call
+consumes:
+  - entity: Webpage
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+facets:
+  domain: agent
+  action: analyze
+  modality:
+    - json
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: agent.marketplace
+    note: both agent-native infrastructure, not user-facing data tasks; marketplace registers and scores the reputation of other agents, this vets an untrusted paid HTTP endpoint's contract before payment
+  - type: alternative_of
+    to: devtools.threat_intel
+    note: both vet an entity before trusting it, differs by subject and inputs — threat_intel scores an IOC (IP/domain/hash) as malicious-or-benign from aggregated feeds, this assesses a specific paid x402 endpoint's spec and payment terms before the first call
+  - type: alternative_of
+    to: devtools.tls_inspect
+    note: both probe endpoint safety at call time, differs by layer — tls_inspect reads the live TLS/SSL certificate chain and HTTPS health, this evaluates the paid API contract (price, OpenAPI readiness, resource-control gate) before payment

@@ -9,7 +9,9 @@ aliases:
   - business hours and ratings
   - POI search
   - store locator API
-  - address autocomplete
+  - place autocomplete predictions
+  - point of interest lookup by name
+  - venue search by category
   - search coffee shops in Austin
 consumes:
   - entity: Place
@@ -20,7 +22,7 @@ produces:
     cardinality: many
 facets:
   domain: maps
-  action: lookup
+  action: search
 links:
   - type: alternative_of
     to: travel.place_reviews

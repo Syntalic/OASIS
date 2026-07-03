@@ -11,12 +11,19 @@ aliases:
   - manage DNS records API
   - domain renew without registrar UI
   - programmatic domain renewal
+  - check DNS propagation
+  - global DNS propagation status
+  - DNS propagation checker
 consumes:
   - entity: Domain
     role: identifier
+  - entity: DnsRecord
+    role: payload
 produces:
   - entity: Domain
     role: identifier
+  - entity: DnsRecord
+    role: payload
 facets:
   domain: cloud
   action: provision

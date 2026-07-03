@@ -1,0 +1,43 @@
+id: blockchain.derivatives
+label: Get crypto derivatives market data (funding, open interest, liquidations, options IV, basis)
+description: Derivatives market microstructure for a crypto perp or asset symbol — perpetual funding rates, open interest, liquidation flows, options implied volatility and skew, and futures basis / term structure sourced from exchange feeds. Use when an agent needs the derivatives-market view of an asset, not its spot quote (blockchain.spot_price is spot only) or on-chain protocol/TVL analytics (blockchain.defi_analytics). Derivatives data, not explicit buy/sell calls (finance.trading_signals).
+aliases:
+  - crypto funding rate
+  - perpetual funding rate for BTC
+  - open interest by exchange
+  - crypto liquidations feed
+  - options implied volatility for ETH
+  - futures basis and term structure
+  - perp funding and OI data
+  - options IV skew and put/call ratio
+  - derivatives market data for a token
+  - crypto volatility index
+  - annualized basis on quarterly futures
+  - real-time liquidation heatmap
+consumes:
+  - entity: CryptoAsset
+    role: identifier
+produces:
+  - entity: MarketQuote
+    role: payload
+    cardinality: many
+facets:
+  domain: blockchain
+  action: lookup
+  modality:
+    - json
+    - timeseries
+  freshness: realtime
+links:
+  - type: sibling_of
+    to: blockchain.spot_price
+    note: derivatives is funding/OI/IV/basis microstructure; crypto_spot_price is a single point-in-time spot quote
+  - type: sibling_of
+    to: blockchain.market_intel
+    note: derivatives is structured exchange-feed metrics; market_intel is narrative, sentiment, and trending context
+  - type: alternative_of
+    to: blockchain.defi_analytics
+    note: derivatives covers exchange-listed perps/options/futures; defi_analytics covers on-chain protocol perps and TVL
+  - type: sibling_of
+    to: finance.trading_signals
+    note: derivatives is raw market-structure data; trading_signals are explicit entry/exit buy-sell calls
