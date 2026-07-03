@@ -166,7 +166,7 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
       if (!res.ok) return;
       const buf = await res.text();
       if (buf.length > 2_000_000) return;
-      const recs = parseOpenApi(JSON.parse(buf), { origin, builtAt: built });
+      const { records: recs, schemas: _sc } = parseOpenApi(JSON.parse(buf), { origin, builtAt: built });
       if (recs.length) { enrichedByOrigin.set(origin, recs); ok++; }
     } catch {}
   };

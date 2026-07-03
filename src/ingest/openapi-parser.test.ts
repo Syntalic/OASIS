@@ -68,8 +68,8 @@ const doc = {
 };
 
 function inputsFor(path: string): string[] {
-  const recs = parseOpenApi(doc, { origin: "https://x.test", builtAt: BUILT_AT });
-  const rec = recs.find((r) => r.path === path);
+  const { records } = parseOpenApi(doc, { origin: "https://x.test", builtAt: BUILT_AT });
+  const rec = records.find((r) => r.path === path);
   assert.ok(rec, `no record for ${path}`);
   return rec.inputs ?? [];
 }
@@ -91,5 +91,29 @@ describe("openapi-parser extractInputs", () => {
     const inputs = inputsFor("/merge");
     assert.ok(inputs.includes("id"), `inputs=${inputs}`);
     assert.ok(inputs.includes("extra"), `inputs=${inputs}`);
+  });
+});
+
+describe("openapi-parser schema capture", () => {
+  it("captures location-keyed input + output schema refs", () => {
+    const doc = {
+      openapi: "3.0.0",
+      servers: [{ url: "https://api.x.com" }],
+      paths: { "/search": { post: {
+        summary: "Search",
+        "x-payment-info": { intent: "charge", method: "x402", amount: "1000" },
+        parameters: [{ name: "q", in: "query", schema: { type: "string" } }],
+        requestBody: { required: true, content: { "application/json": { schema: { $ref: "#/components/schemas/Req" } } } },
+        responses: { "200": { content: { "application/json": { schema: { type: "object", properties: { hits: { type: "array" } } } } } }, "402": {} },
+      } } },
+      components: { schemas: { Req: { type: "object", properties: { url: { type: "string" } } } } },
+    };
+    const { records, schemas } = parseOpenApi(doc as any, { origin: "https://api.x.com", builtAt: BUILT_AT });
+    const rec = records[0];
+    assert.match(rec.input_schema_ref!, /^[a-f0-9]{64}$/);
+    assert.match(rec.output_schema_ref!, /^[a-f0-9]{64}$/);
+    assert.equal(rec.schema_source, "openapi");
+    const input = schemas.toObject()[rec.input_schema_ref!];
+    assert.deepEqual(Object.keys((input as any).properties).sort(), ["body", "query"]);
   });
 });
