@@ -112,6 +112,9 @@ function embeddedV4(b: number[]): string | null {
     return dotted();
   // Deprecated IPv4-compatible ::/96 (all-zero high 96 bits, non-zero tail)
   if (isZero(0, 12) && !isZero(12, 16)) return dotted();
+  // 6to4 2002::/16 — the 32 bits after the prefix are the embedded IPv4 (bytes 2..5); re-vet it so a
+  // 2002:a9fe:a9fe:: (169.254.169.254) tunnel can't reach cloud metadata.
+  if (b[0] === 0x20 && b[1] === 0x02) return `${b[2]}.${b[3]}.${b[4]}.${b[5]}`;
   return null;
 }
 
@@ -132,6 +135,8 @@ export function isPublicAddress(ip: string): boolean {
 
   const b0 = bytes[0];
   const b1 = bytes[1];
+  // 2001:0000::/32 Teredo — tunnels an (obfuscated) arbitrary IPv4; no legit paid origin is Teredo → deny.
+  if (b0 === 0x20 && b1 === 0x01 && bytes[2] === 0x00 && bytes[3] === 0x00) return false;
   if (bytes.every((x) => x === 0)) return false; // :: unspecified
   if (bytes.slice(0, 15).every((x) => x === 0) && bytes[15] === 1) return false; // ::1 loopback
   if (b0 === 0xfc || b0 === 0xfd) return false; // fc00::/7 ULA

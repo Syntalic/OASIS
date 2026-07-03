@@ -13,8 +13,8 @@ import { tmpdir } from 'node:os';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import { verifyPayments } from './discover.js';
-import { saveVerdictCache } from './verdict-cache.js';
+import { verifyPayments, isPermissiveSchema } from './discover.js';
+import { saveVerdictCache, loadVerdictCache } from './verdict-cache.js';
 import type { VerifyResult } from './payment-verify.js';
 import type { EndpointRecord, HttpMethod, IndexBundle, LiveChallenge } from '../core/types.js';
 
@@ -264,6 +264,66 @@ describe('verifyPayments — INGEST_NO_VERIFY kill-switch', () => {
       } finally {
         delete process.env.INGEST_NO_VERIFY;
       }
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// (review fix) isPermissiveSchema — a schema with no discriminating power disables the drop leg
+// ---------------------------------------------------------------------------
+
+describe('isPermissiveSchema — permissive output schemas cannot be the affirmative-lie discriminator', () => {
+  for (const s of [{}, true, { type: 'object' }, { type: 'object', properties: { x: { type: 'string' } } }]) {
+    it(`treats ${JSON.stringify(s)} as permissive (→ unknown, never a drop)`, () => {
+      assert.equal(isPermissiveSchema(s as never), true);
+    });
+  }
+  for (const s of [
+    { type: 'object', required: ['x'] },
+    { type: 'object', additionalProperties: false, properties: { x: {} } },
+    { oneOf: [{ type: 'string' }, { type: 'number' }] },
+    { $ref: '#/$defs/Foo' },
+    { enum: ['a', 'b'] },
+  ]) {
+    it(`keeps ${JSON.stringify(s)} as a real discriminator`, () => {
+      assert.equal(isPermissiveSchema(s as never), false);
+    });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// (review fix) a malformed prior index (no `endpoints`) must not abort the crawl (fail-soft)
+// ---------------------------------------------------------------------------
+
+describe('verifyPayments — fail-soft on a malformed prior index', () => {
+  it('does not throw when prior.endpoints is absent (breaker setup guards the property, not the call)', async () => {
+    await withDir(async (dir) => {
+      const merged = [makeEp({ id: 'A' })];
+      const probe = async (): Promise<VerifyResult> => ({ verdict: 'verified', reason: 'x402_challenge', challenge: X402_CHALLENGE });
+      const priorNoEndpoints = { index_version: '0.4.0' } as unknown as IndexBundle; // non-null, no `endpoints`
+      const out = await verifyPayments(merged, priorNoEndpoints, dir, BUILT, { probe, nowMs: NOW_MS, schemaStore: {} });
+      assert.equal(out[0].payment_verified, 'verified');
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// (review fix) `unknown` verdicts are never persisted (documented asymmetric-TTL invariant)
+// ---------------------------------------------------------------------------
+
+describe('verifyPayments — unknown verdicts are not cached', () => {
+  it('persists verified but not unknown', async () => {
+    await withDir(async (dir) => {
+      const merged = [makeEp({ id: 'V' }), makeEp({ id: 'U', origin: 'https://u.example' })];
+      const canned: Record<string, VerifyResult> = {
+        V: { verdict: 'verified', reason: 'x402_challenge', challenge: X402_CHALLENGE },
+        U: { verdict: 'unknown', reason: 'served_2xx_ambiguous' },
+      };
+      const probe = async (ep: EndpointRecord): Promise<VerifyResult> => canned[ep.id];
+      await verifyPayments(merged, null, dir, BUILT, { probe, nowMs: NOW_MS, schemaStore: {} });
+      const cache = await loadVerdictCache(dir);
+      assert.ok(cache['V'], 'verified should be cached');
+      assert.equal(cache['U'], undefined, 'unknown must NOT be cached');
     });
   });
 });

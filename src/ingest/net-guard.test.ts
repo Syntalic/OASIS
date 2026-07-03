@@ -35,6 +35,9 @@ describe("isPublicAddress", () => {
     "::ffff:7f00:1", // IPv4-mapped hex of 127.0.0.1 (loopback)
     "64:ff9b::a00:1", // NAT64 64:ff9b::/96 wrapping 10.0.0.1
     "64:ff9b::a9fe:a9fe", // NAT64 wrapping 169.254.169.254 (metadata via NAT64)
+    "2002:a9fe:a9fe::", // 6to4 2002::/16 wrapping 169.254.169.254 (metadata via 6to4)
+    "2002:7f00:1::", // 6to4 wrapping 127.0.0.1 (loopback)
+    "2001::1", // 2001:0000::/32 Teredo tunnel
     "fe9a::1", // fe80::/10 link-local (fe80–febf), missed by "fe80" prefix check
     "febf::1", // top of fe80::/10
     "0.0.0.0", // 0.0.0.0/8 this-host
@@ -57,7 +60,7 @@ describe("isPublicAddress", () => {
   }
 
   // Globally-routable addresses — must return true
-  const publicAddrs = ["1.1.1.1", "8.8.8.8", "2606:4700::1"];
+  const publicAddrs = ["1.1.1.1", "8.8.8.8", "2606:4700::1", "2001:4860:4860::8888"]; // last: public 2001:4860::/32, NOT Teredo
   for (const addr of publicAddrs) {
     it(`returns true for ${addr}`, () => {
       assert.equal(isPublicAddress(addr), true);

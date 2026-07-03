@@ -301,6 +301,27 @@ async function loadSchemaStore(outputDir: string): Promise<Record<string, JsonSc
 
 /** Resolve `ep.output_schema_ref` → an Ajv validator (compiled once per ref, cached). Fail-soft:
  *  no ref / no schema / uncompilable → undefined (the classifier treats schema-less as inconclusive). */
+/**
+ * A schema with no power to tell a real paid response from an arbitrary benign JSON object — `{}`,
+ * `true`, `{type:"object"}`, or any object schema with no non-empty `required` and
+ * `additionalProperties` not `false`. It validates almost anything, so it cannot serve as the
+ * affirmative-lie discriminator (leg d of classify2xx). Erring toward "permissive" is the SAFE
+ * direction: a permissive schema DISABLES the drop discriminator (→ `unknown`), so a genuinely-paid
+ * endpoint that answers the unpaid probe with a benign 200 (an auth gate / WAF returning
+ * `{"authenticated":false}`, `{"success":false}`) is kept, not wrongly delisted. Composition/`$ref`/
+ * `enum`/`const` schemas retain real discriminating power and are kept.
+ */
+export function isPermissiveSchema(schema: JsonSchema): boolean {
+  const sc = schema as unknown;
+  if (sc === true) return true;
+  if (typeof sc !== "object" || sc === null) return true; // {}/boolean-false/non-object → no power
+  const s = sc as Record<string, unknown>;
+  if (Array.isArray(s.required) && s.required.length > 0) return false;
+  if (s.additionalProperties === false) return false;
+  if (s.oneOf || s.allOf || s.anyOf || s.$ref || s.enum !== undefined || s.const !== undefined) return false;
+  return true; // no required + additionalProperties not false ⇒ validates any object
+}
+
 function makeValidatorResolver(
   schemaStore: Record<string, JsonSchema>,
 ): (ep: EndpointRecord) => ((b: unknown) => boolean) | undefined {
@@ -313,7 +334,8 @@ function makeValidatorResolver(
     if (cache.has(ref)) return cache.get(ref);
     const schema = schemaStore[ref];
     let validate: ((b: unknown) => boolean) | undefined;
-    if (schema) {
+    // A permissive schema can't discriminate a lie — treat it as schema-less (→ `unknown`), never a drop.
+    if (schema && !isPermissiveSchema(schema)) {
       try {
         const compiled = ajv.compile(schema);
         validate = (b: unknown) => compiled(b) === true;
@@ -486,14 +508,18 @@ export async function verifyPayments(
   // Refresh the cache for freshly-probed endpoints only (reused entries keep their original age).
   for (const id of probedIds) {
     const res = results.get(id)!;
+    // Documented invariant: only verified/contradicted are cached — `unknown` is re-probed every run.
+    // Clear any stale entry so a now-superseded verdict can't linger.
+    if (res.verdict === "unknown") { delete cache[id]; continue; }
     const entry: CachedVerdict = { verdict: res.verdict, reason: res.reason, verified_at: built };
     if (res.challenge) entry.challenge = res.challenge;
     cache[id] = entry;
   }
 
   // (5) Circuit-breaker over the catalog delta vs the prior index.
-  const priorIds = new Set(prior?.endpoints.map((e) => e.id) ?? []);
-  const priorClaimedPaid = prior?.endpoints.filter(isClaimedPaid).length ?? 0;
+  const priorEndpoints = prior?.endpoints ?? []; // guard the property, not the call result (cf. 203/256)
+  const priorIds = new Set(priorEndpoints.map((e) => e.id));
+  const priorClaimedPaid = priorEndpoints.filter(isClaimedPaid).length;
   const { tripped, newlyDropped } = applyCircuitBreaker(verdictMap, priorIds, priorClaimedPaid);
 
   // Reason histogram over the claimed-paid surface (stable across a downgrade — reasons don't change).
