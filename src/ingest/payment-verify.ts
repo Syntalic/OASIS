@@ -219,6 +219,41 @@ function classify2xx(
   return { verdict: 'contradicted', reason: 'served_2xx_verified_content' };
 }
 
+// ---------------------------------------------------------------------------
+// applyCircuitBreaker
+// ---------------------------------------------------------------------------
+
+/**
+ * Catalog-delta circuit-breaker for mass-drop protection.
+ *
+ * Counts ids whose verdict is `contradicted` AND were present in `priorIds`
+ * (newly-dropped from the catalog). Trips if:
+ *   - `priorClaimedPaid > 0` (first crawl never trips), AND
+ *   - `newlyDropped / priorClaimedPaid > maxFraction` (default 0.15), OR
+ *   - `newlyDropped > maxAbs` (default 500).
+ *
+ * Pure — does not mutate `verdicts`. The caller downgrades verdicts on trip.
+ */
+export function applyCircuitBreaker(
+  verdicts: Map<string, Verdict>,
+  priorIds: Set<string>,
+  priorClaimedPaid: number,
+  opts: { maxFraction?: number; maxAbs?: number } = {},
+): { tripped: boolean; newlyDropped: number } {
+  const maxFraction = opts.maxFraction ?? 0.15;
+  const maxAbs = opts.maxAbs ?? 500;
+  let newlyDropped = 0;
+  for (const [id, v] of verdicts) if (v === 'contradicted' && priorIds.has(id)) newlyDropped++;
+  const tripped =
+    priorClaimedPaid > 0 &&
+    (newlyDropped / priorClaimedPaid > maxFraction || newlyDropped > maxAbs);
+  return { tripped, newlyDropped };
+}
+
+// ---------------------------------------------------------------------------
+// Internal helpers
+// ---------------------------------------------------------------------------
+
 /**
  * Returns true if the parsed body (or raw text) looks like a payment/error response rather
  * than actual paid content. Conservative: only exclude clear error indicators.

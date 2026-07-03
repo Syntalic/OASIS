@@ -2,8 +2,10 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   classifyProbe,
+  applyCircuitBreaker,
   type ProbeResponse,
   type ProbeContext,
+  type Verdict,
 } from './payment-verify.js';
 
 // ---------------------------------------------------------------------------
@@ -299,5 +301,104 @@ describe('classifyProbe', () => {
     assert.equal(stored['network'], 'base');
     assert.equal(stored['payTo'], '0xABCDEF');
     assert.equal(stored['amount'], '1000');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// applyCircuitBreaker
+// ---------------------------------------------------------------------------
+
+describe('applyCircuitBreaker', () => {
+  function makeVerdicts(entries: [string, Verdict][]): Map<string, Verdict> {
+    return new Map(entries);
+  }
+
+  // 1. below-threshold → not tripped; drops still counted
+  it('below threshold fraction → not tripped', () => {
+    // 14 contradicted out of 100 prior (0.14 < 0.15)
+    const priorIds = new Set(Array.from({ length: 100 }, (_, i) => `id-${i}`));
+    const verdicts = makeVerdicts(
+      Array.from({ length: 14 }, (_, i) => [`id-${i}`, 'contradicted']),
+    );
+    const result = applyCircuitBreaker(verdicts, priorIds, 100);
+    assert.equal(result.tripped, false);
+    assert.equal(result.newlyDropped, 14);
+  });
+
+  // 2. above fraction threshold → tripped
+  it('above 0.15 fraction → tripped', () => {
+    // 16 contradicted out of 100 prior (0.16 > 0.15)
+    const priorIds = new Set(Array.from({ length: 100 }, (_, i) => `id-${i}`));
+    const verdicts = makeVerdicts(
+      Array.from({ length: 16 }, (_, i) => [`id-${i}`, 'contradicted']),
+    );
+    const result = applyCircuitBreaker(verdicts, priorIds, 100);
+    assert.equal(result.tripped, true);
+    assert.equal(result.newlyDropped, 16);
+  });
+
+  // 3. above absolute threshold → tripped
+  it('above 500 absolute → tripped', () => {
+    // 501 contradicted; fraction would be small (501/10000 = 0.05) but abs > 500
+    const priorIds = new Set(Array.from({ length: 10000 }, (_, i) => `id-${i}`));
+    const verdicts = makeVerdicts(
+      Array.from({ length: 501 }, (_, i) => [`id-${i}`, 'contradicted']),
+    );
+    const result = applyCircuitBreaker(verdicts, priorIds, 10000);
+    assert.equal(result.tripped, true);
+    assert.equal(result.newlyDropped, 501);
+  });
+
+  // 4. empty prior (priorClaimedPaid === 0) → never trips (first crawl)
+  it('empty prior (priorClaimedPaid=0) → never trips', () => {
+    const priorIds = new Set<string>();
+    const verdicts = makeVerdicts([
+      ['id-new-1', 'contradicted'],
+      ['id-new-2', 'contradicted'],
+    ]);
+    const result = applyCircuitBreaker(verdicts, priorIds, 0);
+    assert.equal(result.tripped, false);
+    assert.equal(result.newlyDropped, 0);
+  });
+
+  // 5. contradicted id NOT in priorIds does not count
+  it('contradicted id not in priorIds is not counted', () => {
+    const priorIds = new Set(['id-old-1', 'id-old-2']);
+    const verdicts = makeVerdicts([
+      ['id-new-1', 'contradicted'], // not in priorIds → does not count
+      ['id-old-1', 'contradicted'], // in priorIds → counts
+    ]);
+    // priorClaimedPaid = 2; newlyDropped = 1; 1/2 = 0.5 > 0.15 → tripped
+    const result = applyCircuitBreaker(verdicts, priorIds, 2);
+    assert.equal(result.newlyDropped, 1);
+    assert.equal(result.tripped, true);
+  });
+
+  // 6. verified/unknown ids in priorIds do not count toward newlyDropped
+  it('verified/unknown ids in priorIds do not count', () => {
+    const priorIds = new Set(['id-1', 'id-2', 'id-3']);
+    const verdicts = makeVerdicts([
+      ['id-1', 'verified'],   // in priorIds but not contradicted
+      ['id-2', 'unknown'],    // in priorIds but not contradicted
+      ['id-3', 'contradicted'], // in priorIds AND contradicted → counts
+    ]);
+    // priorClaimedPaid = 100; newlyDropped = 1; 1/100 = 0.01 < 0.15 → not tripped
+    const result = applyCircuitBreaker(verdicts, priorIds, 100);
+    assert.equal(result.newlyDropped, 1);
+    assert.equal(result.tripped, false);
+  });
+
+  // 7. custom opts override defaults
+  it('custom maxFraction and maxAbs are respected', () => {
+    const priorIds = new Set(['id-1', 'id-2', 'id-3', 'id-4', 'id-5']);
+    const verdicts = makeVerdicts([
+      ['id-1', 'contradicted'],
+      ['id-2', 'contradicted'],
+    ]);
+    // With default opts: 2/5 = 0.4 > 0.15 → tripped
+    // With maxFraction=0.5: 0.4 < 0.5 AND 2 < 3 → not tripped
+    const result = applyCircuitBreaker(verdicts, priorIds, 5, { maxFraction: 0.5, maxAbs: 3 });
+    assert.equal(result.tripped, false);
+    assert.equal(result.newlyDropped, 2);
   });
 });
