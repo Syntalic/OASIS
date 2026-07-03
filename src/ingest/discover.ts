@@ -9,10 +9,10 @@ import { baseUnitsToUsd, parseAmountHint } from "../core/money.js";
 import { parseOpenApi } from "./openapi-parser.js";
 import { canonicalOrigin } from "./origin-aliases.js";
 import { gradeEndpoint } from "../bind/quality-gate.js";
-import type { EndpointRecord, HttpMethod, IndexBundle } from "../core/types.js";
+import type { EndpointRecord, HttpMethod, IndexBundle, JsonSchema } from "../core/types.js";
 import { bazaarToEndpoint, fetchBazaar } from "./bazaar.js";
 import { fetchPayShProviders, payShOrigin } from "./paysh.js";
-import { SchemaCollector } from "./schema-store.js";
+import { assembleSchemaStore, SchemaCollector } from "./schema-store.js";
 
 const SPEC_VERSION = "0.3.0";
 const INDEX_VERSION = "0.3.0";
@@ -73,9 +73,9 @@ async function gateAndWrite(merged: EndpointRecord[], outputDir: string, built: 
 }
 
 /** Write the content-addressed schema map to `outputDir/schemas.json`. */
-export async function writeSchemas(collector: SchemaCollector, outputDir: string): Promise<void> {
+export async function writeSchemas(store: Record<string, JsonSchema>, outputDir: string): Promise<void> {
   await mkdir(outputDir, { recursive: true });
-  await writeFile(path.join(outputDir, "schemas.json"), JSON.stringify(collector.toObject(), null, 2));
+  await writeFile(path.join(outputDir, "schemas.json"), JSON.stringify(store, null, 2));
 }
 
 /** Strip ranking/debug substrate fields a snapshot may carry → clean EndpointRecord. */
@@ -222,6 +222,15 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
 
   // --- Gate → PASS corpus → bundle ---
   const bundle = await gateAndWrite(merged, opts.outputDir, built);
-  await writeSchemas(schemaCollector, opts.outputDir);
+  // Persist a store covering EVERY schema ref on the written endpoints. This run's collector only
+  // holds schemas for freshly-probed origins; carried-forward endpoints still carry input/output
+  // refs from a prior crawl whose schemas live in the prior schemas.json. Backfill from it (fail-soft)
+  // so no written ref dangles (ref present on the record, schema missing from schemas.json).
+  let priorStore: Record<string, JsonSchema> = {};
+  const priorSchemasPath = path.join(opts.outputDir, "schemas.json");
+  if (existsSync(priorSchemasPath)) {
+    try { priorStore = JSON.parse(await readFile(priorSchemasPath, "utf8")) as Record<string, JsonSchema>; } catch {}
+  }
+  await writeSchemas(assembleSchemaStore(bundle.endpoints, schemaCollector.toObject(), priorStore), opts.outputDir);
   return bundle;
 }

@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { canonicalJson, schemaRef, SchemaCollector, resolveEndpointSchemas } from "./schema-store.js";
+import { canonicalJson, schemaRef, SchemaCollector, resolveEndpointSchemas, assembleSchemaStore } from "./schema-store.js";
 
 describe("schema-store", () => {
   it("canonicalJson is key-order independent", () => {
@@ -32,5 +32,18 @@ describe("schema-store", () => {
     const r = resolveEndpointSchemas({ output_schema_ref: "nope" } as any, {} as any);
     assert.equal(r.output_schema, undefined);
     assert.equal(r.output_schema_ref, "nope");
+  });
+  it("assembleSchemaStore backfills carried-forward refs from prior, skips unresolvable", () => {
+    const records = [
+      { input_schema_ref: "A", output_schema_ref: "B" }, // A fresh this run, B carried-forward
+      { output_schema_ref: "C" }, // resolvable in neither store
+    ] as any;
+    const ownStore = { A: { type: "string" } } as any;
+    const priorStore = { B: { type: "number" } } as any;
+    const out = assembleSchemaStore(records, ownStore, priorStore);
+    assert.deepEqual(out.A, { type: "string" });
+    assert.deepEqual(out.B, { type: "number" });
+    assert.equal(out.C, undefined);
+    assert.deepEqual(Object.keys(out).sort(), ["A", "B"]);
   });
 });

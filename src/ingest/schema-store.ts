@@ -36,6 +36,27 @@ export class SchemaCollector {
   }
 }
 
+/** Build the minimal ref→schema store to persist for a written endpoint set. For every truthy
+ *  `input_schema_ref`/`output_schema_ref` on a record, resolve its schema from THIS run's own store,
+ *  falling back to the PRIOR store for carried-forward endpoints (re-added prior records that didn't
+ *  re-probe this run, whose schemas are absent from the fresh collector). Refs resolvable in neither
+ *  store are skipped, so the returned store never leaves a ref dangling. */
+export function assembleSchemaStore(
+  records: Array<Partial<EndpointRecord>>,
+  ownStore: Record<string, JsonSchema>,
+  priorStore: Record<string, JsonSchema>,
+): Record<string, JsonSchema> {
+  const out: Record<string, JsonSchema> = {};
+  for (const rec of records) {
+    for (const ref of [rec.input_schema_ref, rec.output_schema_ref]) {
+      if (!ref) continue;
+      const schema = ownStore[ref] ?? priorStore[ref];
+      if (schema !== undefined) out[ref] = schema;
+    }
+  }
+  return out;
+}
+
 /** Inline a record's I/O schema refs against a ref→schema store (the delivery/schema step).
  *  Returns the full schemas (when the ref resolves) alongside the refs + source, for the
  *  `oasis_schema` MCP tool, `capindex schema`, and `oasis_discover`'s `include_schema`. */

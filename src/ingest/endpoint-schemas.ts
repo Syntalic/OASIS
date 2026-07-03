@@ -48,7 +48,11 @@ export function openApiEndpointSchemas(
   // responses → output
   const responses = (op.responses as Record<string, any> | undefined) ?? {};
   const key = responses["200"] ? "200" : Object.keys(responses).find((k) => /^2\d\d$/.test(k));
-  const rc = key ? (responses[key].content as Record<string, { schema?: JsonSchema }> | undefined) : undefined;
+  // A 2xx whose response object is itself a $ref (#/components/responses/X) must be resolved before
+  // reading .content — mirror the requestBody handling above, else output is silently omitted.
+  let respObj = key ? (responses[key] as Record<string, unknown> | undefined) : undefined;
+  if (respObj && typeof respObj.$ref === "string") respObj = resolve(respObj.$ref);
+  const rc = respObj?.content as Record<string, { schema?: JsonSchema }> | undefined;
   const outSchema = rc?.["application/json"]?.schema ?? Object.values(rc ?? {})[0]?.schema;
   const output = outSchema ? norm(outSchema) : undefined;
 

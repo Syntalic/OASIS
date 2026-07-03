@@ -25,6 +25,15 @@ describe("openApiEndpointSchemas", () => {
     assert.deepEqual(Object.keys((input as any).properties), ["query"]);
     assert.equal(output, undefined);
   });
+  it("resolves a response-object-level $ref to capture output", () => {
+    const op = { responses: { "200": { $ref: "#/components/responses/Ok" } } };
+    const resolve = (ref: string): any =>
+      ref === "#/components/responses/Ok"
+        ? { content: { "application/json": { schema: { type: "object", properties: { ok: { type: "boolean" } } } } } }
+        : undefined;
+    const { output } = openApiEndpointSchemas(op as any, resolve, false);
+    assert.ok((output as any).properties.ok);
+  });
 });
 
 describe("bazaarEndpointSchemas", () => {
