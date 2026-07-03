@@ -295,7 +295,9 @@ describe("schema-normalize", () => {
 import type { JsonSchema } from "../core/types.js";
 
 export const DIALECT_2020_12 = "https://json-schema.org/draft/2020-12/schema";
-const MAX_NODES = 4000;
+const MAX_NODES = 2000; // must stay below the JS recursion-stack limit (~2836 frames on node 26):
+// walk() recurses once per node, so recursion depth ≤ MAX_NODES+1; 4000 would overflow before the
+// cap fires on a deeply-nested schema. 2000 is far above any real API schema's node count.
 const OAS_ONLY_KEYS = ["nullable", "example", "xml", "discriminator", "externalDocs"];
 
 interface Ctx {
