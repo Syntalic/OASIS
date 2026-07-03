@@ -25,7 +25,7 @@
     "enrich": "node dist/enrich-facets.js dist",
     "build": "pnpm run build:ts && pnpm run ingest && pnpm run enrich",
     "test": "node --test 'dist/**/*.test.js'",
-    "test:unit": "node --test dist/core/id.test.js dist/search/intent-match.test.js dist/search/search.test.js dist/ingest/openapi-parser.test.js dist/search/related.test.js dist/eval/url-match.test.js",
+    "test:unit": "node --test dist/core/id.test.js dist/search/intent-match.test.js dist/search/search.test.js dist/ingest/openapi-parser.test.js dist/search/related.test.js dist/eval/url-match.test.js dist/core/payment-verified-schema.test.js dist/ingest/net-guard.test.js dist/ingest/payment-verify.test.js dist/ingest/verdict-cache.test.js dist/ingest/verify-payments.test.js dist/bind/quality-gate.test.js",
     "eval": "node dist/cli.js eval",
     "eval:resolve": "node dist/cli.js eval:resolve",
     "eval:hybrid": "node dist/cli.js eval:hybrid",
@@ -50,6 +50,7 @@
     "ajv-formats": "^3.0.1",
     "commander": "^13.1.0",
     "compromise": "^14.15.1",
+    "undici": "^8.6.0",
     "yaml": "^2.7.0"
   },
   "devDependencies": {
