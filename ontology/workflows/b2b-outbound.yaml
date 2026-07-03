@@ -1,0 +1,21 @@
+id: workflow.b2b_outbound
+goal: Find companies hiring for a role, reach a decision-maker, and send a tailored pitch
+shape: chain
+aliases:
+  - cold outreach to companies that are hiring
+  - find hiring companies and email a decision maker
+  - lead-gen pipeline from job postings to outreach
+  - b2b prospecting from job listings
+steps:
+  - intent: data.job_search
+    do: Find postings for the role — yields the hiring companies
+  - intent: identity.company_enrich
+    do: Enrich each company's firmographics and domain
+  - intent: identity.person_search
+    do: Find a decision-maker at the company
+  - intent: utility.email_validate
+    do: Confirm the contact's email is deliverable
+  - intent: comms.send_email
+    do: Send the tailored pitch
+    gate: require human confirmation before sending (terminal action with a real side effect)
+produces: A validated, sent outbound pitch to a named decision-maker — a completed action, not a report. The agent runs it.

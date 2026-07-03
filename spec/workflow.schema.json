@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oasisindex.org/spec/workflow.schema.json",
+  "title": "OASIS Workflow",
+  "description": "A contributed, data-only recipe: an ordered (chain) or parallel (fanout) sequence of INTENT IDs for a compound goal no single endpoint serves. References intents only — never endpoints; the index resolves each step to live endpoints at serve time. OASIS suggests the route; the agent executes it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "goal", "shape", "steps", "produces"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^workflow\\.[a-z0-9_]+$",
+      "description": "Stable id, `workflow.<snake_case>`."
+    },
+    "goal": {
+      "type": "string",
+      "minLength": 12,
+      "description": "The compound user goal in one line — what the whole recipe accomplishes."
+    },
+    "shape": {
+      "enum": ["chain", "fanout"],
+      "description": "chain = ordered pipeline (each step feeds the next); fanout = parallel enrichment of one held entity."
+    },
+    "aliases": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Natural-language phrasings the goal is matched against (like an intent's aliases)."
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 2,
+      "description": "The ordered/parallel steps. Each names an existing intent id.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["intent", "do"],
+        "properties": {
+          "intent": {
+            "type": "string",
+            "pattern": "^[a-z]+\\.[a-z0-9_]+$",
+            "description": "An existing curated intent id (domain.snake_case) — resolved to endpoints at serve time."
+          },
+          "do": {
+            "type": "string",
+            "description": "What this step accomplishes toward the goal (human-facing)."
+          },
+          "optional": {
+            "type": "boolean",
+            "default": false,
+            "description": "The workflow still succeeds if this step is skipped."
+          },
+          "gate": {
+            "type": "string",
+            "description": "A precondition/stop rule the executing agent must honor (e.g. 'stop if risk is high', 'require human confirmation')."
+          }
+        }
+      }
+    },
+    "produces": {
+      "type": "string",
+      "description": "The final artifact/outcome the agent synthesizes from the step outputs. OASIS does not run the steps."
+    }
+  }
+}
