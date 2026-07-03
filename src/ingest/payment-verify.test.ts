@@ -3,10 +3,12 @@ import assert from 'node:assert/strict';
 import {
   classifyProbe,
   applyCircuitBreaker,
+  probePaymentLiveness,
   type ProbeResponse,
   type ProbeContext,
   type Verdict,
 } from './payment-verify.js';
+import type { EndpointRecord, HttpMethod } from '../core/types.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -400,5 +402,104 @@ describe('applyCircuitBreaker', () => {
     const result = applyCircuitBreaker(verdicts, priorIds, 5, { maxFraction: 0.5, maxAbs: 3 });
     assert.equal(result.tripped, false);
     assert.equal(result.newlyDropped, 2);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// probePaymentLiveness
+// ---------------------------------------------------------------------------
+
+describe('probePaymentLiveness', () => {
+  // Minimal EndpointRecord factory. price_usd defaults to undefined → priceDynamic=true.
+  // Pass { price_usd: 0.01 } when you need priceDynamic=false for the contradicted leg.
+  function makeEp(method: HttpMethod, extraPayment?: { price_usd?: number }): EndpointRecord {
+    return {
+      id: 'probe-test-id',
+      origin: 'https://api.example.com',
+      method,
+      path: '/v1/data',
+      summary: 'Test endpoint',
+      payment: { paid: true, rails: [{ protocol: 'x402' }], ...(extraPayment ?? {}) },
+      search_text: 'test probe',
+      built_at: '2026-01-01T00:00:00.000Z',
+    };
+  }
+
+  // Well-formed x402 body (~83 chars) that classifyProbe would mark 'verified' untruncated.
+  const VALID_X402 = JSON.stringify({
+    accepts: [{ scheme: 'exact', network: 'base', payTo: '0xABCDEF', amount: '1000' }],
+  });
+
+  // -------------------------------------------------------------------------
+  // 1. Write methods → unprobed_write_method, fetchImpl NOT invoked
+  // -------------------------------------------------------------------------
+
+  for (const method of ['DELETE', 'PUT', 'PATCH'] as HttpMethod[]) {
+    it(`${method} → {unknown, unprobed_write_method}, fetchImpl not invoked`, async () => {
+      let called = false;
+      const fetchImpl = async (_url: string, _opts?: RequestInit): Promise<Response> => {
+        called = true;
+        return new Response('', { status: 200 });
+      };
+      const result = await probePaymentLiveness(makeEp(method), { fetchImpl });
+      assert.equal(result.verdict, 'unknown');
+      assert.equal(result.reason, 'unprobed_write_method');
+      assert.equal(called, false, `fetchImpl must not be called for ${method}`);
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // 2. GET endpoint returning a 402 with well-formed x402 → verified
+  // -------------------------------------------------------------------------
+
+  it('GET endpoint whose fetchImpl returns 402 well-formed x402 → verified', async () => {
+    const fetchImpl = async (_url: string, _opts?: RequestInit): Promise<Response> =>
+      new Response(VALID_X402, { status: 402 });
+    const result = await probePaymentLiveness(makeEp('GET'), { fetchImpl });
+    assert.equal(result.verdict, 'verified');
+    assert.ok(result.challenge?.[0], 'challenge must be present');
+    assert.equal(result.challenge![0].protocol, 'x402');
+  });
+
+  // -------------------------------------------------------------------------
+  // 3. GET returning 200 schema-matching body + resolveOutputValidator → contradicted
+  // -------------------------------------------------------------------------
+
+  it('GET returning 200 + resolveOutputValidator returning true → contradicted', async () => {
+    const body = JSON.stringify({ id: 42, result: 'content' });
+    const fetchImpl = async (_url: string, _opts?: RequestInit): Promise<Response> =>
+      new Response(body, { status: 200 });
+    // price_usd set → priceDynamic = false (all 4 legs can pass)
+    const ep = makeEp('GET', { price_usd: 0.01 });
+    const resolveOutputValidator = (_ep: EndpointRecord) => (_b: unknown) => true;
+    const result = await probePaymentLiveness(ep, { fetchImpl, resolveOutputValidator });
+    assert.equal(result.verdict, 'contradicted');
+  });
+
+  // -------------------------------------------------------------------------
+  // 4. fetchImpl throws → {unknown, probe_error} — never propagates
+  // -------------------------------------------------------------------------
+
+  it('fetchImpl throwing → {unknown, probe_error} (fail-soft, error not propagated)', async () => {
+    const fetchImpl = async (_url: string, _opts?: RequestInit): Promise<Response> => {
+      throw new Error('ECONNREFUSED connection refused');
+    };
+    // Must resolve (not reject) — fail-soft
+    const result = await probePaymentLiveness(makeEp('GET'), { fetchImpl });
+    assert.equal(result.verdict, 'unknown');
+    assert.equal(result.reason, 'probe_error');
+  });
+
+  // -------------------------------------------------------------------------
+  // 5. Oversized body is truncated to bodyMax before classifyProbe
+  // -------------------------------------------------------------------------
+
+  it('body exceeding bodyMax is truncated to bodyMax before classify', async () => {
+    // VALID_X402 is ~83 chars; bodyMax=20 truncates it to broken JSON → unknown
+    const fetchImpl = async (_url: string, _opts?: RequestInit): Promise<Response> =>
+      new Response(VALID_X402, { status: 402 });
+    const result = await probePaymentLiveness(makeEp('GET'), { fetchImpl, bodyMax: 20 });
+    // If truncation were skipped the full body would give 'verified'; truncation → unknown
+    assert.equal(result.verdict, 'unknown');
   });
 });

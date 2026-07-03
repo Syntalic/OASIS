@@ -6,7 +6,8 @@
  * A 402 is never contradicted.
  */
 
-import type { LiveChallenge, LiveAccept } from '../core/types.js';
+import type { LiveChallenge, LiveAccept, EndpointRecord } from '../core/types.js';
+import { safeFetch } from './net-guard.js';
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -248,6 +249,86 @@ export function applyCircuitBreaker(
     priorClaimedPaid > 0 &&
     (newlyDropped / priorClaimedPaid > maxFraction || newlyDropped > maxAbs);
   return { tripped, newlyDropped };
+}
+
+// ---------------------------------------------------------------------------
+// Internal helpers
+// ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// probePaymentLiveness
+// ---------------------------------------------------------------------------
+
+/** Methods we never probe (mutation risk). */
+const WRITE_METHODS = new Set<string>(['DELETE', 'PUT', 'PATCH']);
+
+/**
+ * Probe an endpoint unpaid and classify the response.
+ *
+ * - Write methods (DELETE/PUT/PATCH) → `{unknown, "unprobed_write_method"}` without fetching.
+ * - HEAD → probed as GET (safe read-equivalent).
+ * - Any throw (network, SSRF guard, timeout) → `{unknown, "probe_error"}` or `"guard_blocked"`.
+ *   Error never propagates to the caller.
+ * - Response body is read and capped at `bodyMax` before classification.
+ */
+export async function probePaymentLiveness(
+  ep: EndpointRecord,
+  deps: {
+    fetchImpl?: typeof safeFetch;
+    resolveOutputValidator?: (ep: EndpointRecord) => ((b: unknown) => boolean) | undefined;
+    timeoutMs?: number;
+    bodyMax?: number;
+  } = {},
+): Promise<VerifyResult> {
+  // Method policy: never probe write methods
+  if (WRITE_METHODS.has(ep.method)) {
+    return { verdict: 'unknown', reason: 'unprobed_write_method' };
+  }
+
+  const fetchFn = deps.fetchImpl ?? safeFetch;
+  const timeoutMs = deps.timeoutMs ?? 10_000;
+  const bodyMax = deps.bodyMax ?? 256 * 1024;
+
+  // HEAD is a read-equivalent — probe as GET (same response semantics, no body concern)
+  const probeMethod: string = ep.method === 'HEAD' ? 'GET' : ep.method;
+
+  try {
+    const res = await fetchFn(ep.origin + ep.path, {
+      method: probeMethod,
+      headers: {
+        Accept: 'application/json',
+        'User-Agent': 'OASIS-Index-Probe/1.0 (+https://oasisindex.org/probe)',
+        'X-OASIS-Probe': 'liveness',
+      },
+      body: probeMethod === 'POST' ? '' : undefined,
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+
+    // Cap body at bodyMax to bound memory usage on large responses
+    const rawBody = await res.text();
+    const body = rawBody.slice(0, bodyMax);
+
+    // Normalise header keys to lowercase (Fetch API already does this, but be explicit)
+    const headers: Record<string, string> = {};
+    res.headers.forEach((value: string, key: string) => {
+      headers[key.toLowerCase()] = value;
+    });
+
+    const probeResponse: ProbeResponse = { status: res.status, headers, body, probedMethod: probeMethod };
+    const validateOutput = deps.resolveOutputValidator?.(ep);
+
+    return classifyProbe(probeResponse, {
+      declaredMethod: ep.method,
+      rails: ep.payment.rails.map((r) => r.protocol),
+      priceDynamic: ep.payment.price_usd == null,
+      validateOutput,
+    });
+  } catch (err) {
+    // Distinguish SSRF-guard rejection from generic network/timeout errors
+    const reason =
+      err instanceof Error && err.message.startsWith('net-guard:') ? 'guard_blocked' : 'probe_error';
+    return { verdict: 'unknown', reason };
+  }
 }
 
 // ---------------------------------------------------------------------------
