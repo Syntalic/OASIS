@@ -10,6 +10,7 @@ import {
   Loader2,
   Plug,
   Sparkles,
+  Workflow,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -24,8 +25,12 @@ import {
   entityByName,
   type Capability,
 } from "@/lib/ontology";
+import { recommendedWorkflowsAtom } from "@/stores/ask";
 import { queryAtom } from "@/stores/query";
 import { selectedIdAtom } from "@/stores/selection";
+import type { RecommendedWorkflow, RecommendedWorkflowStep } from "@/types/graph";
+
+const WF_COLOR = "#f59e0b";
 
 function hostOf(origin: string) {
   try {
@@ -54,13 +59,22 @@ function Body({
   onClose: () => void;
   onNavigate: (id: string) => void;
 }) {
+  const workflows = useAtomValue(recommendedWorkflowsAtom);
   let header: React.ReactNode = null;
   let body: React.ReactNode = null;
 
   if (id.startsWith("ent:")) ({ header, body } = entityView(id.slice(4), onNavigate));
   else if (id.startsWith("dom:")) ({ header, body } = domainView(id.slice(4), onNavigate));
   else if (id.startsWith("ep:")) ({ header, body } = endpointView(id));
-  else if (id === "query:root")
+  else if (id.startsWith("wf:") && id.includes(":step:")) {
+    const m = id.slice(3).match(/^(.*):step:(\d+)$/);
+    const wf = m ? workflows.find((w) => w.id === m[1]) : undefined;
+    const step = wf?.steps.find((s) => s.n === Number(m?.[2]));
+    if (wf && step) ({ header, body } = workflowStepView(wf, step, onNavigate));
+  } else if (id.startsWith("wf:")) {
+    const wf = workflows.find((w) => w.id === id.slice(3));
+    if (wf) ({ header, body } = workflowView(wf, onNavigate));
+  } else if (id === "query:root")
     ({ header, body } = {
       header: <Head icon={<Sparkles size={14} />} kicker="Question" title="Search hub" color="var(--primary)" />,
       body: (
@@ -171,6 +185,127 @@ function CapList({ ids, onNavigate, dot }: { ids: string[]; onNavigate: (id: str
       })}
     </div>
   );
+}
+
+function workflowView(wf: RecommendedWorkflow, onNavigate: (id: string) => void) {
+  return {
+    header: (
+      <Head
+        icon={<Workflow size={14} />}
+        kicker={`Workflow · ${wf.shape}`}
+        title={wf.goal}
+        color={WF_COLOR}
+        subtitle={`${Math.round(wf.match_score * 100)}% match · $${wf.total_price_usd} · ${wf.steps.length} steps`}
+      />
+    ),
+    body: (
+      <>
+        <Section title="Recipe — steps">
+          <div className="space-y-1.5">
+            {wf.steps.map((step) => {
+              const cap = capById.get(step.intent_id);
+              return (
+                <button
+                  key={step.n}
+                  onClick={() => onNavigate(`wf:${wf.id}:step:${step.n}`)}
+                  className="flex w-full items-start gap-2 rounded-md border bg-secondary/30 px-2.5 py-1.5 text-left transition hover:bg-accent"
+                >
+                  <span
+                    className="mt-0.5 grid h-4 w-4 shrink-0 place-items-center rounded-full text-[9px] font-bold tabular-nums"
+                    style={{ background: `color-mix(in oklab, ${WF_COLOR} 22%, transparent)`, color: WF_COLOR }}
+                  >
+                    {step.n}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center gap-1.5">
+                      <span className="truncate text-[12px] font-medium text-foreground">{cap?.label ?? step.intent_id}</span>
+                      {step.optional && <Badge variant="outline" className="px-1 py-0 text-[9px]">optional</Badge>}
+                      {step.gate && (
+                        <Badge variant="outline" className="px-1 py-0 text-[9px]" style={{ color: WF_COLOR, borderColor: WF_COLOR }}>gate</Badge>
+                      )}
+                    </span>
+                    <span className="mt-0.5 block truncate text-[10.5px] text-muted-foreground">{step.do}</span>
+                    {step.endpoint && (
+                      <span className="mt-0.5 flex items-center gap-1 font-mono text-[9.5px] text-foreground/70">
+                        <Plug size={9} className="shrink-0" />
+                        <span className="truncate">{hostOf(step.endpoint.url)}</span>
+                        {step.endpoint.price_usd != null && (
+                          <span className="ml-auto shrink-0 font-bold" style={{ color: WF_COLOR }}>${step.endpoint.price_usd}</span>
+                        )}
+                      </span>
+                    )}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </Section>
+        <Section title="Produces">
+          <p className="text-[12px] leading-snug text-muted-foreground">{wf.produces}</p>
+        </Section>
+        <p className="rounded-md border border-dashed bg-secondary/30 px-2.5 py-1.5 text-[10.5px] leading-snug text-muted-foreground">
+          OASIS suggests this route; your agent executes it. Each step resolves to a fresh endpoint every call.
+        </p>
+      </>
+    ),
+  };
+}
+
+function workflowStepView(
+  wf: RecommendedWorkflow,
+  step: RecommendedWorkflowStep,
+  onNavigate: (id: string) => void,
+) {
+  const cap = capById.get(step.intent_id);
+  const ep = step.endpoint;
+  return {
+    header: (
+      <Head
+        icon={<Workflow size={14} />}
+        kicker={`Step ${step.n} of ${wf.steps.length}`}
+        title={cap?.label ?? step.intent_id}
+        color={WF_COLOR}
+        subtitle={step.intent_id}
+      />
+    ),
+    body: (
+      <>
+        <p className="text-[12px] leading-snug text-muted-foreground">{step.do}</p>
+        {step.gate && (
+          <div className="rounded-md border px-2.5 py-1.5 text-[11px] leading-snug" style={{ borderColor: WF_COLOR, color: WF_COLOR }}>
+            ⚠ Gate — {step.gate}
+          </div>
+        )}
+        {ep ? (
+          <Section title="Resolved endpoint">
+            <div className="rounded-md border bg-secondary/40 px-2.5 py-2 font-mono text-[11px]">
+              <div className="flex items-center gap-1.5">
+                <Plug size={11} style={{ color: WF_COLOR }} />
+                <span className="font-bold">{ep.method}</span>
+                <span className="truncate" title={ep.url}>{hostOf(ep.url)}</span>
+              </div>
+              <div className="mt-1 flex items-center justify-between text-[10px] text-muted-foreground">
+                <span>{ep.price_usd != null ? `$${ep.price_usd}` : ""}</span>
+                <span className="uppercase">{ep.rails?.join(" · ")}</span>
+              </div>
+            </div>
+          </Section>
+        ) : (
+          <p className="text-[11px] italic text-muted-foreground">No live endpoint resolved for this step.</p>
+        )}
+        <div className="flex flex-col gap-1 pt-1">
+          {cap && (
+            <button onClick={() => onNavigate(step.intent_id)} className="text-left text-[11px] text-primary hover:underline">
+              View the {cap.label} capability →
+            </button>
+          )}
+          <button onClick={() => onNavigate(`wf:${wf.id}`)} className="text-left text-[11px] text-muted-foreground hover:underline">
+            ← Back to the workflow
+          </button>
+        </div>
+      </>
+    ),
+  };
 }
 
 function capabilityView(cap: Capability, onNavigate: (id: string) => void) {

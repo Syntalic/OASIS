@@ -1,7 +1,7 @@
 "use client";
 
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { Boxes, Layers, Plug, Search, Sparkles } from "lucide-react";
+import { Boxes, Layers, Plug, Search, Sparkles, Workflow } from "lucide-react";
 import { memo } from "react";
 
 import { cn } from "@/lib/utils";
@@ -11,6 +11,8 @@ import type {
   EndpointNodeData,
   EntityNodeData,
   QueryNodeData,
+  WorkflowNodeData,
+  WorkflowStepNodeData,
 } from "@/types/graph";
 
 /** hidden handles on all sides so floating edges can attach anywhere */
@@ -25,6 +27,14 @@ function Handles() {
 
 function fade(faded?: boolean) {
   return faded ? "opacity-25" : "opacity-100";
+}
+
+function hostOfUrl(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return url;
+  }
 }
 
 export const DomainNode = memo(function DomainNode({ data }: NodeProps) {
@@ -195,10 +205,113 @@ export const EndpointNode = memo(function EndpointNode({ data }: NodeProps) {
   );
 });
 
+export const WorkflowNode = memo(function WorkflowNode({ data, selected }: NodeProps) {
+  const w = data as unknown as WorkflowNodeData;
+  const wf = w.workflow;
+  const active = w.highlight || selected;
+  return (
+    <div className={cn("transition-opacity duration-300", fade(w.faded))}>
+      <Handles />
+      <div
+        className={cn(
+          "w-[268px] rounded-xl border-2 px-3 py-2.5 shadow-lg backdrop-blur-sm transition-transform duration-200",
+          active && "scale-[1.03]",
+        )}
+        style={{
+          borderColor: w.color,
+          background: `color-mix(in oklab, ${w.color} 9%, var(--card))`,
+          boxShadow: active ? `0 10px 32px -10px color-mix(in oklab, ${w.color} 65%, transparent)` : undefined,
+        }}
+      >
+        <div className="flex items-center justify-between gap-2">
+          <span className="flex items-center gap-1.5">
+            <Workflow size={13} style={{ color: w.color }} />
+            <span className="text-[9px] font-semibold uppercase tracking-wide" style={{ color: w.color }}>
+              Workflow · {wf.shape}
+            </span>
+          </span>
+          <span
+            className="rounded-full px-1.5 text-[10px] font-bold"
+            style={{ background: `color-mix(in oklab, ${w.color} 20%, transparent)`, color: w.color }}
+          >
+            {Math.round(wf.match_score * 100)}%
+          </span>
+        </div>
+        <div className="mt-1.5 text-[12.5px] font-semibold leading-snug text-foreground">{wf.goal}</div>
+        <div className="mt-2 flex items-center gap-1.5 font-mono text-[10px] tabular-nums text-muted-foreground">
+          <span>{wf.steps.length} steps</span>
+          <span>·</span>
+          <span style={{ color: w.color }}>${wf.total_price_usd}</span>
+          <span>·</span>
+          <span className="truncate">{wf.source}</span>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+export const WorkflowStepNode = memo(function WorkflowStepNode({ data, selected }: NodeProps) {
+  const s = data as unknown as WorkflowStepNodeData;
+  const step = s.step;
+  const ep = step.endpoint;
+  const active = s.highlight || selected;
+  return (
+    <div className={cn("transition-opacity duration-300", fade(s.faded))}>
+      <Handles />
+      <div
+        className={cn(
+          "w-[236px] rounded-lg border bg-card/95 px-2.5 py-1.5 backdrop-blur-sm transition-transform",
+          active && "scale-[1.03] ring-1",
+        )}
+        style={{ borderColor: active ? s.color : `color-mix(in oklab, ${s.color} 40%, var(--border))` }}
+      >
+        <div className="flex items-center gap-1.5">
+          <span
+            className="grid h-4 w-4 shrink-0 place-items-center rounded-full text-[9px] font-bold tabular-nums"
+            style={{ background: `color-mix(in oklab, ${s.color} 22%, transparent)`, color: s.color }}
+          >
+            {step.n}
+          </span>
+          <span className="flex-1 truncate text-[11px] font-medium text-foreground" title={step.do}>
+            {s.label}
+          </span>
+          {step.optional && (
+            <span className="rounded bg-secondary/70 px-1 text-[8px] font-semibold uppercase text-muted-foreground">opt</span>
+          )}
+          {step.gate && (
+            <span
+              title={step.gate}
+              className="rounded px-1 text-[8px] font-semibold uppercase"
+              style={{ background: "color-mix(in oklab, #f59e0b 22%, transparent)", color: "#f59e0b" }}
+            >
+              gate
+            </span>
+          )}
+        </div>
+        {ep ? (
+          <div className="mt-0.5 flex items-center gap-1.5 pl-[22px] font-mono text-[8.5px]">
+            <Plug size={9} style={{ color: s.color }} />
+            <span className="flex-1 truncate text-foreground/75" title={ep.url}>
+              {hostOfUrl(ep.url)}
+            </span>
+            {ep.price_usd != null && (
+              <span className="font-bold" style={{ color: s.color }}>${ep.price_usd}</span>
+            )}
+          </div>
+        ) : (
+          <div className="mt-0.5 pl-[22px] text-[8.5px] italic text-muted-foreground">no live endpoint</div>
+        )}
+      </div>
+    </div>
+  );
+});
+
 export const nodeTypes = {
   domain: DomainNode,
   capability: CapabilityNode,
   entity: EntityNode,
   query: QueryNode,
   endpoint: EndpointNode,
+  workflow: WorkflowNode,
+  workflowStep: WorkflowStepNode,
 };

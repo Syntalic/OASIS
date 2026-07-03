@@ -8,6 +8,8 @@ const DEFAULTS: Record<NodeKind, [number, number]> = {
   entity: [132, 44],
   query: [264, 96],
   endpoint: [216, 40],
+  workflow: [268, 100],
+  workflowStep: [236, 60],
 };
 
 /** Real footprint of a node — text-measured size from build-graph, else a per-kind default. */

@@ -17,6 +17,9 @@ import type {
   EntityNodeData,
   FindResult,
   QueryNodeData,
+  RecommendedWorkflow,
+  WorkflowNodeData,
+  WorkflowStepNodeData,
 } from "@/types/graph";
 import { measureTextWidth, measureWrappedLines } from "@/utils/text-measure";
 
@@ -32,6 +35,10 @@ function capSize(label: string, withBar: boolean): [number, number] {
 }
 function entSize(name: string): [number, number] {
   return [clamp(measureTextWidth(name, ENT_FONT) + 40, 96, 180), 40];
+}
+function wfRootSize(goal: string): [number, number] {
+  const lines = measureWrappedLines(goal, CAP_FONT, 268 - 28);
+  return [268, 66 + (lines - 1) * 16];
 }
 
 function hostOf(origin: string): string {
@@ -148,6 +155,7 @@ export function buildAskGraph(
   query: string,
   matches: MatchResult[],
   find?: FindResult,
+  workflows: RecommendedWorkflow[] = [],
 ): { nodes: Node[]; edges: Edge[] } {
   const nodes: Node[] = [];
   const edges: Edge[] = [];
@@ -273,6 +281,35 @@ export function buildAskGraph(
       };
       nodes.push({ id: c.id, type: "capability", position: { x: 0, y: 0 }, data: data as unknown as Record<string, unknown> });
       edges.push(edge(`n:${c.id}`, topCap, c.id, "match", NEXT_COLOR, true));
+    }
+  }
+
+  // recommended workflow recipes → a root node + a step sub-tree (chain: sequential; fanout: star)
+  const WF_COLOR = "#f59e0b"; // amber — distinct from capability domain colors and the teal next_steps
+  for (const wf of workflows) {
+    const rootId = `wf:${wf.id}`;
+    const rootData: WorkflowNodeData = { kind: "workflow", workflow: wf, color: WF_COLOR, size: wfRootSize(wf.goal) };
+    nodes.push({ id: rootId, type: "workflow", position: { x: 0, y: 0 }, data: rootData as unknown as Record<string, unknown> });
+    edges.push(edge(`r:${rootId}`, queryId, rootId, "recommends", WF_COLOR, true));
+
+    let prevId = rootId;
+    for (const step of wf.steps) {
+      const cap = capById.get(step.intent_id);
+      const meta = domainMeta(cap?.domain ?? "other");
+      const stepId = `${rootId}:step:${step.n}`;
+      // an unresolved intent must NOT be dropped (it would break the chain/numbering) — degrade to neutral
+      const stepData: WorkflowStepNodeData = {
+        kind: "workflowStep",
+        workflowId: wf.id,
+        step,
+        label: cap?.label ?? step.do,
+        color: meta.color,
+        size: [236, step.endpoint ? 76 : 56],
+      };
+      nodes.push({ id: stepId, type: "workflowStep", position: { x: 0, y: 0 }, data: stepData as unknown as Record<string, unknown> });
+      // chain: each step feeds the next; fanout: all steps hang off the root
+      edges.push(edge(`w:${stepId}`, wf.shape === "chain" ? prevId : rootId, stepId, "workflow", WF_COLOR, true));
+      prevId = stepId;
     }
   }
 

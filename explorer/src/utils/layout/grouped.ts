@@ -18,10 +18,12 @@ export function groupedLayout(nodes: Node[]): Map<string, Pos> {
   const MACRO_GAP = adaptiveSpacing(72, nodes.length);
 
   const groupKey = (n: Node): string => {
-    const d = n.data as { kind?: string; domain?: string; domainId?: string };
+    const d = n.data as { kind?: string; domain?: string; domainId?: string; workflowId?: string; workflow?: { id?: string } };
     if (d.kind === "domain") return `dom:${d.domainId}`;
     if (d.kind === "capability") return `dom:${d.domain}`;
     if (d.kind === "entity") return "__entities";
+    // keep each recommended workflow (root + its steps) in its own cluster box
+    if (d.kind === "workflow" || d.kind === "workflowStep") return `wf:${d.kind === "workflow" ? d.workflow?.id : d.workflowId}`;
     return "__misc";
   };
 

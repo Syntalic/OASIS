@@ -3,7 +3,7 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 
-import { findAtom } from "@/stores/ask";
+import { findAtom, recommendedWorkflowsAtom } from "@/stores/ask";
 import { edgesAtom, graphKeyAtom, nodesAtom } from "@/stores/graph";
 import { focusDomainAtom, layoutEngineAtom, showEntitiesAtom } from "@/stores/options";
 import { matchesAtom, modeAtom, queryAtom } from "@/stores/query";
@@ -26,6 +26,7 @@ export function useGraph() {
   const engine = useAtomValue(layoutEngineAtom);
   const relayoutNonce = useAtomValue(relayoutNonceAtom);
   const find = useAtomValue(findAtom);
+  const workflows = useAtomValue(recommendedWorkflowsAtom);
 
   const setNodes = useSetAtom(nodesAtom);
   const setEdges = useSetAtom(edgesAtom);
@@ -37,14 +38,14 @@ export function useGraph() {
     // question hub while the binder resolves (instead of flashing the overview)
     const isAsk = mode === "ask" && !!query;
     const built = isAsk
-      ? buildAskGraph(query, matches, find ?? undefined)
+      ? buildAskGraph(query, matches, find ?? undefined, workflows)
       : buildExploreGraph({ showEntities, focusDomain });
     const { nodes, edges } = built;
     const positioned = applyLayout(engine, nodes, edges, {
       centerId: isAsk ? "query:root" : null,
       rankdir: isAsk ? "LR" : "TB",
     });
-    const key = `${mode}|${query}|${showEntities}|${focusDomain}|${engine}|${matches.length}|${find ? find.endpoints.length : 0}|${relayoutNonce}`;
+    const key = `${mode}|${query}|${showEntities}|${focusDomain}|${engine}|${matches.length}|${find ? find.endpoints.length : 0}|${workflows.length}|${relayoutNonce}`;
 
     // defer the store writes out of the effect body (keeps the canvas in sync
     // with derived inputs without a synchronous setState-in-effect)
@@ -63,6 +64,7 @@ export function useGraph() {
     focusDomain,
     engine,
     find,
+    workflows,
     relayoutNonce,
     setNodes,
     setEdges,
