@@ -14,7 +14,13 @@ import {
 } from "./search/search-hybrid.js";
 import { searchIndex } from "./search/search.js";
 import { relatedOptions, type RelatedOption } from "./search/related.js";
-import type { CapabilityIntent, EndpointRecord, IndexBundle } from "./core/types.js";
+import { resolveEndpointSchemas } from "./ingest/schema-store.js";
+import type {
+  CapabilityIntent,
+  EndpointRecord,
+  IndexBundle,
+  JsonSchema,
+} from "./core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..");
@@ -22,6 +28,17 @@ const PACKAGE_ROOT = path.join(__dirname, "..");
 async function loadBundle(distDir: string): Promise<IndexBundle> {
   const raw = await readFile(path.join(distDir, "index.json"), "utf8");
   return JSON.parse(raw) as IndexBundle;
+}
+
+/** The content-addressed ref→schema map beside the index. Fail-soft to {} — a pinned snapshot may
+ *  predate schema capture (schemas.json absent), so the schema step degrades to empty, not an error. */
+async function loadSchemaStore(distDir: string): Promise<Record<string, JsonSchema>> {
+  try {
+    const raw = await readFile(path.join(distDir, "schemas.json"), "utf8");
+    return JSON.parse(raw) as Record<string, JsonSchema>;
+  } catch {
+    return {};
+  }
 }
 
 function parsePositiveInt(value: string, flag: string): number {
@@ -156,6 +173,22 @@ program
 
     console.error("Pass --intent <id> or --endpoint <id>");
     process.exitCode = 1;
+  });
+
+program
+  .command("schema <id>")
+  .description("Print an endpoint's normalized input/output JSON Schema (the traversal schema step)")
+  .option("-d, --dist <dir>", "Dist directory", path.join(PACKAGE_ROOT, "dist"))
+  .action(async (id, opts) => {
+    const bundle = await loadBundle(opts.dist);
+    const ep = bundle.endpoints.find((e) => e.id === id);
+    if (!ep) {
+      console.error(`Endpoint not found: ${id}`);
+      process.exitCode = 1;
+      return;
+    }
+    const store = await loadSchemaStore(opts.dist);
+    console.log(JSON.stringify(resolveEndpointSchemas(ep, store), null, 2));
   });
 
 program
@@ -559,6 +592,9 @@ function formatEndpoint(ep: EndpointRecord): string {
     `  provider: ${ep.provider_fqn ?? "—"}`,
     `  capabilities: ${(ep.capabilities ?? []).join(", ") || "—"}`,
     `  openapi: ${ep.openapi_url ?? "—"}`,
+    `  input_schema_ref: ${ep.input_schema_ref ?? "—"}`,
+    `  output_schema_ref: ${ep.output_schema_ref ?? "—"}`,
+    `  schema_source: ${ep.schema_source ?? "—"}`,
   ].join("\n");
 }
 

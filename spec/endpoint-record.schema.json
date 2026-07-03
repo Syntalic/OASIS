@@ -48,7 +48,14 @@
     "schema_missing": { "type": "boolean" },
     "guidance_available": { "type": "boolean" },
     "openapi_url": { "type": "string", "format": "uri" },
+    "input_schema_ref": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "output_schema_ref": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "schema_source": { "type": "string", "enum": ["openapi", "bazaar"] },
+    "schema_captured_at": { "type": "string", "format": "date-time" },
+    "schema_truncated": { "type": "boolean" },
     "search_text": { "type": "string" },
+    "keyphrases": { "type": "array", "items": { "type": "string" } },
+    "host_breadth": { "type": "number" },
     "built_at": { "type": "string", "format": "date-time" }
   },
   "$defs": {
@@ -98,7 +105,14 @@
               "timeseries"
             ]
           }
-        }
+        },
+        "action": {
+          "enum": [
+            "search", "lookup", "compare", "extract", "generate", "transform",
+            "validate", "send", "provision", "analyze", "execute", "monitor"
+          ]
+        },
+        "authored": { "type": "boolean" }
       }
     },
     "PaymentRail": {

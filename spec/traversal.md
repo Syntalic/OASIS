@@ -15,7 +15,7 @@ search → resolve → schema → execute
 |------|-------|--------|--------|
 | 1. Search | Natural-language task | Ranked capability intents + endpoints | `capabilities.json` / `endpoints.json` |
 | 2. Resolve | Intent or endpoint ID | Origin URL, path, payment rails, price | Index record |
-| 3. Schema | Origin + path | Request/response JSON Schema | Origin `openapi.json` or Bazaar 402 extension |
+| 3. Schema | Origin + path | Request/response JSON Schema | **OASIS `oasis_schema` / `capindex schema`** (fallback: origin `openapi.json`) |
 | 4. Execute | Full URL + body | API response | x402 client (`X-Payment`) or MPP client (`X-MPP-Session`) |
 
 ## Step 1 — Search
@@ -58,17 +58,32 @@ Resolution returns:
 
 ## Step 3 — Schema
 
-**Do not** embed full OpenAPI in the index. Fetch schemas from the origin:
+OASIS captures each endpoint's input and output schema at ingest and serves the
+normalized JSON Schema (2020-12) at the schema step, so agents don't fetch and
+parse the provider's raw spec first:
+
+```bash
+capindex schema <endpoint-id>
+```
+
+On the MCP surface, call the `oasis_schema` tool with the `endpoint_id` from a
+discover/search/resolve result (or pass `include_schema: true` to
+`oasis_discover` to inline schemas on the returned endpoints). The response
+carries the location-keyed `input_schema` (`path`/`query`/`headers`/`body`), the
+2xx `output_schema`, and their content-addressed refs plus `schema_source`.
+
+These schemas are advisory: captured from the provider source, they may be wrong
+or stale. The runtime `402` is authoritative, so validate the live response at
+the boundary. When OASIS has no captured schema (an older snapshot, or a provider
+it could not parse), fall back to the origin's raw spec:
 
 ```bash
 curl -fsSL "${ORIGIN}/openapi.json"
 ```
 
-For POST/PUT/PATCH endpoints, read `requestBody` and parameter schemas before
-the first paid call.
-
-x402 Bazaar-enabled APIs may also expose input/output in the `402` response
-under `extensions.bazaar.info`.
+For POST/PUT/PATCH endpoints, read `requestBody` and parameter schemas before the
+first paid call. x402 Bazaar-enabled APIs may also expose input/output in the
+`402` response under `extensions.bazaar.info`.
 
 ## Step 4 — Execute
 

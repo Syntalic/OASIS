@@ -16,7 +16,17 @@ gh release download "$TAG" --repo "$REPO" -p "$ASSET" -O dist/index.snapshot.jso
 GOT="$(shasum -a 256 dist/index.snapshot.json.gz | awk '{print $1}')"
 [ "$GOT" = "$WANT" ] || { echo "ERROR: sha256 mismatch (want $WANT got $GOT)" >&2; exit 1; }
 gunzip -kf dist/index.snapshot.json.gz
-node dist/cli.js ingest --snapshot dist/index.snapshot.json  # re-gate -> dist/index.json (deterministic)
+# Endpoint I/O schemas (spec >= 0.3.0): fetch alongside so the snapshot rebuild carries them forward
+# instead of leaving every schema ref dangling. Absent on pre-schema pins (fine — skipped).
+SCHEMAS_ASSET="$(node -e "process.stdout.write(require('./$LOCK').schemas_asset || '')")"
+if [ -n "$SCHEMAS_ASSET" ]; then
+  gh release download "$TAG" --repo "$REPO" -p "$SCHEMAS_ASSET" -O dist/schemas.json.gz --clobber
+  SWANT="$(node -e "process.stdout.write(require('./$LOCK').schemas_sha256 || '')")"
+  SGOT="$(shasum -a 256 dist/schemas.json.gz | awk '{print $1}')"
+  { [ -z "$SWANT" ] || [ "$SGOT" = "$SWANT" ]; } || { echo "ERROR: schemas.json sha256 mismatch (want $SWANT got $SGOT)" >&2; exit 1; }
+  gunzip -kf dist/schemas.json.gz                            # -> dist/schemas.json (carried forward by ingest below)
+fi
+node dist/cli.js ingest --snapshot dist/index.snapshot.json  # re-gate -> dist/index.json (+ carries schemas.json)
 pnpm run enrich                                              # re-bind (deterministic)
 pnpm run embed                                               # lance vectors (gemini; deterministic given model)
 echo "Restored dist/ from $TAG — matches the pinned/deployed index."

@@ -9,12 +9,13 @@ import { baseUnitsToUsd, parseAmountHint } from "../core/money.js";
 import { parseOpenApi } from "./openapi-parser.js";
 import { canonicalOrigin } from "./origin-aliases.js";
 import { gradeEndpoint } from "../bind/quality-gate.js";
-import type { EndpointRecord, HttpMethod, IndexBundle } from "../core/types.js";
+import type { EndpointRecord, HttpMethod, IndexBundle, JsonSchema } from "../core/types.js";
 import { bazaarToEndpoint, fetchBazaar } from "./bazaar.js";
 import { fetchPayShProviders, payShOrigin } from "./paysh.js";
+import { assembleSchemaStore, SchemaCollector } from "./schema-store.js";
 
-const SPEC_VERSION = "0.2.0";
-const INDEX_VERSION = "0.2.0";
+const SPEC_VERSION = "0.3.0";
+const INDEX_VERSION = "0.3.0";
 const HTTP = new Set<HttpMethod>(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]);
 const hostOf = (origin: string): string => {
   try { return new URL(origin).hostname; } catch { return origin; }
@@ -71,10 +72,35 @@ async function gateAndWrite(merged: EndpointRecord[], outputDir: string, built: 
   return bundle;
 }
 
+/** Write the content-addressed schema map to `outputDir/schemas.json`. */
+export async function writeSchemas(store: Record<string, JsonSchema>, outputDir: string): Promise<void> {
+  await mkdir(outputDir, { recursive: true });
+  await writeFile(path.join(outputDir, "schemas.json"), JSON.stringify(store, null, 2));
+}
+
 /** Strip ranking/debug substrate fields a snapshot may carry → clean EndpointRecord. */
 function cleanRecord(r: Record<string, unknown>): EndpointRecord {
   const { _source, _completeness, _flags, _wellknown, ...rest } = r;
   return rest as unknown as EndpointRecord;
+}
+
+/**
+ * Write dist/schemas.json = fresh schemas + the prior store carried forward, pruned to what the
+ * endpoints still reference (so no schema ref dangles). Fail-soft on a missing/broken prior store.
+ * Shared by the full crawl AND the no-crawl snapshot rebuild — the snapshot path previously skipped
+ * this, so a reproduced index carried refs but no schemas.json (every ref dangled).
+ */
+async function writeSchemaStore(
+  bundle: IndexBundle,
+  freshStore: Record<string, JsonSchema>,
+  outputDir: string,
+): Promise<void> {
+  let priorStore: Record<string, JsonSchema> = {};
+  const priorSchemasPath = path.join(outputDir, "schemas.json");
+  if (existsSync(priorSchemasPath)) {
+    try { priorStore = JSON.parse(await readFile(priorSchemasPath, "utf8")) as Record<string, JsonSchema>; } catch {}
+  }
+  await writeSchemas(assembleSchemaStore(bundle.endpoints, freshStore, priorStore), outputDir);
 }
 
 export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
@@ -87,10 +113,14 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
     const raw = JSON.parse(await readFile(opts.snapshotPath, "utf8")) as unknown;
     const recs = (Array.isArray(raw) ? raw : ((raw as { endpoints?: unknown[]; records?: unknown[] }).endpoints ?? (raw as { records?: unknown[] }).records ?? [])) as Record<string, unknown>[];
     console.error(`ingest: snapshot ${path.basename(opts.snapshotPath)} → ${recs.length} merged records (no crawl)`);
-    return gateAndWrite(recs.map(cleanRecord), opts.outputDir, built);
+    const snap = await gateAndWrite(recs.map(cleanRecord), opts.outputDir, built);
+    // Carry forward the prior schemas.json so the snapshot records' schema refs don't dangle.
+    await writeSchemaStore(snap, {}, opts.outputDir);
+    return snap;
   }
 
   const conc = opts.enrichConcurrency ?? 16;
+  const schemaCollector = new SchemaCollector();
   const inlineByKey = new Map<string, EndpointRecord>();
   const originSource = new Map<string, string>();
   const addInline = (rec: EndpointRecord | null, src: string): void => {
@@ -106,7 +136,7 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
     maxPages: opts.bazaarMaxPages,
     onProgress: (n, t) => { if (n % 5000 === 0) console.error(`  bazaar ${n}/${t}`); },
   });
-  for (const r of bz) addInline(bazaarToEndpoint(r, built), "bazaar");
+  for (const r of bz) addInline(bazaarToEndpoint(r, built, schemaCollector), "bazaar");
 
   console.error("ingest: mpp.dev ...");
   let mppSvcs: MppService[] = [];
@@ -166,8 +196,8 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
       if (!res.ok) return;
       const buf = await res.text();
       if (buf.length > 2_000_000) return;
-      const recs = parseOpenApi(JSON.parse(buf), { origin, builtAt: built });
-      if (recs.length) { enrichedByOrigin.set(origin, recs); ok++; }
+      const { records: recs, schemas: sc } = parseOpenApi(JSON.parse(buf), { origin, builtAt: built });
+      if (recs.length) { enrichedByOrigin.set(origin, recs); schemaCollector.merge(sc); ok++; }
     } catch {}
   };
   const worker = async (): Promise<void> => {
@@ -213,5 +243,8 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
   }
 
   // --- Gate → PASS corpus → bundle ---
-  return gateAndWrite(merged, opts.outputDir, built);
+  const bundle = await gateAndWrite(merged, opts.outputDir, built);
+  // Persist a store covering EVERY schema ref on the written endpoints. This run's collector only
+  await writeSchemaStore(bundle, schemaCollector.toObject(), opts.outputDir);
+  return bundle;
 }
