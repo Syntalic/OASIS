@@ -249,7 +249,7 @@ async function oasisSearch({ query, limit = 8 }) {
   const endpoints = hits
     .filter((h) => h.kind === "endpoint")
     .slice(0, 3)
-    .map((h) => ({ intent_id: h.capability_id, summary: h.label, target: `${h.method} ${h.origin}${h.path}`, price_usd: h.price_usd }));
+    .map((h) => ({ intent_id: h.capability_id, endpoint_id: h.endpoint_id, summary: h.label, target: `${h.method} ${h.origin}${h.path}`, price_usd: h.price_usd }));
   return { capabilities, endpoints };
 }
 
@@ -258,6 +258,7 @@ function oasisResolve({ intent_id, query, limit = 8 }) {
   if (!intent) return { error: `unknown intent_id: ${intent_id}` };
   const endpoints = resolveEndpointsForQuery(intent, bundle.endpoints, query, limit).map(
     (e) => ({
+      endpoint_id: e.id,
       method: e.method,
       target: `${e.origin}${e.path}`,
       summary: e.summary,
@@ -355,14 +356,14 @@ async function oasisDiscover({ query, finding, entities, limit = 12, include_sch
   }
   const out = [];
   const seen = new Set();
-  const add = (method, origin, path, summary, price_usd, rails, via, refs) => {
+  const add = (method, origin, path, summary, price_usd, rails, via, refs, id) => {
     const k = `${method} ${origin}${path}`;
     if (seen.has(k)) return;
     seen.add(k);
-    out.push({ method, url: `${origin}${path}`, summary, price_usd, rails, via, ...(refs ?? {}) });
+    out.push({ method, url: `${origin}${path}`, summary, price_usd, rails, via, endpoint_id: id, ...(refs ?? {}) });
   };
   for (const h of hits) {
-    if (h.kind === "endpoint") add(h.method, h.origin, h.path, h.label, h.price_usd, undefined, "match", schemaRefsOf(h));
+    if (h.kind === "endpoint") add(h.method, h.origin, h.path, h.label, h.price_usd, undefined, "match", schemaRefsOf(h), h.endpoint_id);
   }
   // Concentrate on the TOP-routed intent — return many of ITS providers — and pull only
   // a couple from each subsequent intent as a fallback (mainly when the top is thin).
@@ -380,7 +381,7 @@ async function oasisDiscover({ query, finding, entities, limit = 12, include_sch
     // Semantic rescue applies to the concentrated top bucket only — where the rank-1 gap lives.
     const pool = resolveEndpointsForQuery(intent, bundle.endpoints, query, i === 0 ? limit * 3 : 4, i === 0 ? semanticOf : undefined);
     const addEp = (e) =>
-      add(e.method, e.origin, e.path, e.summary, e.payment?.price_usd, (e.payment?.rails ?? []).map((r) => r.protocol), h.capability_id, schemaRefsOf(e));
+      add(e.method, e.origin, e.path, e.summary, e.payment?.price_usd, (e.payment?.rails ?? []).map((r) => r.protocol), h.capability_id, schemaRefsOf(e), e.id);
     if (i === 0) {
       const seenHost = new Set();
       for (const e of pool) { if (out.length >= limit) break; const ho = hostOf(e.origin); if (seenHost.has(ho)) continue; seenHost.add(ho); addEp(e); }
@@ -405,7 +406,7 @@ async function oasisDiscover({ query, finding, entities, limit = 12, include_sch
     const list = [];
     const sh = new Set();
     const push = (e) => { const ho = hostOf(e.url); if (sh.has(ho) || list.some((x) => x.url === e.url)) return; sh.add(ho); list.push(e); };
-    const armEp = (a) => ({ method: a.ep.method, url: `${a.ep.origin}${a.ep.path}`, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: "arm", ...schemaRefsOf(a.ep) });
+    const armEp = (a) => ({ method: a.ep.method, url: `${a.ep.origin}${a.ep.path}`, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: "arm", endpoint_id: a.ep.id, ...schemaRefsOf(a.ep) });
     for (const a of armHits) { if (list.length >= limit) break; push(armEp(a)); }
     for (const a of armHits) { if (list.length >= limit) break; const e = armEp(a); if (!list.some((x) => x.url === e.url)) list.push(e); } // same-host backfill if short
     endpoints = list.slice(0, limit);
