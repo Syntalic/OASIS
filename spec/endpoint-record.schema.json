@@ -48,6 +48,11 @@
     "schema_missing": { "type": "boolean" },
     "guidance_available": { "type": "boolean" },
     "openapi_url": { "type": "string", "format": "uri" },
+    "input_schema_ref": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "output_schema_ref": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "schema_source": { "type": "string", "enum": ["openapi", "bazaar"] },
+    "schema_captured_at": { "type": "string", "format": "date-time" },
+    "schema_truncated": { "type": "boolean" },
     "search_text": { "type": "string" },
     "built_at": { "type": "string", "format": "date-time" }
   },
