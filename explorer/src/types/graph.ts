@@ -13,7 +13,7 @@ export type EdgeKind =
 
 export type Mode = "explore" | "ask";
 
-export type LayoutEngine = "grouped" | "layered" | "radial";
+export type LayoutEngine = "grouped" | "layered" | "radial" | "workflow";
 
 /** oasis_find result shapes. */
 export interface FindEndpoint {

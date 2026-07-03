@@ -25,6 +25,9 @@ export function applyLayout(
     case "radial":
       pos = radialLayout(nodes, edges, opts.centerId);
       break;
+    case "workflow": // nodes are pre-filtered to the workflow sub-tree in use-graph; flow it L→R
+      pos = layeredLayout(nodes, edges, opts.rankdir ?? "LR");
+      break;
     case "grouped":
     default:
       pos = groupedLayout(nodes);
@@ -37,4 +40,5 @@ export const LAYOUT_LABELS: Record<LayoutEngine, string> = {
   grouped: "Clusters",
   layered: "Layered",
   radial: "Radial",
+  workflow: "Workflow",
 };
