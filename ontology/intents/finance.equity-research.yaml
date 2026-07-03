@@ -1,0 +1,47 @@
+id: finance.equity_research
+label: Get equity and investment research on a stock or fund
+description: Synthesized investment research on a stock, ETF, or company — analyst consensus and price targets, buy/hold/sell ratings, research briefs, fund composition and comparison, and financial-reporting-risk assessments, keyed by ticker. Use when an agent wants analysis and opinion about an equity ("is this a buy", "what do analysts think"), not the raw reported financials (finance.company_fundamentals), a live price quote (finance.stock_quote), or explicit entry/exit calls (finance.trading_signals).
+aliases:
+  - analyst consensus and price targets
+  - wall street analyst ratings for a stock
+  - equity research report for a ticker
+  - is this stock a buy or sell
+  - investment thesis for a company
+  - ETF composition and holdings analysis
+  - compare funds and their holdings
+  - stock research brief
+  - due diligence on a public company
+  - financial reporting risk assessment
+consumes:
+  - entity: Ticker
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+    cardinality: many
+facets:
+  domain: finance
+  action: analyze
+  modality:
+    - json
+    - text
+  freshness: recent
+links:
+  - type: alternative_of
+    to: ai.web_research
+    note: equity_research is finance-specialized analysis keyed by a ticker; web_research is generic deep research on any topic
+  - type: fed_by
+    to: finance.company_fundamentals
+    note: research synthesizes the company's reported financials and filings
+  - type: fed_by
+    to: finance.stock_quote
+    note: research incorporates the live price and valuation
+  - type: fed_by
+    to: web.scrape
+    note: research agents pull raw source detail from filings, news, and investor-relations pages
+  - type: sibling_of
+    to: finance.trading_signals
+    note: research is analysis and opinion; trading_signals are explicit entry/exit calls
+  - type: sibling_of
+    to: blockchain.token_research
+    note: the same research capability across the finance/blockchain seam — equity_research on a stock, token_research on a crypto asset

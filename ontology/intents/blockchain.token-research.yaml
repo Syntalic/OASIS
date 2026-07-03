@@ -1,0 +1,44 @@
+id: blockchain.token_research
+label: Research a crypto token or project (due diligence dossier)
+description: Synthesized due-diligence research on a crypto token or project — a combined dossier covering tokenomics, on-chain activity, holder distribution, security posture, and project fundamentals, keyed by a token contract or symbol. Use when an agent wants a synthesized research verdict on a token ("is this project legit", "give me the full picture"), not a single raw signal — on-chain flows (blockchain.onchain_analytics), a contract risk scan (blockchain.token_security), or market sentiment (blockchain.market_intel).
+aliases:
+  - crypto token due diligence
+  - token research dossier
+  - is this crypto project legit
+  - tokenomics analysis for a token
+  - crypto project research report
+  - token deep dive before investing
+  - full evidence dossier for a wallet or token
+  - crypto due diligence report
+  - research a token before buying
+  - project fundamentals for a crypto asset
+consumes:
+  - entity: CryptoAsset
+    role: identifier
+produces:
+  - entity: Answer
+    role: payload
+    cardinality: many
+facets:
+  domain: blockchain
+  action: analyze
+  modality:
+    - json
+    - text
+  freshness: recent
+links:
+  - type: alternative_of
+    to: ai.web_research
+    note: token_research is crypto-specialized synthesis keyed by a token; web_research is generic deep research on any topic
+  - type: fed_by
+    to: blockchain.onchain_analytics
+    note: research synthesizes on-chain wallet and flow signals
+  - type: fed_by
+    to: blockchain.token_security
+    note: research incorporates the contract risk / honeypot scan
+  - type: fed_by
+    to: blockchain.market_intel
+    note: research incorporates market sentiment and momentum context
+  - type: sibling_of
+    to: finance.equity_research
+    note: the same research capability across the finance/blockchain seam — token_research on a crypto asset, equity_research on a stock
