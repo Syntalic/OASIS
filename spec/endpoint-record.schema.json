@@ -54,6 +54,8 @@
     "schema_captured_at": { "type": "string", "format": "date-time" },
     "schema_truncated": { "type": "boolean" },
     "search_text": { "type": "string" },
+    "keyphrases": { "type": "array", "items": { "type": "string" } },
+    "host_breadth": { "type": "number" },
     "built_at": { "type": "string", "format": "date-time" }
   },
   "$defs": {
@@ -103,7 +105,14 @@
               "timeseries"
             ]
           }
-        }
+        },
+        "action": {
+          "enum": [
+            "search", "lookup", "compare", "extract", "generate", "transform",
+            "validate", "send", "provision", "analyze", "execute", "monitor"
+          ]
+        },
+        "authored": { "type": "boolean" }
       }
     },
     "PaymentRail": {
