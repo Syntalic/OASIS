@@ -1,6 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { isPublicAddress, assertPublicHost } from "./net-guard.js";
+import { isPublicAddress, assertPublicHost, safeFetch } from "./net-guard.js";
 
 describe("isPublicAddress", () => {
   // Private / loopback / link-local addresses — must all return false
@@ -22,8 +22,41 @@ describe("isPublicAddress", () => {
     });
   }
 
+  // Deny-list GAPS that were live SSRF holes before the normalize-then-check rewrite.
+  // Every one of these previously (wrongly) returned true.
+  const leakyAddrs = [
+    "198.18.0.1", // 198.18.0.0/15 benchmarking
+    "192.0.0.1", // 192.0.0.0/24 IETF protocol assignments
+    "192.0.2.5", // 192.0.2.0/24 TEST-NET-1
+    "203.0.113.9", // 203.0.113.0/24 TEST-NET-3
+    "::ffff:a00:1", // IPv4-mapped, HEX form of 10.0.0.1 (old regex missed it)
+    "::ffff:a9fe:a9fe", // IPv4-mapped hex of 169.254.169.254 (cloud metadata)
+    "::ffff:7f00:1", // IPv4-mapped hex of 127.0.0.1 (loopback)
+    "64:ff9b::a00:1", // NAT64 64:ff9b::/96 wrapping 10.0.0.1
+    "64:ff9b::a9fe:a9fe", // NAT64 wrapping 169.254.169.254 (metadata via NAT64)
+    "fe9a::1", // fe80::/10 link-local (fe80–febf), missed by "fe80" prefix check
+    "febf::1", // top of fe80::/10
+    "0.0.0.0", // 0.0.0.0/8 this-host
+    "100.64.0.1", // 100.64.0.0/10 CGNAT
+    "127.5.5.5", // 127.0.0.0/8 loopback (not just .0.0.1)
+    "::", // unspecified
+  ];
+  for (const addr of leakyAddrs) {
+    it(`returns false for leaky ${addr}`, () => {
+      assert.equal(isPublicAddress(addr), false);
+    });
+  }
+
+  // Fail-closed: unparseable input is never public
+  const junk = ["", "not-an-ip", "1.2.3", "999.1.1.1", "::ffff:zz", "1:2:3:4:5:6:7:8:9"];
+  for (const addr of junk) {
+    it(`returns false for unparseable ${JSON.stringify(addr)}`, () => {
+      assert.equal(isPublicAddress(addr), false);
+    });
+  }
+
   // Globally-routable addresses — must return true
-  const publicAddrs = ["1.1.1.1", "2606:4700::1"];
+  const publicAddrs = ["1.1.1.1", "8.8.8.8", "2606:4700::1"];
   for (const addr of publicAddrs) {
     it(`returns true for ${addr}`, () => {
       assert.equal(isPublicAddress(addr), true);
@@ -94,5 +127,82 @@ describe("assertPublicHost", () => {
         return true;
       },
     );
+  });
+});
+
+describe("safeFetch", () => {
+  // A resolver that MUST NOT be reached (proves the scheme gate short-circuits first).
+  const explodingResolver = (_h: string) =>
+    Promise.reject(new Error("resolver-should-not-be-called"));
+
+  it("rejects a file:// URL at the scheme gate (no resolution, no network)", async () => {
+    await assert.rejects(
+      () => safeFetch("file:///etc/passwd", {}, explodingResolver),
+      (err: Error) => {
+        assert.ok(err.message.includes("scheme"), `unexpected message: ${err.message}`);
+        return true;
+      },
+    );
+  });
+
+  it("rejects an ftp:// URL at the scheme gate (no resolution, no network)", async () => {
+    await assert.rejects(
+      () => safeFetch("ftp://ftp.example.com/x", {}, explodingResolver),
+      (err: Error) => {
+        assert.ok(err.message.includes("scheme"), `unexpected message: ${err.message}`);
+        return true;
+      },
+    );
+  });
+
+  it("rejects a host that resolves to a private IP before any fetch", async () => {
+    // If a network call were attempted, the stubbed global fetch below would explode.
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = (async () => {
+      throw new Error("fetch-should-not-be-called");
+    }) as typeof fetch;
+    try {
+      const resolver = (_h: string) => Promise.resolve(["10.0.0.1"]);
+      await assert.rejects(
+        () => safeFetch("http://evil.example.com/", {}, resolver),
+        (err: Error) => {
+          assert.ok(err.message.includes("not public"), `unexpected message: ${err.message}`);
+          return true;
+        },
+      );
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  it("blocks a public→private redirect (re-vets each hop)", async () => {
+    // hop0 host is public; the 302 Location points at a host that resolves to a private IP.
+    const resolver = (h: string) => {
+      if (h === "public.example.com") return Promise.resolve(["1.1.1.1"]);
+      if (h === "internal.example.com") return Promise.resolve(["10.0.0.1"]);
+      return Promise.reject(new Error(`unexpected host ${h}`));
+    };
+    const originalFetch = globalThis.fetch;
+    let fetchCalls = 0;
+    globalThis.fetch = (async () => {
+      fetchCalls++;
+      return new Response(null, {
+        status: 302,
+        headers: { location: "http://internal.example.com/" },
+      });
+    }) as typeof fetch;
+    try {
+      await assert.rejects(
+        () => safeFetch("http://public.example.com/", {}, resolver),
+        (err: Error) => {
+          assert.ok(err.message.includes("not public"), `unexpected message: ${err.message}`);
+          return true;
+        },
+      );
+      // Only hop0 hit the network; the redirect target was rejected before hop1's fetch.
+      assert.equal(fetchCalls, 1);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 });
