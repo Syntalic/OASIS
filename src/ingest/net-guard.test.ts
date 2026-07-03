@@ -1,6 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import { isPublicAddress, assertPublicHost, safeFetch } from "./net-guard.js";
+import { fetchOpenApiForOrigin } from "./openapi-fetch.js";
 
 describe("isPublicAddress", () => {
   // Private / loopback / link-local addresses — must all return false
@@ -201,6 +202,49 @@ describe("safeFetch", () => {
       );
       // Only hop0 hit the network; the redirect target was rejected before hop1's fetch.
       assert.equal(fetchCalls, 1);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+});
+
+describe("fetchOpenApiForOrigin SSRF guard", () => {
+  it("returns empty endpoints and never hits the network when origin resolves to a private IP", async () => {
+    // Inject a resolver that returns a private address — safeFetch must throw before any
+    // real network call is made (assertPublicHost rejects, so fetch is never invoked).
+    const resolver = (_h: string) => Promise.resolve(["10.0.0.1"]);
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = (async () => {
+      throw new Error("fetch-should-not-be-called");
+    }) as typeof fetch;
+    try {
+      const { endpoints } = await fetchOpenApiForOrigin(
+        "http://evil.internal",
+        "2026-01-01T00:00:00.000Z",
+        1000,
+        resolver,
+      );
+      // All OPENAPI_PATHS candidates fail-soft (safeFetch throws → caught → try next → all exhausted).
+      assert.deepEqual(endpoints, []);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  it("returns empty endpoints when origin resolves to loopback (127.x)", async () => {
+    const resolver = (_h: string) => Promise.resolve(["127.0.0.1"]);
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = (async () => {
+      throw new Error("fetch-should-not-be-called");
+    }) as typeof fetch;
+    try {
+      const { endpoints } = await fetchOpenApiForOrigin(
+        "http://localhost",
+        "2026-01-01T00:00:00.000Z",
+        1000,
+        resolver,
+      );
+      assert.deepEqual(endpoints, []);
     } finally {
       globalThis.fetch = originalFetch;
     }

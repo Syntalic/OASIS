@@ -14,6 +14,7 @@ import type { EndpointRecord, HttpMethod, IndexBundle, JsonSchema } from "../cor
 import { bazaarToEndpoint, fetchBazaar } from "./bazaar.js";
 import { fetchPayShProviders, payShOrigin } from "./paysh.js";
 import { assembleSchemaStore, SchemaCollector } from "./schema-store.js";
+import { safeFetch } from "./net-guard.js";
 import {
   applyCircuitBreaker,
   probePaymentLiveness,
@@ -212,7 +213,7 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
   let i = 0, ok = 0;
   const enrichOne = async (origin: string): Promise<void> => {
     try {
-      const res = await fetch(`${origin}/openapi.json`, { signal: AbortSignal.timeout(10000), headers: { accept: "application/json" } });
+      const res = await safeFetch(`${origin}/openapi.json`, { signal: AbortSignal.timeout(10000), headers: { accept: "application/json" } });
       if (!res.ok) return;
       const buf = await res.text();
       if (buf.length > 2_000_000) return;

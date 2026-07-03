@@ -1,5 +1,8 @@
+import { safeFetch } from "./net-guard.js";
 import { parseOpenApi } from "./openapi-parser.js";
 import type { EndpointRecord } from "../core/types.js";
+
+type Resolver = (host: string) => Promise<string[]>;
 
 const OPENAPI_PATHS = [
   "/openapi.json",
@@ -46,14 +49,13 @@ export async function fetchOpenApiForOrigin(
   origin: string,
   builtAt: string,
   timeoutMs = 15_000,
+  resolver?: Resolver,
 ): Promise<{ endpoints: EndpointRecord[]; openapi_url?: string }> {
   for (const url of openapiCandidates(origin)) {
     try {
-      const res = await fetch(url, {
-        headers: FETCH_HEADERS,
-        signal: AbortSignal.timeout(timeoutMs),
-        redirect: "follow",
-      });
+      const res = resolver
+        ? await safeFetch(url, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(timeoutMs) }, resolver)
+        : await safeFetch(url, { headers: FETCH_HEADERS, signal: AbortSignal.timeout(timeoutMs) });
       if (!res.ok) continue;
       const contentType = res.headers.get("content-type") ?? "";
       const text = await res.text();
