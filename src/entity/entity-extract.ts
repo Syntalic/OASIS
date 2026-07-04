@@ -35,6 +35,13 @@ const PLACE_STOP = new Set([
 const PREP_PLACE = /\b(?:in|near|around|throughout|across|to)\s+([A-Z][a-zà-ÿ'’.-]+(?:\s+[A-Z][a-zà-ÿ'’.-]+){0,2})/g;
 const LOCATIVE = new Set(["in", "near", "around", "at", "to", "from", "across", "throughout"]);
 const foldPlace = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+// City abbreviations compromise.js and the gazetteer miss. Matched UPPERCASE-only ("SF", not "sf")
+// so "la"/"as" as ordinary words never fire — people write city abbreviations in caps.
+const CITY_ABBREV: Record<string, string> = {
+  SF: "San Francisco", SFO: "San Francisco", NYC: "New York", LA: "Los Angeles", LAX: "Los Angeles",
+  DC: "Washington DC", NOLA: "New Orleans", LV: "Las Vegas", ATL: "Atlanta", PHL: "Philadelphia",
+  PDX: "Portland", CDMX: "Mexico City",
+};
 // Notable world cities (lowercased; ambiguous common-word names like Nice/Bath/Split omitted to
 // avoid false positives — those still resolve via the preposition pattern).
 const CITY_GAZ = new Set(
@@ -59,6 +66,11 @@ function supplementalPlaces(finding: string): string[] {
     if (low.includes(city) && new RegExp(`\\b${city.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(low)) {
       out.add(city.replace(/(^|[\s-])\p{L}/gu, (c) => c.toUpperCase()));
     }
+  }
+  // City abbreviations (SF, NYC, LA…), matched uppercase-only.
+  for (const tok of finding.split(/\s+/)) {
+    const t = tok.replace(/[^A-Za-z]/g, "");
+    if (t.length >= 2 && t === t.toUpperCase() && CITY_ABBREV[t]) out.add(CITY_ABBREV[t]);
   }
   // Long-tail world cities (pop >= 100k), disambiguated: a gazetteer name counts only if it is
   // Title-Cased or right after a locative preposition — so common-word city names don't over-fire.
