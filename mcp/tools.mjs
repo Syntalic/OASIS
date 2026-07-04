@@ -374,7 +374,10 @@ function hasPlace(q) {
 // community source). Those names are the recipe's DECLARATIVE contract; everything technical (which
 // detector runs, the recall floor) lives HERE in the serving, never in the recipe YAML. Recipes with
 // no `requires` match on plain goal-embedding cosine.
-const HYBRID_FLOOR = 0.5; // recall bar for precondition-gated recipes — tuning lives in serving, not YAML
+const HYBRID_FLOOR = 0.55; // recall bar for precondition-gated recipes — tuning lives in serving, not YAML.
+// Set to 0.55 (not 0.5) to err toward precision: below it, place+source can co-occur without a genuine
+// recommendation intent ("read the top comment on the r/nyc thread"). We'd rather not show than show a
+// low-confidence match — next_steps is the fallback.
 const REQUIRE_DETECTORS = { place: hasPlace, community_source: hasSourceLens };
 function workflowGate(w, score, query) {
   const requires = w.requires ?? [];
