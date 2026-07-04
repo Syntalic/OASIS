@@ -1,0 +1,33 @@
+id: workflow.community_local_recommendations
+goal: Get community-sourced recommendations for local spots — the best places to eat, drink, or visit in a city, ranked by what people actually recommend on Reddit, forums, social media, and reviews
+shape: fanout
+# This recipe only makes sense when the query actually names a PLACE and a COMMUNITY source (reddit,
+# yelp, google reviews, locals, forums…). Without both, it's not a community-recommendation ask —
+# "find a sushi place near me" (no source) and "what's trending on reddit" (no place) are not this.
+requires: [place, community_source]
+aliases:
+  - best restaurants in a city according to reddit
+  - what does reddit say are the best coffee shops in a city
+  - top rated bars according to google reviews
+  - highest rated sushi or ramen spots per yelp
+  - reddit's favorite hidden gem restaurants in a city
+  - best rooftop bars according to reviews
+  - what do locals recommend for brunch or dinner in a neighborhood
+  - crowd-sourced best pizza places in a city
+  - community recommended things to do in a city
+  - what people online say are the best spots in a place
+  - most recommended cafes bars and eateries per social media
+  - where do people say to eat in a city according to forums
+  - top places to visit according to travelers and reviews
+  - what are the must-try food spots locals recommend
+steps:
+  - intent: web.search
+    do: Search the web — Reddit threads, forums, blogs, roundups — for what people recommend
+  - intent: social.social_data
+    do: Pull Reddit and social posts + engagement discussing the options
+  - intent: maps.places
+    do: Find the matching local businesses and points of interest
+  - intent: travel.place_reviews
+    do: Add traveler and user reviews / ratings for the shortlisted spots
+    optional: true
+produces: A ranked shortlist of local spots grounded in what the community actually recommends — the agent reconciles the discussion, social buzz, real places, and reviews.

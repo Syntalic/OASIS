@@ -21,7 +21,7 @@ for (const f of files) {
   const v = await validateWorkflow(src);
   if (!v.valid) { console.error(`  skip ${f}: ${v.errors.join("; ")}`); skipped++; continue; }
   const vector = await embedText([src.goal, ...(src.aliases ?? [])].join(" \n "));
-  out.push({ id: src.id, goal: src.goal, shape: src.shape, aliases: src.aliases ?? [], steps: src.steps, produces: src.produces, vector });
+  out.push({ id: src.id, goal: src.goal, shape: src.shape, aliases: src.aliases ?? [], steps: src.steps, produces: src.produces, vector, ...(Array.isArray(src.requires) && src.requires.length ? { requires: src.requires } : {}) });
   console.error(`  + ${src.id} (${src.steps.length} steps, dim ${vector.length})`);
 }
 await writeFile(OUT, JSON.stringify(out));

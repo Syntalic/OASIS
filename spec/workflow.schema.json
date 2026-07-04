@@ -26,6 +26,11 @@
       "items": { "type": "string" },
       "description": "Natural-language phrasings the goal is matched against (like an intent's aliases)."
     },
+    "requires": {
+      "type": "array",
+      "items": { "enum": ["place", "community_source"] },
+      "description": "Optional applicability preconditions: signals the QUERY must contain for this recipe to apply. `place` = the query names a location; `community_source` = it names a community/opinion source (reddit, yelp, google reviews, locals, forums…). Use for COMPOSITIONAL recipes — a subject + a lens + a place — that whole-query similarity can't tell apart from near-miss queries (\"best sushi in Austin per reddit\" vs \"find a sushi place near me\"). Declarative only: the recipe states WHAT it needs; the serving owns HOW each signal is detected and scored."
+    },
     "steps": {
       "type": "array",
       "minItems": 2,
