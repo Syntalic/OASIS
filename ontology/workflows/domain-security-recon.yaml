@@ -4,9 +4,16 @@ shape: fanout
 aliases:
   - security recon on a domain
   - investigate a domain for threats
-  - check a website's security posture
-  - dns tls and threat intel for a host
-  - is this domain safe
+  - is this website safe — check the owner, hosting, TLS and reputation
+  - vet a domain before onboarding a vendor
+  - scan a site for red flags across ownership, hosting and encryption
+  - background-check a suspicious website
+  - assess the security risk of a domain — whois, dns, tls, ip, blocklists
+  - is this a phishing domain
+  - dns, tls, ip intel and threat reputation for a host
+  - profile a domain's security posture end to end
+  - check if a domain is flagged as malicious
+  - I got a phishy email — investigate the domain it came from
 steps:
   - intent: devtools.whois_lookup
     do: Pull DNS records and WHOIS registration

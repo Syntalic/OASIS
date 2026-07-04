@@ -24,6 +24,8 @@ const DOMAIN_RE = /\b([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}\b/i;
 // cheap, high-precision signals: (1) a capitalized token right after a locative preposition, and
 // (2) a scan against a world-city gazetteer. Cross-cutting: this Place signal drives discover's
 // next_steps AND the workflow hybrid matcher, so improving it lifts both.
+import { WORLD_CITIES } from "./world-cities.js";
+
 const PLACE_STOP = new Set([
   "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december",
   "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
@@ -31,6 +33,8 @@ const PLACE_STOP = new Set([
   "english", "spanish", "french", "german", "chinese", "japanese", "italian", "american", "european", "general",
 ]);
 const PREP_PLACE = /\b(?:in|near|around|throughout|across|to)\s+([A-Z][a-zà-ÿ'’.-]+(?:\s+[A-Z][a-zà-ÿ'’.-]+){0,2})/g;
+const LOCATIVE = new Set(["in", "near", "around", "at", "to", "from", "across", "throughout"]);
+const foldPlace = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 // Notable world cities (lowercased; ambiguous common-word names like Nice/Bath/Split omitted to
 // avoid false positives — those still resolve via the preposition pattern).
 const CITY_GAZ = new Set(
@@ -54,6 +58,21 @@ function supplementalPlaces(finding: string): string[] {
   for (const city of CITY_GAZ) {
     if (low.includes(city) && new RegExp(`\\b${city.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(low)) {
       out.add(city.replace(/(^|[\s-])\p{L}/gu, (c) => c.toUpperCase()));
+    }
+  }
+  // Long-tail world cities (pop >= 100k), disambiguated: a gazetteer name counts only if it is
+  // Title-Cased or right after a locative preposition — so common-word city names don't over-fire.
+  const toks = finding.split(/\s+/);
+  for (let i = 0; i < toks.length; i++) {
+    const prev = i > 0 ? toks[i - 1].toLowerCase().replace(/[^a-z]/g, "") : "";
+    const afterPrep = LOCATIVE.has(prev);
+    for (let n = Math.min(3, toks.length - i); n >= 1; n--) {
+      const key = foldPlace(toks.slice(i, i + n).join(" ")).replace(/[^a-z' .-]/g, "").trim();
+      if (key.length >= 3 && WORLD_CITIES.has(key) && (/^[A-Z]/.test(toks[i]) || afterPrep)) {
+        out.add(toks.slice(i, i + n).join(" ").replace(/[.,;:!?]+$/, ""));
+        i += n - 1;
+        break;
+      }
     }
   }
   return [...out];

@@ -2,11 +2,21 @@ id: workflow.travel_trip_plan
 goal: Plan a trip to a destination — flights, a place to stay, weather, and things to do
 shape: fanout
 aliases:
-  - plan a trip to a city
-  - help me plan a vacation
-  - organize travel to a destination
-  - flights hotels and things to do for a trip
-  - plan a weekend getaway
+  - plan a trip to a destination
+  - help me plan a vacation — flights, a hotel, weather, and things to do
+  - put together a trip to a city — getting there, a place to stay, and what to do
+  - family vacation planning — flights, a hotel, and an itinerary
+  - plan my honeymoon — travel, lodging, and what we will do
+  - plan a ski trip — flights, lodging, and the mountain
+  - backpacking trip through a country, start to finish
+  - solo trip to a city — handle the whole thing, flights lodging and sights
+  - plan a long weekend getaway — get there, stay, and things to do
+  - anniversary or birthday trip — sort out flights, a hotel, and a plan
+  - trip to a city — airfare, lodging, climate, and excursions
+  - plan a week somewhere — flights, a place, the weather, and activities
+  - figure out flights, a place to stay, and activities for a destination
+  - put together a travel itinerary for a destination
+  - vacation to a city — how do we get there, where do we stay, what do we do
 steps:
   - intent: travel.aviation
     do: Find flights to the destination

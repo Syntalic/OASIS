@@ -4,9 +4,16 @@ shape: fanout
 aliases:
   - is this token safe to buy
   - crypto token due diligence before aping in
+  - should I buy this coin or is it a rug
   - vet a token contract before investing
-  - should I buy this coin
+  - go/no-go call on a crypto token — scams, fundamentals, and market
+  - thinking about putting money into a memecoin — is it legit
+  - rug check and fundamentals for a token before I buy
+  - should I ape into this coin
   - full due diligence on a crypto token
+  - is this coin a honeypot and are the fundamentals any good
+  - evaluate a token before investing — safety, tokenomics, liquidity
+  - someone shilled me a coin, help me decide if it is real
 steps:
   - intent: blockchain.token_security
     do: Scan the contract for honeypot / rug / mint / tax risk

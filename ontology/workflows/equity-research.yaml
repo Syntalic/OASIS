@@ -3,10 +3,18 @@ goal: Research a public stock before investing — fundamentals, price, analyst 
 shape: fanout
 aliases:
   - research a stock before buying
-  - full due diligence on a public company
-  - should I invest in this stock
+  - should I invest in this company — give me the full picture
+  - deep dive on a stock before I put money in
+  - vet a stock end to end — fundamentals, price, analyst ratings, and news
+  - evaluate whether a company is a good buy right now
+  - pre-investment analysis of a public company
+  - everything I need to decide on buying these shares
+  - is this stock a good long-term hold
+  - pull financials, valuation, wall street opinion and headlines for a ticker
+  - thinking about adding a stock to my portfolio — worth it
+  - full rundown on a company before investing
+  - analyze a company's fundamentals and outlook
   - equity research report for a ticker
-  - analyze a company's financials and outlook
 steps:
   - intent: finance.company_fundamentals
     do: Pull financials, SEC filings, and corporate data
