@@ -22,9 +22,9 @@ aliases:
   - what are the must-try food spots locals recommend
 steps:
   - intent: web.search
-    do: Search the web — Reddit threads, forums, blogs, roundups — for what people recommend
+    do: Search the web — forums, blogs, roundups, threads — for what people recommend
   - intent: social.social_data
-    do: Pull Reddit and social posts + engagement discussing the options
+    do: Pull social posts + engagement discussing the options
   - intent: maps.places
     do: Find the matching local businesses and points of interest
   - intent: travel.place_reviews

@@ -53,6 +53,17 @@ export const DEFAULT_QUALITY_WEIGHT = 4;
  *  against the absurd, not an optimization target. */
 export const DEFAULT_PRICE_OUTLIER_PENALTY = 8;
 
+/* ---- Workflow STEP resolution — src/bind/select-policy.ts::resolveWorkflowStep (mcp buildRecommendedWorkflows) ----
+ * A community/source recipe names an intent per step; the live endpoint is picked from the FULL ep→intent
+ * binding (not the capped satisfies list), LED by query↔endpoint semantics — because inside one intent's
+ * bound pool task-fit is already uniform (every candidate does "social data"), so the base id/vocab terms
+ * are a flat bias to down-weight. A source bonus lifts endpoints whose URL matches a platform the user named
+ * ("according to reddit"). Validated 24%→96% recall on a blind 100-question battery; 0 false pins on 20
+ * no-source controls. All three are env-overridable for A/B (OASIS_WF_*). */
+export const WORKFLOW_BASE_SCALE = Number(process.env.OASIS_WF_BASE_SCALE ?? "0.15");
+export const WORKFLOW_SEMANTIC_WEIGHT = Number(process.env.OASIS_WF_SEMANTIC_WEIGHT ?? "70");
+export const WORKFLOW_SOURCE_WEIGHT = Number(process.env.OASIS_WF_SOURCE_WEIGHT ?? "60");
+
 /* ============================ Hybrid search fusion — src/search/search-hybrid.ts ============================ */
 
 /** RRF fusion weights — keyword arm vs vector arm. */
