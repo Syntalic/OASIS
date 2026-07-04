@@ -1,7 +1,10 @@
 id: workflow.community_local_recommendations
 goal: Get community-sourced recommendations for local spots — the best places to eat, drink, or visit in a city, ranked by what people actually recommend on Reddit, forums, social media, and reviews
 shape: fanout
-match_threshold: 0.585  # diffuse class: positives cluster ~0.60-0.69 (vs 0.78+ for sharp recipes); tuned on a small set — revisit with an eval set
+# This recipe only makes sense when the query actually names a PLACE and a COMMUNITY source (reddit,
+# yelp, google reviews, locals, forums…). Without both, it's not a community-recommendation ask —
+# "find a sushi place near me" (no source) and "what's trending on reddit" (no place) are not this.
+requires: [place, community_source]
 aliases:
   - best restaurants in a city according to reddit
   - what does reddit say are the best coffee shops in a city

@@ -19,6 +19,46 @@ export interface ExtractionResult {
 const PLACE_RE = /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*),\s*([A-Z]{2})\b/;
 const DOMAIN_RE = /\b([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}\b/i;
 
+// Supplemental Place detection — compromise.js NER misses many international / lesser-known cities
+// (Fukuoka, Ljubljana, Cluj, Da Nang) and cities that LEAD a sentence ("Hobart wineries…"). Two
+// cheap, high-precision signals: (1) a capitalized token right after a locative preposition, and
+// (2) a scan against a world-city gazetteer. Cross-cutting: this Place signal drives discover's
+// next_steps AND the workflow hybrid matcher, so improving it lifts both.
+const PLACE_STOP = new Set([
+  "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december",
+  "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+  "the", "a", "an", "my", "our", "this", "that", "their", "there", "here", "today", "tomorrow", "tonight", "town", "city",
+  "english", "spanish", "french", "german", "chinese", "japanese", "italian", "american", "european", "general",
+]);
+const PREP_PLACE = /\b(?:in|near|around|throughout|across|to)\s+([A-Z][a-zà-ÿ'’.-]+(?:\s+[A-Z][a-zà-ÿ'’.-]+){0,2})/g;
+// Notable world cities (lowercased; ambiguous common-word names like Nice/Bath/Split omitted to
+// avoid false positives — those still resolve via the preposition pattern).
+const CITY_GAZ = new Set(
+  ("new york,los angeles,chicago,houston,phoenix,philadelphia,san antonio,san diego,dallas,san jose,san francisco,seattle,denver,boston,portland,nashville,memphis,atlanta,miami,minneapolis,cleveland,pittsburgh,cincinnati,kansas city,sacramento,austin,boise,providence,chattanooga,ann arbor,asheville,savannah,charleston,boulder,brooklyn,manhattan,detroit,fredericton,"
+  + "toronto,montreal,vancouver,calgary,ottawa,mexico city,guadalajara,monterrey,oaxaca,merida,mérida,tijuana,cancun,"
+  + "london,paris,madrid,barcelona,rome,milan,naples,berlin,munich,hamburg,frankfurt,cologne,amsterdam,rotterdam,brussels,ghent,antwerp,bruges,vienna,zurich,geneva,lisbon,porto,dublin,edinburgh,glasgow,manchester,birmingham,liverpool,prague,budapest,warsaw,krakow,kraków,wroclaw,wrocław,gdansk,vilnius,riga,tallinn,kaunas,helsinki,stockholm,gothenburg,oslo,bergen,copenhagen,reykjavik,reykjavík,athens,thessaloniki,istanbul,ankara,kyiv,tbilisi,yerevan,ljubljana,zagreb,belgrade,sofia,bucharest,cluj,cluj-napoca,sarajevo,valencia,seville,malaga,bilbao,lyon,marseille,bordeaux,toulouse,florence,venice,bologna,turin,palermo,tromso,tromsø,"
+  + "tokyo,osaka,kyoto,yokohama,nagoya,fukuoka,sapporo,seoul,busan,beijing,shanghai,guangzhou,shenzhen,chengdu,hong kong,taipei,bangkok,chiang mai,phuket,hanoi,ho chi minh,da nang,singapore,kuala lumpur,jakarta,bali,manila,cebu,mumbai,delhi,bangalore,bengaluru,chennai,kolkata,hyderabad,pune,dubai,abu dhabi,doha,riyadh,jeddah,tel aviv,jerusalem,amman,beirut,"
+  + "sydney,melbourne,brisbane,perth,adelaide,canberra,hobart,gold coast,auckland,wellington,christchurch,queenstown,"
+  + "sao paulo,são paulo,rio de janeiro,buenos aires,lima,bogota,bogotá,medellin,medellín,santiago,quito,montevideo,cartagena,cusco,"
+  + "cairo,lagos,nairobi,cape town,johannesburg,casablanca,marrakech,marrakesh,accra,tunis").split(","),
+);
+
+/** Places from a locative preposition + a world-city gazetteer scan (supplements compromise.js). */
+function supplementalPlaces(finding: string): string[] {
+  const out = new Set<string>();
+  for (let m; (m = PREP_PLACE.exec(finding)) !== null; ) {
+    const cand = m[1].trim().replace(/[.,]$/, "");
+    if (cand.length > 1 && !PLACE_STOP.has(cand.toLowerCase().split(/\s+/)[0])) out.add(cand);
+  }
+  const low = finding.toLowerCase();
+  for (const city of CITY_GAZ) {
+    if (low.includes(city) && new RegExp(`\\b${city.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(low)) {
+      out.add(city.replace(/(^|[\s-])\p{L}/gu, (c) => c.toUpperCase()));
+    }
+  }
+  return [...out];
+}
+
 const FORBIDDEN = new Set(["Query", "StructuredRecord", "NamedEntity", "Org"]);
 
 /**
@@ -72,6 +112,10 @@ export function extractEntitiesFromFinding(finding: string): HeldEntity[] {
   // `City, ST` regex as a Place supplement.
   const place = finding.match(PLACE_RE);
   if (place) add("Place", `${place[1]}, ${place[2]}`);
+
+  // Locative-preposition + world-city gazetteer — catches international / leading-sentence cities
+  // that compromise.js misses.
+  for (const p of supplementalPlaces(finding)) add("Place", p);
 
   return out;
 }

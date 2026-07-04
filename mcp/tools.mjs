@@ -357,17 +357,43 @@ function cosine(a, b) {
   return na && nb ? dot / (Math.sqrt(na) * Math.sqrt(nb)) : 0;
 }
 
-// Match the query against contributed workflow recipes (goal-embedding cosine); for the top match
-// above threshold, resolve each step's INTENT to its current top endpoint (serve-time resolution —
-// the recipe names intents, the index fills endpoints fresh). Additive to next_steps: OASIS suggests
-// the route, the agent decides whether to run it. Endpoints are never pinned in the recipe.
-function buildRecommendedWorkflows(queryVec) {
+// Hybrid-match signals for COMPOSITIONAL recipes (e.g. community local recs), where whole-query
+// embedding can't separate positives from near-miss negatives ("sushi near me" vs "sushi per reddit").
+// Such a recipe declares match.mode:"hybrid" + require:[source_lens, place]; we then gate on a LOW
+// embedding floor AND the presence of those structural parts. Sharp recipes keep the cosine gate.
+const SRC_LENS = /(reddit|r\/|subreddit|yelp|google review|tripadvisor|trip advisor|\bforum|according to|recommend|\breview|rated|rating|twitter| on x\b|instagram|tiktok|nextdoor|foursquare|tabelog|facebook|the internet|people online|\bonline\b|everyone|crowd|\brave|quora|hacker ?news|\blocals?\b|swear by|people (say|go|love)|favou?rite)/i;
+const hasSourceLens = (q) => SRC_LENS.test(String(q || ""));
+function hasPlace(q) {
+  const finding = String(q || "");
+  try {
+    if ((extractEntities({ finding, bundle, capabilitiesById: capById }).entities ?? []).some((e) => e.entity === "Place")) return true;
+  } catch { /* fail-soft */ }
+  return /\bnear me\b|\bnearby\b/i.test(finding);
+}
+// A recipe may declare `requires` — applicability preconditions the QUERY must satisfy (a place, a
+// community source). Those names are the recipe's DECLARATIVE contract; everything technical (which
+// detector runs, the recall floor) lives HERE in the serving, never in the recipe YAML. Recipes with
+// no `requires` match on plain goal-embedding cosine.
+const HYBRID_FLOOR = 0.5; // recall bar for precondition-gated recipes — tuning lives in serving, not YAML
+const REQUIRE_DETECTORS = { place: hasPlace, community_source: hasSourceLens };
+function workflowGate(w, score, query) {
+  const requires = w.requires ?? [];
+  if (requires.length) {
+    return score >= HYBRID_FLOOR && requires.every((sig) => REQUIRE_DETECTORS[sig]?.(query));
+  }
+  return score >= WF_THRESHOLD;
+}
+
+// Match the query against contributed workflow recipes. Sharp recipes: goal-embedding cosine vs a
+// (per-recipe or global) threshold. Compositional recipes: a hybrid conjunction (low embedding floor
+// AND required structural signals). For the top passing match, resolve each step's INTENT to its
+// current top endpoint (serve-time — the recipe names intents, the index fills endpoints fresh).
+// Additive to next_steps: OASIS suggests the route, the agent decides whether to run it.
+function buildRecommendedWorkflows(queryVec, query) {
   if (!workflows.length || !queryVec) return [];
   const top = workflows
     .map((w) => ({ w, score: cosine(queryVec, w.vector) }))
-    // per-recipe gate: diffuse recipes (community recs) sit in a lower cosine band than sharp ones,
-    // so each recipe can set its own match_threshold; fall back to the global default.
-    .filter((x) => x.score >= (typeof x.w.match_threshold === "number" ? x.w.match_threshold : WF_THRESHOLD))
+    .filter((x) => workflowGate(x.w, x.score, query))
     .sort((a, b) => b.score - a.score)[0];
   if (!top) return [];
   const { w, score } = top;
@@ -496,7 +522,7 @@ async function oasisDiscover({ query, finding, entities, limit = 12, include_sch
   const next_steps = await buildNextSteps(routedCaps, query, held);
   // recommended_workflows: a contributed recipe matching this goal, with each step resolved to a live
   // endpoint. Additive — the agent picks: run the workflow, hit one endpoint, or explore next_steps.
-  const recommended_workflows = buildRecommendedWorkflows(await getQueryVec());
+  const recommended_workflows = buildRecommendedWorkflows(await getQueryVec(), query);
   // matched_capabilities: the capabilities the RETURNED endpoints actually serve — a summary of what
   // discover found, NOT a parallel intent guess. The hybrid classifier pads its tail with homonym noise
   // (a real-estate query pulls in commerce.find_deals / commerce.compare_price on "$400K"/"deal"/"price" tokens);
