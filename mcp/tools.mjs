@@ -5,7 +5,8 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { searchHybridWithFallback } from "../dist/search/search-hybrid.js";
-import { resolveEndpointsForQuery } from "../dist/bind/select-policy.js";
+import { resolveEndpointsForQuery, resolveWorkflowStep } from "../dist/bind/select-policy.js";
+import { buildPlatformGazetteer, extractSource } from "../dist/bind/source-extract.js";
 import { loadEndpointArm, endpointKey } from "../dist/bind/endpoint-arm.js";
 import { embedText } from "../dist/embed/embedder.js";
 import { relatedOptions } from "../dist/search/related.js";
@@ -387,6 +388,13 @@ function workflowGate(w, score, query) {
   return score >= WF_THRESHOLD;
 }
 
+// Source-aware workflow STEP resolution: pick each step's endpoint from the FULL ep→intent binding, led
+// by query↔endpoint semantics, with a bonus for endpoints whose URL matches a community source the user
+// named ("according to reddit"). Validated 24%→96% recall on a blind battery. Default ON; set
+// OASIS_WF_LEGACY_STEP=1 to revert to the legacy do-text/satisfies path for A/B.
+const WF_SOURCE_AWARE = process.env.OASIS_WF_LEGACY_STEP !== "1";
+const isPlatform = buildPlatformGazetteer(bundle.endpoints);
+
 // Match the query against contributed workflow recipes. Sharp recipes: goal-embedding cosine vs a
 // (per-recipe or global) threshold. Compositional recipes: a hybrid conjunction (low embedding floor
 // AND required structural signals). For the top passing match, resolve each step's INTENT to its
@@ -401,11 +409,22 @@ function buildRecommendedWorkflows(queryVec, query) {
   if (!top) return [];
   const { w, score } = top;
   let total = 0;
+  // Source-aware: extract the platform the user named (empty when none) once for all steps.
+  const srcTokens = WF_SOURCE_AWARE ? extractSource(query, isPlatform) : [];
   const steps = w.steps.map((s, i) => {
     const intent = capById.get(s.intent);
-    // Rank the intent's endpoints by the STEP's specific need (its `do` text), not the generic intent
-    // label — so a "find flights" step surfaces a flight search, not any aviation endpoint.
-    const e = intent ? resolveEndpointsForQuery(intent, bundle.endpoints, s.do || intent.label, 1)[0] : undefined;
+    // Resolve the step's intent to a live endpoint FROM THE USER'S QUERY. Source-aware path: full binding
+    // + semantic lead + source bonus (so "…according to reddit" pins a reddit endpoint, not the do-text's
+    // example). Legacy path: rank the capped satisfies pool by the step's `do` text.
+    const e = intent
+      ? (WF_SOURCE_AWARE
+          ? resolveWorkflowStep(intent, bundle.endpoints, query, {
+              semanticOf: endpointArm.ready ? (ep) => endpointArm.cosineToEndpoint(queryVec, endpointKey(ep)) : undefined,
+              sourceTokens: srcTokens,
+              max: 1,
+            })[0]
+          : resolveEndpointsForQuery(intent, bundle.endpoints, s.do || intent.label, 1)[0])
+      : undefined;
     if (e?.payment?.price_usd != null) total += e.payment.price_usd;
     return {
       n: i + 1,

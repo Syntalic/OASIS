@@ -7,6 +7,7 @@ import {
   DEFAULT_BREADTH_PENALTY, BREADTH_THRESHOLD,
   DEFAULT_DOMAIN_PENALTY, DEFAULT_ACTION_PENALTY, DEFAULT_ENTITY_PENALTY, GATED_INTENTS,
   DEFAULT_QUALITY_WEIGHT, DEFAULT_PRICE_OUTLIER_PENALTY,
+  WORKFLOW_BASE_SCALE, WORKFLOW_SEMANTIC_WEIGHT, WORKFLOW_SOURCE_WEIGHT,
 } from "../tuning.js";
 
 export function satisfiesRefsToEndpoints(
@@ -305,6 +306,72 @@ export function resolveEndpointsForQuery(
           qualityScore(ep, qualityWeight) +
           priceOutlierGuard(ep, median, priceOutlierPenalty),
       };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, max)
+    .map((x) => x.ep);
+}
+
+/**
+ * Resolve ONE workflow step's intent to a live endpoint — the source-aware path for
+ * mcp/buildRecommendedWorkflows. Differs from resolveEndpointsForQuery in three ways proven on a blind
+ * battery (24%→96% recall, 0 false pins on no-source controls):
+ *
+ *   ① Candidacy is the FULL ep→intent binding (`ep.capabilities` includes the intent), NOT the capped
+ *      `satisfies` list — so a platform specialist (glim.sh/reddit/search, bound but outside the curated
+ *      top-N) is eligible at all.
+ *   ③ The rank is LED by query↔endpoint semantics. Inside a single intent's bound pool task-fit is already
+ *      uniform (every candidate does the task), so the base id/vocab terms are a flat generic bias — scaled
+ *      down (WORKFLOW_BASE_SCALE) so the semantic cosine (WORKFLOW_SEMANTIC_WEIGHT) decides among siblings.
+ *   ⑤ A source bonus (WORKFLOW_SOURCE_WEIGHT) lifts endpoints whose host/path matches a platform the user
+ *      named ("according to reddit" → reddit endpoints). `sourceTokens` comes from source-extract.ts.
+ *
+ * `semanticOf` returns the query↔endpoint cosine (from the endpoint arm); null/absent → the semantic term
+ * is 0 and the step degrades to base+source (dev/offline without the gemini arm). Returns endpoints best-first.
+ */
+export function resolveWorkflowStep(
+  intent: CapabilityIntent,
+  endpoints: EndpointRecord[],
+  query: string,
+  opts: {
+    semanticOf?: (ep: EndpointRecord) => number | null;
+    sourceTokens?: string[];
+    baseScale?: number;
+    semanticWeight?: number;
+    sourceWeight?: number;
+    max?: number;
+  } = {},
+): EndpointRecord[] {
+  const {
+    semanticOf,
+    sourceTokens = [],
+    baseScale = WORKFLOW_BASE_SCALE,
+    semanticWeight = WORKFLOW_SEMANTIC_WEIGHT,
+    sourceWeight = WORKFLOW_SOURCE_WEIGHT,
+    max = 10,
+  } = opts;
+  const candidates = endpoints.filter((e) => (e.capabilities ?? []).includes(intent.id));
+  const qTokens = queryTokens(query);
+  const idTokens = intentIdTokens(intent);
+  const vocabTokens = intentVocabTokens(intent);
+  const median = priceMedian(candidates);
+  const srcSet = sourceTokens.filter(Boolean);
+
+  return [...candidates]
+    .map((ep) => {
+      const idHits = matchCount(ep, idTokens);
+      const base =
+        DEFAULT_NEUTRAL_SCALE * scoreEndpointNeutral(ep, intent) +
+        DEFAULT_ID_WEIGHT * idHits +
+        DEFAULT_VOCAB_WEIGHT * lexicalScore(ep, vocabTokens) +
+        DEFAULT_QUERY_WEIGHT * lexicalScore(ep, qTokens) +
+        (idHits === 0 ? breadthPenalty(ep) : 0) +
+        qualityScore(ep, DEFAULT_QUALITY_WEIGHT) +
+        priceOutlierGuard(ep, median, DEFAULT_PRICE_OUTLIER_PENALTY);
+      const cos = semanticOf ? Math.max(0, semanticOf(ep) ?? 0) : 0;
+      const url = `${ep.origin} ${ep.path ?? ""}`.toLowerCase();
+      const srcBonus = srcSet.length && srcSet.some((s) => url.includes(s)) ? sourceWeight : 0;
+      return { ep, score: baseScale * base + semanticWeight * cos + srcBonus };
     })
     .sort((a, b) => b.score - a.score)
     .slice(0, max)
