@@ -365,7 +365,9 @@ function buildRecommendedWorkflows(queryVec) {
   if (!workflows.length || !queryVec) return [];
   const top = workflows
     .map((w) => ({ w, score: cosine(queryVec, w.vector) }))
-    .filter((x) => x.score >= WF_THRESHOLD)
+    // per-recipe gate: diffuse recipes (community recs) sit in a lower cosine band than sharp ones,
+    // so each recipe can set its own match_threshold; fall back to the global default.
+    .filter((x) => x.score >= (typeof x.w.match_threshold === "number" ? x.w.match_threshold : WF_THRESHOLD))
     .sort((a, b) => b.score - a.score)[0];
   if (!top) return [];
   const { w, score } = top;

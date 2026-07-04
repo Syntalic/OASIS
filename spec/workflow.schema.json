@@ -26,6 +26,12 @@
       "items": { "type": "string" },
       "description": "Natural-language phrasings the goal is matched against (like an intent's aliases)."
     },
+    "match_threshold": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Optional per-recipe cosine gate for query→workflow matching. Diffuse/broad recipes (spanning many subjects/sources) sit in a lower confidence band than sharp ones; set this below the default (0.68) to catch them without dragging the global gate down. Defaults to the global threshold when absent."
+    },
     "steps": {
       "type": "array",
       "minItems": 2,
