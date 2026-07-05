@@ -27,43 +27,17 @@ import { selectedIdAtom } from "@/stores/selection";
 import { sidebarCollapsedAtom } from "@/stores/ui";
 import type { FindEndpoint, Mode, NextStep } from "@/types/graph";
 
+// Multi-step tasks that surface a recommended_workflow — each maps to a distinct recipe and is
+// verified to return a workflow from oasis_discover (see ontology/workflows/). Keep these as the
+// Ask quick-starts: they show off the ordered-plan output, not just single-endpoint discovery.
 const SAMPLES = [
-  // AI / media
-  "Narrate an article as audio",
-  "Transcribe audio to text",
-  "Image from a text prompt",
-  "Generate text embeddings",
-  "Complete a chat prompt with an LLM",
-  // data / reference
-  "Enrich a company by domain",
-  "Find a person's public profile",
-  "Latest news headlines",
-  "Live sports scores",
-  "Look up NFT metadata",
-  "Look up WHOIS for a domain",
-  "Find a job listing",
-  // validation
-  "Validate an email address",
-  "Validate a VAT number",
-  "Check an IBAN bank account",
-  // finance / compute
-  "Convert USD to euros",
-  "Real-time stock quotes",
-  "Convert units & measurements",
-  // web / search
-  "Screenshot a webpage",
-  "Search the web with citations",
-  "Solve a CAPTCHA",
-  // comms
-  "Send a transactional SMS",
-  "Place an AI phone call",
-  "Send an email",
-  // maps / misc
-  "7-day weather forecast",
-  "Geocode an address",
-  "Translate text to Spanish",
-  "Extract data from a PDF",
-  "Find public holidays by country",
+  "Best restaurants in SF according to Reddit",
+  "Plan a trip to Tokyo — flights, hotel, and things to do",
+  "Research Apple stock before investing",
+  "Is this crypto token safe to buy or a rug?",
+  "Investigate a domain security posture — DNS, TLS, and threat intel",
+  "Create and publish a website — copy, images, domain, hosting",
+  "Find companies hiring for a role and pitch a decision-maker",
 ];
 
 export function Sidebar() {
