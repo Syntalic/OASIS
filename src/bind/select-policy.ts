@@ -313,6 +313,33 @@ export function resolveEndpointsForQuery(
 }
 
 /**
+ * Diversity for a multi-step workflow PLAN: pick the highest-ranked candidate for a step that does not
+ * repeat an endpoint OR a host already claimed by an earlier step — UNLESS the endpoint matches a source
+ * the user named. That exception keeps coherent same-provider source coverage ("according to yelp" → yelp
+ * business-search for places AND yelp business-reviews for reviews, both from one host) while still breaking
+ * up an INCIDENTAL mega-host sweep (a generic multi-tool winning three steps). Falls back to the top
+ * candidate when every option collides, so a step is never dropped. Pure; call once per step in order,
+ * threading the `usedIds`/`usedHosts` sets. See buildRecommendedWorkflows.
+ */
+export function pickDiverseStepEndpoint(
+  ranked: EndpointRecord[],
+  usedIds: Set<string>,
+  usedHosts: Set<string>,
+  sourceTokens: string[] = [],
+): EndpointRecord | undefined {
+  if (!ranked.length) return undefined;
+  const matchesSource = (e: EndpointRecord): boolean =>
+    sourceTokens.length > 0 &&
+    sourceTokens.some((s) => `${e.origin} ${e.path ?? ""}`.toLowerCase().includes(s));
+  // 1) fresh endpoint AND (fresh host OR it is the user's named source)
+  for (const e of ranked) if (!usedIds.has(e.id) && (!usedHosts.has(e.origin) || matchesSource(e))) return e;
+  // 2) at minimum, never repeat the literal same endpoint
+  for (const e of ranked) if (!usedIds.has(e.id)) return e;
+  // 3) unavoidable collision — keep the best
+  return ranked[0];
+}
+
+/**
  * Resolve ONE workflow step's intent to a live endpoint — the source-aware path for
  * mcp/buildRecommendedWorkflows. Differs from resolveEndpointsForQuery in three ways proven on a blind
  * battery (24%→96% recall, 0 false pins on no-source controls):

@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { searchHybridWithFallback } from "../dist/search/search-hybrid.js";
-import { resolveEndpointsForQuery, resolveWorkflowStep } from "../dist/bind/select-policy.js";
+import { resolveEndpointsForQuery, resolveWorkflowStep, pickDiverseStepEndpoint } from "../dist/bind/select-policy.js";
 import { buildPlatformGazetteer, extractSource } from "../dist/bind/source-extract.js";
 import { loadEndpointArm, endpointKey } from "../dist/bind/endpoint-arm.js";
 import { embedText } from "../dist/embed/embedder.js";
@@ -393,6 +393,7 @@ function workflowGate(w, score, query) {
 // named ("according to reddit"). Validated 24%→96% recall on a blind battery. Default ON; set
 // OASIS_WF_LEGACY_STEP=1 to revert to the legacy do-text/satisfies path for A/B.
 const WF_SOURCE_AWARE = process.env.OASIS_WF_LEGACY_STEP !== "1";
+const WF_DEDUP = process.env.OASIS_WF_NO_DEDUP !== "1"; // plan-level provider diversity (default on)
 const isPlatform = buildPlatformGazetteer(bundle.endpoints);
 
 // Match the query against contributed workflow recipes. Sharp recipes: goal-embedding cosine vs a
@@ -411,20 +412,26 @@ function buildRecommendedWorkflows(queryVec, query) {
   let total = 0;
   // Source-aware: extract the platform the user named (empty when none) once for all steps.
   const srcTokens = WF_SOURCE_AWARE ? extractSource(query, isPlatform) : [];
+  // Plan-level diversity: a host/endpoint isn't reused across steps unless it's the named source. Set
+  // OASIS_WF_NO_DEDUP=1 to disable.
+  const usedIds = new Set(), usedHosts = new Set();
   const steps = w.steps.map((s, i) => {
     const intent = capById.get(s.intent);
     // Resolve the step's intent to a live endpoint FROM THE USER'S QUERY. Source-aware path: full binding
     // + semantic lead + source bonus (so "…according to reddit" pins a reddit endpoint, not the do-text's
-    // example). Legacy path: rank the capped satisfies pool by the step's `do` text.
-    const e = intent
-      ? (WF_SOURCE_AWARE
-          ? resolveWorkflowStep(intent, bundle.endpoints, query, {
-              semanticOf: endpointArm.ready ? (ep) => endpointArm.cosineToEndpoint(queryVec, endpointKey(ep)) : undefined,
-              sourceTokens: srcTokens,
-              max: 1,
-            })[0]
-          : resolveEndpointsForQuery(intent, bundle.endpoints, s.do || intent.label, 1)[0])
-      : undefined;
+    // example), then dedup for plan diversity. Legacy path: rank the capped satisfies pool by the `do` text.
+    let e;
+    if (intent && WF_SOURCE_AWARE) {
+      const ranked = resolveWorkflowStep(intent, bundle.endpoints, query, {
+        semanticOf: endpointArm.ready ? (ep) => endpointArm.cosineToEndpoint(queryVec, endpointKey(ep)) : undefined,
+        sourceTokens: srcTokens,
+        max: WF_DEDUP ? 6 : 1,
+      });
+      e = WF_DEDUP ? pickDiverseStepEndpoint(ranked, usedIds, usedHosts, srcTokens) : ranked[0];
+    } else if (intent) {
+      e = resolveEndpointsForQuery(intent, bundle.endpoints, s.do || intent.label, 1)[0];
+    }
+    if (e) { usedIds.add(e.id); usedHosts.add(e.origin); }
     if (e?.payment?.price_usd != null) total += e.payment.price_usd;
     return {
       n: i + 1,
