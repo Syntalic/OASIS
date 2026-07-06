@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { searchHybridWithFallback } from "../dist/search/search-hybrid.js";
 import { resolveEndpointsForQuery, resolveWorkflowStep, pickDiverseStepEndpoint } from "../dist/bind/select-policy.js";
 import { buildPlatformGazetteer, extractSource } from "../dist/bind/source-extract.js";
+import { makeHealthGate } from "../dist/bind/health-gate.js";
 import { loadEndpointArm, endpointKey } from "../dist/bind/endpoint-arm.js";
 import { embedText } from "../dist/embed/embedder.js";
 import { relatedOptions } from "../dist/search/related.js";
@@ -396,6 +397,16 @@ const WF_SOURCE_AWARE = process.env.OASIS_WF_LEGACY_STEP !== "1";
 const WF_DEDUP = process.env.OASIS_WF_NO_DEDUP !== "1"; // plan-level provider diversity (default on)
 const isPlatform = buildPlatformGazetteer(bundle.endpoints);
 
+// Liveness / host-health gate: dist/endpoint-health.json (built by scripts/build-health.mjs — an unpaid
+// liveness probe rolled up per host). Drops endpoints on DEAD hosts + confirmed-dead routes so a dead
+// endpoint never surfaces. Fail-soft: no sidecar → no gating. Disable with OASIS_HEALTH_GATE=0.
+let HEALTH = null;
+try { HEALTH = JSON.parse(readFileSync(path.join(DIST, "endpoint-health.json"), "utf8")); } catch { /* no sidecar → gate off */ }
+const healthGate = makeHealthGate(HEALTH, { disabled: process.env.OASIS_HEALTH_GATE === "0" });
+const HEALTH_GATE = healthGate.enabled;
+const isDead = (ep) => healthGate.isDead(ep);
+if (HEALTH) console.error(`[oasis] health gate ${HEALTH_GATE ? "ON" : "off"} — ${HEALTH.stats?.hosts_dead} dead hosts, ${HEALTH.stats?.endpoints_on_dead_hosts} endpoints gated`);
+
 // Match the query against contributed workflow recipes. Sharp recipes: goal-embedding cosine vs a
 // (per-recipe or global) threshold. Compositional recipes: a hybrid conjunction (low embedding floor
 // AND required structural signals). For the top passing match, resolve each step's INTENT to its
@@ -422,14 +433,17 @@ function buildRecommendedWorkflows(queryVec, query) {
     // example), then dedup for plan diversity. Legacy path: rank the capped satisfies pool by the `do` text.
     let e;
     if (intent && WF_SOURCE_AWARE) {
-      const ranked = resolveWorkflowStep(intent, bundle.endpoints, query, {
+      let ranked = resolveWorkflowStep(intent, bundle.endpoints, query, {
         semanticOf: endpointArm.ready ? (ep) => endpointArm.cosineToEndpoint(queryVec, endpointKey(ep)) : undefined,
         sourceTokens: srcTokens,
-        max: WF_DEDUP ? 6 : 1,
+        max: (WF_DEDUP || HEALTH_GATE) ? 10 : 1,
       });
+      if (HEALTH_GATE) { const live = ranked.filter((x) => !isDead(x)); if (live.length) ranked = live; } // drop dead, keep best if all dead
       e = WF_DEDUP ? pickDiverseStepEndpoint(ranked, usedIds, usedHosts, srcTokens) : ranked[0];
     } else if (intent) {
-      e = resolveEndpointsForQuery(intent, bundle.endpoints, s.do || intent.label, 1)[0];
+      const legacy = resolveEndpointsForQuery(intent, bundle.endpoints, s.do || intent.label, HEALTH_GATE ? 10 : 1);
+      const live = HEALTH_GATE ? legacy.filter((x) => !isDead(x)) : legacy;
+      e = (live.length ? live : legacy)[0];
     }
     if (e) { usedIds.add(e.id); usedHosts.add(e.origin); }
     if (e?.payment?.price_usd != null) total += e.payment.price_usd;
@@ -484,7 +498,7 @@ async function oasisDiscover({ query, finding, entities, limit = 12, include_sch
     out.push({ method, url: `${origin}${path}`, summary, price_usd, rails, via, endpoint_id: id, ...(refs ?? {}) });
   };
   for (const h of hits) {
-    if (h.kind === "endpoint") add(h.method, h.origin, h.path, h.label, h.price_usd, undefined, "match", schemaRefsOf(h), h.endpoint_id);
+    if (h.kind === "endpoint" && !(HEALTH_GATE && isDead(h))) add(h.method, h.origin, h.path, h.label, h.price_usd, undefined, "match", schemaRefsOf(h), h.endpoint_id);
   }
   // Concentrate on the TOP-routed intent — return many of ITS providers — and pull only
   // a couple from each subsequent intent as a fallback (mainly when the top is thin).
@@ -501,8 +515,10 @@ async function oasisDiscover({ query, finding, entities, limit = 12, include_sch
     if (!intent) return;
     // Semantic rescue applies to the concentrated top bucket only — where the rank-1 gap lives.
     const pool = resolveEndpointsForQuery(intent, bundle.endpoints, query, i === 0 ? limit * 3 : 4, i === 0 ? semanticOf : undefined);
-    const addEp = (e) =>
+    const addEp = (e) => {
+      if (HEALTH_GATE && isDead(e)) return;
       add(e.method, e.origin, e.path, e.summary, e.payment?.price_usd, (e.payment?.rails ?? []).map((r) => r.protocol), h.capability_id, schemaRefsOf(e), e.id);
+    };
     if (i === 0) {
       const seenHost = new Set();
       for (const e of pool) { if (out.length >= limit) break; const ho = hostOf(e.origin); if (seenHost.has(ho)) continue; seenHost.add(ho); addEp(e); }
@@ -528,8 +544,8 @@ async function oasisDiscover({ query, finding, entities, limit = 12, include_sch
     const sh = new Set();
     const push = (e) => { const ho = hostOf(e.url); if (sh.has(ho) || list.some((x) => x.url === e.url)) return; sh.add(ho); list.push(e); };
     const armEp = (a) => ({ method: a.ep.method, url: `${a.ep.origin}${a.ep.path}`, summary: a.ep.summary, price_usd: a.ep.payment?.price_usd, rails: (a.ep.payment?.rails ?? []).map((r) => r.protocol), via: "arm", endpoint_id: a.ep.id, ...schemaRefsOf(a.ep) });
-    for (const a of armHits) { if (list.length >= limit) break; push(armEp(a)); }
-    for (const a of armHits) { if (list.length >= limit) break; const e = armEp(a); if (!list.some((x) => x.url === e.url)) list.push(e); } // same-host backfill if short
+    for (const a of armHits) { if (list.length >= limit) break; if (HEALTH_GATE && isDead(a.ep)) continue; push(armEp(a)); }
+    for (const a of armHits) { if (list.length >= limit) break; if (HEALTH_GATE && isDead(a.ep)) continue; const e = armEp(a); if (!list.some((x) => x.url === e.url)) list.push(e); } // same-host backfill if short
     endpoints = list.slice(0, limit);
     // Seed next_steps from the GUARDED top intent (default-on): when the arm flatly rejects hybrid's #1
     // (a homonym), reorder so the cluster grows from the right capability. Reuses these arm hits.
