@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { searchHybridWithFallback } from "../dist/search/search-hybrid.js";
 import { resolveEndpointsForQuery, resolveWorkflowStep, pickDiverseStepEndpoint } from "../dist/bind/select-policy.js";
 import { buildPlatformGazetteer, extractSource } from "../dist/bind/source-extract.js";
+import { makeHealthGate } from "../dist/bind/health-gate.js";
 import { loadEndpointArm, endpointKey } from "../dist/bind/endpoint-arm.js";
 import { embedText } from "../dist/embed/embedder.js";
 import { relatedOptions } from "../dist/search/related.js";
@@ -401,9 +402,9 @@ const isPlatform = buildPlatformGazetteer(bundle.endpoints);
 // endpoint never surfaces. Fail-soft: no sidecar → no gating. Disable with OASIS_HEALTH_GATE=0.
 let HEALTH = null;
 try { HEALTH = JSON.parse(readFileSync(path.join(DIST, "endpoint-health.json"), "utf8")); } catch { /* no sidecar → gate off */ }
-const HEALTH_GATE = !!HEALTH && process.env.OASIS_HEALTH_GATE !== "0";
-const _deadIds = new Set(HEALTH?.dead_endpoint_ids ?? []);
-const isDead = (ep) => HEALTH_GATE && (_deadIds.has(ep.id ?? ep.endpoint_id) || HEALTH.hosts?.[ep.origin]?.verdict === "dead");
+const healthGate = makeHealthGate(HEALTH, { disabled: process.env.OASIS_HEALTH_GATE === "0" });
+const HEALTH_GATE = healthGate.enabled;
+const isDead = (ep) => healthGate.isDead(ep);
 if (HEALTH) console.error(`[oasis] health gate ${HEALTH_GATE ? "ON" : "off"} — ${HEALTH.stats?.hosts_dead} dead hosts, ${HEALTH.stats?.endpoints_on_dead_hosts} endpoints gated`);
 
 // Match the query against contributed workflow recipes. Sharp recipes: goal-embedding cosine vs a
