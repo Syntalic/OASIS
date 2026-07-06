@@ -53,6 +53,7 @@ pnpm run build                 # tsc → ingest (crawl) → enrich-facets (bind 
 pnpm run embed                 # LanceDB curated-capability vectors
 pnpm run build:endpoint-index  # quantized int8 endpoint-arm index
 pnpm run build:workflows       # dist/workflows.json (recipes + goal embeddings for recommended_workflows)
+pnpm run build:health          # dist/endpoint-health.json — unpaid liveness probe → per-host verdicts; server drops dead hosts (OASIS_HEALTH_GATE=0 to disable). Free (no key). Refresh periodically — liveness decays.
 
 # 2. (optional) validate before shipping — CI gate + your eval harness
 
