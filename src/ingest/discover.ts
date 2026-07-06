@@ -208,10 +208,25 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
   const origins = [...originSource.keys()].slice(0, opts.enrichLimit);
   console.error(`ingest: ${originSource.size} unique origins, ${inlineByKey.size} inline records; enriching ${origins.length} (conc ${conc}) ...`);
 
+  // Liveness skip: origins the health sidecar (dist/endpoint-health.json, built by scripts/build-health.mjs)
+  // marks "dead" are NOT re-fetched — the openapi.json hop hangs the 10s timeout on them (measured ~5.25s
+  // avg per dead origin; 39% time out fully). They fall through to carry-forward below (TTL-bounded), so
+  // they're not lost and rejoin enrichment on their next live probe. Fail-soft: no sidecar → no skip.
+  // Disable with OASIS_ENRICH_SKIP_DEAD=0.
+  const deadOrigins = new Set<string>();
+  if (process.env.OASIS_ENRICH_SKIP_DEAD !== "0") {
+    try {
+      const health = JSON.parse(await readFile(path.join(opts.outputDir, "endpoint-health.json"), "utf8")) as { hosts?: Record<string, { verdict?: string } | undefined> };
+      for (const [h, r] of Object.entries(health.hosts ?? {})) if (r?.verdict === "dead") deadOrigins.add(h);
+      if (deadOrigins.size) console.error(`  liveness skip: ${deadOrigins.size} dead origins won't be re-fetched (carry-forward covers them)`);
+    } catch { /* no sidecar → no skip */ }
+  }
+
   // --- Enrichment: hop /openapi.json per origin ---
   const enrichedByOrigin = new Map<string, EndpointRecord[]>();
-  let i = 0, ok = 0;
+  let i = 0, ok = 0, skipped = 0;
   const enrichOne = async (origin: string): Promise<void> => {
+    if (deadOrigins.has(origin)) { skipped++; return; } // liveness-dead → skip the wasted fetch; carry-forward covers it
     try {
       const res = await safeFetch(`${origin}/openapi.json`, { signal: AbortSignal.timeout(10000), headers: { accept: "application/json" } });
       if (!res.ok) return;
@@ -229,7 +244,7 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
     }
   };
   await Promise.all(Array.from({ length: conc }, worker));
-  console.error(`  enriched ${ok} origins`);
+  console.error(`  enriched ${ok} origins${skipped ? `, skipped ${skipped} dead (liveness)` : ""}`);
 
   // --- Merge: openapi enrichment overrides registry inline per origin; tag discovery source ---
   let merged: EndpointRecord[] = [];
@@ -249,18 +264,26 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
   // probe) so genuinely-gone origins still age out. Disable with INGEST_NO_CARRY_FORWARD=1. ---
   if (prior && process.env.INGEST_NO_CARRY_FORWARD !== "1") {
     const staleDays = Number(process.env.INGEST_STALE_DAYS) || 30;
+    // Liveness-confirmed-dead origins age out on a SHORTER window than merely-didn't-reply ones: a probe
+    // blip is transient (30d grace), but a host the health sidecar has repeatedly marked dead is probably
+    // gone, so reclaim its index footprint sooner. Still recoverable — a host that comes back inside the
+    // window is re-probed live (build:health flips its verdict) before it's evicted. Tunable.
+    const staleDaysDead = Number(process.env.INGEST_STALE_DAYS_DEAD) || 7;
     const ttlMs = staleDays * 86_400_000;
+    const ttlDeadMs = staleDaysDead * 86_400_000;
     const nowMs = Date.parse(built);
     const have = new Set(merged.map((e) => e.origin));
-    let carried = 0, evicted = 0;
+    let carried = 0, evicted = 0, evictedDead = 0;
     for (const e of prior.endpoints ?? []) {
       if (have.has(e.origin)) continue; // origin already covered by a fresh probe / inline record
       const seen = Date.parse(e.built_at ?? "");
-      if (Number.isFinite(seen) && Number.isFinite(nowMs) && nowMs - seen > ttlMs) { evicted++; continue; }
+      const dead = deadOrigins.has(e.origin);
+      const ttl = dead ? ttlDeadMs : ttlMs;
+      if (Number.isFinite(seen) && Number.isFinite(nowMs) && nowMs - seen > ttl) { evicted++; if (dead) evictedDead++; continue; }
       merged.push(e);
       carried++;
     }
-    console.error(`  carry-forward: +${carried} prior endpoints re-added (origins that didn't re-probe this run); evicted ${evicted} stale > ${staleDays}d`);
+    console.error(`  carry-forward: +${carried} re-added; evicted ${evicted} stale (${evictedDead} liveness-dead > ${staleDaysDead}d, rest > ${staleDays}d)`);
   }
 
   // --- Live payment verification (crawl-path only; NEVER the snapshot rebuild) ---
