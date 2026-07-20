@@ -9,13 +9,16 @@ Built with **Next.js (App Router)**, **React 19**, **@xyflow/react**, **shadcn/u
 follows [Repree](https://github.com/mitate-gengaku/Repree); the layout strategy is adapted
 from [OpenMetadata's OntologyExplorer](https://github.com/open-metadata/OpenMetadata).
 
-## Two modes
+## Modes & pages
 
 - **Explore** — the whole ontology. Domains are glowing hubs; capabilities cluster under
   them; the entity-flow layer shows how data passes between capabilities. Filter by domain.
 - **Ask** — type a task ("narrate an article as audio"); a local scorer ranks the matching
   capabilities and the graph traces the question → capabilities → shared entities → real
   paid endpoints.
+- **Coverage** (`/coverage`) — browse **services** and **wallets** (catalog map). Endpoints
+  appear on drill-down. **Graph view** is a button on a selected wallet/service and shows
+  only that neighborhood — not a global graph tab. Data from `pnpm data` → `catalog.json`.
 
 Click any node to **trace its connections** (everything connected lights up, the rest fades)
 and open a detail panel. The view pans the selection clear of the panel.

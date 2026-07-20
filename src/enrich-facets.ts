@@ -19,6 +19,7 @@ import { deriveEndpointFacets } from "./bind/facets.js";
 import { dedupeMirrors } from "./bind/dedup-endpoints.js";
 import { bindEndpointsByEmbedding } from "./embed/bind-endpoints.js";
 import { gradeEndpoint } from "./bind/quality-gate.js";
+import { hydrateEntityInputTokens } from "./bind/score-endpoint.js";
 import { buildEntityFlow } from "./entity/entity-flow.js";
 import { buildEntityIndexFromVocab, loadEntityVocabAndSubtypes } from "./entity/entity-index.js";
 import { materializeCuratedIntents } from "./bind/materialize-satisfies.js";
@@ -113,6 +114,10 @@ export async function enrichFacets(distDir: string): Promise<EnrichResult> {
   console.error(
     `  hybrid binding: ${bindResult.bound}/${endpoints.length} endpoints → ${bindResult.perIntent.size} curated intents (embedded ${bindResult.embedded}, reused ${bindResult.reused}); ${bindResult.promotedSparse} promoted by strong-sparse; gated ${bindResult.gatedMeta} meta-files + ${bindResult.gatedSparse} below sparse-vocab floor + ${bindResult.gatedMargin} orphaned by margin`,
   );
+
+  // Hydrate entity-input tokens from vocab properties[] so ranking uses field aliases.
+  const { vocab: entityVocabForTokens } = await loadEntityVocabAndSubtypes();
+  hydrateEntityInputTokens(entityVocabForTokens.entities);
 
   // Authored endpoint→capability bindings override the semantic binder.
   const appliedBindings = applyBindings(endpoints, await loadBindings());

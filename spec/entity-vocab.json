@@ -2,10 +2,18 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/Syntalic/OASIS/spec/entity-vocab.json",
   "title": "EntityVocab",
-  "description": "Closed controlled vocabulary of typed nouns referenced by intent consumes/produces ports. kind ∈ identity|observation|abstract. bridge_eligible marks v1 lateral seeds (identity only).",
-  "spec_version": "0.3.0",
+  "description": "Closed controlled vocabulary of typed nouns referenced by intent consumes/produces ports. kind ∈ identity|observation|abstract. bridge_eligible marks v1 lateral seeds (identity only). Optional properties[] give high-traffic identities field-level structure for scoring + OpenAPI field maps.",
+  "spec_version": "0.4.0",
   "entities": {
-    "Product": { "role": "identifier", "kind": "identity", "schema_org": ["Product"] },
+    "Product": {
+      "role": "identifier",
+      "kind": "identity",
+      "schema_org": ["Product"],
+      "properties": [
+        { "name": "sku", "type": "string", "is_identifier": true, "aliases": ["product_uid", "asin", "upc", "gtin", "item"] },
+        { "name": "name", "type": "string", "aliases": ["product", "title"] }
+      ]
+    },
     "ProductCategory": { "role": "identifier", "kind": "identity", "bridge_eligible": true },
     "PriceSignal": {
       "role": "payload",
@@ -16,7 +24,14 @@
     },
     "Money": { "role": "constraint", "kind": "identity", "schema_org": ["MonetaryAmount"] },
     "Currency": { "role": "identifier", "kind": "identity" },
-    "Query": { "role": "identifier", "kind": "identity", "bridge_eligible": false },
+    "Query": {
+      "role": "identifier",
+      "kind": "identity",
+      "bridge_eligible": false,
+      "properties": [
+        { "name": "text", "type": "string", "is_identifier": true, "aliases": ["query", "q", "search", "keyword", "term", "prompt"] }
+      ]
+    },
     "Topic": { "role": "identifier", "kind": "identity", "bridge_eligible": false },
     "Answer": {
       "role": "payload",
@@ -26,7 +41,14 @@
     },
     "SearchResults": { "role": "payload", "kind": "observation" },
     "CitedAnswer": { "role": "payload", "kind": "observation" },
-    "Webpage": { "role": "identifier", "kind": "identity", "schema_org": ["WebPage"] },
+    "Webpage": {
+      "role": "identifier",
+      "kind": "identity",
+      "schema_org": ["WebPage"],
+      "properties": [
+        { "name": "url", "type": "string", "is_identifier": true, "aliases": ["page_url", "link", "website", "uri"] }
+      ]
+    },
     "WebContent": { "role": "payload", "kind": "observation", "schema_org": ["CreativeWork"] },
     "Document": { "role": "identifier", "kind": "identity", "schema_org": ["DigitalDocument"] },
     "StructuredRecord": { "role": "payload", "kind": "observation", "bridge_eligible": false, "deprecated": true },
@@ -34,7 +56,15 @@
     "AudioClip": { "role": "payload", "kind": "observation", "schema_org": ["AudioObject"] },
     "Text": { "role": "payload", "kind": "observation", "schema_org": ["Text"] },
     "Embedding": { "role": "payload", "kind": "observation" },
-    "Contact": { "role": "identifier", "kind": "identity", "absorbs": ["EmailAddress", "PhoneNumber"] },
+    "Contact": {
+      "role": "identifier",
+      "kind": "identity",
+      "absorbs": ["EmailAddress", "PhoneNumber"],
+      "properties": [
+        { "name": "email", "type": "string", "aliases": ["to", "recipient"] },
+        { "name": "phone", "type": "string", "aliases": ["number", "contact"] }
+      ]
+    },
     "Message": {
       "role": "payload",
       "kind": "observation",
@@ -42,10 +72,43 @@
     },
     "Mailbox": { "role": "identifier", "kind": "identity" },
     "Location": { "role": "identifier", "kind": "identity", "deprecated": true, "absorbed_by": "Place" },
-    "Place": { "role": "identifier", "kind": "identity", "bridge_eligible": true, "schema_org": ["Place", "LocalBusiness"], "absorbs": ["Location", "PostalAddress", "GeoCoordinates", "City", "Region"] },
-    "Company": { "role": "identifier", "kind": "identity", "bridge_eligible": true, "schema_org": ["Organization"], "absorbs": ["Brand"] },
+    "Place": {
+      "role": "identifier",
+      "kind": "identity",
+      "bridge_eligible": true,
+      "schema_org": ["Place", "LocalBusiness"],
+      "absorbs": ["Location", "PostalAddress", "GeoCoordinates", "City", "Region"],
+      "properties": [
+        { "name": "name", "type": "string", "aliases": ["place", "city", "location"] },
+        { "name": "latitude", "type": "number", "aliases": ["lat"] },
+        { "name": "longitude", "type": "number", "aliases": ["lon", "lng"] },
+        { "name": "address", "type": "string" }
+      ]
+    },
+    "Company": {
+      "role": "identifier",
+      "kind": "identity",
+      "bridge_eligible": true,
+      "schema_org": ["Organization"],
+      "absorbs": ["Brand"],
+      "properties": [
+        { "name": "domain", "type": "string", "is_identifier": true, "aliases": ["hostname", "website"] },
+        { "name": "name", "type": "string", "aliases": ["company", "organization", "org", "business", "legal_name"] },
+        { "name": "lei", "type": "string" }
+      ]
+    },
     "Brand": { "role": "identifier", "kind": "identity", "bridge_eligible": false },
-    "Person": { "role": "identifier", "kind": "identity", "bridge_eligible": true, "schema_org": ["Person"] },
+    "Person": {
+      "role": "identifier",
+      "kind": "identity",
+      "bridge_eligible": true,
+      "schema_org": ["Person"],
+      "properties": [
+        { "name": "full_name", "type": "string", "is_identifier": true, "aliases": ["name", "person", "people", "fullname"] },
+        { "name": "email", "type": "string" },
+        { "name": "linkedin_url", "type": "string", "aliases": ["profile"] }
+      ]
+    },
     "SocialProfile": { "role": "payload", "kind": "observation", "bridge_eligible": false },
     "MarketQuote": {
       "role": "payload",
@@ -53,13 +116,49 @@
       "bridge_eligible": false,
       "absorbs": ["StockQuote", "CryptoPrice"]
     },
-    "CryptoAsset": { "role": "identifier", "kind": "identity", "bridge_eligible": false },
-    "WalletAddress": { "role": "identifier", "kind": "identity", "bridge_eligible": false },
+    "CryptoAsset": {
+      "role": "identifier",
+      "kind": "identity",
+      "bridge_eligible": false,
+      "properties": [
+        { "name": "symbol", "type": "string", "is_identifier": true, "aliases": ["coin", "token", "asset", "currency"] },
+        { "name": "contract", "type": "string", "aliases": ["address", "contract_address"] }
+      ]
+    },
+    "WalletAddress": {
+      "role": "identifier",
+      "kind": "identity",
+      "bridge_eligible": false,
+      "properties": [
+        { "name": "address", "type": "string", "is_identifier": true, "aliases": ["wallet", "wallet_address", "account", "holder"] }
+      ]
+    },
     "BlockchainNetwork": { "role": "identifier", "kind": "identity", "bridge_eligible": false },
-    "Ticker": { "role": "identifier", "kind": "identity", "bridge_eligible": false },
-    "Domain": { "role": "identifier", "kind": "identity", "bridge_eligible": true },
+    "Ticker": {
+      "role": "identifier",
+      "kind": "identity",
+      "bridge_eligible": false,
+      "properties": [
+        { "name": "symbol", "type": "string", "is_identifier": true, "aliases": ["ticker", "stock", "equity"] }
+      ]
+    },
+    "Domain": {
+      "role": "identifier",
+      "kind": "identity",
+      "bridge_eligible": true,
+      "properties": [
+        { "name": "hostname", "type": "string", "is_identifier": true, "aliases": ["domain", "host", "fqdn"] }
+      ]
+    },
     "DnsRecord": { "role": "payload", "kind": "observation", "bridge_eligible": false },
-    "IpAddress": { "role": "identifier", "kind": "identity", "bridge_eligible": false },
+    "IpAddress": {
+      "role": "identifier",
+      "kind": "identity",
+      "bridge_eligible": false,
+      "properties": [
+        { "name": "ip", "type": "string", "is_identifier": true, "aliases": ["ip_address", "ipaddress", "addr"] }
+      ]
+    },
     "PostalAddress": { "role": "identifier", "kind": "identity", "deprecated": true, "absorbed_by": "Place" },
     "GeoCoordinates": { "role": "payload", "kind": "identity", "deprecated": true, "absorbed_by": "Place" },
     "GovernmentService": { "role": "payload", "kind": "observation", "bridge_eligible": false },

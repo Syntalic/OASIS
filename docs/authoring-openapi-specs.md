@@ -86,6 +86,19 @@ least a `200` response schema. Typed I/O raises your **completeness score** (a r
 and is what lets agents chain your endpoint into a workflow. Name-only inputs are weak; no
 schema is weaker.
 
+**Inclusion gate (required core + soft completeness):** OASIS drops operations that fail the
+**required core** (not “any 6 random fields”):
+
+1. **Doc core** — a non-stub `summary` of ≥32 characters **or** a `description` of ≥32 characters,
+   plus callability (`inputs[]`, path params, or a captured request/response schema).
+2. **Payment core (paid ops only)** — at least one of `rails`, `x-payment-info.offers`, or a
+   parseable `price_usd` (including dynamic `price.min` as a floor). Free companion routes
+   (list/activate/status) do **not** need payment fields; they only need the doc core.
+3. **Soft floor** — still need a minimum flesh-field count so empty shells stay out.
+
+Completeness (0–13 flesh fields: summary, description, operationId, tags, inputs, price, offers,
+rails, currency, service categories/docs, has402, provider title) remains a **ranking** signal.
+
 ### 8. Fill the cheap signals: `operationId`, `tags`, `info.description`
 Each is a small, free completeness gain and adds vocabulary the binder can use. There's no
 downside to having them.

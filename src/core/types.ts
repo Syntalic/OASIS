@@ -29,6 +29,15 @@ export interface PaymentOffer {
   description?: string;
 }
 
+/** Merchant wallet declared in OpenAPI (not live-verified). */
+export interface DeclaredPayTo {
+  payTo: string;
+  network?: string;
+  asset?: string;
+  /** Where it was found, e.g. "x-faremeter-assets.recipient", "x-payment-info.payTo". */
+  source?: string;
+}
+
 export interface PaymentInfo {
   /** Derived convenience: cheapest charge offer expressed in USD. */
   price_usd?: number;
@@ -39,6 +48,12 @@ export interface PaymentInfo {
   /** Currency of the offer used to derive price_usd. */
   currency?: string;
   live_challenge?: LiveChallenge[];
+  /**
+   * Merchant wallets scraped from OpenAPI extensions (recipient / payTo / pay_to /
+   * faremeter assets, nested x-402, …). Used for usage ranking when live_challenge
+   * is missing; never confuses token contracts with merchants.
+   */
+  declared_pay_tos?: DeclaredPayTo[];
 }
 
 /** A live payment requirement captured from an unpaid probe's 402 (advisory — re-fetch before paying). */
@@ -124,6 +139,31 @@ export interface Port {
   cardinality?: "one" | "many";
 }
 
+/**
+ * Optional field on a vocab entity (spec/entity-vocab.json properties[]).
+ * Progressive: high-traffic identities get structure for scoring + field maps.
+ */
+export interface EntityProperty {
+  name: string;
+  type?: "string" | "number" | "integer" | "boolean" | "enum" | "date" | "datetime";
+  is_identifier?: boolean;
+  aliases?: string[];
+  description?: string;
+  values?: string[];
+}
+
+/**
+ * Curated entity-property → HTTP request field mapping (ontology/bindings field_maps).
+ * Lets agents prefill bodies from typed entities without guessing OpenAPI param names.
+ */
+export interface FieldMap {
+  entity: string;
+  property: string;
+  in: "path" | "query" | "header" | "body";
+  /** Parameter name or JSON path relative to that location (e.g. "symbol", "$.domain"). */
+  path: string;
+}
+
 /** Typed intent↔intent edge. */
 export interface CapabilityLink {
   type:
@@ -163,6 +203,40 @@ export interface ServiceInfo {
   };
 }
 
+/**
+ * On-chain demand snapshot for ranking (origin/payTo-level, shared by endpoints).
+ *
+ * Two enrichment stages (see enrich-usage.ts):
+ *   • stage "activity" — minimal free probe: any inbound transfer / signature at all?
+ *   • stage "volume"   — deeper windowed volume/buyers for ranking (later / Dune)
+ *
+ * Wallets are almost always **service-level** (one payTo shared by many endpoints of
+ * an origin). Endpoint.usage is that wallet snapshot stamped onto every endpoint
+ * that advertises it — de facto service demand, not per-path revenue.
+ */
+export interface UsageSnapshot {
+  /**
+   * Stage-1: false = wallet has no observed on-chain activity (dead for ranking).
+   * true = at least one transfer/signature seen. Undefined if never probed.
+   */
+  active?: boolean;
+  /** Which enrich pass last wrote this snapshot. */
+  stage?: "activity" | "volume";
+  /** Estimated inbound stablecoin volume in USD (stage "volume"). */
+  volume_usd?: number;
+  /** Transfer / payment event count (stage activity may set 0 or ≥1 only). */
+  transactions?: number;
+  /** Distinct payer addresses (stage "volume"). */
+  unique_buyers?: number;
+  /** Window length in days the counts cover (undefined = unbounded sample). */
+  window_days?: number;
+  observed_at: string;
+  /** Free public source(s) used. */
+  source: "base-blockscout" | "solana-rpc" | "mixed" | "bazaar" | "dune";
+  /** Merchant wallets that contributed to this snapshot. */
+  pay_tos?: string[];
+}
+
 export interface EndpointRecord {
   id: string;
   origin: string;
@@ -180,6 +254,11 @@ export interface EndpointRecord {
   facets?: EndpointFacets;
   payment: PaymentInfo;
   service?: ServiceInfo;
+  /**
+   * On-chain usage / revenue proxy from merchant payTo wallets (post-verify enrich).
+   * Origin-level snapshot; ranking uses log-compressed volume as a task-fit-gated term.
+   */
+  usage?: UsageSnapshot;
   /** Declared responses presence; draft-payment-discovery-00 requires 402 on payable ops. */
   responses?: { has200?: boolean; has402?: boolean };
   /** Payable operation lacking a requestBody schema (the spec's "schema-missing"). */
@@ -208,6 +287,11 @@ export interface EndpointRecord {
    *  signal. A host bound to 50+ intents (2s.io, agentutility) is a generic multi-tool whose
    *  broad endpoints flood specialist buckets; used to down-weight it so specialists win rank-1. */
   host_breadth?: number;
+  /**
+   * Curated entity-property → request field maps from ontology/bindings.
+   * Materialized by applyBindings; optional — most endpoints have none.
+   */
+  field_maps?: FieldMap[];
   built_at: string;
 }
 

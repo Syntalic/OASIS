@@ -27,15 +27,26 @@ const BUILT = '2026-06-01T00:00:00.000Z';
 const NOW_MS = Date.parse(BUILT);
 
 function makeEp(o: Partial<EndpointRecord> & { id: string }): EndpointRecord {
+  // Must clear the OpenAPI structural quality bar (MIN_FIELDS=6) so free 402 probes run.
+  // Merge `payment` so partial overrides don't wipe price_usd/rails and re-fail the thin gate.
+  const { payment: payOver, ...rest } = o;
   return {
     origin: 'https://api.example.com',
     method: 'GET' as HttpMethod,
     path: '/x',
-    summary: 'test',
-    payment: { paid: true, rails: [{ protocol: 'x402' }] },
+    summary: 'Test paid endpoint for agents',
+    description: 'A longer description so content-free + thin gates do not skip the probe.',
+    inputs: ['q'],
+    payment: {
+      paid: true,
+      price_usd: 0.01,
+      rails: [{ protocol: 'x402' as const }],
+      ...payOver,
+    },
+    responses: { has200: true, has402: true },
     search_text: '',
     built_at: BUILT,
-    ...o,
+    ...rest,
   } as EndpointRecord;
 }
 

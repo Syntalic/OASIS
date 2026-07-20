@@ -4,6 +4,9 @@
 # binder for the listed endpoints — the same mechanism a maintainer uses to correct a heuristic
 # mis-bind, and the core of a contributed service's curation. Validate your copy before a PR:
 #   pnpm exec capindex validate-binding ontology/bindings/<provider>.yaml
+#
+# Optional field_maps: entity-property → HTTP request field. Uses entity-vocab properties[]
+# (e.g. Ticker.symbol). Materialized onto the endpoint at enrich time for agent prefill + ranking.
 provider: 2s.io (example)
 note: Example — asserts an endpoint's capability authoritatively. capabilities[] is the complete set the endpoint satisfies and replaces the heuristic binding for it.
 bindings:
@@ -12,3 +15,8 @@ bindings:
     path: /api/stocks/quote
     capabilities:
       - finance.stock_quote
+    field_maps:
+      - entity: Ticker
+        property: symbol
+        in: query
+        path: symbol

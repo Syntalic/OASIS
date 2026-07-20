@@ -29,6 +29,35 @@
           "minItems": 1,
           "description": "The complete, authoritative set of capability ids this endpoint satisfies (replaces the heuristic binding for this endpoint).",
           "items": { "type": "string", "pattern": "^[a-z][a-z0-9._-]*$" }
+        },
+        "field_maps": {
+          "type": "array",
+          "description": "Optional entity-property → HTTP request field maps for this endpoint. Enables agent prefill and stronger ranking when present.",
+          "items": { "$ref": "#/$defs/FieldMap" }
+        }
+      }
+    },
+    "FieldMap": {
+      "type": "object",
+      "required": ["entity", "property", "in", "path"],
+      "additionalProperties": false,
+      "properties": {
+        "entity": {
+          "type": "string",
+          "description": "Entity vocab name (e.g. Ticker, Company)."
+        },
+        "property": {
+          "type": "string",
+          "description": "Property name on that entity (must exist when the entity declares properties[])."
+        },
+        "in": {
+          "enum": ["path", "query", "header", "body"],
+          "description": "HTTP location of the field."
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Parameter name or JSON path relative to that location (e.g. symbol, $.company.domain)."
         }
       }
     }

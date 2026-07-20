@@ -94,6 +94,64 @@ describe("openapi-parser extractInputs", () => {
   });
 });
 
+describe("openapi-parser declared merchant wallets", () => {
+  it("extracts faremeter + mpp.recipient (Syntalic-style) and skips USDC token contracts", () => {
+    const merchant = "0xe2e662cF219025AFC0C9Bf850b6a2B0a0b5517fe";
+    const solMerchant = "2hYY7wHhXsoWnskQRzYFUNH7YboXNMEqbGnAFHpRuB2W";
+    const usdc = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+    const doc = {
+      openapi: "3.0.0",
+      info: { title: "Syntalic-like" },
+      "x-faremeter-assets": {
+        "base-usdc": { chain: "base", token: usdc, recipient: merchant },
+        "solana-usdc": { chain: "solana", recipient: solMerchant },
+      },
+      paths: {
+        "/v1/shopper/best-price": {
+          get: {
+            summary: "Best price",
+            "x-payment-info": {
+              price: { mode: "fixed", currency: "USD", amount: "0.01" },
+              protocols: [{ x402: {} }, { mpp: { method: "tempo", recipient: merchant } }],
+            },
+          },
+        },
+      },
+    };
+    const { records } = parseOpenApi(doc as any, {
+      origin: "https://api.syntalic.com",
+      builtAt: BUILT_AT,
+    });
+    assert.equal(records.length, 1);
+    const d = records[0]!.payment.declared_pay_tos ?? [];
+    const addrs = new Set(d.map((x) => x.payTo.toLowerCase()));
+    assert.ok(addrs.has(merchant.toLowerCase()), `missing evm merchant: ${[...addrs]}`);
+    assert.ok(addrs.has(solMerchant.toLowerCase()), `missing sol merchant: ${[...addrs]}`);
+    assert.ok(!addrs.has(usdc.toLowerCase()), "USDC token must not be a merchant");
+  });
+
+  it("extracts telemost-style x-402.networks[].payTo", () => {
+    const pay = "0xf99B281010C5e6CBcF486d7ef108B315Be7cE0e9";
+    const doc = {
+      openapi: "3.0.0",
+      paths: {
+        "/v1/data/search": {
+          get: {
+            summary: "Search",
+            "x-payment-info": { price: { amount: "0.01", currency: "USD" } },
+            "x-402": {
+              networks: [{ network: "base", payTo: pay }],
+            },
+          },
+        },
+      },
+    };
+    const { records } = parseOpenApi(doc as any, { origin: "https://api.telemost.io", builtAt: BUILT_AT });
+    const d = records[0]!.payment.declared_pay_tos ?? [];
+    assert.ok(d.some((x) => x.payTo.toLowerCase() === pay.toLowerCase()));
+  });
+});
+
 describe("openapi-parser schema capture", () => {
   it("captures location-keyed input + output schema refs", () => {
     const doc = {

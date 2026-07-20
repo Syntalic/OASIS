@@ -1,9 +1,19 @@
-import type { EndpointRecord, Port } from "../core/types.js";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import type { EndpointRecord, FieldMap, Port } from "../core/types.js";
+import {
+  BASE_ENTITY_INPUT_TOKENS,
+  buildEntityInputTokens,
+  type EntityVocabDef,
+} from "../entity/entity-tokens.js";
 
 const GENERIC_SUMMARY =
   /^(authenticate|prove action|delete a memory|get mcp|api info|free health|x402 defi)/i;
 const GENERIC_PATH =
   /\/(health|authenticate|auth|prove|memory|mcp-tools|api-info|defi-nontokenized)(\/|$)/i;
+
+const PACKAGE_ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..");
 
 export function isGenericEndpoint(ep: EndpointRecord): boolean {
   if (GENERIC_SUMMARY.test(ep.summary)) return true;
@@ -21,45 +31,82 @@ export interface IntentPorts {
   produces?: Port[];
 }
 
-/**
- * Maps a vocab entity (spec/entity-vocab.json) to the input-parameter tokens
- * that corroborate it. Lowercase, matched against endpoint `inputs[]` tokens.
- * Vendor-neutral: keyed on the typed noun, never on origin/provider.
- */
-const ENTITY_INPUT_TOKENS: Record<string, string[]> = {
-  Product: ["product", "product_uid", "sku", "asin", "upc", "gtin", "item", "q"],
-  ProductCategory: ["category", "department", "product_category"],
-  Money: ["price", "budget", "max_price", "amount", "amount_usd"],
-  Currency: ["currency", "vs_currency", "base", "quote", "fiat"],
-  Query: ["query", "q", "search", "keyword", "term", "prompt"],
-  Webpage: ["url", "page_url", "link", "website", "uri"],
-  Document: ["document", "documentnumber", "file", "pdf", "doc", "documenttype"],
-  Image: ["image", "image_url", "imageurl", "base64", "photo", "img"],
-  AudioClip: ["audio", "audio_url", "voice", "speech", "sound"],
-  Text: ["text", "input", "content", "transcript", "body"],
-  Contact: ["to", "email", "phone", "recipient", "contact", "number"],
-  Mailbox: ["inbox", "mailbox", "from"],
-  Location: ["location", "lat", "lon", "lng", "latitude", "longitude", "coordinates", "city", "place"],
-  Company: ["company", "organization", "org", "business", "domain"],
-  Person: ["person", "name", "people", "fullname", "full_name"],
-  CryptoAsset: ["coin", "token", "asset", "symbol", "currency"],
-  WalletAddress: ["address", "wallet", "wallet_address", "account", "holder"],
-  BlockchainNetwork: ["chain", "network", "blockchain", "chain_id", "rpc"],
-  Ticker: ["ticker", "symbol", "stock", "equity"],
-  Domain: ["domain", "hostname", "host", "fqdn"],
-  IpAddress: ["ip", "ip_address", "ipaddress", "addr"],
-};
+/** Live token table — starts as base; hydrateEntityInputTokens merges vocab properties. */
+let ENTITY_INPUT_TOKENS: Record<string, string[]> = { ...BASE_ENTITY_INPUT_TOKENS };
+let _hydrated = false;
 
-function entityInputTokens(entity: string): string[] {
+/**
+ * Merge entity-vocab property names/aliases into the token table.
+ * Safe to call multiple times; never removes base coverage (no ranking regression).
+ */
+export function hydrateEntityInputTokens(vocab: Record<string, EntityVocabDef>): void {
+  ENTITY_INPUT_TOKENS = buildEntityInputTokens(vocab);
+  _hydrated = true;
+}
+
+/** Test/reset helper — restores the hardcoded baseline (disables auto-hydrate until next ensure). */
+export function resetEntityInputTokens(): void {
+  ENTITY_INPUT_TOKENS = { ...BASE_ENTITY_INPUT_TOKENS };
+  _hydrated = false;
+}
+
+/** Lazy-load shipped entity-vocab properties once (serve path + CLI). */
+function ensureEntityTokensHydrated(): void {
+  if (_hydrated) return;
+  _hydrated = true;
+  try {
+    const raw = JSON.parse(
+      readFileSync(path.join(PACKAGE_ROOT, "spec", "entity-vocab.json"), "utf8"),
+    ) as { entities?: Record<string, EntityVocabDef> };
+    if (raw.entities) ENTITY_INPUT_TOKENS = buildEntityInputTokens(raw.entities);
+  } catch {
+    /* keep base tokens if vocab unreadable */
+  }
+}
+
+export function entityInputTokens(entity: string): string[] {
+  ensureEntityTokensHydrated();
   return ENTITY_INPUT_TOKENS[entity] ?? [];
+}
+
+/**
+ * Strong corroboration when a curated field_map ties a consumed entity to a
+ * concrete request location (query/body/path/header). Stronger than bare token
+ * overlap because a maintainer asserted the mapping.
+ */
+export function fieldMapRelevanceBonus(
+  fieldMaps: FieldMap[] | undefined,
+  consumes: Port[] | undefined,
+  inputs: string[] | undefined,
+): number {
+  if (!fieldMaps?.length || !consumes?.length) return 0;
+  const consumed = new Set(consumes.map((p) => p.entity));
+  const inputParts = new Set<string>();
+  for (const inp of (inputs ?? []).map((i) => i.toLowerCase())) {
+    inputParts.add(inp);
+    for (const part of inp.split(/[_\-\s.]+/)) if (part) inputParts.add(part);
+  }
+
+  let bonus = 0;
+  for (const fm of fieldMaps) {
+    if (!consumed.has(fm.entity)) continue;
+    // Authored map for a consumed entity is itself strong evidence.
+    bonus += 6;
+    // Extra: the mapped path token appears in declared inputs.
+    const pathToken = fm.path.split(/[.\{\}\[\]/]+/).filter(Boolean).pop()?.toLowerCase();
+    if (pathToken && (inputParts.has(pathToken) || inputParts.has(fm.property.toLowerCase()))) {
+      bonus += 2;
+    }
+  }
+  return bonus;
 }
 
 /**
  * Per-intent relevance bonus: rewards endpoints whose declared inputs[] tokens
  * corroborate the resolving intent's consumes[].entity, plus a smaller bonus
  * when the endpoint's derived output_entity matches the intent's produced
- * entity. This is the only relevance-aware lever (moves select@k / resolve-rank);
- * it never reads origin/provider, so vendor neutrality is preserved.
+ * entity. Curated field_maps add a stronger signal when present.
+ * Vendor-neutral: never reads origin/provider.
  */
 export function intentRelevanceBonus(
   ep: EndpointRecord,
@@ -98,6 +145,8 @@ export function intentRelevanceBonus(
         bonus += 2;
       }
     }
+
+    bonus += fieldMapRelevanceBonus(ep.field_maps, consumes, ep.inputs);
   }
 
   const producedEntity = intent.produces?.[0]?.entity;

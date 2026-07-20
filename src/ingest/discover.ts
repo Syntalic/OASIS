@@ -287,8 +287,9 @@ export async function runIngest(opts: IngestOptions): Promise<IndexBundle> {
   }
 
   // --- Live payment verification (crawl-path only; NEVER the snapshot rebuild) ---
-  // Probe each claimed-paid endpoint unpaid, stamp payment_verified, apply the mass-drop
-  // circuit-breaker. Membership is unchanged here — the gate drops `contradicted` records next.
+  // Structural pre-gate FIRST: thin / meta / boilerplate OpenAPI records never receive
+  // free unpaid 402 probes (saves probe quota + wall clock). Final gateAndWrite still
+  // drops them; we only stamp payment_verified on structural passers.
   merged = await verifyPayments(merged, prior, opts.outputDir, built);
 
   // --- Gate → PASS corpus → bundle ---
@@ -414,10 +415,20 @@ export async function verifyPayments(
   // records get `built`; reused ones keep this so payment_verified_at doesn't lie about staleness.
   const reusedVerifiedAt = new Map<string, string>();
 
+  // Structural pre-gate: import lazily to avoid circular deps at module load.
+  const { gradeStructural } = await import("../bind/quality-gate.js");
+  let skippedThin = 0;
+
   for (const ep of merged) {
     seenIds.add(ep.id);
     if (!isClaimedPaid(ep)) {
       results.set(ep.id, { verdict: "unknown", reason: "not_paid" });
+      continue;
+    }
+    // Skip free unpaid probes for records that will fail the quality gate anyway.
+    if (gradeStructural(ep).verdict === "drop") {
+      results.set(ep.id, { verdict: "unknown", reason: "skipped_thin_openapi" });
+      skippedThin += 1;
       continue;
     }
     if (NO_PROBE_METHODS.has(ep.method)) {
@@ -431,6 +442,11 @@ export async function verifyPayments(
       continue; // reuse — do NOT probe
     }
     toProbe.push(ep);
+  }
+  if (skippedThin) {
+    console.error(
+      `verify: skipped ${skippedThin} claimed-paid endpoint(s) below OpenAPI quality bar (no free 402 probe)`,
+    );
   }
 
   // --- (3b) Host-aware scheduler over the probe queue ---

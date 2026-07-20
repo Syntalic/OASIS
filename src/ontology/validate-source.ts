@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { parse as parseYaml } from "yaml";
 import type { ValidateFunction } from "ajv";
 import type { CuratedIntentSource } from "../core/types.js";
+import { lintMethodology } from "./methodology-lint.js";
 
 const require = createRequire(import.meta.url);
 const Ajv = require("ajv") as typeof import("ajv").default;
@@ -134,6 +135,12 @@ export async function validateSourceIntent(source: unknown): Promise<SourceValid
     if (link?.to && !ids.has(link.to) && link.to !== id) {
       warnings.push(`link target "${link.to}" is not an existing capability id`);
     }
+  }
+
+  // Taxonomy methodology (docs/taxonomy-methodology.md) — domain home, notes, discoverability.
+  for (const finding of lintMethodology(src, ids)) {
+    if (finding.level === "error") errors.push(`methodology: ${finding.detail}`);
+    else warnings.push(`methodology: ${finding.detail}`);
   }
 
   return { id, valid: errors.length === 0, isNew, errors, warnings };

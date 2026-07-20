@@ -58,6 +58,38 @@
     "search_text": { "type": "string" },
     "keyphrases": { "type": "array", "items": { "type": "string" } },
     "host_breadth": { "type": "number" },
+    "field_maps": {
+      "type": "array",
+      "description": "Curated entity-property → request field maps (from ontology/bindings). Materialized at enrich time.",
+      "items": {
+        "type": "object",
+        "required": ["entity", "property", "in", "path"],
+        "additionalProperties": false,
+        "properties": {
+          "entity": { "type": "string" },
+          "property": { "type": "string" },
+          "in": { "enum": ["path", "query", "header", "body"] },
+          "path": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "description": "On-chain demand snapshot (merchant payTo). Stage activity = any traffic; stage volume = full ranking metrics. Service-level de facto (shared wallet).",
+      "additionalProperties": false,
+      "required": ["observed_at", "source"],
+      "properties": {
+        "active": { "type": "boolean" },
+        "stage": { "enum": ["activity", "volume"] },
+        "volume_usd": { "type": "number", "minimum": 0 },
+        "transactions": { "type": "integer", "minimum": 0 },
+        "unique_buyers": { "type": "integer", "minimum": 0 },
+        "window_days": { "type": "number" },
+        "observed_at": { "type": "string", "format": "date-time" },
+        "source": { "enum": ["base-blockscout", "solana-rpc", "mixed", "bazaar", "dune"] },
+        "pay_tos": { "type": "array", "items": { "type": "string" } }
+      }
+    },
     "built_at": { "type": "string", "format": "date-time" }
   },
   "$defs": {
@@ -144,7 +176,22 @@
         "live_challenge": {
           "type": "array",
           "items": { "$ref": "#/$defs/LiveChallenge" }
+        },
+        "declared_pay_tos": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/DeclaredPayTo" },
+          "description": "Merchant wallets declared in OpenAPI (recipient/payTo/faremeter); not live-verified"
         }
+      }
+    },
+    "DeclaredPayTo": {
+      "type": "object",
+      "required": ["payTo"],
+      "properties": {
+        "payTo": { "type": "string", "minLength": 1 },
+        "network": { "type": "string" },
+        "asset": { "type": "string" },
+        "source": { "type": "string" }
       }
     },
     "PaymentOffer": {

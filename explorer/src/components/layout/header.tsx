@@ -1,6 +1,7 @@
 "use client";
 
 import { Network } from "lucide-react";
+import Link from "next/link";
 
 import { ThemeToggle } from "@/features/theme/theme-toggle";
 import { ontology } from "@/lib/ontology";
@@ -33,7 +34,21 @@ export function Header() {
         <div className="font-display text-[14px] font-bold leading-none tracking-tight">
           OASIS<span className="ml-1.5 font-normal text-muted-foreground">Atlas</span>
         </div>
-        <span className="hidden text-[11px] text-muted-foreground sm:inline">
+        <nav className="ml-1 flex items-center gap-1 rounded-lg border bg-background/50 p-0.5 text-[12px]">
+          <Link
+            href="/"
+            className="rounded-md bg-primary px-2.5 py-1 font-medium text-primary-foreground shadow"
+          >
+            Ontology
+          </Link>
+          <Link
+            href="/coverage"
+            className="rounded-md px-2.5 py-1 text-muted-foreground transition hover:text-foreground"
+          >
+            Coverage
+          </Link>
+        </nav>
+        <span className="hidden text-[11px] text-muted-foreground lg:inline">
           · discovery for paid x402 / MPP APIs
         </span>
       </div>

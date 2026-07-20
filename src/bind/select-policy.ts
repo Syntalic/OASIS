@@ -6,7 +6,7 @@ import {
   DEFAULT_KEYPHRASE_WEIGHT, DEFAULT_SEMRANK_WEIGHT, DEFAULT_SEMRANK_FLOOR,
   DEFAULT_BREADTH_PENALTY, BREADTH_THRESHOLD,
   DEFAULT_DOMAIN_PENALTY, DEFAULT_ACTION_PENALTY, DEFAULT_ENTITY_PENALTY, GATED_INTENTS,
-  DEFAULT_QUALITY_WEIGHT, DEFAULT_PRICE_OUTLIER_PENALTY,
+  DEFAULT_QUALITY_WEIGHT, DEFAULT_PRICE_OUTLIER_PENALTY, DEFAULT_USAGE_WEIGHT,
   WORKFLOW_BASE_SCALE, WORKFLOW_SEMANTIC_WEIGHT, WORKFLOW_SOURCE_WEIGHT,
 } from "../tuning.js";
 
@@ -231,6 +231,26 @@ function qualityScore(ep: EndpointRecord, weight: number): number {
   return weight * q;
 }
 
+/**
+ * On-chain demand term — log-compressed volume_usd (preferred) or transaction count.
+ * Zero when usage is absent. Hard to game; never overrides task-fit (additive only).
+ * Exported for unit tests.
+ */
+export function usageScore(ep: EndpointRecord, weight: number = DEFAULT_USAGE_WEIGHT): number {
+  if (weight <= 0) return 0;
+  const u = ep.usage;
+  if (!u || u.active === false) return 0;
+  // Stage "activity" only asserts non-zero traffic — no ranking gradient yet.
+  if (u.stage === "activity") return 0;
+  const vol = typeof u.volume_usd === "number" && u.volume_usd > 0 ? u.volume_usd : 0;
+  const txs = typeof u.transactions === "number" && u.transactions > 0 ? u.transactions : 0;
+  // Prefer USD volume; fall back to tx count as a weaker proxy (Solana free path).
+  const raw = vol > 0 ? vol : txs > 0 ? txs * 0.01 : 0; // treat each bare tx as ~1¢ proxy
+  if (raw <= 0) return 0;
+  // log10(1+x): $0→0, $9→1, $99→2, $999→3 … caps mega-hosts without zeroing long tail.
+  return weight * Math.log10(1 + raw);
+}
+
 /** Price is NOT an optimization target — only a guard against the absurd. An endpoint
  *  priced far above the candidate median is pushed down; otherwise price is ignored. */
 function priceMedian(candidates: EndpointRecord[]): number | null {
@@ -268,6 +288,7 @@ export function resolveEndpointsForQuery(
   qualityWeight = DEFAULT_QUALITY_WEIGHT,
   priceOutlierPenalty = DEFAULT_PRICE_OUTLIER_PENALTY,
   keyphraseWeight = DEFAULT_KEYPHRASE_WEIGHT,
+  usageWeight = DEFAULT_USAGE_WEIGHT,
 ): EndpointRecord[] {
   const candidates = satisfiesRefsToEndpoints(intent.satisfies, endpoints);
   const qTokens = queryTokens(query);
@@ -281,8 +302,8 @@ export function resolveEndpointsForQuery(
       return {
         ep,
         // Task fit (id/vocab/query) GATES; among comparably on-task endpoints, weak
-        // structural quality breaks ties, with an outlier guard against absurd prices.
-        // (A popularity/usage term belongs here — see docs/proposals/onchain-usage-ranking.md.)
+        // structural quality + on-chain demand break ties, with an outlier guard against
+        // absurd prices. Usage is log-compressed payTo volume (docs/proposals/ranking-signals.md).
         // The breadth (catch-all) penalty fires ONLY when the endpoint has ZERO id-token match —
         // i.e. a mega-host generic crowding a specialist bucket (agentutility "Domain availability"
         // in whois). A catch-all that DOES match the intent id (agentutility's crypto endpoint in
@@ -304,6 +325,7 @@ export function resolveEndpointsForQuery(
           actionPenalty(ep, intent) +
           entityPenalty(ep, intent) +
           qualityScore(ep, qualityWeight) +
+          usageScore(ep, usageWeight) +
           priceOutlierGuard(ep, median, priceOutlierPenalty),
       };
     })

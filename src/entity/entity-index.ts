@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildSubtypeClosure, V1_BRIDGE_IDENTITIES } from "./entity-match.js";
-import type { CapabilityIntent } from "../core/types.js";
+import type { CapabilityIntent, EntityProperty } from "../core/types.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PACKAGE_ROOT = path.join(__dirname, "..", "..");
@@ -13,6 +13,8 @@ export interface EntityVocabEntry {
   bridge_eligible?: boolean;
   deprecated?: boolean;
   absorbs?: string[];
+  /** Optional field-level structure for scoring + OpenAPI field maps. */
+  properties?: EntityProperty[];
 }
 
 export interface EntityIndex {

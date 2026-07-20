@@ -53,6 +53,13 @@ export const DEFAULT_QUALITY_WEIGHT = 4;
  *  against the absurd, not an optimization target. */
 export const DEFAULT_PRICE_OUTLIER_PENALTY = 8;
 
+/**
+ * On-chain demand (usage) weight in resolve ranking — log-compressed volume/tx from
+ * merchant payTo wallets. Task-fit gated (only orders among on-task candidates).
+ * Default modest; set OASIS_USAGE_WEIGHT=0 to disable. See docs/proposals/ranking-signals.md.
+ */
+export const DEFAULT_USAGE_WEIGHT = Number(process.env.OASIS_USAGE_WEIGHT ?? "6");
+
 /* ---- Workflow STEP resolution — src/bind/select-policy.ts::resolveWorkflowStep (mcp buildRecommendedWorkflows) ----
  * A community/source recipe names an intent per step; the live endpoint is picked from the FULL ep→intent
  * binding (not the capped satisfies list), LED by query↔endpoint semantics — because inside one intent's

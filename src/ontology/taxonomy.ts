@@ -13,8 +13,13 @@ export interface Taxonomy {
   capabilities: { id: string; label: string; aliases: string[]; domain?: string }[];
   /** Controlled facet enums (from ontology-source.schema.json). */
   facets: { domain: string[]; action: string[]; modality: string[]; freshness: string[] };
-  /** Closed entity vocabulary for consumes/produces ports (name + the narrower nouns it absorbs). */
-  entities: { name: string; role?: string; absorbs?: string[] }[];
+  /** Closed entity vocabulary for consumes/produces ports (name + the narrower nouns it absorbs + optional properties). */
+  entities: {
+    name: string;
+    role?: string;
+    absorbs?: string[];
+    properties?: { name: string; type?: string; is_identifier?: boolean; aliases?: string[] }[];
+  }[];
   link_types: string[];
 }
 
@@ -55,9 +60,16 @@ export async function getTaxonomy(): Promise<Taxonomy> {
   const link_types = schema.$defs.CapabilityLink.properties.type.enum as string[];
 
   const vocab = JSON.parse(await readFile(path.join(SPEC, "entity-vocab.json"), "utf8"));
-  const entities = Object.entries<{ role?: string; absorbs?: string[] }>(vocab.entities ?? {}).map(
-    ([name, def]) => ({ name, role: def.role, absorbs: def.absorbs }),
-  );
+  const entities = Object.entries<{
+    role?: string;
+    absorbs?: string[];
+    properties?: { name: string; type?: string; is_identifier?: boolean; aliases?: string[] }[];
+  }>(vocab.entities ?? {}).map(([name, def]) => ({
+    name,
+    role: def.role,
+    absorbs: def.absorbs,
+    properties: def.properties,
+  }));
 
   return { capabilities, facets, entities, link_types };
 }

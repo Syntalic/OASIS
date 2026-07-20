@@ -5,7 +5,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse as parseYaml } from "yaml";
 import type { ValidateFunction } from "ajv";
-import type { EndpointRecord } from "../core/types.js";
+import type { EndpointRecord, FieldMap } from "../core/types.js";
+import type { EntityVocabDef } from "../entity/entity-tokens.js";
 
 const require = createRequire(import.meta.url);
 const Ajv = require("ajv") as typeof import("ajv").default;
@@ -21,6 +22,7 @@ export interface BindingEntry {
   method: string;
   path: string;
   capabilities: string[];
+  field_maps?: FieldMap[];
 }
 export interface ServiceBinding {
   provider?: string;
@@ -56,6 +58,89 @@ async function existingCapabilityIds(): Promise<Set<string>> {
   return ids;
 }
 
+let _vocab: Record<string, EntityVocabDef> | null = null;
+async function entityVocab(): Promise<Record<string, EntityVocabDef>> {
+  if (_vocab) return _vocab;
+  const raw = JSON.parse(await readFile(path.join(SPEC, "entity-vocab.json"), "utf8")) as {
+    entities?: Record<string, EntityVocabDef>;
+  };
+  _vocab = raw.entities ?? {};
+  return _vocab;
+}
+
+/** Validate field_maps against the closed entity vocab (and its properties when declared). */
+export function validateFieldMaps(
+  fieldMaps: FieldMap[] | undefined,
+  vocab: Record<string, EntityVocabDef>,
+  loc: string,
+): { errors: string[]; warnings: string[] } {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  if (!fieldMaps?.length) return { errors, warnings };
+
+  for (let i = 0; i < fieldMaps.length; i++) {
+    const fm = fieldMaps[i]!;
+    const prefix = `${loc}.field_maps[${i}]`;
+    if (!fm.entity || !vocab[fm.entity]) {
+      // Also accept absorbed names as entity keys? Keep strict: canonical vocab keys only.
+      const absorbed = Object.entries(vocab).some(([, d]) => d.absorbs?.includes(fm.entity));
+      if (!vocab[fm.entity] && !absorbed) {
+        errors.push(`${prefix}: unknown entity "${fm.entity}" — must be in entity-vocab.json`);
+        continue;
+      }
+    }
+    const def = vocab[fm.entity];
+    if (def?.properties?.length) {
+      const propNames = new Set(def.properties.map((p) => p.name));
+      // Allow alias as property key only if it matches a property name (not alias) — property is the canonical field.
+      if (!propNames.has(fm.property)) {
+        errors.push(
+          `${prefix}: property "${fm.property}" is not declared on entity "${fm.entity}" (known: ${[...propNames].join(", ")})`,
+        );
+      }
+    } else {
+      warnings.push(
+        `${prefix}: entity "${fm.entity}" has no properties[] in the vocab — field map is accepted but untyped`,
+      );
+    }
+    if (!fm.path?.trim()) {
+      errors.push(`${prefix}: path must be non-empty`);
+    }
+  }
+  return { errors, warnings };
+}
+
+/**
+ * Apply a field map: place `value` into a request locations object.
+ * Returns a shallow structure agents can merge into fetch options.
+ */
+export function applyFieldMapToRequest(
+  maps: FieldMap[],
+  values: Record<string, Record<string, unknown>>,
+): { path: Record<string, unknown>; query: Record<string, unknown>; headers: Record<string, unknown>; body: Record<string, unknown> } {
+  const out = {
+    path: {} as Record<string, unknown>,
+    query: {} as Record<string, unknown>,
+    headers: {} as Record<string, unknown>,
+    body: {} as Record<string, unknown>,
+  };
+  for (const fm of maps) {
+    const v = values[fm.entity]?.[fm.property];
+    if (v === undefined) continue;
+    const loc =
+      fm.in === "header" ? out.headers :
+      fm.in === "path" ? out.path :
+      fm.in === "query" ? out.query :
+      out.body;
+    // Simple path: last segment or full name if no $.
+    const keyName = fm.path.startsWith("$.")
+      ? fm.path.slice(2).split(".")[0]!
+      : fm.path.replace(/^\{|\}$/g, "").split(".").pop()!;
+    loc[keyName] = v;
+  }
+  return out;
+}
+
 export interface BindingValidation {
   valid: boolean;
   errors: string[];
@@ -77,14 +162,19 @@ export async function validateBinding(obj: unknown, endpoints?: EndpointRecord[]
   }
   const sb = (obj ?? {}) as ServiceBinding;
   const caps = await existingCapabilityIds();
+  const vocab = await entityVocab();
   const epKeys = endpoints ? new Set(endpoints.map((e) => key(e.origin, e.method, e.path))) : null;
-  for (const b of sb.bindings ?? []) {
+  for (let bi = 0; bi < (sb.bindings ?? []).length; bi++) {
+    const b = sb.bindings[bi]!;
     for (const c of b.capabilities ?? []) {
       if (!caps.has(c)) errors.push(`unknown capability "${c}" — must be an existing capability id (see \`capindex taxonomy\`)`);
     }
     if (epKeys && b.origin && b.method && b.path && !epKeys.has(key(b.origin, b.method, b.path))) {
       warnings.push(`no indexed endpoint matches ${b.method} ${b.origin}${b.path} (not ingested yet, or a typo)`);
     }
+    const fm = validateFieldMaps(b.field_maps, vocab, `bindings[${bi}]`);
+    errors.push(...fm.errors);
+    warnings.push(...fm.warnings);
   }
   return { valid: errors.length === 0, errors, warnings };
 }
@@ -105,10 +195,14 @@ export async function loadBindings(dir = BINDINGS_DIR): Promise<ServiceBinding[]
 
 /**
  * Apply authored bindings as an AUTHORITATIVE override of `endpoint.capabilities` for the
- * matched endpoints (by origin|method|path). The materialized `satisfies[]` is then derived
- * from the corrected capabilities. Returns the number of endpoints overridden.
+ * matched endpoints (by origin|method|path). Also materializes optional `field_maps`.
+ * The materialized `satisfies[]` is then derived from the corrected capabilities.
+ * Returns the number of endpoints overridden.
  */
 export function applyBindings(endpoints: EndpointRecord[], bindings: ServiceBinding[]): number {
+  // Drop previously materialised field_maps so a removed map does not stick across enrich runs.
+  for (const e of endpoints) delete e.field_maps;
+
   const byKey = new Map(endpoints.map((e) => [key(e.origin, e.method, e.path), e]));
   let applied = 0;
   for (const sb of bindings) {
@@ -116,6 +210,9 @@ export function applyBindings(endpoints: EndpointRecord[], bindings: ServiceBind
       const ep = byKey.get(key(b.origin, b.method, b.path));
       if (ep) {
         ep.capabilities = [...b.capabilities];
+        if (b.field_maps?.length) {
+          ep.field_maps = b.field_maps.map((fm) => ({ ...fm }));
+        }
         applied += 1;
       }
     }

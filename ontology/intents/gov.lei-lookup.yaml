@@ -10,7 +10,9 @@ aliases:
   - legal entity ownership graph
   - LEI corporate structure lookup
 consumes:
-  - entity: Query
+  # Company (not Query): callers supply a legal-entity key — LEI code, legal name, or
+  # related identifier. Entity properties (lei, name) drive ranking + field_maps.
+  - entity: Company
     role: identifier
 produces:
   - entity: Company

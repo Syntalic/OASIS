@@ -1,0 +1,95 @@
+# High-traffic entity-property → HTTP request field maps.
+# Applied at enrich time: materializes onto endpoints for ranking (+fieldMap bonus)
+# and agent prefill (applyFieldMapToRequest). capabilities[] matches the live bind
+# so we only add maps — we do not re-home the endpoints.
+provider: field-map seeds (high-traffic)
+note: Seed field_maps for stock quote, company enrich, token security, and LEI lookup.
+bindings:
+  # finance.stock_quote — 2s.io uses query param "ticker" for Ticker.symbol
+  - origin: https://2s.io
+    method: GET
+    path: /api/stocks/quote
+    capabilities:
+      - finance.stock_quote
+    field_maps:
+      - entity: Ticker
+        property: symbol
+        in: query
+        path: ticker
+
+  # finance.stock_quote — klymax uses "symbol"
+  - origin: https://stock-price.api.klymax402.com
+    method: POST
+    path: /api/quote
+    capabilities:
+      - finance.stock_quote
+    field_maps:
+      - entity: Ticker
+        property: symbol
+        in: body
+        path: symbol
+
+  # identity.company_enrich — domain → Domain.hostname
+  - origin: https://company-enrichment.api.klymax402.com
+    method: GET
+    path: /api/enrich
+    capabilities:
+      - identity.company_enrich
+    field_maps:
+      - entity: Domain
+        property: hostname
+        in: query
+        path: domain
+
+  # blockchain.token_security — address → CryptoAsset.contract
+  - origin: https://x402.ottoai.services
+    method: GET
+    path: /token-security
+    capabilities:
+      - blockchain.token_security
+    field_maps:
+      - entity: CryptoAsset
+        property: contract
+        in: query
+        path: address
+
+  # blockchain.token_security — token_address on the current top-1
+  - origin: https://x402.agentutility.ai
+    method: POST
+    path: /token-risk-score
+    capabilities:
+      - blockchain.token_security
+    field_maps:
+      - entity: CryptoAsset
+        property: contract
+        in: body
+        path: token_address
+
+  # gov.lei_lookup — pure LEI validator (prefer this for "validate LEI" queries;
+  # do not map lei-hierarchy — that path is ownership-graph, not validation).
+  - origin: https://2s.io
+    method: GET
+    path: /api/validate/lei
+    capabilities:
+      - gov.lei_lookup
+    field_maps:
+      - entity: Company
+        property: lei
+        in: query
+        path: lei
+
+  # gov.lei_lookup — search/lookup by LEI or name
+  - origin: https://2s.io
+    method: GET
+    path: /api/business/lei
+    capabilities:
+      - gov.lei_lookup
+    field_maps:
+      - entity: Company
+        property: lei
+        in: query
+        path: lei
+      - entity: Company
+        property: name
+        in: query
+        path: query

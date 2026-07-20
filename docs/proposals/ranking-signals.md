@@ -1,9 +1,9 @@
 # Discovery ranking: quality, trust & demand signals
 
-**Status:** parked — revisit after the binding pipeline is productionized. The per-record substrate
-already exists (`_completeness`, `_flags`, `_wellknown`); this doc captures how to turn it into a
-composite ranking score. The **demand** dimension (on-chain usage, § below) is **help-wanted / not
-yet implemented** and can land independently. · **Date:** 2026-07-03 · **Provenance:** `main` @
+**Status:** partially shipped (2026-07-20). Demand dimension lands via free on-chain enrich
+(`pnpm run build:usage` → `src/ingest/enrich-usage.ts`) + `usageScore` in `resolveEndpointsForQuery`.
+Trust/well-known composite still parked. OpenAPI quality bar raised to `MIN_FIELDS=6` and structural
+pre-gate skips free 402 probes on thin records. · **Date:** 2026-07-03 · **Provenance:** `main` @
 `e2ed5aa`. *(Consolidates the former `onchain-usage-ranking.md` as the demand dimension.)*
 
 > **Shipped since (separate from this composite proposal):** a **catch-all / breadth penalty**
